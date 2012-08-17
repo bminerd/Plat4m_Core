@@ -25,7 +25,7 @@
  * @file i2c_driver.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -34,7 +34,7 @@
 
 // plat4m
 //
-// Include the proper I2C driver header file here
+// Include the proper I2C driver header file here.
 //
 // Example:
 //

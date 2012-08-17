@@ -22,14 +22,14 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file mag_driver_hmc5883l.h
+ * @file interrupt_interface.h
  * @author Ben Minerd
- * @date 12/31/11
+ * @date 8/2/12
  * @brief TODO Comment!
  */
 
-#ifndef _MAG_DRIVER_H_
-#define _MAG_DRIVER_H_
+#ifndef _INTERRUPT_INTERFACE_H_
+#define _INTERRUPT_INTERFACE_H_
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -37,7 +37,7 @@
 
 #include <system_types.h>
 
-#include <mag_interface.h>
+#include <interrupt_driver.h>
 
 /*------------------------------------------------------------------------------
  * Defines
@@ -47,9 +47,30 @@
  * Enumerations
  *----------------------------------------------------------------------------*/
 
+/**
+ * TODO Comment!
+ */
+typedef enum _interrupt_error_e_
+{
+    INTERRUPT_ERROR_NONE = 0,
+    INTERRUPT_ERROR_INVALID_ID,
+
+    // Do not add values below!
+    INTERRUPT_ERROR_COUNT
+} interrupt_error_e;
+
 /*------------------------------------------------------------------------------
  * Types
  *----------------------------------------------------------------------------*/
+
+/**
+ * TODO Comment!
+ */
+typedef struct _interrupt_driver_t_
+{
+    interrupt_driver_id_e id;
+    set_enabled_f* setEnabled;
+} interrupt_driver_t;
 
 /*------------------------------------------------------------------------------
  * Global function declarations
@@ -58,11 +79,38 @@
 /**
  * TODO Comment!
  */
-extern void magDriverInit(void);
+extern void interruptInit(void);
 
 /**
  * TODO Comment!
  */
-extern mag_error_e magDriverRead(mag_reading_t* reading);
+extern bool interruptAddDriver(interrupt_driver_t* interruptDriver);
 
-#endif // _MAG_DRIVER_H_
+/**
+ * TODO Comment!
+ */
+extern bool interruptAddDrivers(interrupt_driver_t interruptDrivers[],
+                                uint8_t size);
+
+/**
+ * TODO Comment!
+ */
+extern bool interruptAddHandler(interrupt_driver_id_e id, procedure_f* handler);
+
+/**
+ * TODO Comment!
+ */
+extern interrupt_error_e interruptSetEnabled(interrupt_driver_id_e id,
+                                             bool enabled);
+
+/**
+ * TODO Comment!
+ */
+extern void interruptHandler(interrupt_driver_id_e id);
+
+/**
+ * TODO Comment!
+ */
+extern void interruptProcedure(void);
+
+#endif // _INTERRUPT_INTERFACE_H_

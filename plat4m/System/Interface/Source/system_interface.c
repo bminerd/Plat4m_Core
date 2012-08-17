@@ -25,7 +25,7 @@
  * @file system_interface.c
  * @author Ben Minerd
  * @date 1/21/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -65,34 +65,39 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 static system_procedure_driver_t procedureDrivers[
                                                  SYSTEM_DRIVER_PROCEDURE_COUNT];
 
 /**
- *
+ * TODO Comment!
  */
 static system_state_driver_t stateDrivers[SYSTEM_DRIVER_STATE_COUNT];
 
 /**
- *
+ * TODO Comment!
  */
 static system_driver_state_id_e currentState;
+
+/**
+ * TODO Comment!
+ */
+static volatile uint32_t systemTimeMs = 0;
 
 /*------------------------------------------------------------------------------
  * Local function declarations
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 static void init(void);
 
 /**
- *
+ * TODO Comment!
  */
-static void procedureUpdate();
+static void procedureUpdate(void);
 
 /*------------------------------------------------------------------------------
  * Global function definitions
@@ -110,15 +115,15 @@ extern void systemStart(void)
 }
 
 //------------------------------------------------------------------------------
-extern bool systemProcedureAddDriver(system_procedure_driver_t driver)
+extern bool systemProcedureAddDriver(system_procedure_driver_t* driver)
 {
-    if (driver.id >= SYSTEM_DRIVER_PROCEDURE_ID_COUNT ||
-        !driver.callback)
+    if (driver->id >= SYSTEM_DRIVER_PROCEDURE_ID_COUNT ||
+        !driver->callback)
     {
         return false;
     }
     
-    DRIVER_ADD(procedureDrivers, driver, system_procedure_driver_t);
+    ADD_DRIVER(procedureDrivers, driver);
     
     return true;
 }
@@ -136,7 +141,7 @@ extern bool systemProcedureAddDrivers(system_procedure_driver_t drivers[],
     
     for (i = 0; i < size; i++)
     {
-        if (!systemProcedureAddDriver(drivers[i]))
+        if (!systemProcedureAddDriver(&drivers[i]))
         {
             return false;
         }
@@ -161,16 +166,16 @@ extern bool systemProcedureSetEnabled(system_driver_procedure_id_e id,
 }
 
 //------------------------------------------------------------------------------
-extern bool systemStateAddDriver(system_state_driver_t driver)
+extern bool systemStateAddDriver(system_state_driver_t* driver)
 {
-    if (driver.id >= SYSTEM_DRIVER_STATE_ID_COUNT ||
-        !driver.enter ||
-        !driver.exit)
+    if ((driver->id >= SYSTEM_DRIVER_STATE_ID_COUNT)    ||
+        !driver->enter                                  ||
+        !driver->exit)
     {
         return false;
     }
     
-    DRIVER_ADD(stateDrivers, driver, system_state_driver_t);
+    ADD_DRIVER(stateDrivers, driver);
     
     return true;
 }
@@ -188,7 +193,7 @@ extern bool systemStateAddDrivers(system_state_driver_t drivers[],
     
     for (i = 0; i < size; i++)
     {
-        if (!systemStateAddDriver(drivers[i]))
+        if (!systemStateAddDriver(&drivers[i]))
         {
             return false;
         }
@@ -200,7 +205,7 @@ extern bool systemStateAddDrivers(system_state_driver_t drivers[],
 //------------------------------------------------------------------------------
 extern bool systemStateSetEnabled(system_driver_state_id_e id, bool enabled)
 {
-    if (id >= SYSTEM_DRIVER_STATE_ID_COUNT || !stateDrivers[id].enter)
+    if ((id >= SYSTEM_DRIVER_STATE_ID_COUNT) || !stateDrivers[id].enter)
     {
         return false;
     }
@@ -213,8 +218,8 @@ extern bool systemStateSetEnabled(system_driver_state_id_e id, bool enabled)
 //------------------------------------------------------------------------------
 extern bool systemStateTransition(system_driver_state_id_e newStateId)
 {
-    if (newStateId >= SYSTEM_DRIVER_STATE_ID_COUNT ||
-        !stateDrivers[newStateId].enabled ||
+    if ((newStateId >= SYSTEM_DRIVER_STATE_ID_COUNT)    ||
+        !stateDrivers[newStateId].enabled               ||
         !stateDrivers[newStateId].enter)
     {
         return false;
@@ -230,6 +235,26 @@ extern bool systemStateTransition(system_driver_state_id_e newStateId)
     stateDrivers[currentState].enter();
 
     return true;
+}
+
+//------------------------------------------------------------------------------
+extern void systemTimeMsHandler(void)
+{
+    systemTimeMs++;
+}
+
+//------------------------------------------------------------------------------
+extern uint32_t systemTimeMsGet(void)
+{
+    return systemTimeMs;
+}
+
+//------------------------------------------------------------------------------
+extern void systemDelayMs(uint32_t delayMs)
+{
+    uint32_t delayTimeMs = systemTimeMs + delayMs;
+
+    while (delayTimeMs > systemTimeMs);
 }
 
 /*------------------------------------------------------------------------------

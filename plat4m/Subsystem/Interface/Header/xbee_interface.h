@@ -25,7 +25,7 @@
  * @file xbee_interface.c
  * @author Ben Minerd
  * @date 2/3/12
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _XBEE_INTERFACE_H_
@@ -48,7 +48,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _xbee_error_e_
 {
@@ -68,7 +68,7 @@ typedef enum _xbee_error_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void xbeeInit(void);
 

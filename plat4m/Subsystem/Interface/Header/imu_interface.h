@@ -25,7 +25,7 @@
  * @file imu_interface.h
  * @author Ben Minerd
  * @date 11/23/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _IMU_INTERFACE_H_
@@ -42,17 +42,17 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 #define IMU_ACCEL_DOF (3u)
 
 /**
- *
+ * TODO Comment!
  */
 #define IMU_GYRO_DOF (3u)
 
 /**
- *
+ * TODO Comment!
  */
 #define IMU_MAG_DOF (3u)
 
@@ -61,7 +61,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _imu_accel_dof_e_
 {
@@ -72,7 +72,7 @@ typedef enum _imu_accel_dof_e_
 } imu_accel_dof_e;
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _imu_gyro_dof_e_
 {
@@ -83,7 +83,7 @@ typedef enum _imu_gyro_dof_e_
 } imu_gyro_dof_e;
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _imu_mag_dof_e
 {
@@ -94,7 +94,7 @@ typedef enum _imu_mag_dof_e
 } imu_mag_dof_e;
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _imu_error_e_
 {
@@ -110,17 +110,17 @@ typedef enum _imu_error_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef uint16_t imu_raw_sample_t;
 
 /**
- *
+ * TODO Comment!
  */
 typedef float imu_sample_t;
 
 /**
- *
+ * TODO Comment!
  */
 typedef struct _imu_reading_t_
 {
@@ -134,7 +134,7 @@ typedef struct _imu_reading_t_
 } imu_reading_t;
 
 /**
- *
+ * TODO Comment!
  */
 typedef void imu_reading_callback_t(imu_reading_t* reading);
 
@@ -143,12 +143,12 @@ typedef void imu_reading_callback_t(imu_reading_t* reading);
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void imuInit(void);
 
 /**
- *
+ * TODO Comment!
  */
 extern imu_error_e imuRead(imu_reading_t* reading);
 

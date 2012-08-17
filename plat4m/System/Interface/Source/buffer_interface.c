@@ -22,9 +22,9 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file gpio_interface.c
+ * @file buffer_interface.c
  * @author Ben Minerd
- * @date 2/3/12
+ * @date 8/2/12
  * @brief TODO Comment!
  */
 
@@ -32,17 +32,13 @@
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <gpio_interface.h>
+#include <buffer_interface.h>
+
+#include <stdlib.h>
 
 /*------------------------------------------------------------------------------
  * Defines
  *----------------------------------------------------------------------------*/
-
-#ifdef  GPIO_DRIVER_ID_LIMIT
-#define GPIO_DRIVER_COUNT (GPIO_DRIVER_ID_LIMIT)
-#else
-#define GPIO_DRIVER_COUNT (GPIO_DRIVER_ID_COUNT)
-#endif
 
 /*------------------------------------------------------------------------------
  * Enumerations
@@ -56,11 +52,6 @@
  * Local variables
  *----------------------------------------------------------------------------*/
 
-/**
- * TODO Comment!
- */
-static gpio_driver_t drivers[GPIO_DRIVER_COUNT];
-
 /*------------------------------------------------------------------------------
  * Local function declarations
  *----------------------------------------------------------------------------*/
@@ -70,78 +61,122 @@ static gpio_driver_t drivers[GPIO_DRIVER_COUNT];
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-extern void gpioInit(void)
+extern bool bufferInit(buffer_t* buffer,
+                       generic_data_t* bufferMemory,
+                       unsigned int bufferMemorySize,
+                       unsigned int wordSize)
 {
-    int i;
-
-    for (i = 0; i < GPIO_DRIVER_COUNT; i++)
-    {
-        drivers[i].id = (gpio_driver_id_e) i;
-        drivers[i].setEnabled = 0;
-        drivers[i].setLevel = 0;
-    }
-
-    gpioDriverInit();
-}
-
-//------------------------------------------------------------------------------
-extern bool gpioAddDriver(gpio_driver_t* gpioDriver)
-{
-    if (gpioDriver->id >= GPIO_DRIVER_ID_COUNT ||
-        !gpioDriver->setEnabled ||
-        !gpioDriver->setLevel)
+    if (!buffer                 ||
+        !bufferMemory           ||
+        (bufferMemorySize == 0) ||
+        (wordSize == 0))
     {
         return false;
     }
 
-    ADD_DRIVER(drivers, gpioDriver);
+    buffer->dataArray.data.bytes    = bufferMemory;
+    buffer->dataArray.data.size     = bufferMemorySize;
+    buffer->dataArray.wordSize      = wordSize;
+    buffer->writeIndex              = 0;
+    buffer->readIndex               = 0;
 
     return true;
 }
 
 //------------------------------------------------------------------------------
-extern bool gpioAddDrivers(gpio_driver_t gpioDrivers[], uint8_t size)
+extern bool bufferWrite(buffer_t* buffer, generic_data_t* data)
 {
-    int i;
-
-    if (size > GPIO_DRIVER_COUNT)
+    if (!buffer                 ||
+        bufferIsFull(buffer)    ||
+        !data                   ||
+        (buffer->dataArray.wordSize == 0))
     {
         return false;
     }
-
-    for (i = 0; i < size; i++)
+    
+    memcpy((uint8_t*) &buffer->dataArray.data.bytes[buffer->writeIndex++ *
+                                                    buffer->dataArray.wordSize],
+           data,
+           buffer->dataArray.wordSize);
+    
+    if (buffer->writeIndex >= buffer->dataArray.data.size)
     {
-        if (!gpioAddDriver(&gpioDrivers[i]))
-        {
-            return false;
-        }
+        buffer->writeIndex = 0;
     }
+    
+    return true;
+}
+
+//------------------------------------------------------------------------------
+extern bool bufferRead(buffer_t* buffer, generic_data_t* data)
+{
+    if (!buffer                 ||
+        bufferIsEmpty(buffer)   ||
+        !data                   ||
+        (buffer->dataArray.wordSize == 0))
+    {
+        return false;
+    }
+    
+    memcpy(data,
+           (uint8_t*) &buffer->dataArray.data.bytes[buffer->readIndex++ *
+                                                    buffer->dataArray.wordSize],
+           buffer->dataArray.wordSize);
+    
+    if (buffer->readIndex >= buffer->dataArray.data.size)
+    {
+        buffer->readIndex = 0;
+    }
+    
+    return true;
+}
+
+//------------------------------------------------------------------------------
+extern bool bufferPeek(buffer_t* buffer, generic_data_t** data)
+{
+    if (!buffer                 ||
+        bufferIsEmpty(buffer)   ||
+        !data                   ||
+        (buffer->dataArray.wordSize == 0))
+    {
+        data = 0;
+
+        return false;
+    }
+
+    *data = &(buffer->dataArray.data.bytes[buffer->readIndex *
+                                           buffer->dataArray.wordSize]);
 
     return true;
 }
 
 //------------------------------------------------------------------------------
-extern gpio_error_e gpioSetEnabled(gpio_driver_id_e id, bool enabled)
+extern bool bufferIsEmpty(buffer_t* buffer)
 {
-    if (id >= GPIO_DRIVER_ID_COUNT || !drivers[id].setEnabled)
-    {
-        return GPIO_ERROR_INVALID_ID;
-    }
-
-    drivers[id].setEnabled(enabled);
-
-    return GPIO_ERROR_NONE;
+    return (buffer && (buffer->writeIndex == buffer->readIndex));
 }
 
 //------------------------------------------------------------------------------
-extern gpio_error_e gpioSetLevel(gpio_driver_id_e id, gpio_level_e level)
+extern bool bufferIsFull(buffer_t* buffer)
 {
-    if (id >= GPIO_DRIVER_ID_COUNT || !drivers[id].setLevel)
-    {
-        return GPIO_ERROR_INVALID_ID;
-    }
-
-    drivers[id].setLevel(level);
-
-    return GPIO_ERROR_NONE;
+    return (buffer                                              &&
+            (((buffer->writeIndex + 1) == buffer->readIndex)    ||
+            ((buffer->writeIndex == BUFFER_SIZE) && (buffer->readIndex == 0))));
 }
+
+//------------------------------------------------------------------------------
+extern bool bufferCount(buffer_t* buffer, uint8_t* count)
+{
+    if (!buffer)
+    {
+        return false;
+    }
+    
+    *count = abs(buffer->writeIndex - buffer->readIndex);
+    
+    return true;
+}
+
+/*------------------------------------------------------------------------------
+ * Local function definitions
+ *----------------------------------------------------------------------------*/

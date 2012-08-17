@@ -25,7 +25,7 @@
  * @file micro_driver.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _MICRO_DRIVER_H_
@@ -54,7 +54,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void microDriverInit(void);
 

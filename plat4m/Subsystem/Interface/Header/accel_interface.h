@@ -25,7 +25,7 @@
  * @file accel_interface.h
  * @author Ben Minerd
  * @date 12/31/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _ACCEL_INTERFACE_H_
@@ -41,24 +41,25 @@
  * Defines
  *----------------------------------------------------------------------------*/
 
-#define ACCEL_DOF (3u)
-
 /*------------------------------------------------------------------------------
  * Enumerations
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _accel_dof_e_
 {
     ACCEL_DOF_X = 0,
     ACCEL_DOF_Y,
-    ACCEL_DOF_Z
+    ACCEL_DOF_Z,
+
+    // Do not place values below!
+    ACCEL_DOF_COUNT
 } accel_dof_e;
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _accel_error_e_
 {
@@ -74,16 +75,16 @@ typedef enum _accel_error_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef uint16_t accel_sample_t;
 
 /**
- *
+ * TODO Comment!
  */
 typedef union _accel_reading_t_
 {
-    accel_sample_t samples[ACCEL_DOF];
+    accel_sample_t samples[ACCEL_DOF_COUNT];
 } accel_reading_t;
 
 /*------------------------------------------------------------------------------
@@ -91,12 +92,12 @@ typedef union _accel_reading_t_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void accelInit(void);
 
 /**
- *
+ * TODO Comment!
  */
 extern accel_error_e accelRead(accel_reading_t* reading);
 

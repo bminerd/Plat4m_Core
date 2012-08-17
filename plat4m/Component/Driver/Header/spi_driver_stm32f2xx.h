@@ -25,7 +25,7 @@
  * @file spi_driver_stm32f2xx.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _SPI_DRIVER_H_
@@ -46,7 +46,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _spi_driver_id_e_
 {
@@ -82,7 +82,7 @@ typedef enum _spi_driver_id_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void spiDriverInit(void);
 

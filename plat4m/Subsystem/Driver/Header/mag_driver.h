@@ -25,7 +25,7 @@
  * @file mag_driver.h
  * @author Ben Minerd
  * @date 12/31/11
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------

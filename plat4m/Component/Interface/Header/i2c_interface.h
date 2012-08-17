@@ -26,6 +26,7 @@
  * @author Ben Minerd
  * @date 1/10/12
  * @brief
+ * TODO Comment!
  */
 
 #ifndef _I2C_INTERFACE_H_
@@ -44,12 +45,14 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief
+ * TODO Comment!
  */
 typedef enum _i2c_error_e_
 {
     I2C_ERROR_NONE = 0,
     I2C_ERROR_INVALID_ID,
+    I2C_ERROR_INVALID_PARAMETER,
+    I2C_ERROR_TX_BUFFER_FULL,
     I2C_ERROR_TIMEOUT,
 
     // Do not place values below!
@@ -57,7 +60,7 @@ typedef enum _i2c_error_e_
 } i2c_error_e;
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _i2c_master_mode_e_
 {
@@ -65,62 +68,58 @@ typedef enum _i2c_master_mode_e_
     I2C_MASTER_MODE_RX
 } i2c_master_mode_e;
 
+/**
+ * TODO Comment!
+ */
+typedef enum _i2c_interrupt_e_
+{
+    I2C_INTERRUPT_START = 0,
+    I2C_INTERRUPT_ADDRESS,
+    I2C_INTERRUPT_STOP,
+    I2C_INTERRUPT_TX,
+    I2C_INTERRUPT_RX,
+
+    // Do not place values below!
+    I2C_INTERRUPT_COUNT
+} i2c_interrupt_e;
+
 /*------------------------------------------------------------------------------
  * Types
  *----------------------------------------------------------------------------*/
 
 /**
- *
- */
-typedef set_enabled_f i2c_driver_set_enabled_f;
-
-/**
- *
- */
-typedef i2c_error_e i2c_driver_master_start_f(void);
-
-/**
- *
- */
-typedef i2c_error_e i2c_driver_master_stop_f(void);
-
-/**
- *
- */
-typedef i2c_error_e i2c_driver_master_tx_address_f(uint8_t address,
-                                                   i2c_master_mode_e mode);
-
-/**
- *
- */
-typedef i2c_error_e i2c_driver_tx_f(uint8_t data);
-
-/**
- *
- */
-typedef i2c_error_e i2c_driver_rx_f(uint8_t* data);
-
-/**
- * @brief
- */
-typedef struct _i2c_driver_t_
-{
-    i2c_driver_id_e id;
-    i2c_driver_set_enabled_f* setEnabled;
-    i2c_driver_master_start_f* masterStart;
-    i2c_driver_master_stop_f* masterStop;
-    i2c_driver_master_tx_address_f* masterTxAddress;
-    i2c_driver_tx_f* tx;
-    i2c_driver_rx_f* rx;
-} i2c_driver_t;
-
-/**
- *
+ * TODO Comment!
  */
 typedef uint8_t i2c_address_t;
 
 /**
- *
+ * TODO Comment!
+ */
+typedef void i2c_driver_master_start_f(void);
+
+/**
+ * TODO Comment!
+ */
+typedef void i2c_driver_master_stop_f(void);
+
+/**
+ * TODO Comment!
+ */
+typedef void i2c_driver_master_tx_address_f(uint8_t address,
+                                            i2c_master_mode_e mode);
+
+/**
+ * TODO Comment!
+ */
+typedef void i2c_driver_tx_f(uint8_t data);
+
+/**
+ * TODO Comment!
+ */
+typedef void i2c_driver_rx_f(uint8_t* data);
+
+/**
+ * TODO Comment!
  */
 typedef struct _i2c_device_t_
 {
@@ -128,53 +127,81 @@ typedef struct _i2c_device_t_
     i2c_driver_id_e driverId;
 } i2c_device_t;
 
+/**
+ * TODO Comment!
+ */
+typedef struct _i2c_driver_t_
+{
+    i2c_driver_id_e id;
+    i2c_address_t address;
+    set_enabled_f* setEnabled;
+    i2c_driver_master_start_f* masterStart;
+    i2c_driver_master_stop_f* masterStop;
+    i2c_driver_master_tx_address_f* masterTxAddress;
+    i2c_driver_tx_f* tx;
+    i2c_driver_rx_f* rx;
+    set_enabled_f* txIntSetEnabled;
+    set_enabled_f* rxIntSetEnabled;
+} i2c_driver_t;
+
 /*------------------------------------------------------------------------------
  * Global function declarations
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void i2cInit(void);
 
 /**
- *
+ * TODO Comment!
  */
-extern bool i2cAddDriver(i2c_driver_t i2cDriver);
+extern bool i2cAddDriver(i2c_driver_t* i2cDriver);
 
 /**
- *
+ * TODO Comment!
  */
 extern bool i2cAddDrivers(i2c_driver_t i2cDrivers[], uint8_t size);
 
 /**
- *
+ * TODO Comment!
+ */
+extern bool i2cAddRxCallBack(i2c_driver_id_e id, data_callback_f* callback);
+
+/**
+ * TODO Comment!
  */
 extern bool i2cMasterAddSlave(i2c_driver_id_e id,
                               i2c_address_t address,
                               i2c_device_t* device);
 
 /**
- *
+ * TODO Comment!
  */
-extern i2c_error_e i2cMasterTx(const i2c_device_t* i2cDevice,
-                               uint8_t data[],
-                               uint8_t size);
+extern i2c_error_e i2cSetEnabled(i2c_driver_id_e id, bool enabled);
 
 /**
- *
+ * TODO Comment!
  */
-extern i2c_error_e i2cMasterRx(const i2c_device_t* i2cDevice,
-                               uint8_t data[],
-                               uint8_t size);
+extern i2c_error_e i2cMasterTx(i2c_device_t* i2cDevice,
+                               byte_array_t* data);
 
 /**
- *
+ * TODO Comment!
  */
-extern i2c_error_e i2cMasterTxRx(const i2c_device_t* i2cDevice,
-                                 uint8_t txData[],
-                                 uint8_t txDataSize,
-                                 uint8_t rxData[],
-                                 uint8_t rxDataSize);
+extern i2c_error_e i2cMasterRx(i2c_device_t* i2cDevice,
+                               byte_array_t* data);
+
+/**
+ * TODO Comment!
+ */
+extern i2c_error_e i2cMasterTxRx(i2c_device_t* i2cDevice,
+                                 byte_array_t* txData,
+                                 byte_array_t* rxData);
+
+/**
+ * TODO Comment!
+ */
+extern void i2cIntHandler(i2c_driver_id_e id, i2c_interrupt_e interrupt);
 
 #endif // _I2C_MASTER_H_

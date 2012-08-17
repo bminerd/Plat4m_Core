@@ -25,7 +25,7 @@
  * @file gps_driver_template.h
  * @author Ben Minerd
  * @date 12/30/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _GPS_DRIVER_H_
@@ -56,7 +56,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void gpsDriverInit(void);
 

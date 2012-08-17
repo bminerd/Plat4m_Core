@@ -25,7 +25,7 @@
  * @file gyro_driver_itg3200.c
  * @author Ben Minerd
  * @date 2/25/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -51,7 +51,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 #define GYRO_I2C_ADDRESS (0x68)
 
@@ -60,7 +60,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _gyro_reg_e_
 {
@@ -87,7 +87,7 @@ typedef enum _gyro_reg_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 static i2c_device_t i2cDevice;
 
@@ -108,12 +108,12 @@ static i2c_device_t i2cDevice;
 //      ...
 
 /**
- *
+ * TODO Comment!
  */
 static i2c_error_e regWrite(gyro_reg_e reg, uint8_t value);
 
 /**
- *
+ * TODO Comment!
  */
 static i2c_error_e regRead(gyro_reg_e reg, uint8_t value[], uint8_t size);
 
@@ -180,20 +180,19 @@ extern gyro_error_e gyroDriverRead(gyro_reading_t* reading)
 //------------------------------------------------------------------------------
 static i2c_error_e regWrite(gyro_reg_e reg, uint8_t value)
 {
-    uint8_t data[] = {(uint8_t) reg, value};
+    uint8_t bytes[] = {reg};
+    byte_array_t data = BYTE_ARRAY(bytes);
     
-    return i2cMasterTx(&i2cDevice, data, sizeof(data));
+    return i2cMasterTx(&i2cDevice, &data);
 }
 
 //------------------------------------------------------------------------------
 static i2c_error_e regRead(gyro_reg_e reg, uint8_t value[], uint8_t size)
 {
-    uint8_t txData[] = {reg};
-    uint8_t rxData[2];
+    uint8_t txBytes[] = {reg};
+    byte_array_t txData = BYTE_ARRAY(txBytes);
+    uint8_t rxBytes[2];
+    byte_array_t rxData = BYTE_ARRAY(rxBytes);
     
-    return i2cMasterTxRx(&i2cDevice,
-                         txData,
-                         sizeof(txData),
-                         rxData,
-                         size);
+    return i2cMasterTxRx(&i2cDevice, &txData, &rxData);
 }

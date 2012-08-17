@@ -25,7 +25,7 @@
  * @file gps_interface.c
  * @author Ben Minerd
  * @date 12/30/11
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -50,6 +50,9 @@
  * Local variables
  *----------------------------------------------------------------------------*/
 
+/**
+ * TODO Comment!
+ */
 static gps_reading_callback_t* readingCallback = 0;
 
 /*------------------------------------------------------------------------------
@@ -57,12 +60,12 @@ static gps_reading_callback_t* readingCallback = 0;
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 static void gpsTask(void);
 
 /**
- *
+ * TODO Comment!
  */
 static void gpsParseData(uint8_t data[], uint8_t size, gps_reading_t* reading);
 

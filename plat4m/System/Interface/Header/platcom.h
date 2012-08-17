@@ -21,15 +21,15 @@
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  *----------------------------------------------------------------------------*/
 
-/*
- * platcom.h
- *
- *  Created on: Jan 9, 2012
- *      Author: ben
+/**
+ * @file platcom.h
+ * @author Ben Minerd
+ * @date 1/9/12
+ * @brief TODO Comment!
  */
 
-#ifndef PLATCOM_H_
-#define PLATCOM_H_
+#ifndef _PLATCOM_H_
+#define _PLATCOM_H_
 
 
-#endif /* PLATCOM_H_ */
+#endif // _PLATCOM_H_

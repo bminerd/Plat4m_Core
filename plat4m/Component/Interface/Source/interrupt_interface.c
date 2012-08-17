@@ -22,9 +22,9 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file xbee_driver_template.c
+ * @file interrupt_interface.c
  * @author Ben Minerd
- * @date 2/3/12
+ * @date 8/2/12
  * @brief TODO Comment!
  */
 
@@ -32,21 +32,17 @@
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <xbee_interface.h>
-
-// plat4m
-//
-// Replace below with proper XBee driver header file.
-//
-// Example:
-//
-//      #include <xbee_driver_zigbee.h>
-
-#include <xbee_driver_zigbee.h>
+#include <interrupt_interface.h>
 
 /*------------------------------------------------------------------------------
  * Defines
  *----------------------------------------------------------------------------*/
+
+#ifdef  INTERRUPT_DRIVER_ID_LIMIT
+#define INTERRUPT_DRIVER_COUNT (INTERRUPT_DRIVER_ID_LIMIT)
+#else
+#define INTERRUPT_DRIVER_COUNT (INTERRUPT_DRIVER_ID_COUNT)
+#endif
 
 /*------------------------------------------------------------------------------
  * Enumerations
@@ -56,44 +52,126 @@
  * Types
  *----------------------------------------------------------------------------*/
 
+/**
+ * TODO Comment!
+ */
+typedef struct _interrupt_driver_container_t_
+{
+    interrupt_driver_t driver;
+
+    struct
+    {
+        bool isActive: 1;
+    };
+
+    procedure_f* handler;
+} interrupt_driver_container_t;
+
 /*------------------------------------------------------------------------------
  * Local variables
  *----------------------------------------------------------------------------*/
 
+/**
+ * TODO Comment!
+ */
+static interrupt_driver_container_t containers[INTERRUPT_DRIVER_COUNT];
+
 /*------------------------------------------------------------------------------
  * Local function declarations
  *----------------------------------------------------------------------------*/
-
-// plat4m
-//
-// Declare local XBee driver functions here.
-//
-// Example:
-//
-//      static void setBaudRate(uart_baud_rate_e baud);
-//      ...
 
 /*------------------------------------------------------------------------------
  * Global function definitions
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-extern void xbeeDriverInit(void)
+extern void interruptInit(void)
 {
-    // plat4m
-    //
-    // Initialize XBee driver here.
-    //
-    // Example:
-    //
-    //      setBaudRate(UART_BAUD_RATE_115200);
-    //      ...
+    int i;
+    
+    for (i = 0; i < INTERRUPT_DRIVER_COUNT; i++)
+    {
+        containers[i].driver.id = (interrupt_driver_id_e) i;
+        containers[i].driver.setEnabled = 0;
+        containers[i].isActive = false;
+        containers[i].handler = 0;
+    }
+    
+    interruptDriverInit();
+}
+
+//------------------------------------------------------------------------------
+extern bool interruptAddDriver(interrupt_driver_t* interruptDriver)
+{
+    if (interruptDriver->id >= INTERRUPT_DRIVER_ID_COUNT ||
+        !interruptDriver->setEnabled)
+    {
+        return false;
+    }
+    
+    ADD_CONTAINER(containers, interruptDriver);
+    
+    return true;
+}
+
+//------------------------------------------------------------------------------
+extern bool interruptAddDrivers(interrupt_driver_t interruptDrivers[],
+                                uint8_t size)
+{
+    int i;
+    
+    if (size > INTERRUPT_DRIVER_COUNT)
+    {
+        return false;
+    }
+    
+    for (i = 0; i < size; i++)
+    {
+        if (!interruptAddDriver(&interruptDrivers[i]))
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+//------------------------------------------------------------------------------
+extern bool interruptAddHandler(interrupt_driver_id_e id, procedure_f* handler)
+{
+    if ((id >= INTERRUPT_DRIVER_ID_COUNT) || !handler)
+    {
+        return false;
+    }
+    
+    containers[id].handler = handler;
+    
+    return true;
+}
+
+//------------------------------------------------------------------------------
+extern interrupt_error_e interruptSetEnabled(interrupt_driver_id_e id,
+                                             bool enabled)
+{
+    if (id >= INTERRUPT_DRIVER_ID_COUNT)
+    {
+        return INTERRUPT_ERROR_INVALID_ID;
+    }
+
+    containers[id].driver.setEnabled(enabled);
+
+    return INTERRUPT_ERROR_NONE;
+}
+
+//------------------------------------------------------------------------------
+extern void interruptHandler(interrupt_driver_id_e id)
+{
+    if ((id < INTERRUPT_DRIVER_ID_COUNT) && containers[id].handler)
+    {
+        containers[id].handler();
+    }
 }
 
 /*------------------------------------------------------------------------------
  * Local function definitions
  *----------------------------------------------------------------------------*/
-
-// plat4m
-//
-// Define here local XBee driver functions declared above.

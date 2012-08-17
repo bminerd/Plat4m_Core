@@ -25,7 +25,7 @@
  * @file imu_driver.h
  * @author Ben Minerd
  * @date 7/31/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------

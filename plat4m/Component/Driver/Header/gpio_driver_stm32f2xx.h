@@ -25,7 +25,7 @@
  * @file gpio_driver.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _GPIO_DRIVER_H_
@@ -45,6 +45,9 @@
  * Enumerations
  *----------------------------------------------------------------------------*/
 
+/**
+ * TODO Comment!
+ */
 typedef enum _gpio_driver_id_e_
 {
     // GPIO driver IDs go here
@@ -57,7 +60,11 @@ typedef enum _gpio_driver_id_e_
     //      GPIO_DRIVER_ID_LED_2,
     //      ...
     
-    GPIO_DRIVER_ID_LED1 = 0,
+    GPIO_DRIVER_ID_LED_1 = 0,
+    GPIO_DRIVER_ID_LED_2,
+    GPIO_DRIVER_ID_OLED_RST_N,
+    GPIO_DRIVER_ID_OLED_VCC_EN,
+    GPIO_DRIVER_ID_OLED_PWR_EN,
     
     // Do not place values below!
     GPIO_DRIVER_ID_COUNT
@@ -72,7 +79,7 @@ typedef enum _gpio_driver_id_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void gpioDriverInit(void);
 

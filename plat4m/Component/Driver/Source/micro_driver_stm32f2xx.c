@@ -25,7 +25,7 @@
  * @file micro_driver_template.c
  * @author Ben Minerd
  * @date 2/3/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------

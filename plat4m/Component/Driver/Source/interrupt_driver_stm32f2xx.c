@@ -22,27 +22,21 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file xbee_driver_template.c
+ * @file interrupt_driver_stm32f2xx.c
  * @author Ben Minerd
- * @date 2/3/12
- * @brief TODO Comment!
+ * @date 8/2/12
+ * @brief  TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <xbee_interface.h>
+#include <interrupt_interface.h>
+#include <interrupt_driver_stm32f2xx.h>
 
-// plat4m
-//
-// Replace below with proper XBee driver header file.
-//
-// Example:
-//
-//      #include <xbee_driver_zigbee.h>
-
-#include <xbee_driver_zigbee.h>
+#include <stm32f2xx.h>
+#include <stm322xg_eval.h>
 
 /*------------------------------------------------------------------------------
  * Defines
@@ -66,34 +60,120 @@
 
 // plat4m
 //
-// Declare local XBee driver functions here.
+// Declare local interrupt driver functions here.
 //
 // Example:
 //
-//      static void setBaudRate(uart_baud_rate_e baud);
+//      static void button1IntSetEnabled(bool setEnabled);
+//      static void button1IntHandler(void);
 //      ...
+
+/**
+ * TODO Comment!
+ */
+static void button1IntSetEnabled(bool enabled);
+
+/**
+ * TODO Comment!
+ */
+static void sysTickIntSetEnabled(bool enabled);
 
 /*------------------------------------------------------------------------------
  * Global function definitions
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-extern void xbeeDriverInit(void)
+extern void interruptDriverInit(void)
 {
     // plat4m
     //
-    // Initialize XBee driver here.
+    // Initialize interrupt driver.
+    // Add drivers to interrupt interface.
     //
     // Example:
     //
-    //      setBaudRate(UART_BAUD_RATE_115200);
-    //      ...
+    //      interrupt_driver_t interrupts[] =
+    //      {
+    //          // Button1
+    //          {
+    //              .id         = INTERRUPT_DRIVER_ID_BUTTON1,
+    //              .setEnabled = button1IntSetEnabled,
+    //              ...
+    //          },
+    //          // Button2
+    //          {
+    //              .id         = INTERRUPT_DRIVER_ID_BUTTON2,
+    //              .setEnabled = button2IntSetEnabled,
+    //              ...
+    //          }
+    //          ...
+    //      };
+    //
+    //      interruptAddDrivers(interrupts, ARRAY_SIZE(interrupts));
+    
+    interrupt_driver_t interrupts[] =
+    {
+        // Button1
+        {
+            .id         = INTERRUPT_DRIVER_ID_BUTTON_1,
+            .setEnabled = button1IntSetEnabled
+        },
+        // SysTick
+        {
+            .id         = INTERRUPT_DRIVER_ID_SYS_TICK,
+            .setEnabled = sysTickIntSetEnabled
+        }
+    };
+    
+    interruptAddDrivers(interrupts, ARRAY_SIZE(interrupts));
 }
 
 /*------------------------------------------------------------------------------
  * Local function definitions
  *----------------------------------------------------------------------------*/
 
-// plat4m
-//
-// Define here local XBee driver functions declared above.
+//------------------------------------------------------------------------------
+static void button1IntSetEnabled(bool enabled)
+{
+    if (enabled)
+    {
+        STM_EVAL_PBInit(BUTTON_KEY, BUTTON_MODE_EXTI);
+    }
+    else
+    {
+        // Do nothing
+    }
+}
+
+//------------------------------------------------------------------------------
+static void sysTickIntSetEnabled(bool enabled)
+{
+    if (enabled)
+    {
+        SysTick_Config(SystemCoreClock / 1000);
+    }
+    else
+    {
+
+    }
+}
+
+/*------------------------------------------------------------------------------
+ * Interrupt service routines
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+extern void EXTI15_10_IRQHandler(void)
+{
+    if (EXTI_GetITStatus(EXTI_Line15) != RESET)
+    {
+        EXTI_ClearITPendingBit(EXTI_Line15);
+        interruptHandler(INTERRUPT_DRIVER_ID_BUTTON_1);
+    }
+}
+
+//------------------------------------------------------------------------------
+extern void SysTick_Handler(void)
+{
+    interruptHandler(INTERRUPT_DRIVER_ID_SYS_TICK);
+}

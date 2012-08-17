@@ -25,7 +25,7 @@
  * @file uart_driver_template.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _UART_DRIVER_H_
@@ -37,21 +37,28 @@
 
 #include <system_types.h>
 
+#include <uart_interface.h>
+
 /*------------------------------------------------------------------------------
  * Defines
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
-#define UART_DATA_MAX (128u)
+#define UART_DRIVER_BUFFER_SIZE (128u)
+
+/**
+ * TODO Comment!
+ */
+#define UART_DRIVER_RX_CALLBACK_COUNT (1u)
 
 /*------------------------------------------------------------------------------
  * Enumerations
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _uart_driver_id_e_
 {
@@ -87,7 +94,7 @@ typedef enum _uart_driver_id_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void uartDriverInit(void);
 

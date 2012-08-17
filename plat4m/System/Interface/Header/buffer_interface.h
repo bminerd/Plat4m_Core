@@ -21,15 +21,15 @@
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  *----------------------------------------------------------------------------*/
 
-/*
- * buffer_interface.h
- *
- *  Created on: Mar 18, 2012
- *      Author: ben
+/**
+ * @file buffer_interface.h
+ * @author Ben Minerd
+ * @date 3/18/12
+ * @brief TODO Comment!
  */
 
-#ifndef BUFFER_INTERFACE_H_
-#define BUFFER_INTERFACE_H_
+#ifndef _BUFFER_INTERFACE_H_
+#define _BUFFER_INTERFACE_H_
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -41,32 +41,97 @@
  * Defines
  *----------------------------------------------------------------------------*/
 
-#define BUFFER_SIZE (256u)
+/**
+ * TODO Comment!
+ */
+#define BUFFER_SIZE (255u)
+
+/**
+ * TODO Comment!
+ */
+#define BUFFER_INIT(buffer, bufferMemory) \
+    bufferInit(buffer, \
+               (generic_data_t*) bufferMemory, \
+               ARRAY_SIZE(bufferMemory), \
+               sizeof(bufferMemory[0]))
+
+/**
+ * TODO Comment!
+ */
+#define BUFFER_WRITE(buffer, elementPtr) \
+    bufferWrite(buffer, (generic_data_t*) elementPtr)
+
+/**
+ * TODO Comment!
+ */
+#define BUFFER_READ(buffer, elementPtr) \
+    bufferRead(buffer, (generic_data_t*) elementPtr)
+
+/**
+ * TODO Comment!
+ */
+#define BUFFER_PEEK(buffer, elementPtr) \
+    bufferPeek(buffer, (generic_data_t**) elementPtr)
 
 /*------------------------------------------------------------------------------
  * Types
  *----------------------------------------------------------------------------*/
 
-typedef struct
+/**
+ * TODO Comment!
+ */
+typedef uint8_t generic_data_t;
+
+/**
+ * TODO Comment!
+ */
+typedef struct _buffer_t_
 {
-	uint8_t data[BUFFER_SIZE];
-	uint8_t size;
-	uint8_t writeIndex;
-	uint8_t readIndex;
+    data_array_t dataArray;
+    unsigned int writeIndex;
+    unsigned int readIndex;
 } buffer_t;
 
 /*------------------------------------------------------------------------------
  * Global function declarations
  *----------------------------------------------------------------------------*/
 
-extern void bufferInit(buffer_t* buffer);
+/**
+ * TODO Comment!
+ */
+extern bool bufferInit(buffer_t* buffer,
+                       generic_data_t* bufferMemory,
+                       unsigned int bufferMemorySize,
+                       unsigned int wordSize);
 
-extern bool bufferWrite(buffer_t* buffer, uint8_t data);
+/**
+ * TODO Comment!
+ */
+extern bool bufferWrite(buffer_t* buffer, generic_data_t* data);
 
-extern bool bufferRead(buffer_t* buffer, uint8_t* data);
+/**
+ * TODO Comment!
+ */
+extern bool bufferRead(buffer_t* buffer, generic_data_t* data);
 
+/**
+ * TODO Comment!
+ */
+extern bool bufferPeek(buffer_t* buffer, generic_data_t** data);
+
+/**
+ * TODO Comment!
+ */
 extern bool bufferIsEmpty(buffer_t* buffer);
 
+/**
+ * TODO Comment!
+ */
 extern bool bufferIsFull(buffer_t* buffer);
 
-#endif /* BUFFER_INTERFACE_H_ */
+/**
+ * TODO Comment!
+ */
+extern bool bufferCount(buffer_t* buffer, uint8_t* count);
+
+#endif // _BUFFER_INTERFACE_H_

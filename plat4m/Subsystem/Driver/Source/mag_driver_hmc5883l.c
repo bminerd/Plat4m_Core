@@ -25,7 +25,7 @@
  * @file mag_driver_hmc58831.c
  * @author Ben Minerd
  * @date 2/25/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -51,7 +51,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 #define MAG_I2C_ADDRESS (0x53)
 
@@ -60,7 +60,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _mag_reg_e_
 {
@@ -84,7 +84,7 @@ typedef enum _mag_reg_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 static i2c_device_t i2cDevice;
 
@@ -105,12 +105,12 @@ static i2c_device_t i2cDevice;
 //      ...
 
 /**
- *
+ * TODO Comment!
  */
 static i2c_error_e regWrite(mag_reg_e reg, uint8_t value);
 
 /**
- *
+ * TODO Comment!
  */
 static i2c_error_e regRead(mag_reg_e reg, uint8_t value[], int size);
 

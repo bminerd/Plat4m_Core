@@ -25,7 +25,7 @@
  * @file accel_driver_template.h
  * @author Ben Minerd
  * @date 12/31/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _ACCEL_DRIVER_H_
@@ -54,12 +54,12 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void accelDriverInit(void);
 
 /**
- *
+ * TODO Comment!
  */
 extern accel_error_e accelDriverRead(accel_reading_t* reading);
 

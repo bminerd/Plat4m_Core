@@ -25,7 +25,7 @@
  * @file uart_interface.h
  * @author Ben Minerd
  * @date 12/30/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _UART_INTERFACE_H_
@@ -38,7 +38,6 @@
 #include <system_types.h>
 
 #include <uart_driver.h>
-#include <buffer_interface.h>
 
 /*------------------------------------------------------------------------------
  * Defines
@@ -49,64 +48,52 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _uart_error_e_
 {
     UART_ERROR_NONE = 0,
     UART_ERROR_INVALID_ID,
+    UART_ERROR_TX_BUFFER_FULL,
 
     // Do not place values below!
     UART_ERROR_COUNT
 } uart_error_e;
+
+/**
+ * TODO Comment!
+ */
+typedef enum _uart_interrupt_e_
+{
+    UART_INTERRUPT_TX = 0,
+    UART_INTERRUPT_RX
+} uart_interrupt_e;
 
 /*------------------------------------------------------------------------------
  * Types
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
-typedef set_enabled_f uart_driver_set_enabled_f;
+typedef uart_error_e uart_driver_tx_f(uint8_t data);
 
 /**
- *
+ * TODO Comment!
  */
-typedef bool uart_driver_tx_f(uint8_t data);
+typedef uart_error_e uart_driver_rx_f(uint8_t* data);
 
 /**
- *
- */
-typedef bool uart_driver_rx_f(uint8_t* data);
-
-/**
- *
- */
-typedef set_enabled_f uart_driver_tx_int_set_enabled_f;
-
-/**
- *
- */
-typedef set_enabled_f uart_driver_rx_int_set_enabled_f;
-
-/**
- *
- */
-typedef bool uart_driver_callback_f(uart_driver_id_e id);
-
-/**
- *
+ * TODO Comment!
  */
 typedef struct _uart_driver_t_
 {
     uart_driver_id_e id;
-    buffer_t txBuffer;
-    buffer_t rxBuffer;
-    uart_driver_set_enabled_f* setEnabled;
+    set_enabled_f* setEnabled;
     uart_driver_tx_f* tx;
     uart_driver_rx_f* rx;
-    uart_driver_tx_int_set_enabled_f* txIntSetEnabled;
-    uart_driver_rx_int_set_enabled_f* rxIntSetEnabled;
+    set_enabled_f* txIntSetEnabled;
+    set_enabled_f* rxIntSetEnabled;
 } uart_driver_t;
 
 /*------------------------------------------------------------------------------
@@ -114,23 +101,49 @@ typedef struct _uart_driver_t_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void uartInit(void);
 
 /**
- *
+ * TODO Comment!
  */
-extern bool uartAddDriver(uart_driver_t uartDriver);
+extern bool uartAddDriver(uart_driver_t* uartDriver);
 
 /**
- *
+ * TODO Comment!
  */
 extern bool uartAddDrivers(uart_driver_t uartDriver[], uint8_t size);
 
 /**
- *
+ * TODO Comment!
  */
-extern bool uartTx(uart_driver_id_e id, uint8_t data[], uint8_t size);
+extern bool uartAddRxCallback(uart_driver_id_e id,
+                              data_callback_f* rxCallback);
+
+/**
+ * TODO Comment!
+ */
+extern uart_error_e uartSetEnabled(uart_driver_id_e id, bool enabled);
+
+/**
+ * TODO Comment!
+ */
+extern uart_error_e uartTx(uart_driver_id_e id, byte_array_t* data);
+
+/**
+ * TODO Comment!
+ */
+extern uart_error_e uartRead(uart_driver_id_e id, byte_array_t* data);
+
+/**
+ * TODO Comment!
+ */
+extern uart_error_e uartBytesAvailable(uart_driver_id_e id, uint8_t* byteCount);
+
+/**
+ * TODO Comment!
+ */
+extern void uartIntHandler(uart_driver_id_e id, uart_interrupt_e interrupt);
 
 #endif // _UART_INTERFACE_H_

@@ -54,12 +54,12 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void gyroDriverInit(void);
 
 /**
- *
+ * TODO Comment!
  */
 extern gyro_error_e gyroDriverRead(gyro_reading_t* reading);
 

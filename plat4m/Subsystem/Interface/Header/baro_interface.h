@@ -25,7 +25,7 @@
  * @file baro_interface.h
  * @author Ben Minerd
  * @date 12/31/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _BARO_INTERFACE_H_
@@ -46,7 +46,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _baro_error_e_
 {
@@ -62,12 +62,12 @@ typedef enum _baro_error_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef uint16_t baro_sample_t;
 
 /**
- *
+ * TODO Comment!
  */
 typedef struct _baro_reading_t_
 {
@@ -79,12 +79,12 @@ typedef struct _baro_reading_t_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void baroInit(void);
 
 /**
- *
+ * TODO Comment!
  */
 extern baro_error_e baroRead(baro_reading_t* reading);
 

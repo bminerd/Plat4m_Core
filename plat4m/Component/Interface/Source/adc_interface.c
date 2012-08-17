@@ -22,10 +22,10 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file adc_interface.h
+ * @file adc_interface.c
  * @author Ben Minerd
  * @date 7/30/12
- * @brief 
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -57,7 +57,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 static adc_driver_t drivers[ADC_DRIVER_COUNT];
 
@@ -76,25 +76,25 @@ extern void adcInit(void)
 
     for (i = 0; i < ADC_DRIVER_COUNT; i++)
     {
-        drivers[i].id = (adc_driver_id_e) i;
-        drivers[i].setEnabled = 0;
-        drivers[i].read = 0;
+        drivers[i].id           = (adc_driver_id_e) i;
+        drivers[i].setEnabled   = 0;
+        drivers[i].read         = 0;
     }
 
     adcDriverInit();
 }
 
 //------------------------------------------------------------------------------
-extern bool adcAddDriver(adc_driver_t adcDriver)
+extern bool adcAddDriver(adc_driver_t* adcDriver)
 {
-    if (adcDriver.id >= ADC_DRIVER_ID_COUNT ||
-        !adcDriver.setEnabled ||
-        !adcDriver.read)
+    if (adcDriver->id >= ADC_DRIVER_ID_COUNT    ||
+        !adcDriver->setEnabled                  ||
+        !adcDriver->read)
     {
         return false;
     }
 
-    DRIVER_ADD(drivers, adcDriver, adc_driver_t);
+    ADD_DRIVER(drivers, adcDriver);
 
     return true;
 }
@@ -106,13 +106,26 @@ extern bool adcAddDrivers(adc_driver_t adcDrivers[], uint8_t size)
     
     for (i = 0; i < size; i++)
     {
-        if (!adcAddDriver(adcDrivers[i]))
+        if (!adcAddDriver(&adcDrivers[i]))
         {
             return false;
         }
     }
     
     return true;
+}
+
+//------------------------------------------------------------------------------
+extern adc_error_e adcSetEnabled(adc_driver_id_e id, bool enabled)
+{
+    if (id >= ADC_DRIVER_ID_COUNT)
+    {
+        return ADC_ERROR_INVALID_ID;
+    }
+
+    drivers[id].setEnabled(enabled);
+
+    return ADC_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------

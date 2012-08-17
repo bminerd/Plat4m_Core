@@ -21,11 +21,11 @@
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  *----------------------------------------------------------------------------*/
 
-/*
- * micro_interface.c
- *
- *  Created on: Feb 3, 2012
- *      Author: ben
+/**
+ * @file micro_interface.c
+ * @author Ben Minerd
+ * @date 2/3/12
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------

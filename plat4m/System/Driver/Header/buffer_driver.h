@@ -21,15 +21,14 @@
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  *----------------------------------------------------------------------------*/
 
-/*
- * buffer_driver.h
- *
- *  Created on: Mar 18, 2012
- *      Author: ben
+/**
+ * @file buffer_driver.h
+ * @author Ben Minerd
+ * @date 3/18/12
+ * @brief TODO Comment!
  */
 
-#ifndef BUFFER_DRIVER_H_
-#define BUFFER_DRIVER_H_
+#ifndef _BUFFER_DRIVER_H_
+#define _BUFFER_DRIVER_H_
 
-
-#endif /* BUFFER_DRIVER_H_ */
+#endif // _BUFFER_DRIVER_H_

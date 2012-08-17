@@ -25,7 +25,7 @@
  * @file imu_interface.c
  * @author Ben Minerd
  * @date 12/30/11
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -53,7 +53,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 static imu_reading_callback_t* readingCallback = 0;
 
@@ -62,12 +62,12 @@ static imu_reading_callback_t* readingCallback = 0;
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 static void imuTask(void);
 
 /**
- *
+ * TODO Comment!
  */
 static void imuParseData(uint8_t data[],
                          uint8_t size,

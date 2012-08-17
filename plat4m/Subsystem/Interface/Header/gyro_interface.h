@@ -25,7 +25,7 @@
  * @file gyro_interface.h
  * @author Ben Minerd
  * @date 12/31/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _GYRO_INTERFACE_H_
@@ -42,7 +42,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 #define GYRO_DOF (3u)
 
@@ -51,7 +51,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _gyro_dof_e_
 {
@@ -61,7 +61,7 @@ typedef enum _gyro_dof_e_
 } gyro_dof_e;
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _gyro_error_e_
 {
@@ -77,12 +77,12 @@ typedef enum _gyro_error_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef uint16_t gyro_sample_t;
 
 /**
- *
+ * TODO Comment!
  */
 typedef union _gyro_reading_t_
 {
@@ -95,12 +95,12 @@ typedef union _gyro_reading_t_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void gyroInit(void);
 
 /**
- *
+ * TODO Comment!
  */
 extern gyro_error_e gyroRead(gyro_reading_t* reading);
 

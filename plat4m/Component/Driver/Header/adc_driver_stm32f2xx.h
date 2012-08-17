@@ -25,7 +25,7 @@
  * @file adc_driver_template.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief 
+ * @brief TODO Comment!
  */
 
 #ifndef _ADC_DRIVER_H_
@@ -46,7 +46,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief
+ * TODO Comment!
  */
 typedef enum _adc_driver_id_e_
 {
@@ -56,18 +56,18 @@ typedef enum _adc_driver_id_e_
     //
     // Example:
     //
-    //      ADC_DRIVER_ID_2_CHANNEL_7,
+    //      ADC_DRIVER_ID_2,
     //      ...
     //
     // Note: first ADC driver ID should be set to 0 (zero).
     //
     // Example:
     //
-    //      ADC_DRIVER_ID_1_CHANNEL_0 = 0,
-    //      ADC_DRIVER_ID_1_CHANNEL_1,
+    //      ADC_DRIVER_ID_1 = 0,
+    //      ADC_DRIVER_ID_1,
     //      ...
     
-    ADC_DRIVER_ID_1_CHANNEL_0 = 0,
+    ADC_DRIVER_ID_1 = 0,
     
     // Do not place values below!
     ADC_DRIVER_ID_COUNT
@@ -82,7 +82,7 @@ typedef enum _adc_driver_id_e_
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief
+ * TODO Comment!
  */
 extern void adcDriverInit(void);
 

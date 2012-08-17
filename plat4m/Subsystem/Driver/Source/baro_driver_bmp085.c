@@ -25,7 +25,7 @@
  * @file baro_driver.c
  * @author Ben Minerd
  * @date 2/25/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -42,7 +42,6 @@
 //
 //      #include <baro_driver_bmp085.h>
 
-//#include <baro_driver_template.h>
 #include <baro_driver_bmp085.h>
 
 #include <i2c_interface.h>
@@ -52,7 +51,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 #define BARO_I2C_ADDRESS (0x00)
 

@@ -25,7 +25,7 @@
  * @file system_driver.h
  * @author Ben Minerd
  * @date 2/3/12
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _SYSTEM_DRIVER_H_
@@ -46,7 +46,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _system_driver_procedure_id_e_
 {
@@ -57,7 +57,7 @@ typedef enum _system_driver_procedure_id_e_
 } system_driver_procedure_id_e;
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _system_driver_state_id_e_
 {
@@ -73,7 +73,7 @@ typedef enum _system_driver_state_id_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void systemDriverInit(void);
 

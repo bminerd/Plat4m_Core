@@ -25,7 +25,7 @@
  * @file gpio_interface.h
  * @author Ben Minerd
  * @date 2/3/12
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _GPIO_INTERFACE_H_
@@ -48,7 +48,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _gpio_error_e
 {
@@ -60,7 +60,7 @@ typedef enum _gpio_error_e
 } gpio_error_e;
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _gpio_level_e_
 {
@@ -76,17 +76,17 @@ typedef enum _gpio_level_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef set_enabled_f gpio_driver_set_enabled_f;
 
 /**
- *
+ * TODO Comment!
  */
 typedef void gpio_driver_set_level_f(gpio_level_e level);
 
 /**
- *
+ * TODO Comment!
  */
 typedef struct _gpio_driver_t_
 {
@@ -100,27 +100,27 @@ typedef struct _gpio_driver_t_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void gpioInit(void);
 
 /**
- *
+ * TODO Comment!
  */
-extern bool gpioAddDriver(gpio_driver_t gpioDriver);
+extern bool gpioAddDriver(gpio_driver_t* gpioDriver);
 
 /**
- *
+ * TODO Comment!
  */
 extern bool gpioAddDrivers(gpio_driver_t gpioDrivers[], uint8_t size);
 
 /**
- *
+ * TODO Comment!
  */
 extern gpio_error_e gpioSetEnabled(gpio_driver_id_e id, bool enabled);
 
 /**
- *
+ * TODO Comment!
  */
 extern gpio_error_e gpioSetLevel(gpio_driver_id_e id, gpio_level_e level);
 

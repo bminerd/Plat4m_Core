@@ -25,7 +25,7 @@
  * @file adc_interface.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief 
+ * @brief TODO Comment!
  */
 
 #ifndef _ADC_INTERFACE_H_
@@ -44,7 +44,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _adc_error_e_
 {
@@ -60,17 +60,17 @@ typedef enum _adc_error_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef set_enabled_f adc_driver_set_enabled_f;
 
 /**
- *
+ * TODO Comment!
  */
 typedef adc_error_e adc_driver_read_f(float* voltage);
 
 /**
- * @brief
+ * TODO Comment!
  */
 typedef struct _adc_driver_t_
 {
@@ -84,22 +84,27 @@ typedef struct _adc_driver_t_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void adcInit(void);
 
 /**
- *
+ * TODO Comment!
  */
-extern bool adcAddDriver(adc_driver_t adcDriver);
+extern bool adcAddDriver(adc_driver_t* adcDriver);
 
 /**
- *
+ * TODO Comment!
  */
 extern bool adcAddDrivers(adc_driver_t adcDriver[], uint8_t size);
 
 /**
- *
+ * TODO Comment!
+ */
+extern adc_error_e adcSetEnabled(adc_driver_id_e id, bool enabled);
+
+/**
+ * TODO Comment!
  */
 extern adc_error_e adcRead(adc_driver_id_e id, float* voltage);
 

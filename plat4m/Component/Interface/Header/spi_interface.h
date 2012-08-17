@@ -25,7 +25,7 @@
  * @file spi_interface.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief 
+ * @brief TODO Comment!
  */
 
 #ifndef _SPI_INTERFACE_H_
@@ -46,7 +46,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _spi_error_e_
 {
@@ -67,7 +67,7 @@ typedef enum _spi_error_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void spiInit(void);
 

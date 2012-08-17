@@ -25,7 +25,7 @@
  * @file baro_driver.h
  * @author Ben Minerd
  * @date 12/31/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _BARO_DRIVER_H_
@@ -54,12 +54,12 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void baroDriverInit(void);
 
 /**
- *
+ * TODO Comment!
  */
 extern baro_error_e baroDriverRead(baro_reading_t* reading);
 

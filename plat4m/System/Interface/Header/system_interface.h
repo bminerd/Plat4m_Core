@@ -25,11 +25,11 @@
  * @file system_interface.h
  * @author Ben Minerd
  * @date 1/21/12
- * @brief
+ * @brief TODO Comment!
  */
 
-#ifndef _SYSTEM_H_
-#define _SYSTEM_H_
+#ifndef _SYSTEM_INTERFACE_H_
+#define _SYSTEM_INTERFACE_H_
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -42,6 +42,9 @@
  * Defines
  *----------------------------------------------------------------------------*/
 
+/**
+ * TODO Comment!
+ */
 #define PLAT4M_VERSION ("0.0.1")
 
 /*------------------------------------------------------------------------------
@@ -53,22 +56,22 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef procedure_f system_driver_procedure_callback_f;
 
 /**
- *
+ * TODO Comment!
  */
 typedef procedure_f system_driver_state_enter_f;
 
 /**
- *
+ * TODO Comment!
  */
 typedef procedure_f system_driver_state_exit_f;
 
 /**
- *
+ * TODO Comment!
  */
 typedef struct _system_procedure_t_
 {
@@ -78,7 +81,7 @@ typedef struct _system_procedure_t_
 } system_procedure_driver_t;
 
 /**
- *
+ * TODO Comment!
  */
 typedef struct _system_state_t_
 {
@@ -93,47 +96,62 @@ typedef struct _system_state_t_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void systemStart(void);
 
 /**
- *
+ * TODO Comment!
  */
-extern bool systemProcedureAddDriver(system_procedure_driver_t driver);
+extern bool systemProcedureAddDriver(system_procedure_driver_t* driver);
 
 /**
- *
+ * TODO Comment!
  */
 extern bool systemProcedureAddDrivers(system_procedure_driver_t drivers[],
                                       uint8_t size);
 
 /**
- *
+ * TODO Comment!
  */
 extern bool systemProcedureSetEnabled(system_driver_procedure_id_e id,
                                       bool enabled);
 
 /**
- *
+ * TODO Comment!
  */
-extern bool systemStateAddDriver(system_state_driver_t driver);
+extern bool systemStateAddDriver(system_state_driver_t* driver);
 
 /**
- *
+ * TODO Comment!
  */
 extern bool systemStateAddDrivers(system_state_driver_t driver[],
                                   uint8_t size);
 
 /**
- *
+ * TODO Comment!
  */
 extern bool systemStateSetEnabled(system_driver_state_id_e stateId,
                                   bool enabled);
 
 /**
- *
+ * TODO Comment!
  */
 extern bool systemStateTransition(system_driver_state_id_e newStateId);
+
+/**
+ * TODO Comment!
+ */
+extern void systemTimeMsHandler(void);
+
+/**
+ * TODO Comment!
+ */
+extern uint32_t systemTimeMsGet(void);
+
+/**
+ * TODO Comment!
+ */
+extern void systemDelayMs(uint32_t delayMs);
 
 #endif // _SYSTEM_INTERFACE_H_

@@ -22,14 +22,14 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file mag_driver_hmc5883l.h
+ * @file interrupt_driver_stm32f2xx.h
  * @author Ben Minerd
- * @date 12/31/11
+ * @date Aug 2, 2012
  * @brief TODO Comment!
  */
 
-#ifndef _MAG_DRIVER_H_
-#define _MAG_DRIVER_H_
+#ifndef _INTERRUPT_DRIVER_H_
+#define _INTERRUPT_DRIVER_H_
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -37,7 +37,6 @@
 
 #include <system_types.h>
 
-#include <mag_interface.h>
 
 /*------------------------------------------------------------------------------
  * Defines
@@ -46,6 +45,35 @@
 /*------------------------------------------------------------------------------
  * Enumerations
  *----------------------------------------------------------------------------*/
+
+/**
+ * TODO Comment!
+ */
+typedef enum _interrupt_driver_id_e_
+{
+    // plat4m
+    //
+    // Add interrupt driver IDs here.
+    //
+    // Example:
+    //
+    //      INTERRUPT_DRIVER_ID_BUTTON_2,
+    //      ...
+    //
+    // Note: first interrupt driver ID should be set to 0 (zero).
+    //
+    // Example:
+    //
+    //      INTERRUPT_DRIVER_ID_BUTTON_1 = 0,
+    //      INTERRUPT_DRIVER_ID_BUTTON_2,
+    //      ...
+
+    INTERRUPT_DRIVER_ID_BUTTON_1 = 0,
+    INTERRUPT_DRIVER_ID_SYS_TICK,
+
+    // Do not place values below!
+    INTERRUPT_DRIVER_ID_COUNT
+} interrupt_driver_id_e;
 
 /*------------------------------------------------------------------------------
  * Types
@@ -58,11 +86,6 @@
 /**
  * TODO Comment!
  */
-extern void magDriverInit(void);
+extern void interruptDriverInit(void);
 
-/**
- * TODO Comment!
- */
-extern mag_error_e magDriverRead(mag_reading_t* reading);
-
-#endif // _MAG_DRIVER_H_
+#endif // _INTERRUPT_DRIVER_H_

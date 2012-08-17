@@ -25,7 +25,7 @@
  * @file gps_interface.h
  * @author Ben Minerd
  * @date 11/23/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _GPS_INTERFACE_H_
@@ -52,7 +52,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef struct _gps_reading_t_
 {
@@ -65,7 +65,7 @@ typedef struct _gps_reading_t_
 } gps_reading_t;
 
 /**
- *
+ * TODO Comment!
  */
 typedef void gps_reading_callback_t(gps_reading_t* gps_measurement);
 
@@ -74,7 +74,7 @@ typedef void gps_reading_callback_t(gps_reading_t* gps_measurement);
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void gpsInit(void);
 

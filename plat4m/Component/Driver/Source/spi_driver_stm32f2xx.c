@@ -25,7 +25,7 @@
  * @file spi_driver_template.c
  * @author Ben Minerd
  * @date 8/1/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ extern void spiDriverInit(void)
     //          ...
     //      };
     //
-    //      spiAddDrivers(spis, ARRAY_SIZE(spis, spi_driver_t));
+    //      spiAddDrivers(spis, ARRAY_SIZE(spis));
 }
 
 /*------------------------------------------------------------------------------

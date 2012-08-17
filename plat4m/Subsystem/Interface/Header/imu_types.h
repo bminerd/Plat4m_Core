@@ -21,15 +21,15 @@
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  *----------------------------------------------------------------------------*/
 
-/*
- * imu_types.h
- *
- *  Created on: Dec 31, 2011
- *      Author: ben
+/**
+ * @file imu_types.h
+ * @author Ben Minerd
+ * @date 12/31/11
+ * @brief TODO Comment!
  */
 
-#ifndef IMU_TYPES_H_
-#define IMU_TYPES_H_
+#ifndef _IMU_TYPES_H_
+#define _IMU_TYPES_H_
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -41,17 +41,14 @@
  * Defines
  *----------------------------------------------------------------------------*/
 
-//#define IMU_ACCEL_DOF_MAX 	(3u)
-//
-//#define IMU_GYRO_DOF_MAX 	(3u)
-//
-//#define IMU_DMC_DOF_MAX		(3u)
-
 /*------------------------------------------------------------------------------
  * Typedefs
  *----------------------------------------------------------------------------*/
 
-typedef enum
+/**
+ * TODO Comment!
+ */
+typedef enum _imu_accel_dof_e_
 {
 	// Accelerometer
 	IMU_ACCEL_DOF_X = 0,
@@ -59,10 +56,13 @@ typedef enum
 	IMU_ACCEL_DOF_Z,
 
 	// Do not place values below!
-	IMU_ACCEL_DOF_MAX
+	IMU_ACCEL_DOF_COUNT
 } imu_accel_dof_e;
 
-typedef enum
+/**
+ * TODO Comment!
+ */
+typedef enum _imu_gyro_dof_e_
 {
 	// Gyroscope
 	IMU_GYRO_DOF_ROLL,
@@ -70,32 +70,45 @@ typedef enum
 	IMU_GYRO_DOF_YAW,
 
 	// Do not place values below!
-	IMU_GYRO_DOF_MAX
+	IMU_GYRO_DOF_COUNT
 } imu_gyro_dof_e;
 
-typedef enum
+/**
+ * TODO Comment!
+ */
+typedef enum _imu_mag_dof_e_
 {
-	// Digital compass
-	IMU_DMC_DOF_AZIMUTH,
-	IMU_DMC_DOF_ELEVATION,
-	IMU_DMC_DOF_BANK,
+	// Magnetometer
+	IMU_MAG_DOF_AZIMUTH,
+	IMU_MAG_DOF_ELEVATION,
+	IMU_MAG_DOF_BANK,
 
 	// Do not place values below!
-	IMU_DMC_DOF_MAX
-} imu_dmc_sample_e;
+	IMU_MAG_DOF_COUNT
+} imu_mag_dof_e;
 
+/**
+ * TODO Comment!
+ */
 typedef uint16_t imu_raw_sample_t;
+
+/**
+ * TODO Comment!
+ */
 typedef float imu_sample_t;
 
-typedef struct
+/**
+ * TODO Comment!
+ */
+typedef struct _imu_measurement_t_
 {
-	imu_raw_sample_t accelRawSamples[IMU_MAX_ACCEL_DOF];
-	imu_sample_t accelSamples[IMU_MAX_ACCEL_DOF];
-	imu_raw_sample_t gyroRawSamples[IMU_MAX_GYRO_DOF];
-	imu_sample_t gyroSamples[IMU_MAX_GYRO_DOF];
-	imu_raw_sample_t dmcRawSamples[IMU_MAX_DMC_DOF];
-	imu_sample_t dmcSamples[IMU_MAX_DMC_DOF];
+	imu_raw_sample_t accelRawSamples[IMU_ACCEL_DOF_COUNT];
+	imu_sample_t accelSamples[IMU_ACCEL_DOF_COUNT];
+	imu_raw_sample_t gyroRawSamples[IMU_GYRO_DOF_COUNT];
+	imu_sample_t gyroSamples[IMU_GYRO_DOF_COUNT];
+	imu_raw_sample_t magRawSamples[IMU_MAG_DOF_COUNT];
+	imu_sample_t magSamples[IMU_MAG_DOF_COUNT];
 	uint32_t timeStamp;
 } imu_measurement_t;
 
-#endif /* IMU_TYPES_H_ */
+#endif // _IMU_TYPES_H_

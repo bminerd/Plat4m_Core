@@ -21,10 +21,10 @@
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  *----------------------------------------------------------------------------*/
 
-/*
- * buffer_driver.c
- *
- *  Created on: Mar 18, 2012
- *      Author: ben
+/**
+ * @file buffer_driver.c
+ * @author Ben Minerd
+ * @date 3/18/12
+ * @brief TODO Comment!
  */
 

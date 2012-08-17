@@ -21,15 +21,15 @@
  * http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
  *----------------------------------------------------------------------------*/
 
-/*
- * queue.h
- *
- *  Created on: Dec 31, 2011
- *      Author: ben
+/**
+ * @file queue.h
+ * @author Ben Minerd
+ * @date 12/31/11
+ * @brief TODO Comment!
  */
 
-#ifndef QUEUE_H_
-#define QUEUE_H_
+#ifndef _QUEUE_H_
+#define _QUEUE_H_
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -41,4 +41,4 @@
 
 
 
-#endif /* QUEUE_H_ */
+#endif // _QUEUE_H_

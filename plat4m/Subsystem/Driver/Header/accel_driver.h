@@ -25,7 +25,7 @@
  * @file accel_driver.h
  * @author Ben Minerd
  * @date 7/31/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -34,7 +34,7 @@
 
 // plat4m
 //
-// Include the proper accelerometer driver header file here
+// Include the proper accelerometer driver header file here.
 //
 // Example:
 //

@@ -25,7 +25,7 @@
  * @file i2c_driver_template.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _I2C_DRIVER_H_
@@ -41,12 +41,27 @@
  * Defines
  *----------------------------------------------------------------------------*/
 
+/**
+ * TODO Comment!
+ */
+#define I2C_DRIVER_BUFFER_SIZE (128u)
+
+/**
+ * TODO Comment!
+ */
+#define I2C_DRIVER_TRANSFER_BUFFER_SIZE (4u)
+
+/**
+ * TODO Comment!
+ */
+#define I2C_DRIVER_RX_CALLBACK_COUNT (1u)
+
 /*------------------------------------------------------------------------------
  * Enumerations
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _i2c_driver_id_e_
 {
@@ -82,7 +97,7 @@ typedef enum _i2c_driver_id_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void i2cDriverInit(void);
 

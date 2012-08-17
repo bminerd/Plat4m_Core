@@ -25,7 +25,7 @@
  * @file spi_driver.h
  * @author Ben Minerd
  * @date 8/1/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------

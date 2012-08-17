@@ -25,7 +25,7 @@
  * @file gpio_driver_stm32f2xx.c
  * @author Ben Minerd
  * @date 2/3/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -69,14 +69,54 @@
 //      ...
 
 /**
- *
+ * TODO Comment!
  */
 static void led1SetEnabled(bool enabled);
 
 /**
- *
+ * TODO Comment!
  */
 static void led1SetLevel(gpio_level_e level);
+
+/**
+ * TODO Comment!
+ */
+static void led2SetEnabled(bool enabled);
+
+/**
+ * TODO Comment!
+ */
+static void led2SetLevel(gpio_level_e level);
+
+/**
+ * TODO Comment!
+ */
+static void oledRstNSetEnabled(bool enabled);
+
+/**
+ * TODO Comment!
+ */
+static inline void oledRstNSetLevel(gpio_level_e level);
+
+/**
+ * TODO Comment!
+ */
+static void oledVccEnSetEnabled(bool enabled);
+
+/**
+ * TODO Comment!
+ */
+static inline void oledVccEnSetLevel(gpio_level_e level);
+
+/**
+ * TODO Comment!
+ */
+static void oledPwrEnSetEnabled(bool enabled);
+
+/**
+ * TODO Comment!
+ */
+static inline void oledPwrEnSetLevel(gpio_level_e level);
 
 /*------------------------------------------------------------------------------
  * Global function definitions
@@ -109,19 +149,43 @@ extern void gpioDriverInit(void)
     //          ...
     //      };
     //
-    //      gpioAddDrivers(gpios, ARRAY_SIZE(gpios, gpio_driver_t));
+    //      gpioAddDrivers(gpios, ARRAY_SIZE(gpios));
     
     gpio_driver_t gpios[] =
     {
-        // LED1
+        // LED_1
         {
-            .id         = GPIO_DRIVER_ID_LED1,
+            .id         = GPIO_DRIVER_ID_LED_1,
             .setEnabled = led1SetEnabled,
             .setLevel   = led1SetLevel
+        },
+        // LED_2
+        {
+            .id         = GPIO_DRIVER_ID_LED_2,
+            .setEnabled = led2SetEnabled,
+            .setLevel   = led2SetLevel
+        },
+        // OLED_RST_N
+        {
+            .id         = GPIO_DRIVER_ID_OLED_RST_N,
+            .setEnabled = oledRstNSetEnabled,
+            .setLevel   = oledRstNSetLevel
+        },
+        // OLED_RST_VCC_EN
+        {
+            .id         = GPIO_DRIVER_ID_OLED_VCC_EN,
+            .setEnabled = oledVccEnSetEnabled,
+            .setLevel   = oledVccEnSetLevel
+        },
+        // OLED_RST_PWR_EN
+        {
+            .id         = GPIO_DRIVER_ID_OLED_PWR_EN,
+            .setEnabled = oledPwrEnSetEnabled,
+            .setLevel   = oledPwrEnSetLevel
         }
     };
     
-    gpioAddDrivers(gpios, ARRAY_SIZE(gpios, gpio_driver_t));
+    gpioAddDrivers(gpios, ARRAY_SIZE(gpios));
 }
 
 /*------------------------------------------------------------------------------
@@ -159,4 +223,121 @@ static void led1SetLevel(gpio_level_e level)
             break;
         }
     }
+}
+
+//------------------------------------------------------------------------------
+static void led2SetEnabled(bool enabled)
+{
+    if (enabled)
+    {
+        STM_EVAL_LEDInit(LED2);
+    }
+    else
+    {
+        // Do nothing
+    }
+}
+
+//------------------------------------------------------------------------------
+static void led2SetLevel(gpio_level_e level)
+{
+    switch (level)
+    {
+        case GPIO_LEVEL_HIGH:
+        {
+            STM_EVAL_LEDOn(LED2);
+
+            break;
+        }
+        case GPIO_LEVEL_LOW:
+        {
+            STM_EVAL_LEDOff(LED2);
+
+            break;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+static void oledRstNSetEnabled(bool enabled)
+{
+    GPIO_InitTypeDef gpioInit;
+
+    gpioInit.GPIO_Pin   = GPIO_Pin_8;
+    gpioInit.GPIO_Mode  = GPIO_Mode_OUT;
+    gpioInit.GPIO_Speed = GPIO_Speed_50MHz;
+    gpioInit.GPIO_OType = GPIO_OType_PP;
+    gpioInit.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+
+    if (enabled)
+    {
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOG, ENABLE);
+        GPIO_Init(GPIOE, &gpioInit);
+    }
+    else
+    {
+        // Do nothing
+    }
+}
+
+//------------------------------------------------------------------------------
+static inline void oledRstNSetLevel(gpio_level_e level)
+{
+    GPIO_WriteBit(GPIOG, GPIO_Pin_1, (BitAction) level);
+}
+
+//------------------------------------------------------------------------------
+static void oledVccEnSetEnabled(bool enabled)
+{
+    GPIO_InitTypeDef gpioInit;
+
+    gpioInit.GPIO_Pin   = GPIO_Pin_9;
+    gpioInit.GPIO_Mode  = GPIO_Mode_OUT;
+    gpioInit.GPIO_Speed = GPIO_Speed_50MHz;
+    gpioInit.GPIO_OType = GPIO_OType_PP;
+    gpioInit.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+
+    if (enabled)
+    {
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
+        GPIO_Init(GPIOE, &gpioInit);
+    }
+    else
+    {
+        // Do nothing
+    }
+}
+
+//------------------------------------------------------------------------------
+static inline void oledVccEnSetLevel(gpio_level_e level)
+{
+    GPIO_WriteBit(GPIOE, GPIO_Pin_9, (BitAction) level);
+}
+
+//------------------------------------------------------------------------------
+static void oledPwrEnSetEnabled(bool enabled)
+{
+    GPIO_InitTypeDef gpioInit;
+
+    gpioInit.GPIO_Pin   = GPIO_Pin_10;
+    gpioInit.GPIO_Mode  = GPIO_Mode_OUT;
+    gpioInit.GPIO_Speed = GPIO_Speed_50MHz;
+    gpioInit.GPIO_OType = GPIO_OType_PP;
+    gpioInit.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+
+    if (enabled)
+    {
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
+        GPIO_Init(GPIOE, &gpioInit);
+    }
+    else
+    {
+
+    }
+}
+
+//------------------------------------------------------------------------------
+static inline void oledPwrEnSetLevel(gpio_level_e level)
+{
+    GPIO_WriteBit(GPIOE, GPIO_Pin_10, (BitAction) level);
 }

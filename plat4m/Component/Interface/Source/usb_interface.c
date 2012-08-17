@@ -25,7 +25,7 @@
  * @file usb_interface.c
  * @author Ben Minerd
  * @date 7/30/12
- * @brief 
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------

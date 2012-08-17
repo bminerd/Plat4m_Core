@@ -25,7 +25,7 @@
  * @file uart_interface.c
  * @author Ben Minerd
  * @date 2/3/12
- * @brief
+ * @brief TODO Comment!
  */
 
 /*------------------------------------------------------------------------------
@@ -54,28 +54,37 @@
  * Types
  *----------------------------------------------------------------------------*/
 
+/**
+ * TODO Comment!
+ */
+typedef struct _uart_driver_container_t_
+{
+    uart_driver_t driver;
+    uint8_t txBufferMemory[UART_DRIVER_BUFFER_SIZE];
+    buffer_t txBuffer;
+    uint8_t rxBufferMemory[UART_DRIVER_BUFFER_SIZE];
+    buffer_t rxBuffer;
+    data_callback_f* rxCallbacks[UART_DRIVER_RX_CALLBACK_COUNT];
+    uint8_t rxCallbackCount;
+} uart_driver_container_t;
+
 /*------------------------------------------------------------------------------
  * Local variables
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
-static uart_driver_t drivers[UART_DRIVER_COUNT];
+static uart_driver_container_t containers[UART_DRIVER_COUNT];
 
 /*------------------------------------------------------------------------------
  * Local function declarations
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
-static bool uartTxCallback(uart_driver_id_e id);
-
-/**
- *
- */
-static bool uartRxCallback(uart_driver_id_e id);
+static void callRxCallbacks(uart_driver_id_e id, uint8_t data);
 
 /*------------------------------------------------------------------------------
  * Global function definitions
@@ -84,34 +93,42 @@ static bool uartRxCallback(uart_driver_id_e id);
 //------------------------------------------------------------------------------
 extern void uartInit(void)
 {
-    int i;
+    int i, j;
 
     for (i = 0; i < UART_DRIVER_COUNT; i++)
     {
-        drivers[i].id = (uart_driver_id_e) i;
-        bufferInit(&(drivers[i].txBuffer));
-        bufferInit(&(drivers[i].rxBuffer));
-        drivers[i].setEnabled = 0;
-        drivers[i].tx = 0;
-        drivers[i].rx = 0;
-        drivers[i].txIntSetEnabled = 0;
-        drivers[i].rxIntSetEnabled = 0;
+        containers[i].driver.id                 = (uart_driver_id_e) i;
+        containers[i].driver.setEnabled         = 0;
+        containers[i].driver.tx                 = 0;
+        containers[i].driver.rx                 = 0;
+        containers[i].driver.txIntSetEnabled    = 0;
+        containers[i].driver.rxIntSetEnabled    = 0;
+
+        BUFFER_INIT(&(containers[i].txBuffer), containers[i].txBufferMemory);
+        BUFFER_INIT(&(containers[i].rxBuffer), containers[i].rxBufferMemory);
+        
+        for (j = 0; j < UART_DRIVER_RX_CALLBACK_COUNT; j++)
+        {
+            containers[i].rxCallbacks[j] = 0;
+        }
+        
+        containers[i].rxCallbackCount = 0;
     }
 
     uartDriverInit();
 }
 
 //------------------------------------------------------------------------------
-extern bool uartAddDriver(uart_driver_t uartDriver)
+extern bool uartAddDriver(uart_driver_t* uartDriver)
 {
-    if (uartDriver.id >= UART_DRIVER_ID_COUNT ||
-       !uartDriver.tx ||
-       !uartDriver.rx)
+    if (uartDriver->id >= UART_DRIVER_ID_COUNT   ||
+       !uartDriver->tx                           ||
+       !uartDriver->rx)
     {
         return false;
     }
 
-    DRIVER_ADD(drivers, uartDriver, uart_driver_t);
+    ADD_CONTAINER(containers, uartDriver);
 
     return true;
 }
@@ -128,7 +145,7 @@ extern bool uartAddDrivers(uart_driver_t uartDrivers[], uint8_t size)
 
     for (i = 0; i < size; i++)
     {
-        if (!uartAddDriver(uartDrivers[i]))
+        if (!uartAddDriver(&uartDrivers[i]))
         {
             return false;
         }
@@ -138,30 +155,127 @@ extern bool uartAddDrivers(uart_driver_t uartDrivers[], uint8_t size)
 }
 
 //------------------------------------------------------------------------------
-extern bool uartTx(uart_driver_id_e id, uint8_t data[], uint8_t size)
+extern bool uartAddRxCallback(uart_driver_id_e id,
+                              data_callback_f* rxCallback)
 {
-    int i;
-
-    if (id >= UART_DRIVER_ID_COUNT ||
-        !drivers[id].tx ||
-        size > UART_DATA_MAX)
+    if (id >= UART_DRIVER_ID_COUNT || !rxCallback)
     {
         return false;
     }
+    
+    containers[id].rxCallbacks[containers[id].rxCallbackCount++] = rxCallback;
+    
+    return true;
+}
 
-    // Load UART Tx buffer
-    for (i = 0; i < size; i++)
+//------------------------------------------------------------------------------
+extern uart_error_e uartSetEnabled(uart_driver_id_e id, bool enabled)
+{
+    if (id >= UART_DRIVER_ID_COUNT || !containers[id].driver.setEnabled)
     {
-        if (!bufferWrite(&(drivers[id].txBuffer), data[i]))
+        return UART_ERROR_INVALID_ID;
+    }
+    
+    containers[id].driver.setEnabled(enabled);
+    containers[id].driver.rxIntSetEnabled(enabled);
+    
+    return UART_ERROR_NONE;
+}
+
+//------------------------------------------------------------------------------
+extern uart_error_e uartTx(uart_driver_id_e id, byte_array_t* data)
+{
+    int i;
+
+    if (id >= UART_DRIVER_ID_COUNT || !containers[id].driver.tx)
+    {
+        return UART_ERROR_INVALID_ID;
+    }
+
+    for (i = 0; i < data->size; i++)
+    {
+        if (!BUFFER_WRITE(&(containers[id].txBuffer), &(data->bytes[i])))
         {
-            // Does this make sense?
-            return false;
+            return UART_ERROR_TX_BUFFER_FULL;
+        }
+    }
+    
+    containers[id].driver.txIntSetEnabled(true);
+    
+    return UART_ERROR_NONE;
+}
+
+//------------------------------------------------------------------------------
+extern uart_error_e uartRead(uart_driver_id_e id, byte_array_t* data)
+{
+    int i;
+
+    if (id >= UART_DRIVER_ID_COUNT)
+    {
+        return UART_ERROR_INVALID_ID;
+    }
+
+    for (i = 0; i < data->size; i++)
+    {
+        if (!BUFFER_READ(&(containers[id].rxBuffer), &(data->bytes[i])))
+        {
+            break;
         }
     }
 
-    drivers[id].txIntSetEnabled(true);
+    data->size = i;
+
+    return UART_ERROR_NONE;
+}
+
+//------------------------------------------------------------------------------
+extern uart_error_e uartBytesAvailable(uart_driver_id_e id, uint8_t* byteCount)
+{
+    if (id >= UART_DRIVER_ID_COUNT)
+    {
+        return UART_ERROR_INVALID_ID;
+    }
     
-    return true;
+    bufferCount(&(containers[id].rxBuffer), byteCount);
+    
+    return UART_ERROR_NONE;
+}
+
+//------------------------------------------------------------------------------
+extern void uartIntHandler(uart_driver_id_e id, uart_interrupt_e interrupt)
+{
+    uint8_t data;
+
+    if (id < UART_DRIVER_ID_COUNT)
+    {
+        switch (interrupt)
+        {
+            case UART_INTERRUPT_TX:
+            {
+                if (BUFFER_READ(&(containers[id].txBuffer), &data))
+                {
+                    containers[id].driver.tx(data);
+                }
+                else
+                {
+                    containers[id].driver.txIntSetEnabled(false);
+                }
+                
+                break;
+            }
+            case UART_INTERRUPT_RX:
+            {
+                containers[id].driver.rx(&data);
+
+                if (BUFFER_WRITE(&(containers[id].rxBuffer), &data))
+                {
+                    callRxCallbacks(id, data);
+                }
+                
+                break;
+            }
+        }
+    }
 }
 
 /*------------------------------------------------------------------------------
@@ -169,45 +283,12 @@ extern bool uartTx(uart_driver_id_e id, uint8_t data[], uint8_t size)
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-static bool uartTxCallback(uart_driver_id_e id)
+static void callRxCallbacks(uart_driver_id_e id, uint8_t data)
 {
-    uint8_t data;
-
-    if (id >= UART_DRIVER_ID_COUNT)
+    int i;
+    
+    for (i = 0; i < containers[id].rxCallbackCount; i++)
     {
-        return false;
+        containers[id].rxCallbacks[i](data);
     }
-
-    if (!bufferRead(&(drivers[id].txBuffer), &data))
-    {
-        // Does this make sense?
-        drivers[id].txIntSetEnabled(false);
-
-        return false;
-    }
-
-    return drivers[id].tx(data);
-}
-
-//------------------------------------------------------------------------------
-static bool uartRxCallback(uart_driver_id_e id)
-{
-    uint8_t data;
-
-    if (id >= UART_DRIVER_ID_COUNT)
-    {
-        return false;
-    }
-
-    if (!drivers[id].rx(&data))
-    {
-        return false;
-    }
-
-    if (!bufferWrite(&(drivers[id].rxBuffer), data))
-    {
-        return false;
-    }
-
-    return true;
 }

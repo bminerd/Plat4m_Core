@@ -25,7 +25,7 @@
  * @file imu_driver_template.h
  * @author Ben Minerd
  * @date 11/23/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _IMU_DRIVER_H_
@@ -54,12 +54,12 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void imuDriverInit(void);
 
 /**
- *
+ * TODO Comment!
  */
 extern imu_error_e imuDriverRead(imu_reading_t* reading);
 

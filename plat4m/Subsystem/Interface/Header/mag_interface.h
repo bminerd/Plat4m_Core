@@ -25,7 +25,7 @@
  * @file mag_interface.h
  * @author Ben Minerd
  * @date 12/31/11
- * @brief
+ * @brief TODO Comment!
  */
 
 #ifndef _MAG_INTERFACE_H_
@@ -42,7 +42,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 #define MAG_DOF (3u)
 
@@ -51,7 +51,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _mag_dof_e_
 {
@@ -61,7 +61,7 @@ typedef enum _mag_dof_e_
 } mag_dof_e;
 
 /**
- *
+ * TODO Comment!
  */
 typedef enum _mag_error_e_
 {
@@ -77,12 +77,12 @@ typedef enum _mag_error_e_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 typedef uint16_t mag_sample_t;
 
 /**
- *
+ * TODO Comment!
  */
 typedef union _mag_reading_t_
 {
@@ -94,12 +94,12 @@ typedef union _mag_reading_t_
  *----------------------------------------------------------------------------*/
 
 /**
- *
+ * TODO Comment!
  */
 extern void magInit(void);
 
 /**
- *
+ * TODO Comment!
  */
 extern mag_error_e magRead(mag_reading_t* reading);
 
