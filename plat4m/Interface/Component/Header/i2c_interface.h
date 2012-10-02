@@ -25,8 +25,7 @@
  * @file i2c_interface.h
  * @author Ben Minerd
  * @date 1/10/12
- * @brief
- * TODO Comment!
+ * @brief Interface layer for the I2C module.
  */
 
 #ifndef _I2C_INTERFACE_H_
@@ -38,6 +37,7 @@
 
 #include <system_types.h>
 
+#include <i2c_application.h>
 #include <i2c_driver.h>
 
 /*------------------------------------------------------------------------------
@@ -45,11 +45,12 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * TODO Comment!
+ * @brief Enumeration of I2C errors.
  */
 typedef enum _i2c_error_e_
 {
     I2C_ERROR_NONE,
+    I2C_ERROR_INVALID_PARAMETER,
     I2C_ERROR_INVALID_ID,
     I2C_ERROR_NOT_ENABLED,
     I2C_ERROR_TX_BUFFER_FULL,
@@ -57,7 +58,7 @@ typedef enum _i2c_error_e_
 } i2c_error_e;
 
 /**
- * TODO Comment!
+ * @brief Enumeration of I2C master modes.
  */
 typedef enum _i2c_master_mode_e_
 {
@@ -66,13 +67,13 @@ typedef enum _i2c_master_mode_e_
 } i2c_master_mode_e;
 
 /**
- * TODO Comment!
+ * @brief Enumeration of I2C interrupts.
  */
 typedef enum _i2c_interrupt_e_
 {
     I2C_INTERRUPT_START = 0,
-    I2C_INTERRUPT_ADDRESS,
     I2C_INTERRUPT_STOP,
+    I2C_INTERRUPT_ADDRESS,
     I2C_INTERRUPT_TX,
     I2C_INTERRUPT_RX,
 
@@ -81,7 +82,7 @@ typedef enum _i2c_interrupt_e_
 } i2c_interrupt_e;
 
 /**
- * TODO Comment!
+ * @brief Enumeration of I2C states.
  */
 typedef enum _i2c_state_e_
 {
@@ -89,127 +90,213 @@ typedef enum _i2c_state_e_
     I2C_STATE_BUSY
 } i2c_state_e;
 
+/**
+ * @brief Enumeration of I2C address bits.
+ */
+typedef enum _i2c_address_bits_e_
+{
+    I2C_ADDRESS_BITS_7 = 0,
+    I2C_ADDRESS_BITS_10,
+
+    // Do not place values below!
+    I2C_ADDRESS_BITS_COUNT
+} i2c_address_bits_e;
+
 /*------------------------------------------------------------------------------
  * Types
  *----------------------------------------------------------------------------*/
 
 /**
- * TODO Comment!
+ * @brief I2C address type.
  */
 typedef uint8_t i2c_address_t;
 
 /**
- * TODO Comment!
+ * @brief I2C configuration type.
  */
-typedef void i2c_master_start_f(void);
-
-/**
- * TODO Comment!
- */
-typedef void i2c_master_stop_f(void);
-
-/**
- * TODO Comment!
- */
-typedef void i2c_master_tx_address_f(uint8_t address,
-                                            i2c_master_mode_e mode);
-
-/**
- * TODO Comment!
- */
-typedef void i2c_tx_f(uint8_t data);
-
-/**
- * TODO Comment!
- */
-typedef void i2c_rx_f(uint8_t* data);
-
-/**
- * TODO Comment!
- */
-typedef struct _i2c_device_t_
+typedef struct _i2c_config_t_
 {
-    i2c_address_t address;
-    i2c_id_e driverId;
-} i2c_device_t;
+    uint32_t clockSpeed;
+    i2c_address_bits_e addressBits;
+    i2c_driver_gpio_map_id_e mapId;
+} i2c_config_t;
 
 /**
- * TODO Comment!
+ * @brief Function type that sets the given I2C enabled or disabled.
+ * @param driverId I2C driver ID.
+ * @param enabled Flag that indicates if the I2C should be enabled or disabled.
+ */
+typedef void i2c_driver_set_enabled_f(const i2c_driver_id_e driverId,
+                                      const bool enabled);
+
+/**
+ * @brief Function type that configures the given I2C.
+ * @param driverId I2C driver ID.
+ * @param config I2C configuration.
+ */
+typedef void i2c_driver_config_f(const i2c_driver_id_e driverId,
+                                 const i2c_config_t* config);
+
+/**
+ * @brief Function type that performs a start on the given I2C.
+ * @param driverId I2C driver ID.
+ */
+typedef void i2c_driver_master_start_f(const i2c_driver_id_e driverId);
+
+/**
+ * @brief Function type that performs a stop on the given I2C.
+ * @param driverId I2C driver ID.
+ */
+typedef void i2c_driver_master_stop_f(const i2c_driver_id_e driverId);
+
+/**
+ * @brief Function type that transmits a slave address over the given I2C.
+ * @param driverId I2C driver ID.
+ * @param address I2C slave address.
+ * @param mode I2C master mode.
+ */
+typedef void i2c_driver_master_tx_address_f(const i2c_driver_id_e driverId,
+                                            const i2c_address_t address,
+                                            const i2c_master_mode_e mode);
+
+/**
+ * @brief Function type that transmits a byte over the given I2C.
+ * @param driverId I2C driver ID.
+ * @param data Byte to transmit.
+ */
+typedef void i2c_driver_tx_f(const i2c_driver_id_e driverId,
+                             const uint8_t data);
+
+/**
+ * @brief Function type that receives a byte over the given I2C.
+ * @param driverId I2C driver ID.
+ * @param data Byte received.
+ */
+typedef void i2c_driver_rx_f(const i2c_driver_id_e driverId, uint8_t* data);
+
+/**
+ * @brief Function type that sets the given I2C interrupt enabled or disabled.
+ * @param driverId I2C driver ID.
+ * @param interrupt I2C interrupt to set enabled or disabled.
+ * @param enabled Flag that indicates if the interrupt should be enabled or
+ * disabled.
+ */
+typedef void i2c_driver_int_set_enabled_f(const i2c_driver_id_e driverId,
+                                          const i2c_interrupt_e interrupt,
+                                          const bool enabled);
+
+/**
+ * @brief Structure that contains the necessary I2C driver functions.
  */
 typedef struct _i2c_driver_t_
 {
-    i2c_id_e id;
-    i2c_address_t address;
-    bool isEnabled;
-    set_enabled_f* setEnabled;
-    i2c_master_start_f* masterStart;
-    i2c_master_stop_f* masterStop;
-    i2c_master_tx_address_f* masterTxAddress;
-    i2c_tx_f* tx;
-    i2c_rx_f* rx;
-    set_enabled_f* txIntSetEnabled;
-    set_enabled_f* rxIntSetEnabled;
+    const i2c_driver_set_enabled_f* setEnabled;
+    const i2c_driver_config_f* configure;
+    const i2c_driver_master_start_f* masterStart;
+    const i2c_driver_master_stop_f* masterStop;
+    const i2c_driver_master_tx_address_f* masterTxAddress;
+    const i2c_driver_tx_f* tx;
+    const i2c_driver_rx_f* rx;
+    const i2c_driver_int_set_enabled_f* intSetEnabled;
 } i2c_driver_t;
+
+/**
+ * @brief I2C ID map type.
+ */
+typedef struct _i2c_id_map_t_
+{
+    i2c_id_e id;
+    i2c_driver_id_e driverId;
+} i2c_id_map_t;
 
 /*------------------------------------------------------------------------------
  * Global function declarations
  *----------------------------------------------------------------------------*/
 
 /**
- * TODO Comment!
+ * @brief Initializes the I2C interface layer.
  */
 extern void i2cInit(void);
 
 /**
- * TODO Comment!
+ * @brief Sets the driver for the I2C interface.
+ * @param i2cDriver I2C driver.
+ * @return I2C error.
  */
-extern bool i2cAddDrivers(i2c_driver_t i2cDrivers[], uint8_t size);
+extern i2c_error_e i2cSetDriver(const i2c_driver_t* i2cDriver);
 
 /**
- * TODO Comment!
+ * @brief Adds the given I2Cs to the map.
+ * @param i2cIdMaps Array of I2C ID maps.
+ * @param size Size of array.
+ * @return I2C error.
  */
-extern bool i2cAddRxCallBack(i2c_id_e id, data_callback_f* callback);
+extern i2c_error_e i2cAddIdMaps(const i2c_id_map_t i2cIdMaps[],
+                                const unsigned int size);
 
 /**
- * TODO Comment!
+ * @brief Sets the given callback function for the given I2C.
+ * @param id I2C ID.
+ * @param callback Rx callback.
+ * @return I2C error.
  */
-extern bool i2cMasterAddSlave(i2c_id_e id,
-                              i2c_address_t address,
-                              i2c_device_t* device);
+extern i2c_error_e i2cSetRxCallBack(const i2c_id_e id,
+                                    const data_callback_f* callback);
 
 /**
- * TODO Comment!
+ * @brief Adds the given I2C device to the given I2C.
+ * @param id I2C ID.
+ * @param deviceId I2C device ID.
+ * @param address I2C device address.
+ * @return I2C error.
  */
-extern i2c_error_e i2cIsEnabled(i2c_id_e id, bool* isEnabled);
+extern i2c_error_e i2cMasterAddSlave(const i2c_id_e id,
+                                     const i2c_address_t address,
+                                     id_t* deviceId);
 
 /**
- * TODO Comment!
+ * @brief Sets the given I2C enabled or disabled.
+ * @param id I2C ID.
+ * @param enabled Flag that indicates if the I2C should be enabled or disabled.
+ * @return I2C error.
  */
-extern i2c_error_e i2cSetEnabled(i2c_id_e id, bool enabled);
+extern i2c_error_e i2cSetEnabled(const i2c_id_e id, const bool enabled);
 
 /**
- * TODO Comment!
+ * @brief Checks to see if the given I2C is enabled or disabled.
+ * @param id I2C ID.
+ * @param isEnabled Flag that indicates if the I2C is enabled or disabled.
+ * @return I2C error.
  */
-extern i2c_error_e i2cMasterTx(i2c_device_t* i2cDevice,
-                               byte_array_t* data,
-                               bool waitUntilIdle);
+extern i2c_error_e i2cIsEnabled(const i2c_id_e id, bool* isEnabled);
 
 /**
- * TODO Comment!
+ * @brief Transmits the given byte array to the given I2C device in master mode.
+ * @param deviceId I2C device ID.
+ * @param data Byte array to transmit.
+ * @return I2C error.
  */
-extern i2c_error_e i2cMasterRx(i2c_device_t* i2cDevice,
+extern i2c_error_e i2cMasterTx(const id_t deviceId,
                                byte_array_t* data);
 
 /**
- * TODO Comment!
+ * @brief Receives data from the given I2C device.
+ * @param deviceId I2C device ID.
+ * @param data Byte array that was received.
+ * @return I2C error.
  */
-extern i2c_error_e i2cMasterTxRx(i2c_device_t* i2cDevice,
-                                 byte_array_t* txData,
-                                 byte_array_t* rxData);
+extern i2c_error_e i2cMasterRx(const id_t deviceId,
+                               byte_array_t* data);
 
 /**
- * TODO Comment!
+ * @brief Transmits and receives data to/from the given I2C device.
+ * @param deviceId I2C device ID.
+ * @param txData Byte array to transmit.
+ * @param rxData Byte array that was received.
+ * @param I2C error.
  */
-extern void i2cIntHandler(i2c_id_e id, i2c_interrupt_e interrupt);
+extern i2c_error_e i2cMasterTxRx(const id_t deviceId,
+                                 byte_array_t* txData,
+                                 byte_array_t* rxData);
 
 #endif // _I2C_MASTER_H_

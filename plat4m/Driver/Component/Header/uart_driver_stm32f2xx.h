@@ -22,10 +22,10 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file uart_driver_template.h
+ * @file uart_driver_stm32f2xx.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief TODO Comment!
+ * @brief UART driver layer for the STM32F2xx.
  */
 
 #ifndef _UART_DRIVER_H_

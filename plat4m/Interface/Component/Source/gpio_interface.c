@@ -117,7 +117,7 @@ extern void gpioInit(void)
 }
 
 //------------------------------------------------------------------------------
-extern bool gpioSetDriver(const gpio_driver_t* gpioDriver)
+extern gpio_error_e gpioSetDriver(const gpio_driver_t* gpioDriver)
 {
 #ifdef PLAT4M_DEBUG
 
@@ -129,24 +129,25 @@ extern bool gpioSetDriver(const gpio_driver_t* gpioDriver)
         IS_NULL_POINTER(gpioDriver->readLevel)  ||
         IS_NULL_POINTER(gpioDriver->toggleLevel))
     {
-        return false;
+        return GPIO_ERROR_INVALID_PARAMETER;
     }
 
 #endif // PLAT4M_DEBUG
 
     driver = *gpioDriver;
 
-    return true;
+    return GPIO_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
-extern bool gpioAddIdMaps(gpio_id_map_t gpioIdMaps[], unsigned int size)
+extern gpio_error_e gpioAddIdMaps(const gpio_id_map_t gpioIdMaps[],
+                                  unsigned int size)
 {
 #ifdef PLAT4M_DEBUG
 
     if (size > GPIO_ID_COUNT)
     {
-        return false;
+        return GPIO_ERROR_INVALID_PARAMETER;
     }
 
 #endif // PLAT4M_DEBUG
@@ -155,13 +156,20 @@ extern bool gpioAddIdMaps(gpio_id_map_t gpioIdMaps[], unsigned int size)
 
     for (i = 0; i < size; i++)
     {
-        if (!addIdMap(&gpioIdMaps[i]))
+        gpio_error_e error = addIdMap(&(gpioIdMaps[i]));
+
+#ifdef PLAT4M_DEBUG
+
+        if (error != GPIO_ERROR_NONE)
         {
             return false;
         }
+
+#endif // PLAT4M_DEBUG
+
     }
 
-    return true;
+    return GPIO_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
@@ -220,9 +228,21 @@ extern gpio_error_e gpioSetLevel(const gpio_id_e id, gpio_level_e level)
         return GPIO_ERROR_INVALID_ID;
     }
 
+    if (!idMap[id]->isEnabled)
+    {
+        return GPIO_ERROR_NOT_ENABLED;
+    }
+
+    if (idMap[id]->config.mode == GPIO_MODE_INPUT)
+    {
+        return GPIO_ERROR_NOT_AN_OUTPUT;
+    }
+
 #endif // PLAT4M_DEBUG
 
-    return gpioHardwareSetLevel(&(idMap[id]->hardware), level);
+    driver.setLevel(&(idMap[id]->hardware), level);
+
+    return GPIO_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
@@ -235,9 +255,21 @@ extern gpio_error_e gpioGetLevel(const gpio_id_e id, gpio_level_e* level)
         return GPIO_ERROR_INVALID_ID;
     }
 
+    if (!idMap[id]->isEnabled)
+    {
+        return GPIO_ERROR_NOT_ENABLED;
+    }
+
+    if (idMap[id]->config.mode == GPIO_MODE_INPUT)
+    {
+        return GPIO_ERROR_NOT_AN_OUTPUT;
+    }
+
 #endif // PLAT4M_DEBUG
 
-    return gpioHardwareGetLevel(&(idMap[id]->hardware), level);
+    driver.getLevel(&(idMap[id]->hardware), level);
+
+    return GPIO_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
@@ -250,9 +282,21 @@ extern gpio_error_e gpioReadLevel(const gpio_id_e id, gpio_level_e* level)
         return GPIO_ERROR_INVALID_ID;
     }
 
+    if (!idMap[id]->isEnabled)
+    {
+        return GPIO_ERROR_NOT_ENABLED;
+    }
+
+    if (idMap[id]->config.mode == GPIO_MODE_OUTPUT)
+    {
+        return GPIO_ERROR_NOT_AN_OUTPUT;
+    }
+
 #endif // PLAT4M_DEBUG
 
-    return gpioHardwareReadLevel(&(idMap[id]->hardware), level);
+    driver.readLevel(&(idMap[id]->hardware), level);
+
+    return GPIO_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
@@ -265,9 +309,21 @@ extern gpio_error_e gpioToggleLevel(const gpio_id_e id)
         return GPIO_ERROR_INVALID_ID;
     }
 
+    if (!idMap[id]->isEnabled)
+    {
+        return GPIO_ERROR_NOT_ENABLED;
+    }
+
+    if (idMap[id]->config.mode == GPIO_MODE_INPUT)
+    {
+        return GPIO_ERROR_NOT_AN_OUTPUT;
+    }
+
 #endif // PLAT4M_DEBUG
 
-    return gpioHardwareToggleLevel(&(idMap[id]->hardware));
+    driver.toggleLevel(&(idMap[id]->hardware));
+
+    return GPIO_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
@@ -340,145 +396,6 @@ extern gpio_error_e gpioHardwareConfigure(const gpio_hardware_t* hardware,
 
     driver.configure(hardware, config);
     gpioMap[hardware->portId][hardware->pinId].config = *config;
-
-    return GPIO_ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-extern gpio_error_e gpioHardwareSetLevel(const gpio_hardware_t* hardware,
-                                         const gpio_level_e level)
-{
-#ifdef PLAT4M_DEBUG
-
-    if (IS_NULL_POINTER(hardware))
-    {
-        return GPIO_ERROR_INVALID_PARAMETER;
-    }
-
-    if ((hardware->portId >= GPIO_DRIVER_PORT_ID_COUNT) ||
-        (hardware->pinId >= GPIO_DRIVER_PIN_ID_COUNT))
-    {
-        return GPIO_ERROR_INVALID_ID;
-    }
-
-    if (!gpioMap[hardware->portId][hardware->pinId].isEnabled)
-    {
-        return GPIO_ERROR_NOT_ENABLED;
-    }
-
-    if (gpioMap[hardware->portId][hardware->pinId].config.mode ==
-            GPIO_MODE_INPUT)
-    {
-        return GPIO_ERROR_NOT_AN_OUTPUT;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    driver.setLevel(hardware, level);
-
-    return GPIO_ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-extern gpio_error_e gpioHardwareGetLevel(const gpio_hardware_t* hardware,
-                                         gpio_level_e* level)
-{
-#ifdef PLAT4M_DEBUG
-
-    if (IS_NULL_POINTER(hardware))
-    {
-        return GPIO_ERROR_INVALID_PARAMETER;
-    }
-
-    if ((hardware->portId >= GPIO_DRIVER_PORT_ID_COUNT) ||
-        (hardware->pinId >= GPIO_DRIVER_PIN_ID_COUNT))
-    {
-        return GPIO_ERROR_INVALID_ID;
-    }
-
-    if (!gpioMap[hardware->portId][hardware->pinId].isEnabled)
-    {
-        return GPIO_ERROR_NOT_ENABLED;
-    }
-
-    if (gpioMap[hardware->portId][hardware->pinId].config.mode ==
-            GPIO_MODE_INPUT)
-    {
-        return GPIO_ERROR_NOT_AN_OUTPUT;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    driver.getLevel(hardware, level);
-
-    return GPIO_ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-extern gpio_error_e gpioHardwareReadLevel(const gpio_hardware_t* hardware,
-                                          gpio_level_e* level)
-{
-#ifdef PLAT4M_DEBUG
-
-    if (IS_NULL_POINTER(hardware))
-    {
-        return GPIO_ERROR_INVALID_PARAMETER;
-    }
-
-    if ((hardware->portId >= GPIO_DRIVER_PORT_ID_COUNT) ||
-        (hardware->pinId >= GPIO_DRIVER_PIN_ID_COUNT))
-    {
-        return GPIO_ERROR_INVALID_ID;
-    }
-
-    if (!gpioMap[hardware->portId][hardware->pinId].isEnabled)
-    {
-        return GPIO_ERROR_NOT_ENABLED;
-    }
-
-    if (gpioMap[hardware->portId][hardware->pinId].config.mode ==
-            GPIO_MODE_OUTPUT)
-    {
-        return GPIO_ERROR_NOT_AN_OUTPUT;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    driver.readLevel(hardware, level);
-
-    return GPIO_ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-extern gpio_error_e gpioHardwareToggleLevel(const gpio_hardware_t* hardware)
-{
-#ifdef PLAT4M_DEBUG
-
-    if (IS_NULL_POINTER(hardware))
-    {
-        return GPIO_ERROR_INVALID_PARAMETER;
-    }
-
-    if ((hardware->portId >= GPIO_DRIVER_PORT_ID_COUNT) ||
-        (hardware->pinId >= GPIO_DRIVER_PIN_ID_COUNT))
-    {
-        return GPIO_ERROR_INVALID_ID;
-    }
-
-    if (!gpioMap[hardware->portId][hardware->pinId].isEnabled)
-    {
-        return GPIO_ERROR_NOT_ENABLED;
-    }
-
-    if (gpioMap[hardware->portId][hardware->pinId].config.mode ==
-            GPIO_MODE_INPUT)
-    {
-        return GPIO_ERROR_NOT_AN_OUTPUT;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    driver.toggleLevel(hardware);
 
     return GPIO_ERROR_NONE;
 }

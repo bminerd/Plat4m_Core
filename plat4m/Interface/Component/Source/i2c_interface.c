@@ -25,7 +25,7 @@
  * @file i2c_interface.c
  * @author Ben Minerd
  * @date 2/25/12
- * @brief TODO Comment!
+ * @brief I2C interface layer.
  */
 
 /*------------------------------------------------------------------------------
@@ -41,12 +41,6 @@
  * Defines
  *----------------------------------------------------------------------------*/
 
-#ifdef  I2C_ID_LIMIT
-#define I2C_COUNT (I2C_ID_LIMIT)
-#else
-#define I2C_COUNT (I2C_ID_COUNT)
-#endif
-
 /*------------------------------------------------------------------------------
  * Enumerations
  *----------------------------------------------------------------------------*/
@@ -56,54 +50,95 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * TODO Comment!
+ * @brief I2C transfer type.
  */
 typedef struct _i2c_transfer_t_
 {
-    i2c_device_t* device;
+    struct _i2c_device_t_* device;
     buffer_t txBuffer;
     buffer_t rxBuffer;
 } i2c_transfer_t;
 
 /**
- * TODO Comment!
+ * @brief I2C type.
  */
-typedef struct _i2c_container_t_
+typedef struct _i2c_t_
 {
-    i2c_driver_t driver;
+    i2c_driver_id_e driverId;
+    bool isEnabled;
     i2c_transfer_t bufferMemory[I2C_TRANSFER_BUFFER_SIZE];
     buffer_t buffer;
-    data_callback_f* rxCallbacks[I2C_RX_CALLBACK_COUNT];
-    uint8_t rxCallbackCount;
-} i2c_container_t;
+    const data_callback_f* rxCallback;
+} i2c_t;
+
+/**
+ * @brief I2C device type.
+ */
+typedef struct _i2c_device_t_
+{
+    id_t id;
+    i2c_address_t address;
+    i2c_t* i2c;
+} i2c_device_t;
 
 /*------------------------------------------------------------------------------
  * Local variables
  *----------------------------------------------------------------------------*/
 
 /**
- * TODO Comment!
+ * @brief I2C driver.
  */
-static i2c_container_t containers[I2C_COUNT];
+static i2c_driver_t driver;
 
 /**
- * TODO Comment!
+ * @brief I2C map.
+ */
+static i2c_t i2cMap[I2C_ID_COUNT];
+
+/**
+ * @brief I2C ID map.
+ */
+static i2c_t* idMap[I2C_DRIVER_ID_COUNT];
+
+/**
+ * @brief I2C device ID map.
+ */
+static i2c_device_t deviceMap[I2C_DEVICE_ID_MAX];
+
+/**
+ * @brief Current I2C state.
  */
 static volatile i2c_state_e currentState = I2C_STATE_IDLE;
+
+/**
+ * @brief Memory for the Tx buffer;
+ */
+static uint8_t txBufferMemory[I2C_BUFFER_SIZE];
+
+/**
+ * @brief Memory for the Rx buffer;
+ */
+static uint8_t rxBufferMemory[I2C_BUFFER_SIZE];
+
+/**
+ * @brief Current device ID.
+ */
+static id_t curDeviceId = 0;
 
 /*------------------------------------------------------------------------------
  * Local function definitions
  *----------------------------------------------------------------------------*/
 
 /**
- * TODO Comment!
+ * @brief I2C interrupt handler.
  */
-static bool i2cAddDriver(i2c_driver_t* i2cDriver);
+static void intHandler(const i2c_driver_id_e driverId,
+                       const i2c_interrupt_e interrupt);
 
 /**
- * TODO Comment!
+ * @brief Adds the given I2C ID map to the local map.
  */
-static bool isDriverEnabled(i2c_id_e id);
+static i2c_error_e addIdMap(const i2c_id_map_t* map);
 
 /*------------------------------------------------------------------------------
  * Global function definitions
@@ -112,121 +147,214 @@ static bool isDriverEnabled(i2c_id_e id);
 //------------------------------------------------------------------------------
 extern void i2cInit(void)
 {
-    int i, j;
+    int i;
 
-    for (i = 0; i < I2C_COUNT; i++)
+    for (i = 0; i < I2C_ID_COUNT; i++)
     {
-        containers[i].driver.id                 = (i2c_id_e) i;
-        containers[i].driver.address            = 0;
-        containers[i].driver.isEnabled          = false;
-        containers[i].driver.setEnabled         = NULL_POINTER;
-        containers[i].driver.masterStart        = NULL_POINTER;
-        containers[i].driver.masterStop         = NULL_POINTER;
-        containers[i].driver.masterTxAddress    = NULL_POINTER;
-        containers[i].driver.tx                 = NULL_POINTER;
-        containers[i].driver.rx                 = NULL_POINTER;
+        i2cMap[i].isEnabled = false;
 
-        BUFFER_INIT(&(containers[i].buffer), containers[i].bufferMemory);
+        BUFFER_INIT(&(i2cMap[i].buffer), i2cMap[i].bufferMemory);
 
-        for (j = 0; j < I2C_RX_CALLBACK_COUNT; j++)
-        {
-            containers[i].rxCallbacks[j] = 0;
-        }
-
-        containers[i].rxCallbackCount = 0;
+        i2cMap[i].rxCallback = NULL_POINTER;
     }
 
-    i2cDriverInit();
+    for (i = 0; i < I2C_DRIVER_ID_COUNT; i++)
+    {
+        idMap[i] = NULL_POINTER;
+    }
+
+    for (i = 0; i < I2C_DEVICE_ID_MAX; i++)
+    {
+        deviceMap[i].id         = (id_t) i;
+        deviceMap[i].address    = 0;
+        deviceMap[i].i2c        = NULL_POINTER;
+    }
+
+    i2cDriverInit((interface_int_handler_f*) intHandler);
+    i2cApplicationInit();
 }
 
 //------------------------------------------------------------------------------
-extern bool i2cAddDrivers(i2c_driver_t i2cDrivers[], uint8_t size)
+extern i2c_error_e i2cSetDriver(const i2c_driver_t* i2cDriver)
 {
-    int i;
+#ifdef PLAT4M_DEBUG
 
-    if (size > I2C_COUNT)
+    if (IS_NULL_POINTER(i2cDriver)                  ||
+        IS_NULL_POINTER(i2cDriver->setEnabled)      ||
+        IS_NULL_POINTER(i2cDriver->masterStart)     ||
+        IS_NULL_POINTER(i2cDriver->masterStop)      ||
+        IS_NULL_POINTER(i2cDriver->masterTxAddress) ||
+        IS_NULL_POINTER(i2cDriver->tx)              ||
+        IS_NULL_POINTER(i2cDriver->rx)              ||
+        IS_NULL_POINTER(i2cDriver->intSetEnabled))
     {
-        return false;
+        return I2C_ERROR_INVALID_PARAMETER;
     }
+
+#endif // PLAT4M_DEBUG
+
+    driver = *i2cDriver;
+
+    return I2C_ERROR_NONE;
+}
+
+//------------------------------------------------------------------------------
+extern i2c_error_e i2cAddIdMaps(const i2c_id_map_t i2cIdMaps[],
+                                const unsigned int size)
+{
+#ifdef PLAT4M_DEBUG
+
+    if (size > I2C_ID_COUNT)
+    {
+        return I2C_ERROR_INVALID_PARAMETER;
+    }
+
+#endif // PLAT4M_DEBUG
+
+    int i;
 
     for (i = 0; i < size; i++)
     {
-        if (!i2cAddDriver(&i2cDrivers[i]))
+        i2c_error_e error = addIdMap(&i2cIdMaps[i]);
+
+#ifdef PLAT4M_DEBUG
+
+        if (error != I2C_ERROR_NONE)
         {
-            return false;
+            return error;
         }
+
+#endif // PLAT4M_DEBUG
+
     }
-
-    return true;
-}
-
-//------------------------------------------------------------------------------
-extern bool i2cAddRxCallBack(i2c_id_e id, data_callback_f* callback)
-{
-    if (id > I2C_ID_COUNT || IS_NULL_POINTER(callback))
-    {
-        return false;
-    }
-
-    containers[id].rxCallbacks[containers[id].rxCallbackCount++] = callback;
-
-    return true;
-}
-
-//------------------------------------------------------------------------------
-extern bool i2cMasterAddSlave(i2c_id_e id,
-                              i2c_address_t address,
-                              i2c_device_t* device)
-{
-    if (id >= I2C_ID_COUNT || IS_NULL_POINTER(device))
-    {
-        return false;
-    }
-
-    device->address = address;
-    device->driverId = id;
-
-    return true;
-}
-
-//------------------------------------------------------------------------------
-extern i2c_error_e i2cIsEnabled(i2c_id_e id, bool* isEnabled)
-{
-    if (id >= I2C_ID_COUNT)
-    {
-        return I2C_ERROR_INVALID_ID;
-    }
-
-    *isEnabled = isDriverEnabled(id);
 
     return I2C_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
-extern i2c_error_e i2cSetEnabled(i2c_id_e id, bool enabled)
+extern i2c_error_e i2cSetRxCallBack(const i2c_id_e id,
+                                    const data_callback_f* callback)
 {
-    if (id >= I2C_ID_COUNT)
+#ifdef PLAT4M_DEBUG
+
+    if (IS_NULL_POINTER(callback))
+    {
+        return I2C_ERROR_INVALID_PARAMETER;
+    }
+
+    if (id > I2C_ID_COUNT)
     {
         return I2C_ERROR_INVALID_ID;
     }
 
-    containers[id].driver.setEnabled(enabled);
+#endif // PLAT4M_DEBUG
+
+    idMap[id]->rxCallback = callback;
 
     return I2C_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
-extern i2c_error_e i2cMasterTx(i2c_device_t* i2cDevice,
-                               byte_array_t* data,
-                               bool waitUntilIdle)
+extern i2c_error_e i2cMasterAddSlave(const i2c_id_e id,
+                                     const i2c_address_t address,
+                                     id_t* deviceId)
 {
-    static uint8_t txBufferMemory[I2C_BUFFER_SIZE];
-    static uint8_t rxBufferMemory[I2C_BUFFER_SIZE];
+#ifdef PLAT4M_DEBUG
 
-    if (waitUntilIdle)
+    if (address >= 128)
     {
-        while (currentState != I2C_STATE_IDLE);
+        *deviceId = -1;
+
+        return I2C_ERROR_INVALID_PARAMETER;
     }
+
+    if (id >= I2C_ID_COUNT)
+    {
+        *deviceId = -1;
+
+        return I2C_ERROR_INVALID_ID;
+    }
+
+    if (curDeviceId >= I2C_DEVICE_ID_MAX)
+    {
+        *deviceId = -1;
+
+        return I2C_ERROR_INVALID_ID;
+    }
+
+#endif // PLAT4M_DEBUG
+
+    deviceMap[curDeviceId].address = address;
+    deviceMap[curDeviceId].i2c = idMap[id];
+    *deviceId = curDeviceId++;
+
+    return I2C_ERROR_NONE;
+}
+
+//------------------------------------------------------------------------------
+extern i2c_error_e i2cSetEnabled(const i2c_id_e id, const bool enabled)
+{
+#ifdef PLAT4M_DEBUG
+
+    if (id >= I2C_ID_COUNT)
+    {
+        return I2C_ERROR_INVALID_ID;
+    }
+
+#endif // PLAT4M_DEBUG
+
+    driver.setEnabled(idMap[id]->driverId, enabled);
+    idMap[id]->isEnabled = enabled;
+
+    return I2C_ERROR_NONE;
+}
+
+//------------------------------------------------------------------------------
+extern i2c_error_e i2cIsEnabled(const i2c_id_e id, bool* isEnabled)
+{
+#ifdef PLAT4M_DEBUG
+
+    if (IS_NULL_POINTER(isEnabled))
+    {
+        return I2C_ERROR_INVALID_PARAMETER;
+    }
+
+    if (id >= I2C_ID_COUNT)
+    {
+        return I2C_ERROR_INVALID_ID;
+    }
+
+#endif // PLAT4M_DEBUG
+
+    *isEnabled = idMap[id]->isEnabled;
+
+    return I2C_ERROR_NONE;
+}
+
+//------------------------------------------------------------------------------
+extern i2c_error_e i2cMasterTx(const id_t deviceId,
+                               byte_array_t* data)
+{
+#ifdef PLAT4M_DEBUG
+
+    if (IS_NULL_POINTER(data))
+    {
+        return I2C_ERROR_INVALID_PARAMETER;
+    }
+
+    if (deviceId >= I2C_DEVICE_ID_MAX)
+    {
+        return I2C_ERROR_INVALID_ID;
+    }
+
+    if (!(deviceMap[deviceId].i2c->isEnabled))
+    {
+        return I2C_ERROR_NOT_ENABLED;
+    }
+
+#endif // PLAT4M_DEBUG
+
+    while (currentState != I2C_STATE_IDLE);
 
     currentState = I2C_STATE_BUSY;
 
@@ -235,18 +363,8 @@ extern i2c_error_e i2cMasterTx(i2c_device_t* i2cDevice,
 
     i2c_transfer_t transfer =
     {
-        .device = i2cDevice
+        .device = &deviceMap[deviceId]
     };
-
-    if (i2cDevice->driverId >= I2C_ID_COUNT)
-    {
-        return I2C_ERROR_INVALID_ID;
-    }
-
-    if (!isDriverEnabled(i2cDevice->driverId))
-    {
-        return I2C_ERROR_NOT_ENABLED;
-    }
 
     BUFFER_INIT(&(transfer.txBuffer), txBufferMemory);
     BUFFER_INIT(&(transfer.rxBuffer), rxBufferMemory);
@@ -259,165 +377,110 @@ extern i2c_error_e i2cMasterTx(i2c_device_t* i2cDevice,
         }
     }
 
-    if (!BUFFER_WRITE(&(containers[i2cDevice->driverId].buffer), &transfer))
+    if (!BUFFER_WRITE(&(transfer.device->i2c->buffer), &transfer))
     {
         return I2C_ERROR_TX_BUFFER_FULL;
     }
 
     // Start
-    containers[i2cDevice->driverId].driver.masterStart();
+    driver.masterStart(transfer.device->i2c->driverId);
 
-//    timeoutTimeMs = systemTimeMsGet() + 1000;
-//
-//    while (!bufferIsEmpty((buffer_t*) &(containers[i2cDevice->driverId].buffer)))
-//    {
-//        if (systemCheckTime(timeoutTimeMs))
-//        {
-//            return I2C_ERROR_TIMEOUT;
-//        }
-//    }
+    timeoutTimeMs = systemTimeMsGet() + 1000;
+
+    while (!bufferIsEmpty((buffer_t*) &(transfer.device->i2c->buffer)))
+    {
+        if (systemCheckTimeMs(timeoutTimeMs))
+        {
+            return I2C_ERROR_TIMEOUT;
+        }
+    }
 
     return I2C_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
-extern i2c_error_e i2cMasterRx(i2c_device_t* i2cDevice, byte_array_t* data)
+extern i2c_error_e i2cMasterRx(const id_t deviceId,
+                               byte_array_t* data)
 {
-    i2c_transfer_t transfer =
+#ifdef PLAT4M_DEBUG
+
+    if (IS_NULL_POINTER(data))
     {
-        .device = i2cDevice
-    };
+        return I2C_ERROR_INVALID_PARAMETER;
+    }
     
-    if (i2cDevice->driverId >= I2C_ID_COUNT)
+    if (deviceId >= I2C_DEVICE_ID_MAX)
     {
         return I2C_ERROR_INVALID_ID;
     }
 
-    if (!isDriverEnabled(i2cDevice->driverId))
+    if (!(deviceMap[deviceId].i2c->isEnabled))
     {
         return I2C_ERROR_NOT_ENABLED;
     }
 
-    if (!BUFFER_WRITE(&(containers[i2cDevice->driverId].buffer), &transfer))
+#endif // PLAT4M_DEBUG
+
+    i2c_transfer_t transfer =
+    {
+        .device = &deviceMap[deviceId]
+    };
+
+    BUFFER_INIT(&(transfer.txBuffer), txBufferMemory);
+    BUFFER_INIT(&(transfer.rxBuffer), rxBufferMemory);
+
+    if (!BUFFER_WRITE(&(transfer.device->i2c->buffer), &transfer))
     {
         // Error?
     }
 
     // Start
-    containers[i2cDevice->driverId].driver.masterStart();
+    driver.masterStart(transfer.device->i2c->driverId);
 
     return I2C_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
-extern i2c_error_e i2cMasterTxRx(i2c_device_t* i2cDevice,
+extern i2c_error_e i2cMasterTxRx(const id_t deviceId,
                                  byte_array_t* txData,
                                  byte_array_t* rxData)
 {
-    i2c_transfer_t transfer =
-    {
-        .device = i2cDevice
-    };
+#ifdef PLAT4M_DEBUG
 
-    if (i2cDevice->driverId >= I2C_ID_COUNT)
+    if (IS_NULL_POINTER(txData) || IS_NULL_POINTER(rxData))
+    {
+        return I2C_ERROR_INVALID_PARAMETER;
+    }
+
+    if (deviceId >= I2C_DEVICE_ID_MAX)
     {
         return I2C_ERROR_INVALID_ID;
     }
 
-    if (!isDriverEnabled(i2cDevice->driverId))
+    if (!(deviceMap[deviceId].i2c->isEnabled))
     {
         return I2C_ERROR_NOT_ENABLED;
     }
 
-    if (!BUFFER_WRITE(&(containers[i2cDevice->driverId].buffer), &transfer))
+#endif // PLAT4M_DEBUG
+
+    i2c_transfer_t transfer =
+    {
+        .device = &deviceMap[deviceId]
+    };
+
+    BUFFER_INIT(&(transfer.txBuffer), txBufferMemory);
+    BUFFER_INIT(&(transfer.rxBuffer), rxBufferMemory);
+
+    if (!BUFFER_WRITE(&(transfer.device->i2c->buffer), &transfer))
     {
         // Error?
     }
 
     // Start
-    containers[i2cDevice->driverId].driver.masterStart();
+    driver.masterStart(transfer.device->i2c->driverId);
 
     return I2C_ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-extern void i2cIntHandler(i2c_id_e id, i2c_interrupt_e interrupt)
-{
-    uint8_t data = 0;
-    i2c_transfer_t* transfer;
-
-    if (id < I2C_ID_COUNT)
-    {
-        BUFFER_PEEK(&(containers[id].buffer), &transfer);
-
-        switch (interrupt)
-        {
-            case I2C_INTERRUPT_START:
-            {
-                if (!IS_NULL_POINTER(transfer))
-                {
-                    if (!bufferIsEmpty(&(transfer->txBuffer)))
-                    {
-                        containers[id].driver.
-                            masterTxAddress(transfer->device->address,
-                                            I2C_MASTER_MODE_TX);
-                    }
-                    else if (!bufferIsEmpty(&(transfer->rxBuffer)))
-                    {
-                        containers[id].driver.
-                            masterTxAddress(transfer->device->address,
-                                            I2C_MASTER_MODE_RX);
-                    }
-                }
-
-                break;
-            }
-            case I2C_INTERRUPT_ADDRESS:
-            {
-                if (!IS_NULL_POINTER(transfer))
-                {
-                    if (!bufferIsEmpty(&(transfer->txBuffer)) &&
-                        BUFFER_READ(&(transfer->txBuffer), &data))
-                    {
-                        containers[id].driver.txIntSetEnabled(true);
-                        containers[id].driver.tx(data);
-                    }
-                    else if (!bufferIsEmpty(&(transfer->rxBuffer)))
-                    {
-                        containers[id].driver.rxIntSetEnabled(true);
-                    }
-                }
-
-                break;
-            }
-            case I2C_INTERRUPT_STOP:
-            {
-                containers[id].driver.masterStop();
-                containers[id].driver.txIntSetEnabled(false);
-                BUFFER_READ(&(containers[id].buffer), transfer);
-
-                currentState = I2C_STATE_IDLE;
-
-                break;
-            }
-            case I2C_INTERRUPT_TX:
-            {
-                if (!IS_NULL_POINTER(transfer))
-                {
-                    if (BUFFER_READ(&(transfer->txBuffer), &data))
-                    {
-                        containers[id].driver.tx(data);
-                    }
-                }
-
-                break;
-            }
-            case I2C_INTERRUPT_RX:
-            {
-                break;
-            }
-        }
-    }
 }
 
 /*------------------------------------------------------------------------------
@@ -425,32 +488,111 @@ extern void i2cIntHandler(i2c_id_e id, i2c_interrupt_e interrupt)
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-static bool i2cAddDriver(i2c_driver_t* i2cDriver)
+static i2c_error_e addIdMap(const i2c_id_map_t* map)
 {
-    if (IS_NULL_POINTER(i2cDriver)                  ||
-        i2cDriver->id >= I2C_ID_COUNT        ||
-        IS_NULL_POINTER(i2cDriver->setEnabled)      ||
-        IS_NULL_POINTER(i2cDriver->masterStart)     ||
-        IS_NULL_POINTER(i2cDriver->masterStop)      ||
-        IS_NULL_POINTER(i2cDriver->masterTxAddress) ||
-        IS_NULL_POINTER(i2cDriver->tx)              ||
-        IS_NULL_POINTER(i2cDriver->rx))
+#ifdef PLAT4M_DEBUG
+
+    if (IS_NULL_POINTER(map))
     {
-        return false;
+        return I2C_ERROR_INVALID_PARAMETER;
     }
 
-    ADD_CONTAINER(containers, i2cDriver);
-
-    if (containers[i2cDriver->id].driver.isEnabled)
+    if ((map->id >= I2C_ID_COUNT) || (map->driverId >= I2C_DRIVER_ID_COUNT))
     {
-        i2cSetEnabled(i2cDriver->id, true);
+        return I2C_ERROR_INVALID_ID;
     }
 
-    return true;
+#endif // PLAT4M_DEBUG
+
+    i2cMap[map->id].driverId = map->driverId;
+    idMap[map->id] = &(i2cMap[map->driverId]);
+
+    return I2C_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
-static bool isDriverEnabled(i2c_id_e id)
+extern void intHandler(const i2c_driver_id_e driverId,
+                       const i2c_interrupt_e interrupt)
 {
-    return containers[id].driver.isEnabled;
+#ifdef PLAT4M_DEBUG
+
+    if (driverId >= I2C_DRIVER_ID_COUNT)
+    {
+        return;
+    }
+
+#endif // PLAT4M_DEBUG
+
+    uint8_t data = 0;
+    i2c_transfer_t* transfer;
+
+    BUFFER_PEEK(&(i2cMap[driverId].buffer), &transfer);
+
+    switch (interrupt)
+    {
+        case I2C_INTERRUPT_START:
+        {
+            if (!IS_NULL_POINTER(transfer))
+            {
+                if (!bufferIsEmpty(&(transfer->txBuffer)))
+                {
+                    driver.masterTxAddress(driverId,
+                                           transfer->device->address,
+                                           I2C_MASTER_MODE_TX);
+                }
+                else if (!bufferIsEmpty(&(transfer->rxBuffer)))
+                {
+                    driver.masterTxAddress(driverId,
+                                           transfer->device->address,
+                                           I2C_MASTER_MODE_RX);
+                }
+            }
+
+            break;
+        }
+        case I2C_INTERRUPT_STOP:
+        {
+            driver.masterStop(driverId);
+            driver.intSetEnabled(driverId, I2C_INTERRUPT_TX, false);
+            BUFFER_READ(&(i2cMap[driverId].buffer), transfer);
+
+            currentState = I2C_STATE_IDLE;
+
+            break;
+        }
+        case I2C_INTERRUPT_ADDRESS:
+        {
+            if (!IS_NULL_POINTER(transfer))
+            {
+                if (!bufferIsEmpty(&(transfer->txBuffer)) &&
+                    BUFFER_READ(&(transfer->txBuffer), &data))
+                {
+                    driver.intSetEnabled(driverId, I2C_INTERRUPT_TX, true);
+                    driver.tx(driverId, data);
+                }
+                else if (!bufferIsEmpty(&(transfer->rxBuffer)))
+                {
+                    driver.intSetEnabled(driverId, I2C_INTERRUPT_RX, true);
+                }
+            }
+
+            break;
+        }
+        case I2C_INTERRUPT_TX:
+        {
+            if (!IS_NULL_POINTER(transfer))
+            {
+                if (BUFFER_READ(&(transfer->txBuffer), &data))
+                {
+                    driver.tx(driverId, data);
+                }
+            }
+
+            break;
+        }
+        case I2C_INTERRUPT_RX:
+        {
+            break;
+        }
+    }
 }

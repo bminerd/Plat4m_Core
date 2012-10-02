@@ -25,7 +25,7 @@
  * @file uart_interface.c
  * @author Ben Minerd
  * @date 2/3/12
- * @brief TODO Comment!
+ * @brief UART interface layer.
  */
 
 /*------------------------------------------------------------------------------
@@ -49,7 +49,7 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @brief UART wrapper type.
+ * @brief UART type.
  */
 typedef struct _uart_t_
 {
@@ -72,14 +72,14 @@ typedef struct _uart_t_
 static uart_driver_t driver;
 
 /**
- * @brief UART wrapper map.
+ * @brief UART map.
  */
-static uart_t uartMap[UART_DRIVER_ID_COUNT];
+static uart_t uartMap[UART_ID_COUNT];
 
 /**
  * @brief UART ID map.
  */
-static uart_t* idMap[UART_ID_COUNT];
+static uart_t* idMap[UART_DRIVER_ID_COUNT];
 
 /*------------------------------------------------------------------------------
  * Local function declarations
@@ -94,7 +94,7 @@ static void intHandler(const uart_driver_id_e driverId,
 /**
  * @brief Adds the given UART ID map to the local map.
  */
-static bool addIdMap(const uart_id_map_t* map);
+static uart_error_e addIdMap(const uart_id_map_t* map);
 
 /*------------------------------------------------------------------------------
  * Global function definitions
@@ -105,9 +105,8 @@ extern void uartInit(void)
 {
     int i;
 
-    for (i = 0; i < UART_DRIVER_ID_COUNT; i++)
+    for (i = 0; i < UART_ID_COUNT; i++)
     {
-        uartMap[i].driverId     = (uart_driver_id_e) i;
         uartMap[i].isEnabled    = false;
 
         BUFFER_INIT(&(uartMap[i].txBuffer), uartMap[i].txBufferMemory);
@@ -116,11 +115,17 @@ extern void uartInit(void)
         uartMap[i].rxCallback   = NULL_POINTER;
     }
 
+    for (i = 0; i < UART_DRIVER_ID_COUNT; i++)
+    {
+        idMap[i] = NULL_POINTER;
+    }
+
     uartDriverInit((interface_int_handler_f*) intHandler);
+    uartApplicationInit();
 }
 
 //------------------------------------------------------------------------------
-extern bool uartSetDriver(const uart_driver_t* uartDriver)
+extern uart_error_e uartSetDriver(const uart_driver_t* uartDriver)
 {
 #ifdef PLAT4M_DEBUG
 
@@ -130,25 +135,25 @@ extern bool uartSetDriver(const uart_driver_t* uartDriver)
         IS_NULL_POINTER(uartDriver->rx)         ||
         IS_NULL_POINTER(uartDriver->intSetEnabled))
     {
-        return false;
+        return UART_ERROR_INVALID_PARAMETER;
     }
 
 #endif // PLAT4M_DEBUG
 
     driver = *uartDriver;
 
-    return true;
+    return UART_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
-extern bool uartAddIdMaps(const uart_id_map_t uartIdMaps[],
-                          const unsigned int size)
+extern uart_error_e uartAddIdMaps(const uart_id_map_t uartIdMaps[],
+                                  const unsigned int size)
 {
 #ifdef PLAT4M_DEBUG
 
     if (size > UART_ID_COUNT)
     {
-        return false;
+        return UART_ERROR_INVALID_PARAMETER;
     }
 
 #endif // PLAT4M_DEBUG
@@ -157,31 +162,38 @@ extern bool uartAddIdMaps(const uart_id_map_t uartIdMaps[],
 
     for (i = 0; i < size; i++)
     {
-        if (!addIdMap(&uartIdMaps[i]))
+        uart_error_e error = addIdMap(&uartIdMaps[i]);
+
+#ifdef PLAT4M_DEBUG
+
+        if (error != UART_ERROR_NONE)
         {
-            return false;
+            return error;
         }
+
+#endif // PLAT4M_DEBUG
+
     }
 
-    return true;
+    return UART_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
-extern bool uartSetRxCallback(const uart_id_e id,
-                              const data_callback_f* rxCallback)
+extern uart_error_e uartSetRxCallback(const uart_id_e id,
+                                      const data_callback_f* rxCallback)
 {
 #ifdef PLAT4M_DEBUG
 
-    if (id >= UART_ID_COUNT || IS_NULL_POINTER(rxCallback))
+    if ((id >= UART_ID_COUNT) || IS_NULL_POINTER(rxCallback))
     {
-        return false;
+        return UART_ERROR_INVALID_PARAMETER;
     }
     
 #endif // PLAT4M_DEBUG
 
-    uartMap[id].rxCallback = rxCallback;
+    idMap[id]->rxCallback = rxCallback;
     
-    return true;
+    return UART_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
@@ -196,7 +208,9 @@ extern uart_error_e uartSetEnabled(const uart_id_e id, const bool enabled)
 
 #endif // PLAT4M_DEBUG
 
-    return uartHardwareSetEnabled(idMap[id]->driverId, enabled);
+    driver.setEnabled(idMap[id]->driverId, enabled);
+
+    return UART_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
@@ -211,7 +225,9 @@ extern uart_error_e uartIsEnabled(const uart_id_e id, bool* isEnabled)
 
 #endif // PLAT4M_DEBUG
 
-    return uartHardwareIsEnabled(idMap[id]->driverId, isEnabled);
+    *isEnabled = idMap[id]->isEnabled;
+
+    return UART_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
@@ -226,7 +242,19 @@ extern uart_error_e uartTx(const uart_id_e id, const byte_array_t* data)
 
 #endif // PLAT4M_DEBUG
 
-    return uartHardwareTx(idMap[id]->driverId, data);
+    int i;
+
+    for (i = 0; i < data->size; i++)
+    {
+        if (!BUFFER_WRITE(&(idMap[id]->txBuffer), &(data->bytes[i])))
+        {
+            break;
+        }
+    }
+
+    driver.intSetEnabled(idMap[id]->driverId, UART_INTERRUPT_TX, true);
+
+    return UART_ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
@@ -234,91 +262,17 @@ extern uart_error_e uartRead(const uart_id_e id, byte_array_t* data)
 {
 #ifdef PLAT4M_DEBUG
 
-    if (id >= UART_ID_COUNT)
-    {
-        return UART_ERROR_INVALID_ID;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    return uartHardwareRead(idMap[id]->driverId, data);
-}
-
-//------------------------------------------------------------------------------
-extern uart_error_e uartBytesAvailable(const uart_id_e id, uint8_t* byteCount)
-{
-#ifdef PLAT4M_DEBUG
-
-    if (id >= UART_ID_COUNT)
-    {
-        return UART_ERROR_INVALID_ID;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    return uartHardwareBytesAvailable(idMap[id]->driverId, byteCount);
-}
-
-//------------------------------------------------------------------------------
-extern uart_error_e uartHardwareSetEnabled(const uart_driver_id_e driverId,
-                                           const bool enabled)
-{
-#ifdef PLAT4M_DEBUG
-
-    if (driverId >= UART_DRIVER_ID_COUNT)
-    {
-        return UART_ERROR_INVALID_ID;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    driver.setEnabled(driverId, enabled);
-    driver.intSetEnabled(driverId, UART_INTERRUPT_RX, enabled);
-    uartMap[driverId].isEnabled = enabled;
-
-    return UART_ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-extern uart_error_e uartHardwareIsEnabled(const uart_driver_id_e driverId,
-                                          bool* isEnabled)
-{
-#ifdef PLAT4M_DEBUG
-
-    if (IS_NULL_POINTER(isEnabled))
-    {
-        return UART_ERROR_INVALID_PARAMETER;
-    }
-
-    if (driverId >= UART_DRIVER_ID_COUNT)
-    {
-        return UART_ERROR_INVALID_ID;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    *isEnabled = uartMap[driverId].isEnabled;
-
-    return UART_ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-extern uart_error_e uartHardwareTx(const uart_driver_id_e driverId,
-                                   const byte_array_t* data)
-{
-#ifdef PLAT4M_DEBUG
-
     if (IS_NULL_POINTER(data))
     {
         return UART_ERROR_INVALID_PARAMETER;
     }
 
-    if (driverId >= UART_DRIVER_ID_COUNT)
+    if (id >= UART_ID_COUNT)
     {
         return UART_ERROR_INVALID_ID;
     }
 
-    if (!uartMap[driverId].isEnabled)
+    if (!idMap[id]->isEnabled)
     {
         return UART_ERROR_NOT_ENABLED;
     }
@@ -329,45 +283,7 @@ extern uart_error_e uartHardwareTx(const uart_driver_id_e driverId,
 
     for (i = 0; i < data->size; i++)
     {
-        if (!BUFFER_WRITE(&(uartMap[driverId].txBuffer), &(data->bytes[i])))
-        {
-            return UART_ERROR_TX_BUFFER_FULL;
-        }
-    }
-
-    driver.intSetEnabled(driverId, UART_INTERRUPT_TX, true);
-
-    return UART_ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-extern uart_error_e uartHardwareRead(const uart_driver_id_e driverId,
-                                     byte_array_t* data)
-{
-#ifdef PLAT4M_DEBUG
-
-    if (IS_NULL_POINTER(data))
-    {
-        return UART_ERROR_INVALID_PARAMETER;
-    }
-
-    if (driverId >= UART_DRIVER_ID_COUNT)
-    {
-        return UART_ERROR_INVALID_ID;
-    }
-
-    if (!uartMap[driverId].isEnabled)
-    {
-        return UART_ERROR_NOT_ENABLED;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    int i;
-
-    for (i = 0; i < data->size; i++)
-    {
-        if (!BUFFER_READ(&(uartMap[driverId].rxBuffer), &(data->bytes[i])))
+        if (!BUFFER_READ(&(idMap[id]->rxBuffer), &(data->bytes[i])))
         {
             break;
         }
@@ -379,8 +295,7 @@ extern uart_error_e uartHardwareRead(const uart_driver_id_e driverId,
 }
 
 //------------------------------------------------------------------------------
-extern uart_error_e uartHardwareBytesAvailable(const uart_driver_id_e driverId,
-                                               uint8_t* byteCount)
+extern uart_error_e uartBytesAvailable(const uart_id_e id, uint8_t* byteCount)
 {
 #ifdef PLAT4M_DEBUG
 
@@ -389,14 +304,14 @@ extern uart_error_e uartHardwareBytesAvailable(const uart_driver_id_e driverId,
         return UART_ERROR_INVALID_PARAMETER;
     }
 
-    if (driverId >= UART_DRIVER_ID_COUNT)
+    if (id >= UART_ID_COUNT)
     {
         return UART_ERROR_INVALID_ID;
     }
 
 #endif // PLAT4M_DEBUG
 
-    bufferCount(&(uartMap[driverId].rxBuffer), byteCount);
+    bufferCount(&(idMap[id]->rxBuffer), byteCount);
 
     return UART_ERROR_NONE;
 }
@@ -404,6 +319,29 @@ extern uart_error_e uartHardwareBytesAvailable(const uart_driver_id_e driverId,
 /*------------------------------------------------------------------------------
  * Local function definitions
  *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+static uart_error_e addIdMap(const uart_id_map_t* map)
+{
+#ifdef PLAT4M_DEBUG
+
+    if (IS_NULL_POINTER(map))
+    {
+        return UART_ERROR_INVALID_PARAMETER;
+    }
+
+    if ((map->id >= UART_ID_COUNT) || (map->driverId >= UART_DRIVER_ID_COUNT))
+    {
+        return UART_ERROR_INVALID_ID;
+    }
+
+#endif // PLAT4M_DEBUG
+
+    uartMap[map->id].driverId = map->driverId;
+    idMap[map->driverId] = &(uartMap[map->id]);
+
+    return UART_ERROR_NONE;
+}
 
 //------------------------------------------------------------------------------
 static void intHandler(const uart_driver_id_e driverId,
@@ -447,21 +385,4 @@ static void intHandler(const uart_driver_id_e driverId,
             break;
         }
     }
-}
-
-//------------------------------------------------------------------------------
-static bool addIdMap(const uart_id_map_t* map)
-{
-#ifdef PLAT4M_DEBUG
-
-    if ((map->id >= UART_ID_COUNT) || (map->driverId >= UART_DRIVER_ID_COUNT))
-    {
-        return false;
-    }
-
-#endif // PLAT4M_DEBUG
-
-    idMap[map->id] = &(uartMap[map->driverId]);
-
-    return true;
 }

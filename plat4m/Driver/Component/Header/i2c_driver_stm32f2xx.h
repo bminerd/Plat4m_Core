@@ -22,10 +22,10 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file i2c_template.h
+ * @file i2c_driver_stm32f2xx.h
  * @author Ben Minerd
  * @date 7/30/12
- * @brief TODO Comment!
+ * @brief STM32F2xx driver layer for the I2C module.
  */
 
 #ifndef _I2C_DRIVER_H_
@@ -40,6 +40,11 @@
 /*------------------------------------------------------------------------------
  * Defines
  *----------------------------------------------------------------------------*/
+
+/**
+ * @brief Number of I2C device IDs.
+ */
+#define I2C_DEVICE_ID_MAX (10)
 
 /**
  * TODO Comment!
@@ -63,7 +68,7 @@
 /**
  * TODO Comment!
  */
-typedef enum _i2c_id_e_
+typedef enum _i2c_driver_id_e_
 {
     // plat4m
     //
@@ -82,11 +87,26 @@ typedef enum _i2c_id_e_
     //      I2C_ID_2,
     //      ...
     
-    I2C_ID_1 = 0,
+    I2C_DRIVER_ID_1 = 0,
+    I2C_DRIVER_ID_2,
+    I2C_DRIVER_ID_3,
     
     // Do not place values below!
-    I2C_ID_COUNT
-} i2c_id_e;
+    I2C_DRIVER_ID_COUNT
+} i2c_driver_id_e;
+
+/**
+ * @brief Enumeration of I2C driver GPIO map entries.
+ */
+typedef enum _i2c_driver_gpio_map_id_e_
+{
+    I2C_DRIVER_GPIO_MAP_ID_1 = 0,
+    I2C_DRIVER_GPIO_MAP_ID_2,
+    I2C_DRIVER_GPIO_MAP_ID_3,
+
+    // Do not place values below!
+    I2C_DRIVER_GPIO_MAP_ID_COUNT
+} i2c_driver_gpio_map_id_e;
 
 /*------------------------------------------------------------------------------
  * Types
@@ -97,8 +117,9 @@ typedef enum _i2c_id_e_
  *----------------------------------------------------------------------------*/
 
 /**
- * TODO Comment!
+ * @brief Initializes the I2C driver layer.
+ * @param handler I2C interface interrupt handler.
  */
-extern void i2cDriverInit(void);
+extern void i2cDriverInit(const interface_int_handler_f* handler);
 
 #endif // _I2C_DRIVER_H_

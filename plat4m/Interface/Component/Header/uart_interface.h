@@ -25,7 +25,7 @@
  * @file uart_interface.h
  * @author Ben Minerd
  * @date 12/30/11
- * @brief TODO Comment!
+ * @brief Interface layer for the UART module.
  */
 
 #ifndef _UART_INTERFACE_H_
@@ -65,8 +65,11 @@ typedef enum _uart_error_e_
  */
 typedef enum _uart_interrupt_e_
 {
-    UART_INTERRUPT_TX,  /// Transmit interrupt.
-    UART_INTERRUPT_RX   /// Receive interrupt.
+    UART_INTERRUPT_TX = 0,  /// Transmit interrupt.
+    UART_INTERRUPT_RX,      /// Receive interrupt.
+
+    // Do not place values below!
+    UART_INTERRUPT_COUNT
 } uart_interrupt_e;
 
 /**
@@ -74,8 +77,11 @@ typedef enum _uart_interrupt_e_
  */
 typedef enum _uart_word_bits_e_
 {
-    UART_WORD_BITS_8,
-    UART_WORD_BITS_9
+    UART_WORD_BITS_8 = 0,
+    UART_WORD_BITS_9,
+
+    // Do not place values below!
+    UART_WORD_BITS_COUNT
 } uart_word_bits_e;
 
 /**
@@ -83,8 +89,11 @@ typedef enum _uart_word_bits_e_
  */
 typedef enum _uart_stop_bits_e_
 {
-    UART_STOP_BITS_1,
-    UART_STOP_BITS_2
+    UART_STOP_BITS_1 = 0,
+    UART_STOP_BITS_2,
+
+    // Do not place values below!
+    UART_STOP_BITS_COUNT
 } uart_stop_bits_e;
 
 /**
@@ -92,9 +101,12 @@ typedef enum _uart_stop_bits_e_
  */
 typedef enum _uart_parity_e_
 {
-    UART_PARITY_NONE,
+    UART_PARITY_NONE = 0,
     UART_PARITY_EVEN,
-    UART_PARITY_ODD
+    UART_PARITY_ODD,
+
+    // Do not place values below!
+    UART_PARITY_COUNT
 } uart_parity_e;
 
 /**
@@ -102,21 +114,15 @@ typedef enum _uart_parity_e_
  */
 typedef enum _uart_hardware_flow_control_e_
 {
-    UART_HARDWARE_FLOW_CONTROL_NONE
+    UART_HARDWARE_FLOW_CONTROL_NONE = 0,
+
+    // Do not place values below!
+    UART_HARDWARE_FLOW_CONTROL_COUNT
 } uart_hardware_flow_control_e;
 
 /*------------------------------------------------------------------------------
  * Types
  *----------------------------------------------------------------------------*/
-
-/**
- * @brief UART type.
- */
-typedef struct _uart_id_map_t_
-{
-    uart_id_e id;
-    uart_driver_id_e driverId;
-} uart_id_map_t;
 
 /**
  * @brief UART configuration type.
@@ -132,7 +138,7 @@ typedef struct _uart_config_t_
 } uart_config_t;
 
 /**
- * @brief Function type that sets the given UART enabled.
+ * @brief Function type that sets the given UART enabled or disabled.
  * @param driverId UART driver ID.
  * @param enabled Flag that indicates if the UART should be enabled or disabled.
  */
@@ -148,7 +154,7 @@ typedef void uart_driver_config_f(const uart_driver_id_e driverId,
                                   const uart_config_t* config);
 
 /**
- * @brief Function type that transmits the given byte array over the given UART.
+ * @brief Function type that transmits the given byte over the given UART.
  * @param driverId UART driver ID.
  * @param data Byte to transmit.
  * @return true if the function was successful, false if not.
@@ -156,7 +162,7 @@ typedef void uart_driver_config_f(const uart_driver_id_e driverId,
 typedef void uart_driver_tx_f(const uart_driver_id_e driverId, uint8_t data);
 
 /**
- * @brief Function type that transmits the given byte array over the given UART.
+ * @brief Function type that receives a byte over the given UART.
  * @param driverId UART driver ID.
  * @param data Byte received.
  */
@@ -165,7 +171,7 @@ typedef void uart_driver_rx_f(const uart_driver_id_e driverId, uint8_t* data);
 /**
  * @brief Function type that sets the given UART interrupt enabled or disabled.
  * @param driverId UART driver ID.
- * @param interrupt UART interrupt to set enabled.
+ * @param intId UART interrupt to set enabled or disabled.
  * @param enabled Flag that indicates if the interrupt should be enabled or
  * disabled.
  */
@@ -174,7 +180,7 @@ typedef void uart_driver_int_set_enabled_f(const uart_driver_id_e driverId,
                                            const bool enabled);
 
 /**
- * @brief Structure that contains all the necessary UART driver functions.
+ * @brief Structure that contains the necessary UART driver functions.
  */
 typedef struct _uart_driver_t_
 {
@@ -184,6 +190,15 @@ typedef struct _uart_driver_t_
     const uart_driver_rx_f* rx;
     const uart_driver_int_set_enabled_f* intSetEnabled;
 } uart_driver_t;
+
+/**
+ * @brief UART ID map type.
+ */
+typedef struct _uart_id_map_t_
+{
+    uart_id_e id;
+    uart_driver_id_e driverId;
+} uart_id_map_t;
 
 /*------------------------------------------------------------------------------
  * Global function declarations
@@ -196,40 +211,39 @@ extern void uartInit(void);
 
 /**
  * @brief Sets the driver for the UART interface.
- * @param uartDriver uartDriver UART driver.
- * @return true if the function was successful, false if not.
+ * @param uartDriver UART driver.
+ * @return UART error.
  */
-extern bool uartSetDriver(const uart_driver_t* uartDriver);
+extern uart_error_e uartSetDriver(const uart_driver_t* uartDriver);
 
 /**
  * @brief Adds the given UARTs to the map.
- * @param uarts Array of UARTs.
+ * @param uartIdMaps Array of UART ID maps.
  * @param size Size of array.
- * @return true if the function was successful, false if not.
+ * @return UART error.
  */
-extern bool uartAddIdMaps(const uart_id_map_t uartIdMaps[],
-                          const unsigned int size);
+extern uart_error_e uartAddIdMaps(const uart_id_map_t uartIdMaps[],
+                                  const unsigned int size);
 
 /**
- * @brief Adds the given callback function to the given UART.
+ * @brief Sets the given callback function for the given UART.
  * @param id UART ID.
  * @param callback Rx callback.
- * @return true if the function was successful, false if not.
+ * @return UART error.
  */
-extern bool uartSetRxCallback(const uart_id_e id,
-                              const data_callback_f* callback);
+extern uart_error_e uartSetRxCallback(const uart_id_e id,
+                                      const data_callback_f* callback);
 
 /**
- * @brief Sets the given UART enabled.
+ * @brief Sets the given UART enabled or disabled.
  * @param id UART ID.
  * @param enabled Flag that indicates if the UART should be enabled or disabled.
  * @return UART error.
  */
-extern uart_error_e uartSetEnabled(const uart_id_e id,
-                                   const bool enabled);
+extern uart_error_e uartSetEnabled(const uart_id_e id, const bool enabled);
 
 /**
- * @brief Checks to see if the given UART is enabled.
+ * @brief Checks to see if the given UART is enabled or disabled.
  * @param id UART ID.
  * @param isEnabled Flag that indicates if the UART is enabled or disabled.
  * @return UART error.
@@ -259,50 +273,5 @@ extern uart_error_e uartRead(const uart_id_e id, byte_array_t* data);
  * @return true if the function was successful, false if not.
  */
 extern uart_error_e uartBytesAvailable(const uart_id_e id, uint8_t* byteCount);
-
-/**
- * @brief Sets the given UART enabled.
- * @param id UART driver ID.
- * @param enabled Flag that indicates if the UART should be enabled or disabled.
- * @return UART error.
- */
-extern uart_error_e uartHardwareSetEnabled(const uart_driver_id_e driverId,
-                                           const bool enabled);
-
-/**
- * @brief Checks to see if the given UART is enabled.
- * @param id UART driver ID.
- * @param isEnabled Flag that indicates if the UART is enabled or disabled.
- * @return UART error.
- */
-extern uart_error_e uartHardwareIsEnabled(const uart_driver_id_e driverId,
-                                          bool* isEnabled);
-
-/**
- * @brief Transmits the given byte array over the given UART.
- * @param id UART driver ID.
- * @param data Byte array to transmit.
- * @return true if the function was successful, false if not.
- */
-extern uart_error_e uartHardwareTx(const uart_driver_id_e driverId,
-                                   const byte_array_t* data);
-
-/**
- * @brief Reads data from the given UART into the given byte array.
- * @param id UART driver ID.
- * @param data Byte array for received data.
- * @return true if the function was successful, false if not.
- */
-extern uart_error_e uartHardwareRead(const uart_driver_id_e driverId,
-                                     byte_array_t* data);
-
-/**
- * @brief Gets the number of bytes that have been received.
- * @param id UART driver ID.
- * @param byteCount Number of bytes that have been received.
- * @return true if the function was successful, false if not.
- */
-extern uart_error_e uartHardwareBytesAvailable(const uart_driver_id_e driverId,
-                                               uint8_t* byteCount);
 
 #endif // _UART_INTERFACE_H_

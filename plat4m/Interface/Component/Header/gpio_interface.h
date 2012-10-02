@@ -95,6 +95,11 @@ typedef enum _gpio_resistor_e_
  *----------------------------------------------------------------------------*/
 
 /**
+ * @brief GPIO ID type.
+ */
+typedef int gpio_id_t;
+
+/**
  * @brief GPIO hardware map type.
  */
 typedef struct _gpio_hardware_t_
@@ -194,17 +199,18 @@ extern void gpioInit(void);
 /**
  * @brief Sets the driver for the GPIO interface.
  * @param gpioDriver GPIO driver.
- * @return true if the function was successful, false if not.
+ * @return GPIO error.
  */
-extern bool gpioSetDriver(const gpio_driver_t* gpioDriver);
+extern gpio_error_e gpioSetDriver(const gpio_driver_t* gpioDriver);
 
 /**
- * @brief Adds the given GPIOs to the map.
- * @param gpios Array of GPIOs.
+ * @brief Adds the given GPIO IDs to the map.
+ * @param gpios Array of GPIO ID maps.
  * @param size Size of array.
- * @return true if the function was successful, false if not.
+ * @return GPIO error.
  */
-extern bool gpioAddIdMaps(gpio_id_map_t gpioIdMaps[], unsigned int size);
+extern gpio_error_e gpioAddIdMaps(const gpio_id_map_t gpioIdMaps[],
+                                  unsigned int size);
 
 /**
  * @brief Sets the given GPIO enabled.
@@ -290,40 +296,5 @@ extern gpio_error_e gpioHardwareIsEnabled(const gpio_hardware_t* hardware,
  */
 extern gpio_error_e gpioHardwareConfigure(const gpio_hardware_t* hardware,
                                           const gpio_config_t* config);
-
-/**
- * @brief Sets the level for the given GPIO port and pin.
- * @param hardware GPIO hardware to access.
- * @param level GPIO output level to set.
- * @return GPIO error.
- */
-extern gpio_error_e gpioHardwareSetLevel(const gpio_hardware_t* hardware,
-                                         const gpio_level_e level);
-
-/**
- * @brief Gets the level for the given GPIO output port and pin.
- * @param hardware GPIO hardware to access.
- * @param level Current GPIO output level.
- * @return GPIO error.
- */
-extern gpio_error_e gpioHardwareGetLevel(const gpio_hardware_t* hardware,
-                                         gpio_level_e* level);
-
-/**
- * @brief Reads the level for the given GPIO input port and pin.
- * @param hardware GPIO hardware to access.
- * @param level Current GPIO input level.
- * @return GPIO error.
- */
-extern gpio_error_e gpioHardwareReadLevel(const gpio_hardware_t* hardware,
-                                          gpio_level_e* level);
-
-/**
- * @brief Toggles the level for the given GPIO output port and pin.
- * @param hardware GPIO hardware to access.
- * @param pinId Pin ID.
- * @return GPIO error.
- */
-extern gpio_error_e gpioHardwareToggleLevel(const gpio_hardware_t* hardware);
 
 #endif // _GPIO_INTERFACE_H_
