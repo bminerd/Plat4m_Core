@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,89 +33,71 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file ComProtocol.h
+ * @file ErrorTemplate.h
  * @author Ben Minerd
- * @date 4/22/13
- * @brief ComProtocol class.
+ * @date 5/25/15
+ * @brief Generic class for all modules to be subclasses of.
  */
 
-#ifndef _COM_PROTOCOL_H_
-#define _COM_PROTOCOL_H_
+#ifndef _ERROR_TEMPLATE_H_
+#define _ERROR_TEMPLATE_H_
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
-#include <ErrorTemplate.h>
-#include <ByteArray.h>
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class ComProtocol
+template <typename TCode>
+class ErrorTemplate
 {
 public:
     
-    /*--------------------------------------------------------------------------
-     * Public enumerations
-     *------------------------------------------------------------------------*/
-
-    /**
-     * @brief Enumeration of communication errors.
-     */
-    enum ErrorCode
-    {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID
-    };
-
-    enum ParseStatus
-    {
-        PARSE_STATUS_NOT_A_MESSAGE,
-        PARSE_STATUS_MID_MESSAGE,
-        PARSE_STATUS_INVALID_MESSAGE,
-		PARSE_STATUS_UNSUPPORTED_MESSAGE,
-        PARSE_STATUS_FOUND_MESSAGE
-    };
-
-    /*--------------------------------------------------------------------------
-	 * Public typedefs
-	 *------------------------------------------------------------------------*/
-
-    typedef ErrorTemplate<ErrorCode> Error;
-
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
-    
-    uint32_t getParseTimeoutMs();
-    
-    ParseStatus parseData(const ByteArray& rxByteArray, ByteArray& txByteArray);
-    
-protected:
-    
-    /*--------------------------------------------------------------------------
+	/*--------------------------------------------------------------------------
 	 * Protected constructors
 	 *------------------------------------------------------------------------*/
 
-	ComProtocol(const uint32_t parseTimeoutMs);
+	//--------------------------------------------------------------------------
+	ErrorTemplate()
+	{
+	}
+
+	//--------------------------------------------------------------------------
+	ErrorTemplate(const TCode code) :
+		myCode(code)
+	{
+		//ErrorHandler::call(*this);
+	}
+    
+	/*--------------------------------------------------------------------------
+	 * Public methods
+	 *------------------------------------------------------------------------*/
+    
+	//--------------------------------------------------------------------------
+	TCode getCode()
+	{
+		return myCode;
+	}
+
+	//--------------------------------------------------------------------------
+	void setCode(const TCode code)
+	{
+		myCode = code;
+
+		//ErrorHandler::call(*this);
+	}
     
 private:
     
     /*--------------------------------------------------------------------------
-     * Private members
-     *------------------------------------------------------------------------*/
-    
-    const uint32_t myParseTimeoutMs;
-
-    /*--------------------------------------------------------------------------
-	 * Private virtual methods
+	 * Private members
 	 *------------------------------------------------------------------------*/
 
-    virtual ParseStatus driverParseData(const ByteArray& rxByteArray,
-    									ByteArray& txByteArray) = 0;
+	TCode myCode;
 };
 
-#endif // _COM_PROTOCOL_H_
+#endif // _ERROR_TEMPLATE_H_

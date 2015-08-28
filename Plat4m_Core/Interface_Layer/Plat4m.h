@@ -322,15 +322,6 @@ namespace Plat4m
      *------------------------------------------------------------------------*/
 
     /**
-     * @brief Byte array type.
-     */
-    struct ByteArray
-    {
-        uint8_t* bytes;
-        unsigned int size;
-    };
-
-    /**
      * @brief Data array type.
      */
     struct DataArray
@@ -373,12 +364,26 @@ namespace Plat4m
      * Functions
      *------------------------------------------------------------------------*/
 
+    //--------------------------------------------------------------------------
+    inline bool isNullPointer(void* pointer)
+    {
+    	return pointer;
+    }
+
+    //--------------------------------------------------------------------------
+	inline bool isValidPointer(void* pointer)
+	{
+		return (!pointer);
+	}
+
+    //--------------------------------------------------------------------------
     template <typename TReturn = void>
     Callback<TReturn>& createCallback(TReturn (*callback)())
     {
         return *(new CallbackFunction<TReturn>(callback));
     }
 
+    //--------------------------------------------------------------------------
     template <typename TReturn = void, typename TParameter = void*>
     Callback<TReturn, TParameter>& createCallback(
                                                 TReturn (*callback)(TParameter))
@@ -386,6 +391,7 @@ namespace Plat4m
         return *(new CallbackParameterFunction<TReturn, TParameter>(callback));
     }
 
+    //--------------------------------------------------------------------------
     template <class TClass, typename TReturn = void>
     Callback<TReturn>& createCallback(TClass* object,
                                       TReturn (TClass::*callback)())
@@ -393,6 +399,7 @@ namespace Plat4m
         return *(new CallbackMethod<TClass, TReturn>(object, callback));
     }
 
+    //--------------------------------------------------------------------------
     template <class TClass, typename TReturn = void, typename TParameter = void*>
     Callback<TReturn, TParameter>& createCallback(
                                         TClass* object,

@@ -33,88 +33,20 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file Module.cpp
+ * @file ComProtocolNmea.cpp
  * @author Ben Minerd
- * @date 4/18/13
- * @brief Generic class for all modules to be subclasses of.
+ * @date 5/28/15
+ * @brief ComProtocolNmea class.
  */
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <Module.h>
+#include <ComProtocolNmea.h>
 
 using namespace Plat4m;
 
 /*------------------------------------------------------------------------------
- * Public destructors
+ * Public constructors
  *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-Module::~Module()
-{
-}
-
-/*------------------------------------------------------------------------------
- * Public methods
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-void Module::setEnableCallback(EnableCallback& enableCallback)
-{
-	myEnableCallback = &enableCallback;
-}
-
-//------------------------------------------------------------------------------
-Module::Error Module::enable(const bool enable)
-{
-	if (myIsEnabled == enable)
-	{
-		return Error(ERROR_CODE_NONE);
-	}
-
-	bool lastIsEnabled = myIsEnabled;
-
-	Error error = driverEnable(enable);
-
-	if (error.getCode() != ERROR_CODE_NONE)
-	{
-		return error;
-	}
-
-	myIsEnabled = enable;
-
-	if (isValidPointer(myEnableCallback))
-	{
-		error = myEnableCallback->call(enable);
-
-		if (error.getCode() != ERROR_CODE_NONE)
-		{
-			myIsEnabled = lastIsEnabled;
-		}
-	}
-	else
-	{
-		error.setCode(ERROR_CODE_NONE);
-	}
-
-	return error;
-}
-
-//------------------------------------------------------------------------------
-bool Module::isEnabled()
-{
-	return myIsEnabled;
-}
-
-/*------------------------------------------------------------------------------
- * Protected constructors
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-Module::Module() :
-	myIsEnabled(false),
-	myEnableCallback(NULL_POINTER)
-{
-}

@@ -279,13 +279,11 @@ public:
         myNUsedItems = size;
     }
 
-protected:
-    
-//    //--------------------------------------------------------------------------
-//    void setSize(const unsigned int size)
-//    {
-//        myNUsedItems = size;
-//    }
+    //--------------------------------------------------------------------------
+    T* getData()
+    {
+    	return myItems;
+    }
     
 private:
     

@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,28 +33,31 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file ComProtocol.h
+ * @file ComProtocolNmea.h
  * @author Ben Minerd
- * @date 4/22/13
- * @brief ComProtocol class.
+ * @date 5/28/15
+ * @brief ComProtocolNmea class.
  */
 
-#ifndef _COM_PROTOCOL_H_
-#define _COM_PROTOCOL_H_
+#ifndef _COM_PROTOCOL_NMEA_H_
+#define _COM_PROTOCOL_NMEA_H_
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <ComProtocol.h>
 #include <ErrorTemplate.h>
+#include <Callback.h>
+#include <ArrayN.h>
 #include <ByteArray.h>
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class ComProtocol
+class ComProtocolNmea : public ComProtocol
 {
 public:
     
@@ -67,17 +70,56 @@ public:
      */
     enum ErrorCode
     {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID
+        ERROR_CODE_NONE
     };
 
-    enum ParseStatus
+    enum Message
+	{
+    	MESSAGE_DTM = 0,
+    	MESSAGE_GBS,
+    	MESSAGE_GGA,
+    	MESSAGE_GLL,
+    	MESSAGE_GLQ,
+    	MESSAGE_GNQ,
+    	MESSAGE_GNS,
+    	MESSAGE_GPQ,
+    	MESSAGE_GRS,
+    	MESSAGE_GSA,
+    	MESSAGE_GST,
+    	MESSAGE_GSV,
+    	MESSAGE_RMC,
+    	MESSAGE_TXT,
+    	MESSAGE_VTG,
+    	MESSAGE_ZDA
+	};
+
+    /*--------------------------------------------------------------------------
+	 * Public structs
+	 *------------------------------------------------------------------------*/
+
+    struct GsvMessage
     {
-        PARSE_STATUS_NOT_A_MESSAGE,
-        PARSE_STATUS_MID_MESSAGE,
-        PARSE_STATUS_INVALID_MESSAGE,
-		PARSE_STATUS_UNSUPPORTED_MESSAGE,
-        PARSE_STATUS_FOUND_MESSAGE
+        ArrayN<uint8_t, 12> satellites;
+    };
+
+    struct GsaMessage
+    {
+        ArrayN<uint8_t, 12> satellites;
+        Plat4m::RealNumber positionDilutionOfPrecision;
+        Plat4m::RealNumber horizontalDilutionOfPrecision;
+        Plat4m::RealNumber verticalDilutionOfPreceision;
+    };
+
+    struct RmcMessage
+    {
+    	Plat4m::RealNumber time;
+    	bool isActive;
+    	Plat4m::RealNumber latitude;
+    	Plat4m::RealNumber longitude;
+    	Plat4m::RealNumber groundSpeed;
+    	Plat4m::RealNumber trackAngle;
+    	uint32_t date;
+    	Plat4m::RealNumber magneticVariation;
     };
 
     /*--------------------------------------------------------------------------
@@ -86,21 +128,29 @@ public:
 
     typedef ErrorTemplate<ErrorCode> Error;
 
+    typedef Callback<void, GsaMessage&> GsaMessageCallback;
+
+    typedef Callback<void, RmcMessage&> RmcMessageCallback;
+
+    /*--------------------------------------------------------------------------
+     * Public constructors
+     *------------------------------------------------------------------------*/
+    
+    ComProtocolNmea();
+    
+    /*--------------------------------------------------------------------------
+     * Public destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~ComProtocolNmea();
+
     /*--------------------------------------------------------------------------
      * Public methods
      *------------------------------------------------------------------------*/
     
-    uint32_t getParseTimeoutMs();
-    
-    ParseStatus parseData(const ByteArray& rxByteArray, ByteArray& txByteArray);
-    
-protected:
-    
-    /*--------------------------------------------------------------------------
-	 * Protected constructors
-	 *------------------------------------------------------------------------*/
+    void setGsaMessageCallback(GsaMessageCallback& gsaMessageCallback);
 
-	ComProtocol(const uint32_t parseTimeoutMs);
+    void setRmcMessageCallback(RmcMessageCallback& rmcMessageCallback);
     
 private:
     
@@ -108,14 +158,25 @@ private:
      * Private members
      *------------------------------------------------------------------------*/
     
-    const uint32_t myParseTimeoutMs;
+    GsaMessageCallback* myGsaMessageCallback;
+
+    RmcMessageCallback* myRmcMessageCallback;
 
     /*--------------------------------------------------------------------------
-	 * Private virtual methods
+	 * Private methods implemented from ComProtocol
 	 *------------------------------------------------------------------------*/
 
-    virtual ParseStatus driverParseData(const ByteArray& rxByteArray,
-    									ByteArray& txByteArray) = 0;
+	ParseStatus driverParseData(const ByteArray& rxByteArray,
+	                            ByteArray& txByteArray,
+	                            unsigned int& bytesConsumed);
+
+	/*--------------------------------------------------------------------------
+	 * Private methods
+	 *------------------------------------------------------------------------*/
+
+	ParseStatus parseGsaMessage(const ByteArray& byteArray);
+
+	ParseStatus parseRmcMessage(const ByteArray& byteArray);
 };
 
-#endif // _COM_PROTOCOL_H_
+#endif // _COM_PROTOCOL_NMEA_H_

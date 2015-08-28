@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file ComProtocol.h
+ * @file SerialPortWindows.h
  * @author Ben Minerd
- * @date 4/22/13
- * @brief ComProtocol class.
+ * @date 6/3/15
+ * @brief SerialPortWindows class.
  */
 
-#ifndef _COM_PROTOCOL_H_
-#define _COM_PROTOCOL_H_
+#ifndef _SERIAL_PORT_WINDOWS_H_
+#define _SERIAL_PORT_WINDOWS_H_
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -48,13 +48,14 @@
 
 #include <Plat4m.h>
 #include <ErrorTemplate.h>
-#include <ByteArray.h>
+#include <SerialPort.h>
+#include <windows.h>
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class ComProtocol
+class SerialPortWindows : public SerialPort
 {
 public:
     
@@ -63,59 +64,56 @@ public:
      *------------------------------------------------------------------------*/
 
     /**
-     * @brief Enumeration of communication errors.
+     * @brief Enumeration of UART driver IDs.
      */
-    enum ErrorCode
+    enum Id
     {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID
-    };
-
-    enum ParseStatus
-    {
-        PARSE_STATUS_NOT_A_MESSAGE,
-        PARSE_STATUS_MID_MESSAGE,
-        PARSE_STATUS_INVALID_MESSAGE,
-		PARSE_STATUS_UNSUPPORTED_MESSAGE,
-        PARSE_STATUS_FOUND_MESSAGE
+        ID_1 = 0,
+        ID_2,
+        ID_3,
+        ID_4,
+        ID_5,
+        ID_6
     };
 
     /*--------------------------------------------------------------------------
-	 * Public typedefs
-	 *------------------------------------------------------------------------*/
-
-    typedef ErrorTemplate<ErrorCode> Error;
-
-    /*--------------------------------------------------------------------------
-     * Public methods
+     * Public static methods
      *------------------------------------------------------------------------*/
     
-    uint32_t getParseTimeoutMs();
-    
-    ParseStatus parseData(const ByteArray& rxByteArray, ByteArray& txByteArray);
-    
-protected:
-    
-    /*--------------------------------------------------------------------------
-	 * Protected constructors
-	 *------------------------------------------------------------------------*/
-
-	ComProtocol(const uint32_t parseTimeoutMs);
+    static SerialPortWindows& get(const char* comPort);
     
 private:
     
     /*--------------------------------------------------------------------------
-     * Private members
+     * Private constructors and destructors
      *------------------------------------------------------------------------*/
     
-    const uint32_t myParseTimeoutMs;
+    SerialPortWindows(const char* comPort);
 
     /*--------------------------------------------------------------------------
-	 * Private virtual methods
+     * Private data members
+     *------------------------------------------------------------------------*/
+
+    HANDLE mySerialHandle;
+
+    /*--------------------------------------------------------------------------
+	 * Private implemented methods from Module
 	 *------------------------------------------------------------------------*/
 
-    virtual ParseStatus driverParseData(const ByteArray& rxByteArray,
-    									ByteArray& txByteArray) = 0;
+	Module::Error driverEnable(const bool enable);
+
+    /*--------------------------------------------------------------------------
+     * Private implemented methods from SerialPort
+     *------------------------------------------------------------------------*/
+    
+    SerialPort::Error driverConfigure(const Config& config);
+    
+    SerialPort::Error driverTx(const ByteArray& byteArray);
+    
+    unsigned int driverRxBytesAvailable();
+
+    SerialPort::Error driverGetRxBytes(ByteArray& byteArray,
+    								   const unsigned int nBytes);
 };
 
-#endif // _COM_PROTOCOL_H_
+#endif // _SERIAL_PORT_WINDOWS_H_

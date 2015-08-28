@@ -11,18 +11,18 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
- * 
+ * Copyright (c) 2015 Benjamin Minerd
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,89 +33,59 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file ComProtocol.h
+ * @file SystemWindows.h
  * @author Ben Minerd
- * @date 4/22/13
- * @brief ComProtocol class.
+ * @date 6/3/2015
+ * @brief SystemWindows class.
  */
 
-#ifndef _COM_PROTOCOL_H_
-#define _COM_PROTOCOL_H_
+#ifndef _SYSTEM_WINDOWS_H_
+#define _SYSTEM_WINDOWS_H_
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
-#include <ErrorTemplate.h>
-#include <ByteArray.h>
+#include <System.h>
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class ComProtocol
+class SystemWindows : public System
 {
 public:
-    
+
     /*--------------------------------------------------------------------------
-     * Public enumerations
+     * Public constructors
      *------------------------------------------------------------------------*/
 
-    /**
-     * @brief Enumeration of communication errors.
-     */
-    enum ErrorCode
-    {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID
-    };
+    SystemWindows();
 
-    enum ParseStatus
-    {
-        PARSE_STATUS_NOT_A_MESSAGE,
-        PARSE_STATUS_MID_MESSAGE,
-        PARSE_STATUS_INVALID_MESSAGE,
-		PARSE_STATUS_UNSUPPORTED_MESSAGE,
-        PARSE_STATUS_FOUND_MESSAGE
-    };
-
-    /*--------------------------------------------------------------------------
-	 * Public typedefs
-	 *------------------------------------------------------------------------*/
-
-    typedef ErrorTemplate<ErrorCode> Error;
-
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
-    
-    uint32_t getParseTimeoutMs();
-    
-    ParseStatus parseData(const ByteArray& rxByteArray, ByteArray& txByteArray);
-    
-protected:
-    
-    /*--------------------------------------------------------------------------
-	 * Protected constructors
-	 *------------------------------------------------------------------------*/
-
-	ComProtocol(const uint32_t parseTimeoutMs);
-    
 private:
-    
+
     /*--------------------------------------------------------------------------
      * Private members
      *------------------------------------------------------------------------*/
-    
-    const uint32_t myParseTimeoutMs;
 
     /*--------------------------------------------------------------------------
-	 * Private virtual methods
-	 *------------------------------------------------------------------------*/
+     * Private implemented methods
+     *------------------------------------------------------------------------*/
 
-    virtual ParseStatus driverParseData(const ByteArray& rxByteArray,
-    									ByteArray& txByteArray) = 0;
+    void driverAddTask(Task& task);
+
+    void driverRun();
+
+    void driverTimeMsHandler();
+
+    uint32_t driverTimeGetMs();
+
+    void driverTimeDelayMs(const uint32_t timeMs);
+
+    /*--------------------------------------------------------------------------
+     * Private methods
+     *------------------------------------------------------------------------*/
 };
 
-#endif // _COM_PROTOCOL_H_
+#endif // _SYSTEM_WINDOWS_H_

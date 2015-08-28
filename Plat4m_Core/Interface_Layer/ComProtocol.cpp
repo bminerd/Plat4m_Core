@@ -45,16 +45,6 @@
 
 #include <ComProtocol.h>
 #include <System.h>
-     
-/*------------------------------------------------------------------------------
- * Public constructors and destructors
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-ComProtocol::ComProtocol(const uint32_t parseTimeoutMs) :
-    myParseTimeoutMs(parseTimeoutMs)
-{
-}
 
 /*------------------------------------------------------------------------------
  * Public methods
@@ -64,4 +54,21 @@ ComProtocol::ComProtocol(const uint32_t parseTimeoutMs) :
 uint32_t ComProtocol::getParseTimeoutMs()
 {
     return myParseTimeoutMs;
+}
+
+//------------------------------------------------------------------------------
+ComProtocol::ParseStatus ComProtocol::parseData(const ByteArray& rxByteArray,
+								   	   	   	    ByteArray& txByteArray)
+{
+	return driverParseData(rxByteArray, txByteArray);
+}
+
+/*------------------------------------------------------------------------------
+ * Protected constructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+ComProtocol::ComProtocol(const uint32_t parseTimeoutMs) :
+    myParseTimeoutMs(parseTimeoutMs)
+{
 }

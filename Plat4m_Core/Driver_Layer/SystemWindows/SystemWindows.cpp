@@ -12,17 +12,17 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2015 Benjamin Minerd
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,88 +33,65 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file Module.cpp
+ * @file SystemWindows.cpp
  * @author Ben Minerd
- * @date 4/18/13
- * @brief Generic class for all modules to be subclasses of.
+ * @date 6/4/2013
+ * @brief SystemWindows class.
  */
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <Module.h>
-
-using namespace Plat4m;
+#include <SystemWindows.h>
 
 /*------------------------------------------------------------------------------
- * Public destructors
+ * Public constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-Module::~Module()
+SystemWindows::SystemWindows() :
+    System("SYSTEM_WINDOWS")
 {
 }
 
 /*------------------------------------------------------------------------------
- * Public methods
+ * Private implemented methods
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-void Module::setEnableCallback(EnableCallback& enableCallback)
+void SystemWindows::driverAddTask(Task& task)
 {
-	myEnableCallback = &enableCallback;
+
 }
 
 //------------------------------------------------------------------------------
-Module::Error Module::enable(const bool enable)
+void SystemWindows::driverRun()
 {
-	if (myIsEnabled == enable)
-	{
-		return Error(ERROR_CODE_NONE);
-	}
+    FOREVER
+    {
 
-	bool lastIsEnabled = myIsEnabled;
-
-	Error error = driverEnable(enable);
-
-	if (error.getCode() != ERROR_CODE_NONE)
-	{
-		return error;
-	}
-
-	myIsEnabled = enable;
-
-	if (isValidPointer(myEnableCallback))
-	{
-		error = myEnableCallback->call(enable);
-
-		if (error.getCode() != ERROR_CODE_NONE)
-		{
-			myIsEnabled = lastIsEnabled;
-		}
-	}
-	else
-	{
-		error.setCode(ERROR_CODE_NONE);
-	}
-
-	return error;
+    }
 }
 
 //------------------------------------------------------------------------------
-bool Module::isEnabled()
+void SystemWindows::driverTimeMsHandler()
 {
-	return myIsEnabled;
+
+}
+
+//------------------------------------------------------------------------------
+uint32_t SystemWindows::driverTimeGetMs()
+{
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+void SystemWindows::driverTimeDelayMs(const uint32_t timeMs)
+{
+
 }
 
 /*------------------------------------------------------------------------------
- * Protected constructors
+ * Private methods
  *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-Module::Module() :
-	myIsEnabled(false),
-	myEnableCallback(NULL_POINTER)
-{
-}

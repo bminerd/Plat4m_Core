@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,10 +47,8 @@
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
-
-/*------------------------------------------------------------------------------
- * Defines
- *----------------------------------------------------------------------------*/
+#include <ErrorTemplate.h>
+#include <Callback.h>
 
 /*------------------------------------------------------------------------------
  * Classes
@@ -60,17 +58,63 @@ class Module
 {
 public:
     
-    /*--------------------------------------------------------------------------
-     * Public constructors and destructors
-     *------------------------------------------------------------------------*/
-    
-    Module();
-    
+	/*--------------------------------------------------------------------------
+	 * Public enumerations
+	 *------------------------------------------------------------------------*/
+
+	enum ErrorCode
+	{
+		ERROR_CODE_NONE = 0,
+		ERROR_CODE_ENABLE
+	};
+
+	/*--------------------------------------------------------------------------
+	 * Public typedefs
+	 *------------------------------------------------------------------------*/
+
+	typedef ErrorTemplate<ErrorCode> Error;
+
+	typedef Callback<Error, bool> EnableCallback;
+
+	/*--------------------------------------------------------------------------
+	 * Public destructors
+	 *------------------------------------------------------------------------*/
+
     ~Module();
+    
+    /*--------------------------------------------------------------------------
+	 * Public methods
+	 *------------------------------------------------------------------------*/
+
+    void setEnableCallback(EnableCallback& enableCallback);
+
+    Error enable(const bool enable);
+
+    bool isEnabled();
+
+protected:
+    
+    /*--------------------------------------------------------------------------
+	 * Protected constructors
+	 *------------------------------------------------------------------------*/
+
+	Module();
     
 private:
     
-    virtual void interruptHandler(const id_t interruptId) = 0;
+    /*--------------------------------------------------------------------------
+	 * Private members
+	 *------------------------------------------------------------------------*/
+
+	bool myIsEnabled;
+
+	EnableCallback* myEnableCallback;
+
+	/*--------------------------------------------------------------------------
+	 * Private virtual methods
+	 *------------------------------------------------------------------------*/
+
+	virtual Error driverEnable(const bool enable) = 0;
 };
 
 #endif // _MODULE_H_
