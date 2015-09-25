@@ -71,13 +71,13 @@ public:
      * Public typedefs
      *------------------------------------------------------------------------*/
     
-    typedef Callback<> Callback;
+    typedef Callback<> ActionCallback;
     
     /*--------------------------------------------------------------------------
      * Public constructors and destructors
      *------------------------------------------------------------------------*/
     
-    UiAction(Callback& callback);
+    UiAction(ActionCallback& callback);
     
     /*--------------------------------------------------------------------------
      * Public implemented methods
@@ -91,7 +91,7 @@ private:
      * Private data members
      *------------------------------------------------------------------------*/
     
-    Callback& myCallback;
+    ActionCallback& myCallback;
 };
 
 #endif // _UI_ACTION_H_

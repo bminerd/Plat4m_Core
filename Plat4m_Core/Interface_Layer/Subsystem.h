@@ -85,63 +85,24 @@ public:
      * Public methods
      *------------------------------------------------------------------------*/
     
-    Error enable(const bool enable);
-    
-    Error isEnabled(bool& isEnabled);
-    
-    Error configure(const Config& config);
-    
-    Error setLevel(const Level level);
-    
-    Error getLevel(Level& level);
-    
-    Error readLevel(Level& level);
-    
-    Error toggleLevel();
-    
 protected:
 
     /*--------------------------------------------------------------------------
      * Protected constructors
      *------------------------------------------------------------------------*/
     
-    Subsystem(const char* portIdString, const char* pinIdString);
-    
-    /*--------------------------------------------------------------------------
-     * Protected methods
-     *------------------------------------------------------------------------*/
-    
-    Config& getConfig();
-    
+    Subsystem();
+
 private:
 
     /*--------------------------------------------------------------------------
      * Private data members
      *------------------------------------------------------------------------*/
 
-    const char* myPortIdString;
-    
-    const char* myPinIdString;
-
-    bool myIsEnabled;
-    
-    Config myConfig;
-    
     /*--------------------------------------------------------------------------
      * Private pure virtual methods
      *------------------------------------------------------------------------*/
-    
-    virtual Error driverEnable(const bool enable) = 0;
-    
-    virtual Error driverConfigure(const Config& config) = 0;
-    
-    virtual Error driverSetLevel(const Level level) = 0;
-    
-    virtual Error driverGetLevel(Level& level) = 0;
-    
-    virtual Error driverReadLevel(Level& level) = 0;
-    
-    virtual Error driverToggleLevel() = 0;
+
 };
 
 #endif // _SUBSYSTEM_H_

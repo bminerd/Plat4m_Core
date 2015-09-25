@@ -50,7 +50,7 @@
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-UiAction::UiAction(Callback& callback) :
+UiAction::UiAction(ActionCallback& callback) :
     myCallback(callback)
 {
 }

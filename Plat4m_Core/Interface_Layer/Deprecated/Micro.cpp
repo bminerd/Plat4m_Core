@@ -33,63 +33,79 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file CallbackParameterFunction.h
+ * @file Micro.cpp
  * @author Ben Minerd
- * @date 8/13/2013
- * @brief CallbackParameterFunction class.
+ * @date 6/3/2013
+ * @brief Micro class.
  */
-
-#ifndef _CALLBACK_FUNCTION_PARAMETER_H_
-#define _CALLBACK_FUNCTION_PARAMETER_H_
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <Plat4m.h>
-#include <Callback.h>
+#include <Micro.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Static data members
  *----------------------------------------------------------------------------*/
 
-template <typename TReturn = void, typename TParameter = void*>
-class CallbackParameterFunction : public Callback<TReturn, TParameter>
-{
-public:
-    
-    /*--------------------------------------------------------------------------
-     * Public typedefs
-     *------------------------------------------------------------------------*/
-    
-    typedef TReturn (*CallbackFunctionType)(TParameter);
-    
-    /*--------------------------------------------------------------------------
-     * Public constructors and destructors
-     *------------------------------------------------------------------------*/
-    
-    CallbackParameterFunction(CallbackFunctionType callbackFunction) :
-        Callback<TReturn>(),
-        myCallbackFunction(callbackFunction)
-    {
-    }
-    
-    /*--------------------------------------------------------------------------
-     * Public implemented methods
-     *------------------------------------------------------------------------*/
-    
-    TReturn call(TParameter parameter)
-    {
-        return (*myCallbackFunction)(parameter);
-    }
-    
-private:
-    
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
-    
-    CallbackFunctionType myCallbackFunction;
-};
+Micro* Micro::myDriver                      = NULL_POINTER;
+float Micro::myCoreVoltage                  = 0.0f;
+uint32_t Micro::myClockSourceFrequencyHz    = 0;
+Micro::Config Micro::myConfig;
 
-#endif // _CALLBACK_PARAMETER_FUNCTION_H_
+/*------------------------------------------------------------------------------
+ * Public static methods
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+float Micro::getCoreVoltage()
+{
+    return myCoreVoltage;
+}
+
+//------------------------------------------------------------------------------
+uint32_t Micro::getClockSourceFrequencyHz()
+{
+    return myClockSourceFrequencyHz;
+}
+
+//------------------------------------------------------------------------------
+Micro::Error Micro::reset()
+{
+    return myDriver->driverReset();
+}
+
+//------------------------------------------------------------------------------
+Micro::Error Micro::configure(const Config& config)
+{
+    Micro::Error error = myDriver->driverConfigure(config);
+
+    if (error == Micro::ERROR_NONE)
+    {
+        myConfig = config;
+    }
+    
+    return error;
+}
+
+//------------------------------------------------------------------------------
+Micro::Error Micro::setPowerMode(const PowerMode powerMode)
+{
+    return myDriver->driverSetPowerMode(powerMode);
+}
+
+/*------------------------------------------------------------------------------
+ * Protected constructors and destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+Micro::Micro(const float coreVoltage, const uint32_t clockSourceFrequencyHz)
+{
+    if (IS_NULL_POINTER(myDriver))
+    {
+        myCoreVoltage               = coreVoltage;
+        myClockSourceFrequencyHz    = clockSourceFrequencyHz;
+        myDriver                    = this;
+    }
+}

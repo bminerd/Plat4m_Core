@@ -33,24 +33,24 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file GpioPin.cpp
+ * @file Subsystem.cpp
  * @author Ben Minerd
- * @date 3/22/13
- * @brief GpioPin class.
+ * @date 4/23/14
+ * @brief Subsystem class.
  */
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <GpioPin.h>
+#include <Subsystem.h>
 
 /*------------------------------------------------------------------------------
  * Public virtual destructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-GpioPin::~GpioPin()
+Subsystem::~Subsystem()
 {
 }
 
@@ -58,110 +58,12 @@ GpioPin::~GpioPin()
  * Public methods
  *----------------------------------------------------------------------------*/
 
-//------------------------------------------------------------------------------
-GpioPin::Error GpioPin::enable(const bool enable)
-{
-    if (enable == myIsEnabled)
-    {
-        return ERROR_NONE;
-    }
-
-    Error error = driverEnable(enable);
-
-    if (error == ERROR_NONE)
-    {
-        myIsEnabled = enable;
-    }
-
-    return error;
-}
-
-//------------------------------------------------------------------------------
-GpioPin::Error GpioPin::isEnabled(bool& isEnabled)
-{
-    isEnabled = myIsEnabled;
-
-    return ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-GpioPin::Error GpioPin::configure(const Config& config)
-{
-    Error error = driverConfigure(config);
-
-    return error;
-}
-
-//------------------------------------------------------------------------------
-GpioPin::Error GpioPin::setLevel(const Level level)
-{
-    if (!myIsEnabled)
-    {
-        return ERROR_NOT_ENABLED;
-    }
-
-    Error error = driverSetLevel(level);
-
-    return error;
-}
-
-//------------------------------------------------------------------------------
-GpioPin::Error GpioPin::getLevel(Level& level)
-{
-    if (!myIsEnabled)
-    {
-        return ERROR_NOT_ENABLED;
-    }
-
-    Error error = driverGetLevel(level);
-
-    return error;
-}
-
-//------------------------------------------------------------------------------
-GpioPin::Error GpioPin::readLevel(Level& level)
-{
-    if (!myIsEnabled)
-    {
-        return ERROR_NOT_ENABLED;
-    }
-
-    Error error = driverReadLevel(level);
-
-    return error;
-}
-
-//------------------------------------------------------------------------------
-GpioPin::Error GpioPin::toggleLevel()
-{
-    if (!myIsEnabled)
-    {
-        return ERROR_NOT_ENABLED;
-    }
-
-    Error error = driverToggleLevel();
-
-    return error;
-}
 
 /*------------------------------------------------------------------------------
  * Protected constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-GpioPin::GpioPin(const char* portIdString, const char* pinIdString) :
-    myPortIdString(portIdString),
-    myPinIdString(pinIdString),
-    myIsEnabled(false)
+Subsystem::Subsystem()
 {
-}
-
-/*------------------------------------------------------------------------------
- * Protected methods
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-GpioPin::Config& GpioPin::getConfig()
-{
-    return myConfig;
 }

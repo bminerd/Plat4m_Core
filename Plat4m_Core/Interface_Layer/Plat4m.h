@@ -48,9 +48,7 @@
 
 #include <Callback.h>
 #include <CallbackFunction.h>
-#include <CallbackParameterFunction.h>
 #include <CallbackMethod.h>
-#include <CallbackParameterMethod.h>
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -377,36 +375,20 @@ namespace Plat4m
 	}
 
     //--------------------------------------------------------------------------
-    template <typename TReturn = void>
-    Callback<TReturn>& createCallback(TReturn (*callback)())
+    template <typename TReturn, typename... TParameters>
+    Callback<TReturn, TParameters...>& createCallback(
+                                            TReturn (*callback)(TParameters...))
     {
-        return *(new CallbackFunction<TReturn>(callback));
+        return *(new CallbackFunction<TReturn, TParameters...>(callback));
     }
 
     //--------------------------------------------------------------------------
-    template <typename TReturn = void, typename TParameter = void*>
-    Callback<TReturn, TParameter>& createCallback(
-                                                TReturn (*callback)(TParameter))
+    template <class TClass, typename TReturn, typename... TParameters>
+    Callback<TReturn, TParameters...>& createCallback(
+                                   TClass* object,
+                                   TReturn (TClass::*callback)(TParameters ...))
     {
-        return *(new CallbackParameterFunction<TReturn, TParameter>(callback));
-    }
-
-    //--------------------------------------------------------------------------
-    template <class TClass, typename TReturn = void>
-    Callback<TReturn>& createCallback(TClass* object,
-                                      TReturn (TClass::*callback)())
-    {
-        return *(new CallbackMethod<TClass, TReturn>(object, callback));
-    }
-
-    //--------------------------------------------------------------------------
-    template <class TClass, typename TReturn = void, typename TParameter = void*>
-    Callback<TReturn, TParameter>& createCallback(
-                                        TClass* object,
-                                        TReturn (TClass::*callback)(TParameter))
-    {
-        return *(new CallbackParameterMethod<TClass, TReturn, TParameter>(
-                                                                     object,
+        return *(new CallbackMethod<TClass, TReturn, TParameters...>(object,
                                                                      callback));
     }
 };

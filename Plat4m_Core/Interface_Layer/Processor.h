@@ -33,70 +33,113 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file CallbackMethod.h
+ * @file Processor.h
  * @author Ben Minerd
- * @date 7/8/2013
- * @brief CallbackMethod class.
+ * @date 12/26/2013
+ * @brief Processor namespace.
  */
 
-#ifndef _CALLBACK_METHOD_H_
-#define _CALLBACK_METHOD_H_
+#ifndef _PROCESSOR_H_
+#define _PROCESSOR_H_
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
-#include <Callback.h>
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-template <class TClass, typename TReturn, typename... TParameters>
-class CallbackMethod : public Callback<TReturn, TParameters...>
+class Processor
 {
 public:
-    
-    /*--------------------------------------------------------------------------
-     * Public typedefs
-     *------------------------------------------------------------------------*/
-    
-    typedef TReturn (TClass::*CallbackMethodType)(TParameters...);
-    
-    /*--------------------------------------------------------------------------
-     * Public constructors and destructors
-     *------------------------------------------------------------------------*/
-    
-    CallbackMethod(TClass* object, CallbackMethodType callbackMethod) :
-        Callback<TReturn, TParameters...>(),
-        myObject(object),
-        myCallbackMethod(callbackMethod)
-    {
-    }
-    
-    /*--------------------------------------------------------------------------
-     * Public implemented methods
-     *------------------------------------------------------------------------*/
-    
-    TReturn call(TParameters... parameters)
-    {
-        return (*myObject.*myCallbackMethod)(parameters...);
-    }
-    
-    TReturn operator()(TParameters... parameters)
-    {
-        return (*myObject.*myCallbackMethod)(parameters...);
-    }
 
-private:
-    
     /*--------------------------------------------------------------------------
-     * Private data members
+     * Public enumerations
      *------------------------------------------------------------------------*/
     
-    TClass* myObject;
-    CallbackMethodType myCallbackMethod;
+    /**
+     * @brief Enumeration of micro errors.
+     */
+    enum Error
+    {
+        ERROR_NONE,
+        ERROR_PARAMETER_INVALID,
+        ERROR_NOT_ENABLED
+    };
+
+    /**
+     * @brief Enumeration of timer interrupts.
+     */
+    enum Interrupt
+    {
+        INTERRUPT_OUTPUT_COMPARE
+    };
+    
+    enum PowerMode
+    {
+        POWER_MODE_RUN,
+        POWER_MODE_SLEEP
+    };
+    
+    /*--------------------------------------------------------------------------
+     * Public structures
+     *------------------------------------------------------------------------*/
+    
+    struct Config
+    {
+        int a; // Placeholder
+    };
+    
+    /*--------------------------------------------------------------------------
+     * Public static methods
+     *------------------------------------------------------------------------*/
+
+    static float getCoreVoltage();
+    
+    static uint32_t getClockSourceFrequencyHz();
+    
+    static Error reset();
+    
+    static Error configure(const Config& config);
+    
+    static Error setPowerMode(const PowerMode powerMode);
+    
+protected:
+    
+    /*--------------------------------------------------------------------------
+     * Protected constructors and destructors
+     *------------------------------------------------------------------------*/
+    
+    Processor(const float coreVoltage, const uint32_t clockSourceFrequencyHz);
+    
+private:
+
+    /*--------------------------------------------------------------------------
+     * Private static data members
+     *------------------------------------------------------------------------*/
+    
+    static Processor* myDriver;
+    
+    static float myCoreVoltage;
+    
+    static uint32_t myClockSourceFrequencyHz;
+    
+    static Config myConfig;
+    
+    /*--------------------------------------------------------------------------
+     * Private virtual methods
+     *------------------------------------------------------------------------*/
+    
+    virtual Processor::Error driverReset() = 0;
+    
+    virtual Processor::Error driverConfigure(
+                                           const Processor::Config& config) = 0;
+    
+    virtual Processor::Error driverSetPowerMode(
+                                      const Processor::PowerMode powerMode) = 0;
 };
 
-#endif // _CALLBACK_METHOD_H_
+#endif // _PROCESSOR_H_

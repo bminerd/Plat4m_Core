@@ -57,15 +57,15 @@ static const Button::Sequence::State pressSequenceStates[] =
 {
     // First state (inactive)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 0,
-        .isActive       = false
+        0,
+        0,
+        false
     },
     // Second state (active)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 0,
-        .isActive       = true
+        0,
+        0,
+        true
     }
 };
 
@@ -73,15 +73,15 @@ static const Button::Sequence::State releaseSequenceStates[] =
 {
     // First state (active)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 0,
-        .isActive       = true
+        0,
+        0,
+        true
     },
     // Second state (inactive)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 0,
-        .isActive       = false
+        0,
+        0,
+        false
     }
 };
 
@@ -89,15 +89,15 @@ static const Button::Sequence::State holdSequenceStates[] =
 {
     // First state (inactive)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 0,
-        .isActive       = false
+        0,
+        0,
+        false
     },
     // Second state (active)
     {
-        .minDurationMs  = 1000,
-        .maxDurationMs  = 0,
-        .isActive       = true
+        1000,
+        0,
+        true
     }
 };
 
@@ -105,21 +105,21 @@ static const Button::Sequence::State singleTapSequenceStates[] =
 {
     // First state (inactive)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 0,
-        .isActive       = false
+        0,
+        0,
+        false
     },
     // Second state (active)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 999,
-        .isActive       = true
+        0,
+        999,
+        true
     },
     // Third state (inactive)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 0,
-        .isActive       = false
+        0,
+        0,
+        false
     }
 };
 
@@ -127,33 +127,33 @@ static const Button::Sequence::State doubleTapSequenceStates[] =
 {
     // First state (inactive)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 0,
-        .isActive       = false
+        0,
+        0,
+        false
     },
     // Second state (active)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 1999, // Check with imaging team
-        .isActive       = true
+        0,
+        1999,
+        true
     },
     // Third state (inactive)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 250,
-        .isActive       = false
+        0,
+        250,
+        false
     },
     // Fourth state (active)
     {
-        .minDurationMs  = 0,
-        .maxDurationMs  = 1999, // Check with imaging team
-        .isActive       = true
+        0,
+        1999,
+        true
     },
     // Fifth state (inactive)
     {
-        .minDurationMs  = 0,
-        .minDurationMs  = 0,
-        .isActive       = false
+        0,
+        0,
+        false
     }
 };
 
@@ -161,33 +161,33 @@ static const Button::Sequence sequences[] =
 {
     // Button::Event::ID_PRESS
     {
-        .states         = pressSequenceStates,
-        .nStates        = ARRAY_SIZE(pressSequenceStates),
-        .isRepeatable   = false
+        pressSequenceStates,
+        ARRAY_SIZE(pressSequenceStates),
+        false
     },
     // Button::Event::ID_RELEASE
     {
-        .states         = releaseSequenceStates,
-        .nStates        = ARRAY_SIZE(releaseSequenceStates),
-        .isRepeatable   = false
+        releaseSequenceStates,
+        ARRAY_SIZE(releaseSequenceStates),
+        false
     },
     // Button::Event::ID_HOLD
     {
-        .states         = holdSequenceStates,
-        .nStates        = ARRAY_SIZE(holdSequenceStates),
-        .isRepeatable   = false
+        holdSequenceStates,
+        ARRAY_SIZE(holdSequenceStates),
+        false
     },
     // Button::Event::ID_SINGLE_TAP
     {
-        .states         = singleTapSequenceStates,
-        .nStates        = ARRAY_SIZE(singleTapSequenceStates),
-        .isRepeatable   = true
+        singleTapSequenceStates,
+        ARRAY_SIZE(singleTapSequenceStates),
+        true
     },
     // Button::Event::ID_DOUBLE_TAP
     {
-        .states         = doubleTapSequenceStates,
-        .nStates        = ARRAY_SIZE(doubleTapSequenceStates),
-        .isRepeatable   = false
+        doubleTapSequenceStates,
+        ARRAY_SIZE(doubleTapSequenceStates),
+        false
     }
 };
 

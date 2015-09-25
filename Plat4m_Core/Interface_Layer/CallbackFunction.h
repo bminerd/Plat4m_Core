@@ -53,8 +53,8 @@
  * Classes
  *----------------------------------------------------------------------------*/
 
-template <typename TReturn = void, typename TParameter = void*>
-class CallbackFunction : public Callback<TReturn>
+template <typename TReturn, typename... TParameters>
+class CallbackFunction : public Callback<TReturn, TParameters...>
 {
 public:
     
@@ -62,14 +62,14 @@ public:
      * Public typedefs
      *------------------------------------------------------------------------*/
     
-    typedef TReturn (*CallbackFunctionType)();
+    typedef TReturn (*CallbackFunctionType)(TParameters...);
     
     /*--------------------------------------------------------------------------
      * Public constructors and destructors
      *------------------------------------------------------------------------*/
     
     CallbackFunction(CallbackFunctionType callbackFunction) :
-        Callback<TReturn>(),
+        Callback<TReturn, TParameters...>(),
         myCallbackFunction(callbackFunction)
     {
     }
@@ -78,11 +78,16 @@ public:
      * Public implemented methods
      *------------------------------------------------------------------------*/
     
-    TReturn call(TParameter parameter = 0)
+    TReturn call(TParameters... parameters)
     {
-        return (*myCallbackFunction)();
+        return (*myCallbackFunction)(parameters...);
     }
     
+    TReturn operator()(TParameters... parameters)
+    {
+        return (*myCallbackFunction)(parameters...);
+    }
+
 private:
     
     /*--------------------------------------------------------------------------

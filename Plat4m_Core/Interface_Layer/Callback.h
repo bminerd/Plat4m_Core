@@ -52,16 +52,26 @@
  * Classes
  *----------------------------------------------------------------------------*/
 
-template <typename TReturn = void, typename TParameter = void*>
+template <typename TReturn = void, typename... TParameters>
 class Callback
 {
 public:
     
     /*--------------------------------------------------------------------------
+     * Public virtual destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~Callback()
+    {
+    }
+
+    /*--------------------------------------------------------------------------
      * Public virtual methods
      *------------------------------------------------------------------------*/
     
-    virtual TReturn call(TParameter parameter = 0) = 0;
+    virtual TReturn call(TParameters... parameters) = 0;
+
+    virtual TReturn operator()(TParameters... parameters) = 0;
 };
 
 #endif // _CALLBACK_H_

@@ -33,65 +33,79 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file CallbackParameterMethod.h
+ * @file Processor.cpp
  * @author Ben Minerd
- * @date 7/13/2013
- * @brief CallbackParameterMethod class.
+ * @date 6/3/2013
+ * @brief Processor class.
  */
-
-#ifndef _CALLBACK_PARAMETER_METHOD_H_
-#define _CALLBACK_PARAMETER_METHOD_H_
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <Plat4m.h>
-#include <Callback.h>
+#include <Processor.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Static data members
  *----------------------------------------------------------------------------*/
 
-template <class TClass, typename TReturn = void, typename TParameter = void*>
-class CallbackParameterMethod : public Callback<TReturn, TParameter>
-{
-public:
-    
-    /*--------------------------------------------------------------------------
-     * Public typedefs
-     *------------------------------------------------------------------------*/
-    
-    typedef TReturn (TClass::*CallbackMethodType)(TParameter);
-    
-    /*--------------------------------------------------------------------------
-     * Public constructors and destructors
-     *------------------------------------------------------------------------*/
-    
-    CallbackParameterMethod(TClass* object, CallbackMethodType callbackMethod) :
-        Callback<TReturn, TParameter>(),
-        myObject(object),
-        myCallbackMethod(callbackMethod)
-    {
-    }
-    
-    /*--------------------------------------------------------------------------
-     * Public implemented methods
-     *------------------------------------------------------------------------*/
-    
-    TReturn call(TParameter parameter = 0)
-    {
-        return (*myObject.*myCallbackMethod)(parameter);
-    }
-    
-private:
-    
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
-    
-    TClass* myObject;
-    CallbackMethodType myCallbackMethod;
-};
+Processor* Processor::myDriver                  = NULL_POINTER;
+float Processor::myCoreVoltage                  = 0.0f;
+uint32_t Processor::myClockSourceFrequencyHz    = 0;
+Processor::Config Processor::myConfig;
 
-#endif // _CALLBACK_PARAMETER_METHOD_H_
+/*------------------------------------------------------------------------------
+ * Public static methods
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+float Processor::getCoreVoltage()
+{
+    return myCoreVoltage;
+}
+
+//------------------------------------------------------------------------------
+uint32_t Processor::getClockSourceFrequencyHz()
+{
+    return myClockSourceFrequencyHz;
+}
+
+//------------------------------------------------------------------------------
+Processor::Error Processor::reset()
+{
+    return myDriver->driverReset();
+}
+
+//------------------------------------------------------------------------------
+Processor::Error Processor::configure(const Config& config)
+{
+    Processor::Error error = myDriver->driverConfigure(config);
+
+    if (error == Processor::ERROR_NONE)
+    {
+        myConfig = config;
+    }
+    
+    return error;
+}
+
+//------------------------------------------------------------------------------
+Processor::Error Processor::setPowerMode(const PowerMode powerMode)
+{
+    return myDriver->driverSetPowerMode(powerMode);
+}
+
+/*------------------------------------------------------------------------------
+ * Protected constructors and destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+Processor::Processor(const float coreVoltage, const uint32_t clockSourceFrequencyHz)
+{
+    if (IS_NULL_POINTER(myDriver))
+    {
+        myCoreVoltage               = coreVoltage;
+        myClockSourceFrequencyHz    = clockSourceFrequencyHz;
+        myDriver                    = this;
+    }
+}
