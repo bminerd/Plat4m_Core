@@ -12,17 +12,17 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2013 Benjamin Minerd
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,42 +33,30 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file I2cDevice.cpp
+ * @file GpioPinTest.cpp
  * @author Ben Minerd
- * @date 3/26/13
- * @brief I2cDevice class.
+ * @date 3/22/13
+ * @brief GpioPinTest class.
  */
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <I2cDevice.h>
+#include <GpioPinTest.h>
 
-using Plat4m::I2cDevice;
-using Plat4m::SlaveDevice;
+using Plat4m::GpioPinTest;
+using Plat4m::GpioPin;
 using Plat4m::Module;
 
 /*------------------------------------------------------------------------------
- * Public constructors and destructors
+ * Public constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-I2cDevice::I2cDevice(const uint8_t address, I2c& i2c) :
-    SlaveDevice(),
-    myAddress(address),
-    myI2c(i2c)
+GpioPinTest::GpioPinTest(const char* portIdString, const char* pinIdString) :
+    GpioPin(portIdString, pinIdString)
 {
-}
-
-/*------------------------------------------------------------------------------
- * Public methods
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-uint8_t I2cDevice::getAddress()
-{
-    return myAddress;
 }
 
 /*------------------------------------------------------------------------------
@@ -76,81 +64,41 @@ uint8_t I2cDevice::getAddress()
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-Module::Error I2cDevice::driverEnable(const bool enable)
+Module::Error GpioPinTest::driverEnable(const bool enable)
 {
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 /*------------------------------------------------------------------------------
- * Private implemented methods
+ * Private methods implemented from Module
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-SlaveDevice::Error I2cDevice::driverTx(const ByteArray& byteArray,
-                                       const bool waitUntilDone,
-                                       const uint32_t timeoutMs)
+GpioPin::Error GpioPinTest::driverConfigure(const GpioPin::Config& config)
 {
-    ByteArray emptyByteArray;
-    I2c::TransferMode transferMode;
-    
-    if (waitUntilDone)
-    {
-        transferMode = I2c::TRANSFER_MODE_TX_WAIT;
-    }
-    else
-    {
-        transferMode = I2c::TRANSFER_MODE_TX;
-    }
-    
-    I2c::Error error = myI2c.masterTransfer(transferMode,
-                                            myAddress,
-                                            byteArray,
-                                            emptyByteArray,
-                                            timeoutMs);
-
-    if (error.getCode() != I2c::ERROR_CODE_NONE)
-    {
-        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
-    }
-    
-    return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
+    return GpioPin::Error(GpioPin::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-SlaveDevice::Error I2cDevice::driverRx(ByteArray& byteArray,
-                                       const uint32_t timeoutMs)
+GpioPin::Error GpioPinTest::driverSetLevel(const Level level)
 {
-    ByteArray emptyByteArray;
-
-    I2c::Error error = myI2c.masterTransfer(I2c::TRANSFER_MODE_RX,
-                                            myAddress,
-                                            emptyByteArray,
-                                            byteArray,
-                                            timeoutMs);
-
-    if (error.getCode() != I2c::ERROR_CODE_NONE)
-    {
-        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
-    }
-    
-    return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
+    return GpioPin::Error(GpioPin::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-SlaveDevice::Error I2cDevice::driverTxRx(const ByteArray& txByteArray,
-                                         ByteArray& rxByteArray,
-                                         const uint32_t timeoutMs)
+GpioPin::Error GpioPinTest::driverGetLevel(Level& level)
 {
-    I2c::Error error = myI2c.masterTransfer(I2c::TRANSFER_MODE_TX_RX,
-                                            myAddress,
-                                            txByteArray,
-                                            rxByteArray,
-                                            timeoutMs);
+    return GpioPin::Error(GpioPin::ERROR_CODE_NONE);
+}
 
-    if (error.getCode() != I2c::ERROR_CODE_NONE)
-    {
-        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
-    }
-    
-    return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
+//------------------------------------------------------------------------------
+GpioPin::Error GpioPinTest::driverReadLevel(Level& level)
+{
+    return GpioPin::Error(GpioPin::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+GpioPin::Error GpioPinTest::driverToggleLevel()
+{
+    return GpioPin::Error(GpioPin::ERROR_CODE_NONE);
 }

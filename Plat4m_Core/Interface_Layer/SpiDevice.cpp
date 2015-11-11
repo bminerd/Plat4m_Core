@@ -45,8 +45,12 @@
 
 #include <SpiDevice.h>
 
+using Plat4m::SpiDevice;
+using Plat4m::SlaveDevice;
+using Plat4m::Module;
+
 /*------------------------------------------------------------------------------
- * Public constructors and destructors
+ * Public constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
@@ -58,11 +62,20 @@ SpiDevice::SpiDevice(GpioPin* chipSelectGpioPin, Spi& spi) :
 }
 
 /*------------------------------------------------------------------------------
+ * Public destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+SpiDevice::~SpiDevice()
+{
+}
+
+/*------------------------------------------------------------------------------
  * Private implemented methods
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-SlaveDevice::Error SpiDevice::driverEnable(const bool enable)
+Module::Error SpiDevice::driverEnable(const bool enable)
 {
     if (IS_VALID_POINTER(myChipSelectGpioPin))
     {
@@ -79,7 +92,7 @@ SlaveDevice::Error SpiDevice::driverEnable(const bool enable)
         }
     }
     
-    return ERROR_NONE;
+    return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -100,16 +113,18 @@ SlaveDevice::Error SpiDevice::driverTx(const ByteArray& byteArray,
         transferMode = Spi::TRANSFER_MODE_TX;
     }
     
-    if (mySpi.masterTransfer(transferMode,
-                             myChipSelectGpioPin,
-                             byteArray,
-                             emptyByteArray,
-                             timeoutMs)             != Spi::ERROR_NONE)
+    Spi::Error error = mySpi.masterTransfer(transferMode,
+                                            myChipSelectGpioPin,
+                                            byteArray,
+                                            emptyByteArray,
+                                            timeoutMs);
+
+    if (error.getCode() != Spi::ERROR_CODE_NONE)
     {
-        return ERROR_COMMUNICATION;
+        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
     }
     
-    return ERROR_NONE;
+    return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -118,16 +133,18 @@ SlaveDevice::Error SpiDevice::driverRx(ByteArray& byteArray,
 {
     ByteArray emptyByteArray;
 
-    if (mySpi.masterTransfer(Spi::TRANSFER_MODE_RX,
-                             myChipSelectGpioPin,
-                             emptyByteArray,
-                             byteArray,
-                             timeoutMs)             != Spi::ERROR_NONE)
+    Spi::Error error = mySpi.masterTransfer(Spi::TRANSFER_MODE_RX,
+                                            myChipSelectGpioPin,
+                                            emptyByteArray,
+                                            byteArray,
+                                            timeoutMs);
+
+    if (error.getCode() != Spi::ERROR_CODE_NONE)
     {
-        return ERROR_COMMUNICATION;
+        return Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
     }
     
-    return ERROR_NONE;
+    return Error(SlaveDevice::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -135,14 +152,16 @@ SlaveDevice::Error SpiDevice::driverTxRx(const ByteArray& txByteArray,
                                          ByteArray& rxByteArray,
                                          const uint32_t timeoutMs)
 {
-    if (mySpi.masterTransfer(Spi::TRANSFER_MODE_TX_RX_SEQUENTIAL,
-                             myChipSelectGpioPin,
-                             txByteArray,
-                             rxByteArray,
-                             timeoutMs)                 != Spi::ERROR_NONE)
+    Spi::Error error = mySpi.masterTransfer(Spi::TRANSFER_MODE_TX_RX_SEQUENTIAL,
+                                            myChipSelectGpioPin,
+                                            txByteArray,
+                                            rxByteArray,
+                                            timeoutMs);
+
+    if (error.getCode() != Spi::ERROR_CODE_NONE)
     {
-        return ERROR_COMMUNICATION;
+        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
     }
     
-    return ERROR_NONE;
+    return SlaveDevice::Error(ERROR_CODE_NONE);
 }

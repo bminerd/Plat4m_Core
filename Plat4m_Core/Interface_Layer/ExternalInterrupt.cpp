@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,79 +33,138 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file Micro.cpp
+ * @file ExternalInterrupt.cpp
  * @author Ben Minerd
- * @date 6/3/2013
- * @brief Micro class.
+ * @date 9/25/15
+ * @brief ExternalInterrupt class.
  */
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <Micro.h>
+#include <ExternalInterrupt.h>
+#include <System.h>
+
+using Plat4m::ExternalInterrupt;
+using Plat4m::GpioPin;
 
 /*------------------------------------------------------------------------------
- * Static data members
+ * Local variables
  *----------------------------------------------------------------------------*/
 
-Micro* Micro::myDriver                      = NULL_POINTER;
-float Micro::myCoreVoltage                  = 0.0f;
-uint32_t Micro::myClockSourceFrequencyHz    = 0;
-Micro::Config Micro::myConfig;
+/**
+ * @brief Trigger mode map.
+ */
+static const ExternalInterrupt::Trigger triggerMap[] =
+{
+    ExternalInterrupt::TRIGGER_FALLING, /// GpioPin::LEVEL_LOW
+    ExternalInterrupt::TRIGGER_RISING   /// GpioPin::LEVEL_HIGH
+};
+
+static const GpioPin::Resistor resistorMap[] =
+{
+    GpioPin::RESISTOR_PULL_DOWN,    /// ExternalInterrupt::TRIGGER_RISING
+    GpioPin::RESISTOR_PULL_UP,      /// ExternalInterrupt::TRIGGER_FALLING
+    GpioPin::RESISTOR_NONE          /// ExternalInterrupt::TRIGGER_RISING_FALLING
+};
+
+static const bool activeLevelMap[2][2] =
+{
+    // ExternalInterrupt::ACTIVE_LEVEL_HIGH
+    {
+        false,  // GpioPin::LEVEL_LOW
+        true    // GpioPin::LEVEL_HIGH
+    },
+    // ExternalInterrupt::ACTIVE_LEVEL_LOW
+    {
+        true,   // GpioPin::LEVEL_LOW
+        false   // GpioPin::LEVEL_HIGH
+    }
+};
 
 /*------------------------------------------------------------------------------
- * Public static methods
+ * Public virtual destructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-float Micro::getCoreVoltage()
+ExternalInterrupt::~ExternalInterrupt()
 {
-    return myCoreVoltage;
 }
 
-//------------------------------------------------------------------------------
-uint32_t Micro::getClockSourceFrequencyHz()
-{
-    return myClockSourceFrequencyHz;
-}
+/*------------------------------------------------------------------------------
+ * Public methods
+ *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-Micro::Error Micro::reset()
+ExternalInterrupt::Error ExternalInterrupt::configure(const Config& config)
 {
-    return myDriver->driverReset();
-}
-
-//------------------------------------------------------------------------------
-Micro::Error Micro::configure(const Config& config)
-{
-    Micro::Error error = myDriver->driverConfigure(config);
-
-    if (error == Micro::ERROR_NONE)
+    GpioPin::Config gpioConfig;
+    gpioConfig.mode     = GpioPin::MODE_DIGITAL_INPUT;
+    gpioConfig.resistor = resistorMap[config.trigger];
+    
+    myGpioPin.configure(gpioConfig);
+    
+    Error error = driverConfigure(config);
+    
+    if (error.getCode() == ERROR_CODE_NONE)
     {
         myConfig = config;
     }
-    
-    return error;
+
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-Micro::Error Micro::setPowerMode(const PowerMode powerMode)
+ExternalInterrupt::Error ExternalInterrupt::setHandlerCallback(
+                                               HandlerCallback& handlerCallback)
 {
-    return myDriver->driverSetPowerMode(powerMode);
+    if (IS_NULL_POINTER(myHandlerCallback))
+    {
+        myHandlerCallback = &handlerCallback;
+    }
+    
+    return Error(ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+ExternalInterrupt::Error ExternalInterrupt::isActive(bool& isActive)
+{
+    GpioPin::Level level;
+    myGpioPin.readLevel(level);
+    
+    isActive = activeLevelMap[myConfig.activeLevel][level];
+    
+    return Error(ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+void ExternalInterrupt::handler()
+{
+    if (IS_VALID_POINTER(myHandlerCallback))
+    {
+        bool isActive = true;
+            
+        if (myConfig.trigger == TRIGGER_RISING_FALLING)
+        {
+            GpioPin::Level level;
+            myGpioPin.readLevel(level);
+            
+            isActive = activeLevelMap[myConfig.activeLevel][level];
+        }
+    
+        myHandlerCallback->call(isActive);
+    }
 }
 
 /*------------------------------------------------------------------------------
- * Protected constructors and destructors
+ * Protected constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-Micro::Micro(const float coreVoltage, const uint32_t clockSourceFrequencyHz)
+ExternalInterrupt::ExternalInterrupt(GpioPin& gpioPin) :
+    myIsEnabled(false),
+    myGpioPin(gpioPin),
+    myHandlerCallback(NULL_POINTER)
 {
-    if (IS_NULL_POINTER(myDriver))
-    {
-        myCoreVoltage               = coreVoltage;
-        myClockSourceFrequencyHz    = clockSourceFrequencyHz;
-        myDriver                    = this;
-    }
 }

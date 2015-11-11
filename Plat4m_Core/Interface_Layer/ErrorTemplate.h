@@ -39,14 +39,17 @@
  * @brief Generic class for all modules to be subclasses of.
  */
 
-#ifndef _ERROR_TEMPLATE_H_
-#define _ERROR_TEMPLATE_H_
+#ifndef ERROR_TEMPLATE_H
+#define ERROR_TEMPLATE_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
@@ -58,7 +61,7 @@ class ErrorTemplate
 public:
     
 	/*--------------------------------------------------------------------------
-	 * Protected constructors
+	 * Public constructors
 	 *------------------------------------------------------------------------*/
 
 	//--------------------------------------------------------------------------
@@ -67,7 +70,7 @@ public:
 	}
 
 	//--------------------------------------------------------------------------
-	ErrorTemplate(const TCode code) :
+	explicit ErrorTemplate(const TCode code) :
 		myCode(code)
 	{
 		//ErrorHandler::call(*this);
@@ -78,10 +81,18 @@ public:
 	 *------------------------------------------------------------------------*/
     
 	//--------------------------------------------------------------------------
-	TCode getCode()
-	{
-		return myCode;
-	}
+    ErrorTemplate& operator=(const ErrorTemplate& errorTemplate)
+    {
+        myCode = errorTemplate.myCode;
+
+        return (*this);
+    }
+
+    //--------------------------------------------------------------------------
+    TCode getCode()
+    {
+        return myCode;
+    }
 
 	//--------------------------------------------------------------------------
 	void setCode(const TCode code)
@@ -100,4 +111,6 @@ private:
 	TCode myCode;
 };
 
-#endif // _ERROR_TEMPLATE_H_
+};
+
+#endif // ERROR_TEMPLATE_H

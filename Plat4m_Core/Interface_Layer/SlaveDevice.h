@@ -39,21 +39,26 @@
  * @brief SlaveDevice class.
  */
 
-#ifndef _SLAVE_DEVICE_H_
-#define _SLAVE_DEVICE_H_
+#ifndef SLAVE_DEVICE_H
+#define SLAVE_DEVICE_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
 #include <ByteArray.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class SlaveDevice
+class SlaveDevice : public Module
 {
 public:
     
@@ -61,18 +66,22 @@ public:
      * Public enumerations
      *------------------------------------------------------------------------*/
     
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_NOT_ENABLED,
-        ERROR_COMMUNICATION
+        ERROR_CODE_NONE,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_COMMUNICATION
     };
     
     /*--------------------------------------------------------------------------
+     * Public typedefs
+     *------------------------------------------------------------------------*/
+
+    typedef ErrorTemplate<ErrorCode> Error;
+
+    /*--------------------------------------------------------------------------
      * Public methods
      *------------------------------------------------------------------------*/
-    
-    Error enable(const bool enable);
     
     /**
      * @brief Transmits the given byte array to this Slave device.
@@ -104,24 +113,28 @@ public:
 protected:
 
     /*--------------------------------------------------------------------------
-     * Protected constructors and destructors
+     * Protected constructors
      *------------------------------------------------------------------------*/
     
     SlaveDevice();
     
+    /*--------------------------------------------------------------------------
+     * Protected destructors
+     *------------------------------------------------------------------------*/
+    
+    virtual ~SlaveDevice();
+
 private:
     
     /*--------------------------------------------------------------------------
-     * Private data members
+     * Private methods implemented from Module
      *------------------------------------------------------------------------*/
-    
-    bool myIsEnabled;
-    
+
+    //Module::Error driverEnable(const bool enable) override;
+
     /*--------------------------------------------------------------------------
      * Private pure virtual methods
      *------------------------------------------------------------------------*/
-    
-    virtual Error driverEnable(const bool enable) = 0;
     
     virtual Error driverTx(const ByteArray& byteArray,
                            const bool waitUntilDone,
@@ -133,5 +146,7 @@ private:
                              ByteArray& rxByteArray,
                              const uint32_t timeoutMs) = 0;
 };
+
+}; // namespace Plat4m
 
 #endif // _SLAVE_DEVICE_H_

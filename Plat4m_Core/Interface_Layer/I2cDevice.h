@@ -39,8 +39,8 @@
  * @brief I2cDevice class.
  */
 
-#ifndef _I2C_DEVICE_H_
-#define _I2C_DEVICE_H_
+#ifndef I2C_DEVICE_H
+#define I2C_DEVICE_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -49,6 +49,9 @@
 #include <Plat4m.h>
 #include <SlaveDevice.h>
 #include <I2c.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
@@ -81,20 +84,27 @@ private:
     I2c& myI2c;
     
     /*--------------------------------------------------------------------------
-     * Private implemented methods
+     * Private methods implemented from Module
      *------------------------------------------------------------------------*/
     
-    Error driverEnable(const bool enable);
+    Module::Error driverEnable(const bool enable) override;
+
+    /*--------------------------------------------------------------------------
+     * Private methods from SlaveDevice
+     *------------------------------------------------------------------------*/
     
-    Error driverTx(const ByteArray& byteArray,
-                   const bool waitUntilDone,
-                   const uint32_t timeoutMs);
+    SlaveDevice::Error driverTx(const ByteArray& byteArray,
+                                const bool waitUntilDone,
+                                const uint32_t timeoutMs) override;
     
-    Error driverRx(ByteArray& byteArray, const uint32_t timeoutMs);
+    SlaveDevice::Error driverRx(ByteArray& byteArray,
+                                const uint32_t timeoutMs) override;
     
-    Error driverTxRx(const ByteArray& txByteArray,
-                     ByteArray& rxByteArray,
-                     const uint32_t timeoutMs);
+    SlaveDevice::Error driverTxRx(const ByteArray& txByteArray,
+                                  ByteArray& rxByteArray,
+                                  const uint32_t timeoutMs) override;
 };
+
+}; // namespace Plat4m
 
 #endif // _I2C_DEVICE_H_

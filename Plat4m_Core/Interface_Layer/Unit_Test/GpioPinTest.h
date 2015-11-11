@@ -33,27 +33,22 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file ComLink.h
+ * @file GpioPinTest.h
  * @author Ben Minerd
- * @date 4/22/13
- * @brief ComLink class.
+ * @date 10/20/15
+ * @brief GpioPinTest class.
  */
 
-#ifndef COM_LINK_H
-#define COM_LINK_H
+#ifndef GPIO_PIN_TEST_H
+#define GPIO_PIN_TEST_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
-#include <Module.h>
+#include <GpioPin.h>
 #include <ErrorTemplate.h>
-#include <ComProtocol.h>
-#include <List.h>
-#include <ByteArrayN.h>
-#include <ComInterface.h>
-#include <Task.h>
 
 namespace Plat4m
 {
@@ -62,24 +57,24 @@ namespace Plat4m
  * Classes
  *----------------------------------------------------------------------------*/
 
-class ComLink : public Module
+class GpioPinTest : public GpioPin
 {
 public:
-
+    
     /*--------------------------------------------------------------------------
      * Public enumerations
      *------------------------------------------------------------------------*/
-
+    
     /**
-     * @brief Enumeration of communication errors.
+     * @brief Enumeration of GPIO errors.
      */
-    enum ErrorCode
+    enum class ErrorCode
     {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID,
-        ERROR_CODE_NOT_ENABLED
+        NONE,
+        NOT_ENABLED,
+        COMMUNICATION
     };
-
+    
     /*--------------------------------------------------------------------------
      * Public typedefs
      *------------------------------------------------------------------------*/
@@ -87,46 +82,59 @@ public:
     typedef ErrorTemplate<ErrorCode> Error;
 
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Public structures
      *------------------------------------------------------------------------*/
-
-    ComLink(ComInterface& comInterface);
-
+    
+    /**
+     * @brief GPIO configuration type.
+     */
+    struct Config
+    {
+        Mode mode;
+        Resistor resistor;
+    };
+    
+    /*--------------------------------------------------------------------------
+     * Public constructors
+     *------------------------------------------------------------------------*/
+    
+    GpioPinTest(const char* portIdString, const char* pinIdString);
+    
     /*--------------------------------------------------------------------------
      * Public methods
      *------------------------------------------------------------------------*/
-
-    Error addComProtocol(ComProtocol* comProtocol);
+    
+    Error configure(const Config& config);
 
 private:
 
     /*--------------------------------------------------------------------------
      * Private data members
      *------------------------------------------------------------------------*/
-
-    ComInterface& myComInterface;
-
-    List<ComProtocol*> myComProtocolList;
-
-    ComProtocol* myCurrentComProtocol;
-
-    uint32_t myCurrentComProtocolTimeoutTimeMs;
-
-    ByteArrayN<256> myRxByteArray;
-
-    ByteArrayN<256> myTxByteArray;
-
-    Task myTask;
+    
+    Config myConfig;
+    
+    /*--------------------------------------------------------------------------
+     * Private methods implemented from Module
+     *------------------------------------------------------------------------*/
+    
+    Module::Error driverEnable(const bool enable) override;
 
     /*--------------------------------------------------------------------------
-     * Private methods
+     * Private methods implemented from GpioPin
      *------------------------------------------------------------------------*/
-
-    void taskCallback();
-
-    void tryProtocol(ComProtocol* comProtocol);
+    
+    GpioPin::Error driverConfigure(const GpioPin::Config& config) override;
+    
+    GpioPin::Error driverSetLevel(const Level level) override;
+    
+    GpioPin::Error driverGetLevel(Level& level) override;
+    
+    GpioPin::Error driverReadLevel(Level& level) override;
+    
+    GpioPin::Error driverToggleLevel() override;
 };
 
 }; // namespace Plat4m
 
-#endif // COM_LINK_H
+#endif // GPIO_PIN_TEST_H

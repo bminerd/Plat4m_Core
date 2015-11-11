@@ -46,24 +46,28 @@
 #include <EnableLine.h>
 #include <System.h>
 
+using Plat4m::EnableLine;
+using Plat4m::Module;
+using Plat4m::GpioPin;
+
 /*------------------------------------------------------------------------------
  * Local variables
  *----------------------------------------------------------------------------*/
 
 static GpioPin::Resistor gpioResistorMap[] =
 {
-    GpioPin::RESISTOR_PULL_DOWN,    // ACTIVE_LEVEL_HIGH
-    GpioPin::RESISTOR_PULL_UP       // ACTIVE_LEVEL_LOW
+    GpioPin::RESISTOR_PULL_DOWN,    // Active::LEVEL_HIGH
+    GpioPin::RESISTOR_PULL_UP       // Active::LEVEL_LOW
 };
 
 static GpioPin::Level gpioLevelMap[2][2] =
 {
-    // ACTIVE_HIGH
+    // Active::HIGH
     {
         GpioPin::LEVEL_LOW,     // Active == false
         GpioPin::LEVEL_HIGH     // Active == true
     },
-    // ACTIVE_LOW
+    // Active::LOW
     {
         GpioPin::LEVEL_HIGH,    // Active == false
         GpioPin::LEVEL_LOW      // Active == true
@@ -72,12 +76,12 @@ static GpioPin::Level gpioLevelMap[2][2] =
 
 static bool activeLevelMap[2][2] =
 {
-    // ACTIVE_HIGH
+    // Active::HIGH
     {
         false,  // GpioPin::LEVEL_LOW
         true    // GpioPin::LEVEL_HIGH
     },
-    // ACTIVE_LOW
+    // Active::LOW
     {
         true,   // GpioPin::LEVEL_LOW
         false   // GpioPin::LEVEL_HIGH
@@ -85,7 +89,7 @@ static bool activeLevelMap[2][2] =
 };
 
 /*------------------------------------------------------------------------------
- * Public constructors and destructors
+ * Public constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
@@ -96,9 +100,17 @@ EnableLine::EnableLine(const Mode mode,
     myMode(mode),
     myActiveLevel(activeLevel),
     myUsePullResistor(usePullResistor),
-    myIsEnabled(false),
     myIsActive(false),
     myGpioPin(gpioPin)
+{
+}
+
+/*------------------------------------------------------------------------------
+ * Public constructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+EnableLine::~EnableLine()
 {
 }
 
@@ -107,85 +119,29 @@ EnableLine::EnableLine(const Mode mode,
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-EnableLine::Error EnableLine::enable(const bool enable)
-{
-    if (enable == myIsEnabled)
-    {
-        return ERROR_NONE;
-    }
-    
-    GpioPin::Error error;
-    
-    error = myGpioPin.enable(enable);
-    
-    if (enable)
-    {
-        GpioPin::Config gpioConfig;
-        
-        if (myMode == MODE_INPUT)
-        {
-            gpioConfig.mode = GpioPin::MODE_DIGITAL_INPUT;
-        }
-        else // myMode == MODE_OUTPUT
-        {
-            gpioConfig.mode = GpioPin::MODE_DIGITAL_OUTPUT;
-        }
-        
-        if (myUsePullResistor)
-        {
-            gpioConfig.resistor = gpioResistorMap[myActiveLevel];
-        }
-        else
-        {
-            gpioConfig.resistor = GpioPin::RESISTOR_NONE;
-        }
-        
-        error = myGpioPin.configure(gpioConfig);
-        
-        if (myMode == MODE_OUTPUT)
-        {
-            error = myGpioPin.setLevel(gpioLevelMap[myActiveLevel][false]);
-        }
-    }
-    
-    if (error == GpioPin::ERROR_NONE)
-    {
-        myIsEnabled = enable;
-    }
-    
-    return ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-bool EnableLine::isEnabled()
-{
-    return myIsEnabled;
-}
-
-//------------------------------------------------------------------------------
 EnableLine::Error EnableLine::setActive(const bool active)
 {
     if (active == myIsActive)
     {
-        return ERROR_NONE;
+        return Error(ERROR_CODE_NONE);
     }
     
     GpioPin::Error error = myGpioPin.
                            setLevel(gpioLevelMap[myActiveLevel][active]);
     
-    if (error == GpioPin::ERROR_NONE)
+    if (error.getCode() == GpioPin::ERROR_CODE_NONE)
     {
         myIsActive = active;
     }
     
     // Error?
-    return ERROR_NONE;
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
 EnableLine::Error EnableLine::isActive(bool& isActive)
 {
-    if (!myIsEnabled)
+    if (!isEnabled())
     {
         isActive = false;
     }
@@ -201,7 +157,7 @@ EnableLine::Error EnableLine::isActive(bool& isActive)
         isActive = activeLevelMap[myActiveLevel][level];
     }
     
-    return ERROR_NONE;
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -222,4 +178,58 @@ EnableLine::Error EnableLine::pulseActive(const bool active,
 EnableLine::Error EnableLine::toggleActive()
 {
     return setActive(!myIsActive);
+}
+
+/*------------------------------------------------------------------------------
+ * Private methods implemented from Module
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+Module::Error EnableLine::driverEnable(const bool enable)
+{
+    if (enable == isEnabled())
+    {
+        return Module::Error(Module::ERROR_CODE_NONE);
+    }
+
+    Module::Error moduleError = myGpioPin.enable(enable);
+    GpioPin::Error gpioPinError;
+
+    if (enable)
+    {
+        GpioPin::Config gpioConfig;
+
+        if (myMode == MODE_INPUT)
+        {
+            gpioConfig.mode = GpioPin::MODE_DIGITAL_INPUT;
+        }
+        else // myMode == MODE_OUTPUT
+        {
+            gpioConfig.mode = GpioPin::MODE_DIGITAL_OUTPUT;
+        }
+
+        if (myUsePullResistor)
+        {
+            gpioConfig.resistor = gpioResistorMap[myActiveLevel];
+        }
+        else
+        {
+            gpioConfig.resistor = GpioPin::RESISTOR_NONE;
+        }
+
+        gpioPinError = myGpioPin.configure(gpioConfig);
+
+        if (myMode == MODE_OUTPUT)
+        {
+            gpioPinError = myGpioPin.setLevel(gpioLevelMap[myActiveLevel][false]);
+        }
+    }
+
+    if ((moduleError.getCode() != Module::ERROR_CODE_NONE) ||
+        (gpioPinError.getCode() != GpioPin::ERROR_CODE_NONE))
+    {
+        return Module::Error(Module::ERROR_CODE_ENABLE);
+    }
+
+    return Module::Error(Module::ERROR_CODE_NONE);
 }

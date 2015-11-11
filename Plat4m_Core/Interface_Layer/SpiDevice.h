@@ -39,8 +39,8 @@
  * @brief SpiDevice class.
  */
 
-#ifndef _SPI_DEVICE_H_
-#define _SPI_DEVICE_H_
+#ifndef SPI_DEVICE_H
+#define SPI_DEVICE_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -51,6 +51,9 @@
 #include <Spi.h>
 #include <ByteArray.h>
 
+namespace Plat4m
+{
+
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
@@ -60,11 +63,17 @@ class SpiDevice : public SlaveDevice
 public:
     
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Public constructors
      *------------------------------------------------------------------------*/
     
     SpiDevice(GpioPin* chipSelectGpioPin, Spi& spi);
     
+    /*--------------------------------------------------------------------------
+     * Public destructors
+     *------------------------------------------------------------------------*/
+
+    ~SpiDevice();
+
 private:
     
     /*--------------------------------------------------------------------------
@@ -74,22 +83,28 @@ private:
     GpioPin* myChipSelectGpioPin;
     
     Spi& mySpi;
+
+    /*--------------------------------------------------------------------------
+     * Private methods implemented from Module
+     *------------------------------------------------------------------------*/
+
+    Module::Error driverEnable(const bool enable) override;
     
     /*--------------------------------------------------------------------------
-     * Private implemented methods
+     * Private methods implemented from SlaveDevice
      *------------------------------------------------------------------------*/
-    
-    Error driverEnable(const bool enable);
     
     Error driverTx(const ByteArray& byteArray,
                    const bool waitUntilDone,
-                   const uint32_t timeoutMs);
+                   const uint32_t timeoutMs) override;
     
-    Error driverRx(ByteArray& byteArray, const uint32_t timeoutMs);
+    Error driverRx(ByteArray& byteArray, const uint32_t timeoutMs) override;
     
     Error driverTxRx(const ByteArray& txByteArray,
                      ByteArray& rxByteArray,
-                     const uint32_t timeoutMs);
+                     const uint32_t timeoutMs) override;
 };
 
-#endif // _SPI_DEVICE_H_
+}; // namespace Plat4m
+
+#endif // SPI_DEVICE_H

@@ -46,6 +46,8 @@
 #include <ComProtocol.h>
 #include <System.h>
 
+using Plat4m::ComProtocol;
+
 /*------------------------------------------------------------------------------
  * Public methods
  *----------------------------------------------------------------------------*/
@@ -70,5 +72,14 @@ ComProtocol::ParseStatus ComProtocol::parseData(const ByteArray& rxByteArray,
 //------------------------------------------------------------------------------
 ComProtocol::ComProtocol(const uint32_t parseTimeoutMs) :
     myParseTimeoutMs(parseTimeoutMs)
+{
+}
+
+/*------------------------------------------------------------------------------
+ * Protected destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+ComProtocol::~ComProtocol()
 {
 }

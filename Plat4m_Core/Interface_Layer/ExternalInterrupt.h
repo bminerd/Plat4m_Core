@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,112 +33,136 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file Micro.h
+ * @file ExternalInterrupt.h
  * @author Ben Minerd
- * @date 12/26/2013
- * @brief Micro namespace.
+ * @date 9/25/15
+ * @brief ExternalInterrupt class.
  */
 
-#ifndef _MICRO_H_
-#define _MICRO_H_
+#ifndef EXTERNAL_INTERRUPT_H
+#define EXTERNAL_INTERRUPT_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <Callback.h>
+#include <GpioPin.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class Micro
+class ExternalInterrupt : public Module
 {
 public:
-
+    
     /*--------------------------------------------------------------------------
      * Public enumerations
      *------------------------------------------------------------------------*/
     
     /**
-     * @brief Enumeration of micro errors.
+     * @brief Enumeration of external interrupt errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_PARAMETER_INVALID,
-        ERROR_NOT_ENABLED
+        ERROR_CODE_NONE,
+        ERROR_CODE_PARAMETER_INVALID,
+        ERROR_CODE_NOT_ENABLED
     };
 
     /**
-     * @brief Enumeration of timer interrupts.
+     * @brief Enumeration of external interrupt triggers.
      */
-    enum Interrupt
+    enum Trigger
     {
-        INTERRUPT_OUTPUT_COMPARE
+        TRIGGER_RISING = 0,
+        TRIGGER_FALLING,
+        TRIGGER_RISING_FALLING
     };
     
-    enum PowerMode
+    enum ActiveLevel
     {
-        POWER_MODE_RUN,
-        POWER_MODE_SLEEP
+        ACTIVE_LEVEL_HIGH = 0,
+        ACTIVE_LEVEL_LOW
     };
-    
+         
     /*--------------------------------------------------------------------------
      * Public structures
      *------------------------------------------------------------------------*/
     
     struct Config
     {
-        int a; // Placeholder
+        Trigger trigger;
+        ActiveLevel activeLevel;
     };
     
     /*--------------------------------------------------------------------------
-     * Public static methods
+     * Public typedefs
+     *------------------------------------------------------------------------*/
+    
+    typedef ErrorTemplate<ErrorCode> Error;
+
+    typedef Callback<void, bool> HandlerCallback;
+    
+    /*--------------------------------------------------------------------------
+     * Public methods
      *------------------------------------------------------------------------*/
 
-    static float getCoreVoltage();
+    /**
+     * @brief Configures the given external interrupt.
+     * @param handle ExternalInterrupt handle to access.
+     * @param config ExternalInterrupt configuration.
+     * @return ExternalInterrupt error.
+     */
+    Error configure(const Config& config);
     
-    static uint32_t getClockSourceFrequencyHz();
+    Error setHandlerCallback(HandlerCallback& handlerCallback);
     
-    static Error reset();
+    Error isActive(bool& isActive);
     
-    static Error configure(const Config& config);
-    
-    static Error setPowerMode(const PowerMode powerMode);
+    void handler();
     
 protected:
     
     /*--------------------------------------------------------------------------
-     * Protected constructors and destructors
+     * Protected constructors
      *------------------------------------------------------------------------*/
     
-    Micro(const float coreVoltage, const uint32_t clockSourceFrequencyHz);
+    ExternalInterrupt(GpioPin& gpioPin);
     
+    /*--------------------------------------------------------------------------
+     * Protected virtual destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~ExternalInterrupt();
+
 private:
+    
+    /*--------------------------------------------------------------------------
+     * Private data members
+     *------------------------------------------------------------------------*/
+    
+    bool myIsEnabled;
+    
+    Config myConfig;
+    
+    GpioPin& myGpioPin;
+    
+    HandlerCallback* myHandlerCallback;
 
     /*--------------------------------------------------------------------------
-     * Private static data members
+     * Private pure virtual methods
      *------------------------------------------------------------------------*/
     
-    static Micro* myDriver;
-    
-    static float myCoreVoltage;
-    
-    static uint32_t myClockSourceFrequencyHz;
-    
-    static Config myConfig;
-    
-    /*--------------------------------------------------------------------------
-     * Private virtual methods
-     *------------------------------------------------------------------------*/
-    
-    virtual Micro::Error driverReset() = 0;
-    
-    virtual Micro::Error driverConfigure(const Micro::Config& config) = 0;
-    
-    virtual Micro::Error driverSetPowerMode(
-                                          const Micro::PowerMode powerMode) = 0;
+    virtual Error driverConfigure(const Config& config) = 0;
 };
 
-#endif // _MICRO_H_
+}; // namespace Plat4m
+
+#endif // EXTERNAL_INTERRUPT_H

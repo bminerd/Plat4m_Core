@@ -39,21 +39,26 @@
  * @brief PowerSupply class.
  */
 
-#ifndef _POWER_SUPPLY_H_
-#define _POWER_SUPPLY_H_
+#ifndef POWER_SUPPLY_H
+#define POWER_SUPPLY_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
 #include <EnableLine.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class PowerSupply
+class PowerSupply : public Module
 {
 public:
     
@@ -64,29 +69,37 @@ public:
     /**
      * @brief Enumeration of enable line errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_NOT_ENABLED,
-        ERROR_COMMUNICATION,
-        ERROR_NOT_CONTROLLED
+        ERROR_CODE_NONE,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_COMMUNICATION,
+        ERROR_CODE_NOT_CONTROLLED
     };
     
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Public typedefs
+     *------------------------------------------------------------------------*/
+
+    typedef ErrorTemplate<ErrorCode> Error;
+
+    /*--------------------------------------------------------------------------
+     * Public constructors
      *------------------------------------------------------------------------*/
     
     PowerSupply(const EnableLine::ActiveLevel activeLevel,
                 GpioPin& gpioPin,
-                PowerSupply* parentSupply = NULL_POINTER);
+                PowerSupply* parentSupply = nullptr);
+    
+    /*--------------------------------------------------------------------------
+     * Public destructors
+     *------------------------------------------------------------------------*/
+    
+    ~PowerSupply();
     
     /*--------------------------------------------------------------------------
      * Public methods
      *------------------------------------------------------------------------*/
-    
-    Error enable(const bool enable);
-    
-    Error isEnabled(bool& isEnabled);
     
     Error setActive(const bool active);
     
@@ -113,6 +126,12 @@ private:
     EnableLine myEnableLine;
     
     PowerSupply* myParent;
+
+    /*--------------------------------------------------------------------------
+     * Private methods implemented from Module
+     *------------------------------------------------------------------------*/
+
+    Module::Error driverEnable(const bool enable) override;
     
     /*--------------------------------------------------------------------------
      * Private methods
@@ -120,5 +139,7 @@ private:
     
     Error update();
 };
+
+}; // namespace Plat4m
 
 #endif // _POWER_SUPPLY_H_

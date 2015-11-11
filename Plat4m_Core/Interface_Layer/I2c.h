@@ -40,22 +40,27 @@
  * @todo Add slave implementation.
  */
 
-#ifndef _I2C_H_
-#define _I2C_H_
+#ifndef I2C_H
+#define I2C_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
 #include <ByteArray.h>
 #include <Buffer.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class I2c
+class I2c : public Module
 {
 public:
 
@@ -66,16 +71,16 @@ public:
     /**
      * @brief Enumeration of I2C errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_PARAMETER_INVALID,
-        ERROR_ADDRESS_INVALID,
-        ERROR_NOT_ENABLED,
-        ERROR_TX_BUFFER_FULL,
-        ERROR_TIMEOUT,
-        ERROR_BUS,
-        ERROR_BUS_BUSY
+        ERROR_CODE_NONE,
+        ERROR_CODE_PARAMETER_INVALID,
+        ERROR_CODE_ADDRESS_INVALID,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_TX_BUFFER_FULL,
+        ERROR_CODE_TIMEOUT,
+        ERROR_CODE_BUS,
+        ERROR_CODE_BUS_BUSY
     };
 
     /**
@@ -134,6 +139,12 @@ public:
     };
 
     /*--------------------------------------------------------------------------
+     * Public typedefs
+     *------------------------------------------------------------------------*/
+
+    typedef ErrorTemplate<ErrorCode> Error;
+
+    /*--------------------------------------------------------------------------
      * Public structures
      *------------------------------------------------------------------------*/
 
@@ -147,28 +158,8 @@ public:
     };
 
     /*--------------------------------------------------------------------------
-     * Public virtual destructors
-     *------------------------------------------------------------------------*/
-
-    virtual ~I2c();
-
-    /*--------------------------------------------------------------------------
      * Public methods
      *------------------------------------------------------------------------*/
-
-    /**
-     * @brief Sets this I2C enabled or disabled.
-     * @param enable Flag that indicates if the I2C should be enabled or disabled.
-     * @return I2C error.
-     */
-    Error enable(const bool enable);
-
-    /**
-     * @brief Checks to see if this I2C is enabled or disabled.
-     * @param isEnabled Flag that indicates if the I2C is enabled or disabled.
-     * @return I2C error.
-     */
-    Error isEnabled(bool& isEnabled);
 
     /**
      * @brief Configures this I2C.
@@ -194,6 +185,12 @@ protected:
      *------------------------------------------------------------------------*/
 
     I2c(const char* idString);
+
+    /*--------------------------------------------------------------------------
+     * Protected virtual destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~I2c();
 
 private:
 
@@ -221,8 +218,6 @@ private:
 
     const char* myIdString;
 
-    bool myIsEnabled;
-
     Config myConfig;
 
     volatile State myState;
@@ -236,8 +231,6 @@ private:
     /*--------------------------------------------------------------------------
      * Private virtual methods
      *------------------------------------------------------------------------*/
-
-    virtual Error driverEnable(const bool enable) = 0;
 
     virtual Error driverConfigure(const Config& config) = 0;
 
@@ -260,4 +253,6 @@ private:
     virtual Error driverReset() = 0;
 };
 
-#endif // _I2C_H_
+}; // namespace Plat4m
+
+#endif // I2C_H

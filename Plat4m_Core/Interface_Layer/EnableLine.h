@@ -39,21 +39,26 @@
  * @brief EnableLine class.
  */
 
-#ifndef _ENABLE_LINE_H_
-#define _ENABLE_LINE_H_
+#ifndef ENABLE_LINE_H
+#define ENABLE_LINE_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
 #include <GpioPin.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class EnableLine
+class EnableLine : public Module
 {
 public:
     
@@ -64,13 +69,13 @@ public:
     /**
      * @brief Enumeration of enable line errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_NOT_ENABLED,
-        ERROR_MODE_NOT_INPUT,
-        ERROR_MODE_NOT_OUTPUT,
-        ERROR_COMMUNICATION
+        ERROR_CODE_NONE,
+        ERROR_CODE_ENABLED,
+        ERROR_CODE_MODE_NOT_INPUT,
+        ERROR_CODE_MODE_NOT_OUTPUT,
+        ERROR_CODE_COMMUNICATION
     };
     
     /**
@@ -90,9 +95,15 @@ public:
         ACTIVE_LEVEL_HIGH = 0,
         ACTIVE_LEVEL_LOW
     };
+
+    /*--------------------------------------------------------------------------
+     * Public typedefs
+     *------------------------------------------------------------------------*/
+
+    typedef ErrorTemplate<ErrorCode> Error;
     
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Public constructors
      *------------------------------------------------------------------------*/
     
     EnableLine(const Mode mode,
@@ -101,12 +112,14 @@ public:
                const bool usePullResistor);
     
     /*--------------------------------------------------------------------------
-     * Public methods
+     * Public destructors
      *------------------------------------------------------------------------*/
     
-    Error enable(const bool enable);
+    ~EnableLine();
     
-    bool isEnabled();
+    /*--------------------------------------------------------------------------
+     * Public methods
+     *------------------------------------------------------------------------*/
     
     Error setActive(const bool active);
     
@@ -128,11 +141,17 @@ private:
     
     const bool myUsePullResistor;
     
-    bool myIsEnabled;
-    
     bool myIsActive;
     
     GpioPin& myGpioPin;
+
+    /*--------------------------------------------------------------------------
+     * Private methods implemented from Module
+     *------------------------------------------------------------------------*/
+
+    Module::Error driverEnable(const bool enable) override;
 };
 
-#endif // _ENABLE_LINE_H_
+}; // namespace Plat4m
+
+#endif // ENABLE_LINE_H

@@ -45,36 +45,20 @@
 
 #include <SlaveDevice.h>
 
+using Plat4m::SlaveDevice;
+
 /*------------------------------------------------------------------------------
  * Public methods
  *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-SlaveDevice::Error SlaveDevice::enable(const bool enable)
-{
-    if (enable == myIsEnabled)
-    {
-        return ERROR_NONE;
-    }
-    
-    Error error = driverEnable(enable);
-    
-    if (error == ERROR_NONE)
-    {
-        myIsEnabled = enable;
-    }
-    
-    return error;
-}
 
 //------------------------------------------------------------------------------
 SlaveDevice::Error SlaveDevice::tx(const ByteArray& byteArray,
                                    const bool waitUntilDone,
                                    const uint32_t timeoutMs)
 {
-    if (!myIsEnabled)
+    if (!isEnabled())
     {
-        return ERROR_NOT_ENABLED;
+        return Error(ERROR_CODE_NOT_ENABLED);
     }
     
     Error error = driverTx(byteArray, waitUntilDone, timeoutMs);
@@ -86,9 +70,9 @@ SlaveDevice::Error SlaveDevice::tx(const ByteArray& byteArray,
 SlaveDevice::Error SlaveDevice::rx(ByteArray& byteArray,
                                    const uint32_t timeoutMs)
 {
-    if (!myIsEnabled)
+    if (!isEnabled())
     {
-        return ERROR_NOT_ENABLED;
+        return Error(ERROR_CODE_NOT_ENABLED);
     }
 
     Error error = driverRx(byteArray, timeoutMs);
@@ -101,9 +85,9 @@ SlaveDevice::Error SlaveDevice::txRx(const ByteArray& txByteArray,
                                      ByteArray& rxByteArray,
                                      const uint32_t timeoutMs)
 {
-    if (!myIsEnabled)
+    if (!isEnabled())
     {
-        return ERROR_NOT_ENABLED;
+        return Error(ERROR_CODE_NOT_ENABLED);
     }
     
     Error error = driverTxRx(txByteArray, rxByteArray, timeoutMs);
@@ -112,11 +96,19 @@ SlaveDevice::Error SlaveDevice::txRx(const ByteArray& txByteArray,
 }
 
 /*------------------------------------------------------------------------------
- * Protected constructors and destructors
+ * Protected constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-SlaveDevice::SlaveDevice() :
-    myIsEnabled(false)
+SlaveDevice::SlaveDevice()
+{
+}
+
+/*------------------------------------------------------------------------------
+ * Protected virtual destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+SlaveDevice::~SlaveDevice()
 {
 }

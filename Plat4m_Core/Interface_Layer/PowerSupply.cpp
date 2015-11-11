@@ -45,8 +45,11 @@
 
 #include <PowerSupply.h>
 
+using Plat4m::PowerSupply;
+using Plat4m::Module;
+
 /*------------------------------------------------------------------------------
- * Public constructors and destructors
+ * Public constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
@@ -61,53 +64,47 @@ PowerSupply::PowerSupply(const EnableLine::ActiveLevel activeLevel,
 }
 
 /*------------------------------------------------------------------------------
- * Public methods
+ * Public destructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-PowerSupply::Error PowerSupply::enable(const bool enable)
+PowerSupply::~PowerSupply()
 {
-    if (myEnableLine.enable(enable) != EnableLine::ERROR_NONE)
-    {
-        // Error
-    }
-    
-    return ERROR_NONE;
 }
 
-//------------------------------------------------------------------------------
-PowerSupply::Error PowerSupply::isEnabled(bool& isEnabled)
-{
-    isEnabled = myEnableLine.isEnabled();
-    
-    return ERROR_NONE;
-}
+/*------------------------------------------------------------------------------
+ * Public methods
+ *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
 PowerSupply::Error PowerSupply::setActive(const bool active)
 {
     if (!myIsControlled)
     {
-        return ERROR_NOT_CONTROLLED;
+        return Error(ERROR_CODE_NOT_CONTROLLED);
     }
     
-    if (myEnableLine.setActive(active) != EnableLine::ERROR_NONE)
+    EnableLine::Error error = myEnableLine.setActive(active);
+
+    if (error.getCode() != EnableLine::ERROR_CODE_NONE)
     {
         // Error
     }
     
-    return ERROR_NONE;
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
 PowerSupply::Error PowerSupply::isActive(bool& isActive)
 {
-    if (myEnableLine.isActive(isActive) != EnableLine::ERROR_NONE)
+    EnableLine::Error error = myEnableLine.isActive(isActive);
+
+    if (error.getCode() != EnableLine::ERROR_CODE_NONE)
     {
         // Error
     }
     
-    return ERROR_NONE;
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -127,7 +124,7 @@ PowerSupply::Error PowerSupply::use(const bool use)
         }
     }
     
-    if (IS_VALID_POINTER(myParent))
+    if (isValidPointer(myParent))
     {
         myParent->use(use);
     }
@@ -140,7 +137,7 @@ PowerSupply::Error PowerSupply::control(const bool control)
 {
     if (control == myIsControlled)
     {
-        return ERROR_NONE;
+        return Error(ERROR_CODE_NONE);
     }
     
     myIsControlled = control;
@@ -153,7 +150,7 @@ PowerSupply::Error PowerSupply::isControlled(bool& isControlled)
 {
     isControlled = myIsControlled;
     
-    return ERROR_NONE;
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -161,7 +158,24 @@ PowerSupply::Error PowerSupply::getParent(PowerSupply*& parentSupply)
 {
     parentSupply = myParent;
     
-    return ERROR_NONE;
+    return Error(ERROR_CODE_NONE);
+}
+
+/*------------------------------------------------------------------------------
+ * Private methods implemented from Module
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+Module::Error PowerSupply::driverEnable(const bool enable)
+{
+    Module::Error error = myEnableLine.enable(enable);
+
+    if (error.getCode() != Module::ERROR_CODE_NONE)
+    {
+        // Error
+    }
+
+    return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 /*------------------------------------------------------------------------------
@@ -175,11 +189,13 @@ PowerSupply::Error PowerSupply::update()
     {
         bool active = (myNUsers != 0);
         
-        if (myEnableLine.setActive(active) != EnableLine::ERROR_NONE)
+        EnableLine::Error error = myEnableLine.setActive(active);
+
+        if (error.getCode() != EnableLine::ERROR_CODE_NONE)
         {
             // Error
         }
     }
     
-    return ERROR_NONE;
+    return Error(ERROR_CODE_NONE);
 }

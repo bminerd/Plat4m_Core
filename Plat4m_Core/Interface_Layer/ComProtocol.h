@@ -39,22 +39,26 @@
  * @brief ComProtocol class.
  */
 
-#ifndef _COM_PROTOCOL_H_
-#define _COM_PROTOCOL_H_
+#ifndef COM_PROTOCOL_H
+#define COM_PROTOCOL_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <Module.h>
 #include <ErrorTemplate.h>
 #include <ByteArray.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class ComProtocol
+class ComProtocol : public Module
 {
 public:
     
@@ -76,7 +80,7 @@ public:
         PARSE_STATUS_NOT_A_MESSAGE,
         PARSE_STATUS_MID_MESSAGE,
         PARSE_STATUS_INVALID_MESSAGE,
-		PARSE_STATUS_UNSUPPORTED_MESSAGE,
+        PARSE_STATUS_UNSUPPORTED_MESSAGE,
         PARSE_STATUS_FOUND_MESSAGE
     };
 
@@ -101,6 +105,12 @@ protected:
 	 *------------------------------------------------------------------------*/
 
 	ComProtocol(const uint32_t parseTimeoutMs);
+
+    /*--------------------------------------------------------------------------
+     * Protected destructors
+     *------------------------------------------------------------------------*/
+
+    ~ComProtocol();
     
 private:
     
@@ -111,6 +121,12 @@ private:
     const uint32_t myParseTimeoutMs;
 
     /*--------------------------------------------------------------------------
+     * Private methods implemented from Module
+     *------------------------------------------------------------------------*/
+
+    Module::Error driverEnable(const bool enable) override;
+
+    /*--------------------------------------------------------------------------
 	 * Private virtual methods
 	 *------------------------------------------------------------------------*/
 
@@ -118,4 +134,6 @@ private:
     									ByteArray& txByteArray) = 0;
 };
 
-#endif // _COM_PROTOCOL_H_
+}; // namespace Plat4m
+
+#endif // COM_PROTOCOL_H

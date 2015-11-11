@@ -39,8 +39,8 @@
  * @brief Generic class for all modules to be subclasses of.
  */
 
-#ifndef _MODULE_H_
-#define _MODULE_H_
+#ifndef MODULE_H
+#define MODULE_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -49,6 +49,9 @@
 #include <Plat4m.h>
 #include <ErrorTemplate.h>
 #include <Callback.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
@@ -75,12 +78,6 @@ public:
 	typedef ErrorTemplate<ErrorCode> Error;
 
 	typedef Callback<Error, bool> EnableCallback;
-
-	/*--------------------------------------------------------------------------
-	 * Public destructors
-	 *------------------------------------------------------------------------*/
-
-    ~Module();
     
     /*--------------------------------------------------------------------------
 	 * Public methods
@@ -99,6 +96,12 @@ protected:
 	 *------------------------------------------------------------------------*/
 
 	Module();
+
+	/*--------------------------------------------------------------------------
+     * Protected virtual destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~Module();
     
 private:
     
@@ -117,4 +120,6 @@ private:
 	virtual Error driverEnable(const bool enable) = 0;
 };
 
-#endif // _MODULE_H_
+}; // namespace Plat4m
+
+#endif // MODULE_H

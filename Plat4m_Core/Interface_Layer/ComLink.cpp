@@ -47,13 +47,15 @@
 #include <ComInterface.h>
 #include <System.h>
 
+using Plat4m::ComLink;
+
 /*------------------------------------------------------------------------------
  * Public constructors and destructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
 ComLink::ComLink(ComInterface& comInterface) :
-    myIsEnabled(false),
+    Module(),
     myComInterface(comInterface),
     myCurrentComProtocol(NULL_POINTER),
     myCurrentComProtocolTimeoutTimeMs(0),
@@ -66,30 +68,11 @@ ComLink::ComLink(ComInterface& comInterface) :
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-ComLink::Error ComLink::enable(const bool enable)
-{
-    if (enable == myIsEnabled)
-    {
-        return ERROR_NONE;
-    }
-    
-    myTask.enable(enable);
-    
-    myIsEnabled = enable;
-    
-    return ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
 ComLink::Error ComLink::addComProtocol(ComProtocol* comProtocol)
 {
-    // Lock mutex
-    
     myComProtocolList.append(comProtocol);
     
-    // Unlcok mutex
-    
-    return ERROR_NONE;
+    return Error(ERROR_CODE_NONE);
 }
 
 /*------------------------------------------------------------------------------
@@ -125,7 +108,7 @@ void ComLink::taskCallback()
         
     }
     
-    if (IS_NULL_POINTER(myCurrentComProtocol))
+    if (isNullPointer(myCurrentComProtocol))
     {
         myRxByteArray.clear();
     }
@@ -138,7 +121,7 @@ void ComLink::tryProtocol(ComProtocol* comProtocol)
     {
         case ComProtocol::PARSE_STATUS_MID_MESSAGE:
         {
-            if (IS_NULL_POINTER(myCurrentComProtocol))
+            if (isNullPointer(myCurrentComProtocol))
             {
                 myCurrentComProtocol = comProtocol;
                 myCurrentComProtocolTimeoutTimeMs =
@@ -150,7 +133,7 @@ void ComLink::tryProtocol(ComProtocol* comProtocol)
                 // Timeout
                 if (System::timeCheckMs(myCurrentComProtocolTimeoutTimeMs))
                 {
-                    myCurrentComProtocol = NULL_POINTER;
+                    myCurrentComProtocol = nullptr;
                 }
             }
             
@@ -160,7 +143,7 @@ void ComLink::tryProtocol(ComProtocol* comProtocol)
         {
             myComInterface.tx(myTxByteArray);
             
-            myCurrentComProtocol = NULL_POINTER;
+            myCurrentComProtocol = nullptr;
             myTxByteArray.clear();
             
             break;

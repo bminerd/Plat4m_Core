@@ -39,20 +39,25 @@
  * @brief GpioPin class.
  */
 
-#ifndef _GPIO_PIN_H_
-#define _GPIO_PIN_H_
+#ifndef GPIO_PIN_H
+#define GPIO_PIN_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class GpioPin
+class GpioPin : public Module
 {
 public:
     
@@ -63,11 +68,11 @@ public:
     /**
      * @brief Enumeration of GPIO errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_NOT_ENABLED,
-        ERROR_COMMUNICATION
+        ERROR_CODE_NONE,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_COMMUNICATION
     };
     
     /**
@@ -75,8 +80,8 @@ public:
      */
     enum Level
     {
-        LEVEL_LOW  = 0,   /// Digital low / logic 0
-        LEVEL_HIGH = 1    /// Digital high / logic 1
+        LEVEL_LOW  = 0, /// Digital low / logic 0
+        LEVEL_HIGH = 1  /// Digital high / logic 1
     };
     
     /**
@@ -101,6 +106,12 @@ public:
     };
     
     /*--------------------------------------------------------------------------
+     * Public tyepdefs
+     *------------------------------------------------------------------------*/
+
+    typedef ErrorTemplate<ErrorCode> Error;
+
+    /*--------------------------------------------------------------------------
      * Public structures
      *------------------------------------------------------------------------*/
     
@@ -120,18 +131,8 @@ public:
     };
     
     /*--------------------------------------------------------------------------
-     * Public virtual destructors
-     *------------------------------------------------------------------------*/
-    
-    virtual ~GpioPin();
-    
-    /*--------------------------------------------------------------------------
      * Public methods
      *------------------------------------------------------------------------*/
-    
-    Error enable(const bool enable);
-    
-    Error isEnabled(bool& isEnabled);
     
     Error configure(const Config& config);
     
@@ -152,6 +153,12 @@ protected:
     GpioPin(const char* portIdString, const char* pinIdString);
     
     /*--------------------------------------------------------------------------
+     * Protected virtual destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~GpioPin();
+
+    /*--------------------------------------------------------------------------
      * Protected methods
      *------------------------------------------------------------------------*/
          
@@ -165,16 +172,12 @@ private:
 
     const char* myPortIdString;
     const char* myPinIdString;
-
-    bool myIsEnabled;
     
     Config myConfig;
     
     /*--------------------------------------------------------------------------
      * Private pure virtual methods
      *------------------------------------------------------------------------*/
-    
-    virtual Error driverEnable(const bool enable) = 0;
     
     virtual Error driverConfigure(const Config& config) = 0;
     
@@ -187,4 +190,6 @@ private:
     virtual Error driverToggleLevel() = 0;
 };
 
-#endif // _GPIO_PIN_H_
+}; // namespace Plat4m
+
+#endif // GPIO_PIN_H

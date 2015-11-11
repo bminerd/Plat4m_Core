@@ -39,23 +39,28 @@
  * @brief Spi class.
  */
 
-#ifndef _SPI_H_
-#define _SPI_H_
+#ifndef SPI_H
+#define SPI_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
 #include <ByteArray.h>
 #include <Buffer.h>
 #include <GpioPin.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class Spi
+class Spi : public Module
 {
 public:
     
@@ -66,13 +71,13 @@ public:
     /**
      * @brief Enumeration of SPI errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_PARAMETER_INVALID,
-        ERROR_NOT_ENABLED,
-        ERROR_TX_BUFFER_FULL,
-        ERROR_TIMEOUT
+        ERROR_CODE_NONE,
+        ERROR_CODE_PARAMETER_INVALID,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_TX_BUFFER_FULL,
+        ERROR_CODE_TIMEOUT
     };
     
     /**
@@ -163,6 +168,12 @@ public:
     };
     
     /*--------------------------------------------------------------------------
+     * Public typedefs
+     *------------------------------------------------------------------------*/
+
+    typedef ErrorTemplate<ErrorCode> Error;
+
+    /*--------------------------------------------------------------------------
      * Public structures
      *------------------------------------------------------------------------*/
     
@@ -175,34 +186,13 @@ public:
         DataBits dataBits;
         ClockPolarity clockPolarity;
         ClockPhase clockPhase;
-        id_t clockPrescaler;
+        Id clockPrescaler;
         BitOrder bitOrder;
     };
     
     /*--------------------------------------------------------------------------
-     * Public virtual destructors
-     *------------------------------------------------------------------------*/
-    
-    virtual ~Spi();
-    
-    /*--------------------------------------------------------------------------
      * Public methods
      *------------------------------------------------------------------------*/
-    
-    /**
-     * @brief Sets this SPI enabled or disabled.
-     * @param enable Flag that indicates if the SPI should be enabled or
-     * disabled.
-     * @return SPI error.
-     */
-    Error enable(const bool enable);
-
-    /**
-     * @brief Checks to see if this SPI is enabled or disabled.
-     * @param isEnabled Flag that indicates if this SPI is enabled or disabled.
-     * @return SPI error.
-     */
-    Error isEnabled(bool& isEnabled);
 
     /**
      * @brief Configures this SPI.
@@ -229,6 +219,12 @@ protected:
 
     Spi(const TransmissionMode transmissionMode);
     
+    /*--------------------------------------------------------------------------
+     * Protected virtual destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~Spi();
+
 private:
     
     /*--------------------------------------------------------------------------
@@ -253,8 +249,6 @@ private:
      * Private data members
      *------------------------------------------------------------------------*/
     
-    bool myIsEnabled;
-    
     const TransmissionMode myTransmissionMode;
     
     Config myConfig;
@@ -267,8 +261,6 @@ private:
      * Private pure virtual methods
      *------------------------------------------------------------------------*/
     
-    virtual Error driverEnable(const bool enable) = 0;
-    
     virtual Error driverConfigure(const Config& config) = 0;
     
     virtual Error driverTx(const uint8_t byte) = 0;
@@ -279,4 +271,6 @@ private:
                                         const bool enable) = 0;
 };
 
-#endif // _SPI_INTERFACE_H_
+}; // namespace Plat4m
+
+#endif // SPI_H

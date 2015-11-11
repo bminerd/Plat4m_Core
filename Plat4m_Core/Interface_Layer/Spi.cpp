@@ -46,56 +46,24 @@
 #include <Spi.h>
 #include <System.h>
 
-/*------------------------------------------------------------------------------
- * Public virtual destructors
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-Spi::~Spi()
-{
-}
+using Plat4m::Spi;
+using Plat4m::Module;
 
 /*------------------------------------------------------------------------------
  * Public methods
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-Spi::Error Spi::enable(const bool enable)
-{
-    if (enable == myIsEnabled)
-    {
-        return ERROR_NONE;
-    }
-
-    Error error = driverEnable(enable);
-    
-    if (error == ERROR_NONE)
-    {
-        myIsEnabled = enable;
-    }
-    
-    return error;
-}
-
-//------------------------------------------------------------------------------
-Spi::Error Spi::isEnabled(bool& isEnabled)
-{
-    isEnabled = myIsEnabled;
-
-    return ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
 Spi::Error Spi::configure(const Config& config)
 {
-    if (!myIsEnabled)
+    if (!isEnabled())
     {
-        return ERROR_NOT_ENABLED;
+        return Error(ERROR_CODE_NOT_ENABLED);
     }
 
     Error error = driverConfigure(config);
     
-    if (error == ERROR_NONE)
+    if (error.getCode() == ERROR_CODE_NONE)
     {
         myConfig = config;
     }
@@ -110,9 +78,9 @@ Spi::Error Spi::masterTransfer(const TransferMode transferMode,
                                ByteArray& rxByteArray,
                                const uint32_t timeoutMs)
 {
-    if (!myIsEnabled)
+    if (!isEnabled())
     {
-        return ERROR_NOT_ENABLED;
+        return Error(ERROR_CODE_NOT_ENABLED);
     }
     
     Transfer transfer;
@@ -120,19 +88,19 @@ Spi::Error Spi::masterTransfer(const TransferMode transferMode,
     transfer.chipSelectGpioPin  = chipSelectGpioPin;
     transfer.txCount            = txByteArray.getSize();
     transfer.rxCount            = rxByteArray.getMaxSize();
-    transfer.error              = ERROR_NONE;
+    transfer.error.setCode(ERROR_CODE_NONE);
     
     for (int i = 0; i < transfer.txCount; i++)
     {
         if (!(transfer.txBuffer.write(txByteArray[i])))
         {
-            return ERROR_TX_BUFFER_FULL;
+            return Error(ERROR_CODE_TX_BUFFER_FULL);
         }
     }
     
     if (!(myTransferBuffer.write(transfer)))
     {
-        return ERROR_TX_BUFFER_FULL;
+        return Error(ERROR_CODE_TX_BUFFER_FULL);
     }
     
     myState = STATE_BUSY;
@@ -162,13 +130,13 @@ Spi::Error Spi::masterTransfer(const TransferMode transferMode,
     }
     
     uint32_t timeoutTimeMs = System::timeGetMs() + timeoutMs;
-    transfer.error = ERROR_NONE; // Does this make sense?
+    transfer.error.setCode(ERROR_CODE_NONE); // Does this make sense?
 
     while (myState != STATE_IDLE)
     {
         if (System::timeCheckMs(timeoutTimeMs))
         {
-            transfer.error = ERROR_TIMEOUT;
+            transfer.error.setCode(ERROR_CODE_TIMEOUT);
             transfer.error = driverInterruptEnable(INTERRUPT_TX, false);
             transfer.error = driverInterruptEnable(INTERRUPT_RX, false);
 
@@ -178,7 +146,7 @@ Spi::Error Spi::masterTransfer(const TransferMode transferMode,
     
     myTransferBuffer.read(transfer);
 
-    if (transfer.error == ERROR_NONE)
+    if (transfer.error.getCode() == ERROR_CODE_NONE)
     {
         int size = rxByteArray.getSize();
         
@@ -318,8 +286,17 @@ void Spi::interruptHandler(const Interrupt interrupt)
 
 //------------------------------------------------------------------------------
 Spi::Spi(const TransmissionMode transmissionMode) :
-    myIsEnabled(false),
+    Module(),
     myTransmissionMode(transmissionMode),
     myState(STATE_IDLE)
+{
+}
+
+/*------------------------------------------------------------------------------
+ * Protected virtual destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+Spi::~Spi()
 {
 }

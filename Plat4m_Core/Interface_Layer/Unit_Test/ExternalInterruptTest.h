@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,28 +33,33 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file Interrupt.h
+ * @file ExternalInterruptTest.h
  * @author Ben Minerd
- * @date 4/17/13
- * @brief Interrupt class.
+ * @date 9/25/15
+ * @brief ExternalInterruptTest class.
  */
 
-#ifndef _INTERRUPT_H_
-#define _INTERRUPT_H_
+#ifndef EXTERNAL_INTERRUPT_TEST_H
+#define EXTERNAL_INTERRUPT_TEST_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <ExternalInterrupt.h>
+#include <ErrorTemplate.h>
 #include <Callback.h>
 #include <GpioPin.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class Interrupt
+class ExternalInterruptTest : public ExternalInterrupt
 {
 public:
     
@@ -63,117 +68,52 @@ public:
      *------------------------------------------------------------------------*/
     
     /**
-     * @brief Enumeration of interrupt errors.
+     * @brief Enumeration of external interrupt errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_PARAMETER_INVALID,
-        ERROR_NOT_ENABLED
+        ERROR_CODE_NONE,
+        ERROR_CODE_PARAMETER_INVALID,
+        ERROR_CODE_NOT_ENABLED
     };
 
-    /**
-     * @brief Enumeration of interrupt triggers.
-     */
-    enum Trigger
-    {
-        TRIGGER_RISING = 0,
-        TRIGGER_FALLING,
-        TRIGGER_RISING_FALLING
-    };
-    
-    enum ActiveLevel
-    {
-        ACTIVE_LEVEL_HIGH = 0,
-        ACTIVE_LEVEL_LOW
-    };
-         
+    /*--------------------------------------------------------------------------
+     * Public typedefs
+     *------------------------------------------------------------------------*/
+
+    typedef ErrorTemplate<ErrorCode> Error;
+
     /*--------------------------------------------------------------------------
      * Public structures
      *------------------------------------------------------------------------*/
     
     struct Config
     {
-        Trigger trigger;
-        ActiveLevel activeLevel;
+        int a;
     };
     
     /*--------------------------------------------------------------------------
-     * Public typedefs
+     * Public constructors
      *------------------------------------------------------------------------*/
     
-    typedef Callback<void, bool> HandlerCallback;
-    
-    /*--------------------------------------------------------------------------
-     * Public virtual destructors
-     *------------------------------------------------------------------------*/
-    
-    virtual ~Interrupt();
-    
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
-
-    /**
-     * @brief Sets the given interrupt enabled or disabled.
-     * @param handle Interrupt handle to access.
-     * @param enable Flag that indicates if the interrupt should be enabled or
-     * disabled.
-     * @return Interrupt error.
-     */
-    Error enable(const bool enable);
-
-    /**
-     * @brief Checks to see if the given interrupt is enabled or disabled.
-     * @param handle Interrupt handle to access.
-     * @param isEnabled Flag that indicates if the interrupt is enabled or disabled.
-     * @return Interrupt error.
-     */
-    Error isEnabled(bool& isEnabled);
-
-    /**
-     * @brief Configures the given interrupt.
-     * @param handle Interrupt handle to access.
-     * @param config Interrupt configuration.
-     * @return Interrupt error.
-     */
-    Error configure(const Config& config);
-    
-    Error setHandlerCallback(HandlerCallback& handlerCallback);
-    
-    Error isActive(bool& isActive);
-    
-    void handler();
-    
-protected:
-    
-    /*--------------------------------------------------------------------------
-     * Protected constructors
-     *------------------------------------------------------------------------*/
-    
-    Interrupt(GpioPin& gpioPin);
+    ExternalInterruptTest(GpioPin& gpioPin);
     
 private:
-    
+
     /*--------------------------------------------------------------------------
-     * Private data members
+     * Private methods implemented from Module
+     *------------------------------------------------------------------------*/
+
+    Module::Error driverEnable(const bool enable) override;
+
+    /*--------------------------------------------------------------------------
+     * Private methods implemented from ExternalInterrupt
      *------------------------------------------------------------------------*/
     
-    bool myIsEnabled;
-    
-    Config myConfig;
-    
-    GpioPin& myGpioPin;
-    
-    HandlerCallback* myHandlerCallback;
-    
-    /*--------------------------------------------------------------------------
-     * Private pure virtual methods
-     *------------------------------------------------------------------------*/
-    
-    virtual Error driverEnable(const bool enable) = 0;
-    
-    virtual Error driverConfigure(const Config& config) = 0;
+    ExternalInterrupt::Error driverConfigure(
+                              const ExternalInterrupt::Config& config) override;
 };
 
-#endif // _INTERRUPT_H_
+}; // namespace Plat4m
+
+#endif // EXTERNAL_INTERRUPT_TEST_H

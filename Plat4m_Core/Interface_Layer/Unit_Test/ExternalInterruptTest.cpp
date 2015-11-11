@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,42 +33,35 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file I2cDevice.cpp
+ * @file ExternalInterruptTest.cpp
  * @author Ben Minerd
- * @date 3/26/13
- * @brief I2cDevice class.
+ * @date 4/17/13
+ * @brief ExternalInterruptTest class.
  */
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <I2cDevice.h>
+#include <ExternalInterruptTest.h>
+#include <System.h>
 
-using Plat4m::I2cDevice;
-using Plat4m::SlaveDevice;
+using Plat4m::ExternalInterruptTest;
+using Plat4m::ExternalInterrupt;
 using Plat4m::Module;
 
 /*------------------------------------------------------------------------------
- * Public constructors and destructors
+ * Local variables
  *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-I2cDevice::I2cDevice(const uint8_t address, I2c& i2c) :
-    SlaveDevice(),
-    myAddress(address),
-    myI2c(i2c)
-{
-}
 
 /*------------------------------------------------------------------------------
- * Public methods
+ * Public constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-uint8_t I2cDevice::getAddress()
+ExternalInterruptTest::ExternalInterruptTest(GpioPin& gpioPin) :
+    ExternalInterrupt(gpioPin)
 {
-    return myAddress;
 }
 
 /*------------------------------------------------------------------------------
@@ -76,81 +69,18 @@ uint8_t I2cDevice::getAddress()
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-Module::Error I2cDevice::driverEnable(const bool enable)
+Module::Error ExternalInterruptTest::driverEnable(const bool enable)
 {
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 /*------------------------------------------------------------------------------
- * Private implemented methods
+ * Private methods implemented from ExternalInterrupt
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-SlaveDevice::Error I2cDevice::driverTx(const ByteArray& byteArray,
-                                       const bool waitUntilDone,
-                                       const uint32_t timeoutMs)
+ExternalInterrupt::Error ExternalInterruptTest::driverConfigure(
+                                        const ExternalInterrupt::Config& config)
 {
-    ByteArray emptyByteArray;
-    I2c::TransferMode transferMode;
-    
-    if (waitUntilDone)
-    {
-        transferMode = I2c::TRANSFER_MODE_TX_WAIT;
-    }
-    else
-    {
-        transferMode = I2c::TRANSFER_MODE_TX;
-    }
-    
-    I2c::Error error = myI2c.masterTransfer(transferMode,
-                                            myAddress,
-                                            byteArray,
-                                            emptyByteArray,
-                                            timeoutMs);
-
-    if (error.getCode() != I2c::ERROR_CODE_NONE)
-    {
-        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
-    }
-    
-    return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
-}
-
-//------------------------------------------------------------------------------
-SlaveDevice::Error I2cDevice::driverRx(ByteArray& byteArray,
-                                       const uint32_t timeoutMs)
-{
-    ByteArray emptyByteArray;
-
-    I2c::Error error = myI2c.masterTransfer(I2c::TRANSFER_MODE_RX,
-                                            myAddress,
-                                            emptyByteArray,
-                                            byteArray,
-                                            timeoutMs);
-
-    if (error.getCode() != I2c::ERROR_CODE_NONE)
-    {
-        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
-    }
-    
-    return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
-}
-
-//------------------------------------------------------------------------------
-SlaveDevice::Error I2cDevice::driverTxRx(const ByteArray& txByteArray,
-                                         ByteArray& rxByteArray,
-                                         const uint32_t timeoutMs)
-{
-    I2c::Error error = myI2c.masterTransfer(I2c::TRANSFER_MODE_TX_RX,
-                                            myAddress,
-                                            txByteArray,
-                                            rxByteArray,
-                                            timeoutMs);
-
-    if (error.getCode() != I2c::ERROR_CODE_NONE)
-    {
-        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
-    }
-    
-    return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
+    return ExternalInterrupt::Error(ExternalInterrupt::ERROR_CODE_NONE);
 }

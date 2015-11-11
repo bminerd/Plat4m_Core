@@ -33,10 +33,10 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file i2c_interface.c
+ * @file I2c.cpp
  * @author Ben Minerd
  * @date 2/25/12
- * @brief I2C interface layer.
+ * @brief I2C class.
  */
 
 /*------------------------------------------------------------------------------
@@ -46,63 +46,23 @@
 #include <I2c.h>
 #include <System.h>
 
-/*------------------------------------------------------------------------------
- * Public virtual destructors
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-I2c::~I2c()
-{
-}
+using Plat4m::I2c;
 
 /*------------------------------------------------------------------------------
  * Public methods
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-I2c::Error I2c::enable(const bool enable)
-{
-    if (enable == myIsEnabled)
-    {
-        return ERROR_NONE;
-    }
-
-    Error error;
-
-    error = driverEnable(enable);
-
-    if (error != ERROR_NONE)
-    {
-        return error;
-    }
-
-    if (error == ERROR_NONE)
-    {
-        myIsEnabled = enable;
-    }
-
-    return ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-I2c::Error I2c::isEnabled(bool& isEnabled)
-{
-    isEnabled = myIsEnabled;
-
-    return ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
 I2c::Error I2c::configure(const Config& config)
 {
     Error error = driverConfigure(config);
 
-    if (error == ERROR_NONE)
+    if (error.getCode() == ERROR_CODE_NONE)
     {
         myConfig = config;
     }
 
-    return ERROR_NONE;
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -114,8 +74,8 @@ I2c::Error I2c::reset()
 
     // Error checking?
 
-    myIsEnabled = false;
-    error = enable(true);
+    Module::Error moduleError = enable(false);
+    moduleError = enable(true);
 
     // Error checking?
 
@@ -131,9 +91,9 @@ I2c::Error I2c::masterTransfer(const TransferMode transferMode,
                                ByteArray& rxByteArray,
                                const uint32_t timeoutMs)
 {
-    if (!myIsEnabled)
+    if (!isEnabled())
     {
-        return ERROR_NOT_ENABLED;
+        return Error(ERROR_CODE_NOT_ENABLED);
     }
 
     Transfer transfer;
@@ -141,19 +101,19 @@ I2c::Error I2c::masterTransfer(const TransferMode transferMode,
     transfer.address        = address;
     transfer.txCount        = txByteArray.getSize();
     transfer.rxCount        = rxByteArray.getMaxSize();
-    transfer.error          = ERROR_NONE;
+    transfer.error.setCode(ERROR_CODE_NONE);
 
     for (int i = 0; i < transfer.txCount; i++)
     {
         if (!(transfer.txBuffer.write(txByteArray[i])))
         {
-            return ERROR_TX_BUFFER_FULL;
+            return Error(ERROR_CODE_TX_BUFFER_FULL);
         }
     }
 
     if (!(myTransferBuffer.write(transfer)))
     {
-        return ERROR_TX_BUFFER_FULL;
+        return Error(ERROR_CODE_TX_BUFFER_FULL);
     }
 
     // Start transfer
@@ -178,7 +138,7 @@ I2c::Error I2c::masterTransfer(const TransferMode transferMode,
     {
         if (System::timeCheckMs(timeoutTimeMs))
         {
-            transfer.error = ERROR_TIMEOUT;
+            transfer.error.setCode(ERROR_CODE_TIMEOUT);
             reset();
 
             break;
@@ -204,7 +164,7 @@ I2c::Error I2c::masterTransfer(const TransferMode transferMode,
     myTransferBuffer.read(transfer);
     myLastTransfer = transfer;
 
-    if (transfer.error == ERROR_NONE)
+    if (transfer.error.getCode() == ERROR_CODE_NONE)
     {
         int size = transfer.rxBuffer.count();
 
@@ -226,7 +186,7 @@ void I2c::interruptHandler(const Interrupt interrupt)
     Transfer* transfer;
     myTransferBuffer.peek(transfer);
 
-    if (IS_NULL_POINTER(transfer))
+    if (isNullPointer(transfer))
     {
         return;
     }
@@ -431,8 +391,17 @@ void I2c::interruptHandler(const Interrupt interrupt)
 
 //------------------------------------------------------------------------------
 I2c::I2c(const char* idString) :
+    Module(),
     myIdString(idString),
-    myIsEnabled(false),
     myState(STATE_IDLE)
+{
+}
+
+/*------------------------------------------------------------------------------
+ * Protected virtual destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+I2c::~I2c()
 {
 }

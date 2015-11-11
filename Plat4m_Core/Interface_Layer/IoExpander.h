@@ -39,21 +39,26 @@
  * @brief IoExpander class.
  */
 
-#ifndef _IO_EXPANDER_H_
-#define _IO_EXPANDER_H_
+#ifndef IO_EXPANDER_H
+#define IO_EXPANDER_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
 #include <GpioPin.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class IoExpander
+class IoExpander : public Module
 {
 public:
     
@@ -64,39 +69,23 @@ public:
     /**
      * @brief Enumeration of IO expander errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_PARAMETER_INVALID,
-        ERROR_NOT_ENABLED,
-        ERROR_COMMUNICATION
+        ERROR_CODE_NONE,
+        ERROR_CODE_PARAMETER_INVALID,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_COMMUNICATION
     };
-    
+
     /*--------------------------------------------------------------------------
-     * Public virtual destructors
+     * Public typdefs
      *------------------------------------------------------------------------*/
     
-    virtual ~IoExpander();
+    typedef ErrorTemplate<ErrorCode> Error;
     
     /*--------------------------------------------------------------------------
      * Public methods
      *------------------------------------------------------------------------*/
-    
-    /**
-     * @brief Enables or disables this IO expander.
-     * @param enable Flag that indicates if the IO expander should be enabled or
-     * disabled.
-     * @return IO expander error.
-     */
-    Error enable(const bool enable);
-    
-    /**
-     * @brief Checks to see if this IO expander is enabled or disabled.
-     * @param isEnabled Flag that indicates if the IO expander is enabled or
-     * disabled.
-     * @return IO expander error.
-     */
-    Error isEnabled(bool& isEnabled);
     
     Error registerRead(const id_t registerId, uint8_t& value);
     
@@ -124,19 +113,17 @@ protected:
     
     IoExpander();
     
-private:
-    
     /*--------------------------------------------------------------------------
-     * Private data members
+     * Protected virtual destructors
      *------------------------------------------------------------------------*/
     
-    bool myIsEnabled;
+    virtual ~IoExpander();
+
+private:
     
     /*--------------------------------------------------------------------------
      * Private virtual methods
      *------------------------------------------------------------------------*/
-        
-    virtual Error driverEnable(const bool enable) = 0;
     
     virtual Error driverRegisterRead(const id_t registerId, uint8_t& value) = 0;
     
@@ -161,4 +148,6 @@ private:
                                     GpioPin::Level& level) = 0;
 };
 
-#endif // _IO_EXPANDER_H_
+}; // namespace Plat4m
+
+#endif // IO_EXPANDER_H
