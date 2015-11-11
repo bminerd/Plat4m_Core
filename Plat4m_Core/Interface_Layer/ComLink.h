@@ -53,7 +53,7 @@
 #include <List.h>
 #include <ByteArrayN.h>
 #include <ComInterface.h>
-#include <Task.h>
+#include <Thread.h>
 
 namespace Plat4m
 {
@@ -116,7 +116,7 @@ private:
 
     ByteArrayN<256> myTxByteArray;
 
-    Task myTask;
+    Thread myThread;
 
     /*--------------------------------------------------------------------------
      * Private methods

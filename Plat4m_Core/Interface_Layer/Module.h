@@ -117,7 +117,7 @@ private:
 	 * Private virtual methods
 	 *------------------------------------------------------------------------*/
 
-	virtual Error driverEnable(const bool enable) = 0;
+	virtual Error driverEnable(const bool enable);
 };
 
 }; // namespace Plat4m

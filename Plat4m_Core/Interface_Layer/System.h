@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,26 +36,23 @@
  * @file System.h
  * @author Ben Minerd
  * @date 6/4/2013
- * @brief System namespace.
+ * @brief System class.
  */
 
-#ifndef _SYSTEM_H_
-#define _SYSTEM_H_
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
+#include <ErrorTemplate.h>
 #include <Mutex.h>
-#include <Task.h>
+#include <Thread.h>
 
-/*------------------------------------------------------------------------------
- * Forward class declarations
- *----------------------------------------------------------------------------*/
-
-//class Mutex;
-//class Task;
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
@@ -75,13 +72,19 @@ public:
     /**
      * @brief Enumeration of timer errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_PARAMETER_INVALID,
-        ERROR_MODE_INVALID,
-        ERROR_NOT_ENABLED
+        ERROR_CODE_NONE,
+        ERROR_CODE_PARAMETER_INVALID,
+        ERROR_CODE_MODE_INVALID,
+        ERROR_CODE_NOT_ENABLED
     };
+
+    /*--------------------------------------------------------------------------
+     * Public typedefs
+     *------------------------------------------------------------------------*/
+
+    typedef ErrorTemplate<ErrorCode> Error;
     
     /*--------------------------------------------------------------------------
      * Public static methods
@@ -89,7 +92,7 @@ public:
     
     static const char* getName();
 
-    static void addTask(Task& task);
+    static void addThread(Thread& thread);
 
     static void run();
     
@@ -108,10 +111,16 @@ public:
 protected:
     
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Protected constructors
      *------------------------------------------------------------------------*/
 
     System(const char* name);
+
+    /*--------------------------------------------------------------------------
+     * Protected destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~System();
 
 private:
     
@@ -129,7 +138,7 @@ private:
      * Private virtual methods
      *------------------------------------------------------------------------*/
 
-    virtual void driverAddTask(Task& task) = 0;
+    virtual void driverAddThread(Thread& thread) = 0;
 
     virtual void driverRun() = 0;
 
@@ -142,4 +151,6 @@ private:
     virtual Mutex& driverGetMutex() = 0;
 };
 
-#endif // _SYSTEM_H_
+}; // namespace Plat4m
+
+#endif // SYSTEM_H

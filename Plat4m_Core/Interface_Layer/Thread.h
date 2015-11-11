@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,46 +33,65 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file AllocationMemoryLite.cpp
+ * @file Thread.h
  * @author Ben Minerd
- * @date 4/9/14
- * @brief AllocationMemoryLite class.
+ * @date 6/14/2013
+ * @brief Thread class.
  */
+
+#ifndef THREAD_H
+#define THREAD_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <AllocationMemoryLite.h>
+#include <Plat4m.h>
+#include <Module.h>
+#include <Callback.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
- * Public constructors and destructors
+ * Classes
  *----------------------------------------------------------------------------*/
 
-//------------------------------------------------------------------------------
-AllocationMemoryLite::AllocationMemoryLite() :
-    AllocationMemoryDriver(),
-    memoryIndex(0)
+class Thread : public Module
 {
-}
-
-/*------------------------------------------------------------------------------
- * Private implemented methods
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-void* AllocationMemoryLite::driverAllocate(std::size_t count)
-{
-    void* memory;
+public:
     
-    memory = &(myMemory[myMemoryIndex]);
-    myMemoryIndex += count;
+    /*--------------------------------------------------------------------------
+     * Public typedefs
+     *------------------------------------------------------------------------*/
     
-    return memory;
-}
+    typedef Callback<> RunCallback;
+    
+    /*--------------------------------------------------------------------------
+     * Public constructors and destructors
+     *------------------------------------------------------------------------*/
+    
+    Thread(RunCallback& callback, const uint32_t timeDelayMs = 0);
+    
+    /*--------------------------------------------------------------------------
+     * Public methods
+     *------------------------------------------------------------------------*/
 
-//------------------------------------------------------------------------------
-void AllocationMemoryLite::driverDeallocate(void* pointer)
-{
-    // Intentionally blank
-}
+    void run();
+    
+    uint32_t getTimeDelayMs();
+    
+private:
+    
+    /*--------------------------------------------------------------------------
+     * Private data members
+     *------------------------------------------------------------------------*/
+
+    RunCallback& myRunCallback;
+    
+    const unsigned int myTimeDelayMs;
+};
+
+}; // namespace Plat4m
+
+#endif // THREAD_H

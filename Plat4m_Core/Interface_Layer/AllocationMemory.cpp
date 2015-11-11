@@ -45,71 +45,62 @@
 
 #include <AllocationMemory.h>
 
-/*------------------------------------------------------------------------------
- * Local variables
- *----------------------------------------------------------------------------*/
-
-static AllocationMemoryDriver* driver = NULL_POINTER;
+using Plat4m::AllocationMemory;
 
 /*------------------------------------------------------------------------------
- * Namespace functions
+ * Static data members
  *----------------------------------------------------------------------------*/
 
-//------------------------------------------------------------------------------
-void AllocationMemory::setDriver(AllocationMemoryDriver& allocationMemoryDriver)
-{
-    if (IS_NULL_POINTER(driver))
-    {
-        driver = &allocationMemoryDriver;
-    }
-}
+AllocationMemory* AllocationMemory::myDriver = nullptr;
+
+/*------------------------------------------------------------------------------
+ * Public static methods
+ *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocate(size_t count)
 {
-    if (IS_VALID_POINTER(driver))
-    {
-        return driver->allocate(count);
-    }
-    
-    return operator new(count);
+    return myDriver->driverAllocate(count);
 }
 
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocateArray(size_t count)
 {
-    if (IS_VALID_POINTER(driver))
-    {
-        return driver->allocateArray(count);
-    }
-    
-    return operator new[](count);
+    return myDriver->driverAllocateArray(count);
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocate(void* pointer)
 {
-    if (IS_VALID_POINTER(driver))
-    {
-        driver->deallocate(pointer);
-    }
-    else
-    {
-        operator delete(pointer);
-    }
+    myDriver->driverDeallocate(pointer);
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocateArray(void* pointer)
 {
-    if (IS_VALID_POINTER(driver))
+    myDriver->driverDeallocateArray(pointer);
+}
+
+/*------------------------------------------------------------------------------
+ * Protected constructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+AllocationMemory::AllocationMemory()
+{
+    if (isNullPointer(myDriver))
     {
-        driver->deallocateArray(pointer);
+        myDriver = this;
     }
-    else
-    {
-        operator delete[](pointer);
-    }
+}
+
+/*------------------------------------------------------------------------------
+ * Protected destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+AllocationMemory::~AllocationMemory()
+{
 }
 
 /*------------------------------------------------------------------------------

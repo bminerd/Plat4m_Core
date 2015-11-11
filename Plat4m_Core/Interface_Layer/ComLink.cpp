@@ -59,7 +59,7 @@ ComLink::ComLink(ComInterface& comInterface) :
     myComInterface(comInterface),
     myCurrentComProtocol(NULL_POINTER),
     myCurrentComProtocolTimeoutTimeMs(0),
-    myTask(Plat4m::createCallback(this, &ComLink::taskCallback))
+    myThread(Plat4m::createCallback(this, &ComLink::taskCallback))
 {
 }
 

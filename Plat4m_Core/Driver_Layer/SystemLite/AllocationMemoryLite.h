@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,22 +39,25 @@
  * @brief AllocationMemoryLite class.
  */
 
-#ifndef _ALLOCATION_MEMORY_LITE_H_
-#define _ALLOCATION_MEMORY_LITE_H_
+#ifndef ALLOCATION_MEMORY_LITE_H
+#define ALLOCATION_MEMORY_LITE_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
-#include <AllocationMemoryDriver.h>
+#include <AllocationMemory.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
 template <unsigned int N>
-class AllocationMemoryLite : public AllocationMemoryDriver
+class AllocationMemoryLite : public AllocationMemory
 {
 public:
     
@@ -63,7 +66,7 @@ public:
      *------------------------------------------------------------------------*/
     
     AllocationMemoryLite() :
-        AllocationMemoryDriver(),
+        AllocationMemory(),
         myMemoryIndex(0),
         myIsLocked(false)
     {
@@ -81,7 +84,7 @@ public:
 private:
     
     /*--------------------------------------------------------------------------
-     * Private implemented methods
+     * Private methods implemented from AllocationMemory
      *------------------------------------------------------------------------*/
     
     void* driverAllocate(size_t count)
@@ -122,8 +125,12 @@ private:
      *------------------------------------------------------------------------*/
     
     uint8_t myMemory[N];
+
     size_t myMemoryIndex;
+
     bool myIsLocked;
 };
 
-#endif // _ALLOCATION_MEMORY_LITE_H_
+}; // namespace Plat4m
+
+#endif // ALLOCATION_MEMORY_LITE_H

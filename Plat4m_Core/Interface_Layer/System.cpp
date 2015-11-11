@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2015 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@
  * @file System.cpp
  * @author Ben Minerd
  * @date 6/4/2013
- * @brief System namespace.
+ * @brief System class.
  */
 
 /*------------------------------------------------------------------------------
@@ -46,13 +46,15 @@
 #include <System.h>
 #include <List.h>
 
+using Plat4m::System;
+
 /*------------------------------------------------------------------------------
  * Static data members
  *----------------------------------------------------------------------------*/
 
-System* System::myDriver    = NULL_POINTER;
+System* System::myDriver    = nullptr;
 bool System::myIsRunning    = false;
-const char* System::myName  = NULL_POINTER;
+const char* System::myName  = nullptr;
 
 /*------------------------------------------------------------------------------
  * Public static methods
@@ -65,9 +67,9 @@ const char* System::getName()
 }
 
 //------------------------------------------------------------------------------
-void System::addTask(Task& task)
+void System::addThread(Thread& thread)
 {
-    myDriver->driverAddTask(task);
+    myDriver->driverAddThread(thread);
 }
 
 //------------------------------------------------------------------------------
@@ -119,7 +121,7 @@ Mutex& System::getMutex()
 //------------------------------------------------------------------------------
 System::System(const char* name)
 {
-    if (IS_NULL_POINTER(myDriver))
+    if (isNullPointer(myDriver))
     {
         myName      = name;
         myDriver    = this;

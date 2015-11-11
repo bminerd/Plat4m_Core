@@ -39,8 +39,8 @@
  * @brief AllocationMemory class.
  */
 
-#ifndef _ALLOCATION_MEMORY_H_
-#define _ALLOCATION_MEMORY_H_
+#ifndef ALLOCATION_MEMORY_H
+#define ALLOCATION_MEMORY_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -49,25 +49,64 @@
 #include <Plat4m.h>
 #include <AllocationMemoryDriver.h>
 
+namespace Plat4m
+{
+
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-namespace AllocationMemory
+class AllocationMemory
 {
+public:
+
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Public static methods
      *------------------------------------------------------------------------*/
     
-    void setDriver(AllocationMemoryDriver& allocationMemoryDriver);
+    static void* allocate(size_t count);
     
-    void* allocate(size_t count);
+    static void* allocateArray(size_t count);
     
-    void* allocateArray(size_t count);
+    static void deallocate(void* pointer);
     
-    void deallocate(void* pointer);
-    
-    void deallocateArray(void* pointer);
+    static void deallocateArray(void* pointer);
+
+protected:
+
+    /*--------------------------------------------------------------------------
+     * Protected constructors
+     *------------------------------------------------------------------------*/
+
+    AllocationMemory();
+
+    /*--------------------------------------------------------------------------
+     * Protected destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~AllocationMemory();
+
+private:
+
+    /*--------------------------------------------------------------------------
+     * Private static data members
+     *------------------------------------------------------------------------*/
+
+    static AllocationMemory* myDriver;
+
+    /*--------------------------------------------------------------------------
+     * Private virtual methods
+     *------------------------------------------------------------------------*/
+
+    virtual void* driverAllocate(size_t count) = 0;
+
+    virtual void* driverAllocateArray(size_t count) = 0;
+
+    virtual void driverDeallocate(void* pointer) = 0;
+
+    virtual void driverDeallocateArray(void* pointer) = 0;
 };
 
-#endif // _ALLOCATION_MEMORY_H_
+}; // namespace Plat4m
+
+#endif // ALLOCATION_MEMORY_H
