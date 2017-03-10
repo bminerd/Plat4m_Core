@@ -1,0 +1,8 @@
+title: Plat4m
+description: Plat4m is a C++ library that provides abstraction for the main elements of an embedded software application including core system functionality, peripherals, and subsystems.
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-slate
+
+gems:
+  - jekyll-mentions
