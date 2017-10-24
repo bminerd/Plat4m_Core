@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,15 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiPrinter.h
- * @author Ben Minerd
- * @date 9/20/2013
- * @brief UiPrinter class.
- */
+///
+/// @file UiPrinter.h
+/// @author Ben Minerd
+/// @date 9/20/2013
+/// @brief UiPrinter class header file.
+///
 
-#ifndef _UI_PRINTER_H_
-#define _UI_PRINTER_H_
+#ifndef UI_PRINTER_H
+#define UI_PRINTER_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -48,6 +48,13 @@
 
 #include <Plat4m.h>
 #include <Display.h>
+
+/*------------------------------------------------------------------------------
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Forward class declarations
@@ -60,7 +67,7 @@ class UiLine;
 class UiImage;
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiPrinter
@@ -76,12 +83,6 @@ public:
         ERROR_NONE,
         ERROR_ITEM_INVALID
     };
-    
-    /*--------------------------------------------------------------------------
-     * Public constructors and destructors
-     *------------------------------------------------------------------------*/
-    
-    UiPrinter(Display& display);
     
     /*--------------------------------------------------------------------------
      * Public methods
@@ -110,9 +111,23 @@ public:
 protected:
     
     /*--------------------------------------------------------------------------
+     * Protected constructors
+     *------------------------------------------------------------------------*/
+
+    UiPrinter(Display& display);
+
+    /*--------------------------------------------------------------------------
+     * Public virtual destructors
+     *------------------------------------------------------------------------*/
+
+    virtual ~UiPrinter();
+
+    /*--------------------------------------------------------------------------
      * Protected methods
      *------------------------------------------------------------------------*/
     
+    Display& getDisplay();
+
     Display::Frame& getFrame();
     
 private:
@@ -126,4 +141,6 @@ private:
     UiItem* myPrintItem;
 };
 
-#endif // _UI_PRINTER_H_
+}; // namespace Plat4m
+
+#endif // UI_PRINTER_H

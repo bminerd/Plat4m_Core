@@ -50,10 +50,17 @@
 #include <UiButton.h>
 #include <UiItem.h>
 #include <UiIcon.h>
-#include <image_types.h>
+//#include <image_types.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiIconButton : public UiButton
@@ -66,9 +73,9 @@ public:
     
     UiIconButton(UiPrinter& printer,
                  UiView* view,
-                 UiItem* parent,
-                 const tImage& unpressedImage,
-                 const tImage& pressedImage);
+                 UiItem* parent);
+//                 const tImage& unpressedImage,
+//                 const tImage& pressedImage);
     
 private:
     
@@ -76,7 +83,7 @@ private:
      * Private data members
      *------------------------------------------------------------------------*/
     
-    const tImage* myIconImages[2];
+//    const tImage* myIconImages[2];
     
     UiIcon myIcon;
     
@@ -86,5 +93,7 @@ private:
     
     void driverSetPressed(const bool pressed);
 };
+
+}; // namespace Plat4m
 
 #endif // _UI_SPIN_BOX_H_

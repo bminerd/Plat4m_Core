@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,15 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiRectangle.h
- * @author Ben Minerd
- * @date 9/19/2013
- * @brief UiRectangle class.
- */
+///
+/// @file UiRectangle.h
+/// @author Ben Minerd
+/// @date 9/19/2013
+/// @brief UiRectangle class header file.
+///
 
-#ifndef _UI_RECTANGLE_H_
-#define _UI_RECTANGLE_H_
+#ifndef UI_RECTANGLE_H
+#define UI_RECTANGLE_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -48,10 +48,16 @@
 
 #include <Plat4m.h>
 #include <UiItem.h>
-#include <image_types.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiRectangle : public UiItem
@@ -62,33 +68,60 @@ public:
      * Public enumerations
      *------------------------------------------------------------------------*/
 
+    enum Fill
+    {
+        FILL_NONE = 0,
+        FILL_SOLID
+    };
+
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Public constructors
      *------------------------------------------------------------------------*/
     
     UiRectangle(UiPrinter& printer,
                 UiView* view,
                 UiItem* parent,
                 const int width = 0,
-                const int height = 0,
-                const int thickness = 1);
+                const int height = 0);
     
     /*--------------------------------------------------------------------------
      * Public methods
      *------------------------------------------------------------------------*/
     
-    int getThickness() const;
+    int getLineWidth() const;
     
-    void setThickness(const int thickness);
+    void setLineWidth(const int lineWidth);
     
+    Fill getFill() const;
+
+    void setFill(const Fill fill);
+
+    // TODO: For now
+
+    uint16_t getLineColor() const;
+
+    void setLineColor(const uint16_t lineColor);
+
+    uint16_t getFillColor() const;
+
+    void setFillColor(const uint16_t fillColor);
+
 private:
     
     /*--------------------------------------------------------------------------
      * Private data members
      *------------------------------------------------------------------------*/
     
-    int myThickness;
+    int myLineWidth;
     
+    Fill myFill;
+
+    // TODO: For now
+
+    uint16_t myLineColor;
+
+    uint16_t myFillColor;
+
     /*--------------------------------------------------------------------------
      * Private implemented methods
      *------------------------------------------------------------------------*/
@@ -96,4 +129,6 @@ private:
     void driverPrint();
 };
 
-#endif // _UI_RECTANGLE_H_
+}; // namespace Plat4m
+
+#endif // UI_RECTANGLE_H

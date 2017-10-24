@@ -49,10 +49,16 @@
 #include <Plat4m.h>
 #include <UiSelectableItem.h>
 #include <UiItem.h>
-#include <image_types.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiButton : public UiItem
@@ -60,7 +66,7 @@ class UiButton : public UiItem
 public:
     
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Public constructors
      *------------------------------------------------------------------------*/
     
     UiButton(UiPrinter& printer,
@@ -89,5 +95,7 @@ private:
     
     virtual void driverSetPressed(const bool pressed) = 0;
 };
+
+}; // namespace Plat4m
 
 #endif // _UI_BUTTON_H_

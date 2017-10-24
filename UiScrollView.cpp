@@ -46,6 +46,8 @@
 #include <UiScrollView.h>
 #include <icons.h>
 
+using Plat4m::UiScrollView;
+
 /*------------------------------------------------------------------------------
  * Public constructors and destructors
  *----------------------------------------------------------------------------*/

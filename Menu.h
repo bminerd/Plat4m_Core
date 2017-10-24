@@ -50,11 +50,18 @@
 #include <UiList.h>
 #include <Callback.h>
 #include <List.h>
-#include <image_types.h>
+//#include <image_types.h>
 #include <UiLink.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class Menu : public UiList
@@ -75,7 +82,7 @@ public:
          UiView* view,
          UiItem* parent,
          const char* name,
-         const tFont& font,
+//         const tFont& font,
          ExitCallback& exitCallback,
          const int width = -1);
     
@@ -83,7 +90,7 @@ public:
          UiView* view,
          UiItem* parent,
          const char* name,
-         const tFont& font,
+//         const tFont& font,
          Menu& parentMenu,
          const int width = -1);
     
@@ -109,7 +116,7 @@ private:
     
     const char* myName;
     
-    const tFont& myFont;
+//    const tFont& myFont;
     
     Menu* myParentMenu;
     
@@ -117,5 +124,7 @@ private:
     
     List<Menu*> mySubMenuList;
 };
+
+}; // namespace Plat4m
 
 #endif // _MENU_H_

@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,18 +32,22 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiView.cpp
- * @author Ben Minerd
- * @date 11/18/2013
- * @brief UiView class.
- */
+///
+/// @file UiView.cpp
+/// @author Ben Minerd
+/// @date 11/18/2013
+/// @brief UiView class source file.
+///
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <UiView.h>
+
+using Plat4m::UiView;
+using Plat4m::UiItem;
+using Plat4m::Ui;
 
 /*------------------------------------------------------------------------------
  * Public constructors and destructors
@@ -70,6 +74,36 @@ UiView::UiView(Ui& ui,
     myViewAreaItem.setHeight(height);
     
     addChild(&rootItem);
+}
+
+/*------------------------------------------------------------------------------
+ * Public virtual methods
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+bool UiView::isItemInView(UiItem& item)
+{
+    int x = item.getAbsoluteX();
+    int y = item.getAbsoluteY();
+    int width = item.getWidth();
+    int height = item.getHeight();
+
+    int viewX = myViewAreaItem.getAbsoluteX();
+    int viewY = myViewAreaItem.getAbsoluteY();
+    int viewWidth = myViewAreaItem.getWidth();
+    int viewHeight = myViewAreaItem.getHeight();
+
+    if (((x + width) < viewX) || (x > (viewX + viewWidth)))
+    {
+        return false;
+    }
+
+    if (((y + height) < viewY) || (y > (viewY + viewHeight)))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 /*------------------------------------------------------------------------------
@@ -109,32 +143,6 @@ void UiView::setFocusItem(UiItem* item)
     driverSetFocusItem(item);
     
 //    moveItemIntoView(*item);
-}
-
-//------------------------------------------------------------------------------
-bool UiView::isItemInView(UiItem& item)
-{
-    int x = item.getAbsoluteX();
-    int y = item.getAbsoluteY();
-    int width = item.getWidth();
-    int height = item.getHeight();
-    
-    int viewX = myViewAreaItem.getAbsoluteX();
-    int viewY = myViewAreaItem.getAbsoluteY();
-    int viewWidth = myViewAreaItem.getWidth();
-    int viewHeight = myViewAreaItem.getHeight();
-    
-    if (((x + width) < viewX) || (x > (viewX + viewWidth)))
-    {
-        return false;
-    }
-    
-    if (((y + height) < viewY) || (y > (viewY + viewHeight)))
-    {
-        return false;
-    }
-    
-    return true;
 }
 
 //------------------------------------------------------------------------------

@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,18 +32,20 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiText.cpp
- * @author Ben Minerd
- * @date 9/19/2013
- * @brief UiText class.
- */
+///
+/// @file UiText.h
+/// @author Ben Minerd
+/// @date 9/19/2013
+/// @brief UiText class source file.
+///
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <UiText.h>
+
+using Plat4m::UiText;
 
 /*------------------------------------------------------------------------------
  * Public constructors and destructors

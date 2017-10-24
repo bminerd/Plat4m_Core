@@ -50,7 +50,14 @@
 #include <UiItem.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiSelectableItem : public UiItem
@@ -80,5 +87,7 @@ private:
     
     bool driverHandleAction(const UiInput::Action action);
 };
+
+}; // namespace Plat4m
 
 #endif // _UI_SELECTABLE_ITEM_H_

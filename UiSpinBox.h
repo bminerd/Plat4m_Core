@@ -50,9 +50,17 @@
 #include <UiItem.h>
 #include <UiIconButton.h>
 #include <UiText.h>
+#include <Font.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiSpinBox : public UiItem
@@ -69,7 +77,7 @@ public:
               const unsigned int minValue,
               const unsigned int maxValue,
               const unsigned int increment,
-              const tFont& font);
+              const Font& font);
     
 private:
     
@@ -92,5 +100,7 @@ private:
     
     bool driverHandleAction(const UiInput::Action action);
 };
+
+}; // namespace Plat4m
 
 #endif // _UI_SPIN_BOX_H_

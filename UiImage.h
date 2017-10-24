@@ -48,10 +48,17 @@
 
 #include <Plat4m.h>
 #include <UiItem.h>
-#include <image_types.h>
+//#include <image_types.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiImage : public UiItem
@@ -68,9 +75,9 @@ public:
      * Public methods
      *------------------------------------------------------------------------*/
     
-    const tImage& getImage() const;
-    
-    void setImage(const tImage& image);
+//    const tImage& getImage() const;
+//
+//    void setImage(const tImage& image);
     
 private:
     
@@ -78,7 +85,7 @@ private:
      * Private data members
      *------------------------------------------------------------------------*/
     
-    const tImage* myImage;
+//    const tImage* myImage;
     
     /*--------------------------------------------------------------------------
      * Private implemented methods
@@ -86,5 +93,7 @@ private:
     
     void driverPrint();
 };
+
+}; // namespace Plat4m
 
 #endif // _UI_IMAGE_H_

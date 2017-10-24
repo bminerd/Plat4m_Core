@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,15 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiItem.h
- * @author Ben Minerd
- * @date 7/10/2013
- * @brief UiItem class.
- */
+///
+/// @file UiItem.h
+/// @author Ben Minerd
+/// @date 7/10/2013
+/// @brief UiItem class header file.
+///
 
-#ifndef _UI_ITEM_H_
-#define _UI_ITEM_H_
+#ifndef UI_ITEM_H
+#define UI_ITEM_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -52,13 +52,20 @@
 #include <UiInput.h>
 
 /*------------------------------------------------------------------------------
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
  * Forward class declarations
  *----------------------------------------------------------------------------*/
 
 class UiView;
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiItem
@@ -86,10 +93,16 @@ public:
     };
     
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Public constructors
+     *------------------------------------------------------------------------*/
+
+    UiItem(UiPrinter& printer, UiView* view, UiItem* parent);
+
+    /*--------------------------------------------------------------------------
+     * Public virtual destructors
      *------------------------------------------------------------------------*/
     
-    UiItem(UiPrinter& printer, UiView* view, UiItem* parent);
+    virtual ~UiItem();
     
     /*--------------------------------------------------------------------------
      * Public methods
@@ -137,8 +150,8 @@ public:
     
     void setHeight(const int height, const bool update = true);
     
-    void setWidthHeight(const int height,
-                        const int width,
+    void setWidthHeight(const int width,
+                        const int height,
                         const bool update = true);
     
     HorizontalAlignment getHorizontalAlignment() const;
@@ -171,6 +184,8 @@ public:
     
     void moveIntoView();
     
+    void setNotifyParentOnUpdate(const bool notify);
+
 protected:
     
     /*--------------------------------------------------------------------------
@@ -213,6 +228,8 @@ private:
     
     bool myIsVisible;
     
+    bool myNotifyParentOnUpdate;
+
     /*--------------------------------------------------------------------------
      * Private virtual methods
      *------------------------------------------------------------------------*/
@@ -242,4 +259,6 @@ private:
     void setHeightPrivate(const  int height);
 };
 
-#endif // _UI_ITEM_H_
+}; // namespace Plat4m
+
+#endif // UI_ITEM_H

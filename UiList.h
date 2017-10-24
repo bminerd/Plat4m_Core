@@ -54,10 +54,16 @@
 #include <UiRectangle.h>
 #include <UiLine.h>
 #include <UiIconButton.h>
-#include <image_types.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiList : public UiItem
@@ -123,5 +129,7 @@ private:
     
     bool driverHandleAction(const UiInput::Action action);
 };
+
+}; // namespace Plat4m
 
 #endif // _UI_LIST_H_

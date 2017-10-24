@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,15 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiText.h
- * @author Ben Minerd
- * @date 9/19/2013
- * @brief UiText class.
- */
+///
+/// @file UiText.h
+/// @author Ben Minerd
+/// @date 9/19/2013
+/// @brief UiText class header file.
+///
 
-#ifndef _UI_TEXT_H_
-#define _UI_TEXT_H_
+#ifndef UI_TEXT_H
+#define UI_TEXT_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -49,10 +49,17 @@
 #include <Plat4m.h>
 #include <UiItem.h>
 #include <UiPrinter.h>
-#include <image_types.h>
+#include <Font.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiText : public UiItem
@@ -66,7 +73,7 @@ public:
     UiText(UiPrinter& printer,
            UiView* view,
            UiItem* parent,
-           const tFont& font,
+           const Font& font,
            const char* text = "");
     
     /*--------------------------------------------------------------------------
@@ -77,7 +84,7 @@ public:
     
     void setText(const char* text);
     
-    const tFont& getFont() const;
+    const Font& getFont() const;
     
 private:
     
@@ -87,7 +94,7 @@ private:
     
     const char* myText;
     
-    const tFont& myFont;
+    const Font& myFont;
     
     /*--------------------------------------------------------------------------
      * Private implemented methods
@@ -96,4 +103,6 @@ private:
     void driverPrint();
 };
 
-#endif // _UI_TEXT_H_
+}; // namespace Plat4m
+
+#endif // UI_TEXT_H

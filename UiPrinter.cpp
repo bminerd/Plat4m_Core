@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,12 +32,12 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiPrinter.cpp
- * @author Ben Minerd
- * @date 9/20/2013
- * @brief UiPrinter class.
- */
+///
+/// @file UiPrinter.h
+/// @author Ben Minerd
+/// @date 9/20/2013
+/// @brief UiPrinter class source file.
+///
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -49,16 +49,8 @@
 #include <UiRectangle.h>
 #include <UiImage.h>
 
-/*------------------------------------------------------------------------------
- * Public constructors and destructors
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-UiPrinter::UiPrinter(Display& display) :
-    myDisplay(display),
-    myPrintItem(NULL_POINTER)
-{
-}
+using Plat4m::UiPrinter;
+using Plat4m::Display;
 
 /*------------------------------------------------------------------------------
  * Public methods
@@ -67,10 +59,10 @@ UiPrinter::UiPrinter(Display& display) :
 //------------------------------------------------------------------------------
 void UiPrinter::printFrame()
 {
-    if (IS_VALID_POINTER(myPrintItem))
+    if (isValidPointer(myPrintItem))
     {
         Display::Frame& frame = myDisplay.getFrame();
-        memset(frame.data, 0, frame.width * (frame.height / 8));
+//        memset(frame.data, 0, frame.width * (frame.height / 8));
         
         myPrintItem->print();
         myDisplay.writeFrame();
@@ -95,7 +87,7 @@ unsigned int UiPrinter::getFrameHeight()
 void UiPrinter::schedulePrint(UiItem* item)
 {
     // FOR NOW!
-    if (IS_NULL_POINTER(myPrintItem))
+    if (isNullPointer(myPrintItem))
     {
         myPrintItem = item;
     }
@@ -127,8 +119,34 @@ UiPrinter::Error UiPrinter::printImage(UiImage& image)
 }
 
 /*------------------------------------------------------------------------------
+ * Protected constructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+UiPrinter::UiPrinter(Display& display) :
+    myDisplay(display),
+    myPrintItem(0)
+{
+}
+
+/*------------------------------------------------------------------------------
+ * Protected virtual destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+UiPrinter::~UiPrinter()
+{
+}
+
+/*------------------------------------------------------------------------------
  * Protected methods
  *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+Display& UiPrinter::getDisplay()
+{
+    return myDisplay;
+}
 
 //------------------------------------------------------------------------------
 Display::Frame& UiPrinter::getFrame()

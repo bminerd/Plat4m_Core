@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,15 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiPrinterMonochrome.h
- * @author Ben Minerd
- * @date 9/20/2013
- * @brief UiPrinterMonochrome class.
- */
+///
+/// @file UiPrinterMonochrome.h
+/// @author Ben Minerd
+/// @date 9/20/2013
+/// @brief UiPrinterMonochrome class header file.
+///
 
-#ifndef _UI_PRINTER_MONOCHROME_H_
-#define _UI_PRINTER_MONOCHROME_H_
+#ifndef UI_PRINTER_MONOCHROME_H
+#define UI_PRINTER_MONOCHROME_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -54,13 +54,15 @@
  * Classes
  *----------------------------------------------------------------------------*/
 
+namespace Plat4m
+{
+
 class UiPrinterMonochrome : public UiPrinter
 {
 public:
-
     
     /*--------------------------------------------------------------------------
-     * Public constructors and destructors
+     * Public constructors
      *------------------------------------------------------------------------*/
     
     UiPrinterMonochrome(Display& display);
@@ -88,4 +90,6 @@ private:
                              const uint8_t byte);
 };
 
-#endif // _UI_PRINTER_MONOCHROME_H_
+}; // namespace Plat4m
+
+#endif // UI_PRINTER_MONOCHROME_H

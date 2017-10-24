@@ -45,6 +45,8 @@
 
 #include <UiSelectableItem.h>
 
+using Plat4m::UiSelectableItem;
+
 /*------------------------------------------------------------------------------
  * Public constructors and destructors
  *----------------------------------------------------------------------------*/

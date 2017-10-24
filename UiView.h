@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,15 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiView.h
- * @author Ben Minerd
- * @date 11/18/2013
- * @brief UiView class.
- */
+///
+/// @file UiView.h
+/// @author Ben Minerd
+/// @date 11/18/2013
+/// @brief UiView class header file.
+///
 
-#ifndef _UI_VIEW_H_
-#define _UI_VIEW_H_
+#ifndef UI_VIEW_H
+#define UI_VIEW_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -51,6 +51,9 @@
 #include <Ui.h>
 #include <UiPrinter.h>
 #include <UiLayout.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
@@ -124,4 +127,6 @@ private:
     virtual void driverMoveItemIntoView(UiItem& item);
 };
 
-#endif // _UI_VIEW_H_
+}; // namespace Plat4m
+
+#endif // UI_VIEW_H

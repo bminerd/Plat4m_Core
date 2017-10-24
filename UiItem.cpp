@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,12 +32,12 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiItem.cpp
- * @author Ben Minerd
- * @date 7/10/2013
- * @brief UiItem class.
- */
+///
+/// @file UiItem.cpp
+/// @author Ben Minerd
+/// @date 7/10/2013
+/// @brief UiItem class source file.
+///
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -48,8 +48,12 @@
 // Match forward class declarations
 #include <UiView.h>
 
+using Plat4m::UiItem;
+using Plat4m::UiView;
+using Plat4m::UiPrinter;
+
 /*------------------------------------------------------------------------------
- * Public constructors and destructors
+ * Public constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
@@ -65,12 +69,22 @@ UiItem::UiItem(UiPrinter& printer, UiView* view, UiItem* parent) :
     myVerticalAlignment(VERTICAL_ALIGNMENT_ABSOLUTE),
     myHorizontalAlignmentOffset(0),
     myVerticalAlignmentOffset(0),
-    myIsVisible(true)
+    myIsVisible(true),
+    myNotifyParentOnUpdate(true)
 {
-    if (IS_VALID_POINTER(myParent))
+    if (isValidPointer(myParent))
     {
         myParent->addChild(this);
     }
+}
+
+/*------------------------------------------------------------------------------
+ * Public virtual destructors
+ *----------------------------------------------------------------------------*/
+
+//------------------------------------------------------------------------------
+UiItem::~UiItem()
+{
 }
 
 /*------------------------------------------------------------------------------
@@ -86,7 +100,7 @@ UiItem* UiItem::getParent()
 //------------------------------------------------------------------------------
 void UiItem::setParent(UiItem* parent)
 {
-    if (IS_VALID_POINTER(parent))
+    if (isValidPointer(parent))
     {
         myParent = parent;
     }
@@ -101,7 +115,7 @@ UiView* UiItem::getView()
 //------------------------------------------------------------------------------
 void UiItem::addChild(UiItem* item)
 {
-    if (IS_VALID_POINTER(item))
+    if (isValidPointer(item))
     {
         item->setParent(this);
         myChildList.append(item);
@@ -112,16 +126,20 @@ void UiItem::addChild(UiItem* item)
 //------------------------------------------------------------------------------
 void UiItem::update()
 {
-    if (IS_VALID_POINTER(myParent))
+    if (isValidPointer(myParent))
     {
-        myParent->update();
+        if (myNotifyParentOnUpdate)
+        {
+            myParent->update();
+        }
+
         myParent->updateChild(*this);
     }
     
     driverUpdate();
     
     // FOR NOW!
-    if (IS_VALID_POINTER(myView))
+    if (isValidPointer(myView))
     {
         myView->update();
     }
@@ -209,7 +227,7 @@ void UiItem::print()
 {
     UiItem* parent = getParent();
     
-    while (IS_VALID_POINTER(parent))
+    while (isValidPointer(parent))
     {
         if (!parent->isVisible())
         {
@@ -221,7 +239,7 @@ void UiItem::print()
     
     if (isVisible())
     {
-        if (IS_VALID_POINTER(getView()) && (getView()->isItemInView(*this)))
+        if (isValidPointer(getView()) && (getView()->isItemInView(*this)))
         {
             driverPrint();
         }
@@ -306,7 +324,7 @@ int UiItem::getAbsoluteX() const
     
     UiItem* item = myParent;
     
-    while (IS_VALID_POINTER(item))
+    while (isValidPointer(item))
     {
         x += item->getX();
         item = item->getParent();
@@ -322,7 +340,7 @@ int UiItem::getAbsoluteY() const
     
     UiItem* item = myParent;
     
-    while (IS_VALID_POINTER(item))
+    while (isValidPointer(item))
     {
          y += item->getY();
          item = item->getParent();
@@ -474,7 +492,7 @@ bool UiItem::handleAction(const UiInput::Action action)
 {
     if (driverHandleAction(action))
     {
-        if (IS_VALID_POINTER(myView))
+        if (isValidPointer(myView))
         {
             myView->handleAction(action);
         }
@@ -484,11 +502,11 @@ bool UiItem::handleAction(const UiInput::Action action)
     
     UiItem* parent = getParent();
     
-    while (IS_VALID_POINTER(parent))
+    while (isValidPointer(parent))
     {
         if (parent->driverHandleAction(action))
         {
-            if (IS_VALID_POINTER(myView))
+            if (isValidPointer(myView))
             {
                 myView->handleAction(action);
             }
@@ -505,7 +523,7 @@ bool UiItem::handleAction(const UiInput::Action action)
 //------------------------------------------------------------------------------
 void UiItem::setFocus()
 {
-    if (IS_VALID_POINTER(myView))
+    if (isValidPointer(myView))
     {
         myView->setFocusItem(this);
     }
@@ -521,6 +539,12 @@ bool UiItem::hasFocus()
 void UiItem::moveIntoView()
 {
     myView->moveItemIntoView(*this);
+}
+
+//------------------------------------------------------------------------------
+void UiItem::setNotifyParentOnUpdate(const bool notify)
+{
+    myNotifyParentOnUpdate = notify;
 }
 
 /*------------------------------------------------------------------------------

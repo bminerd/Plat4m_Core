@@ -1,0 +1,35 @@
+cmake_minimum_required (VERSION 2.6)
+
+set(files ${files})
+set(header_files ${header_files})
+set(asm_source_files ${asm_source_files})
+set(c_source_files ${c_source_files})
+set(cpp_source_files ${cpp_source_files})
+
+macro(find_header_files path)
+    file(GLOB temp_header_files ${path}/*.h)
+    set(header_files ${header_files} ${temp_header_files})
+endmacro()
+
+macro(find_source_files path)
+    file(GLOB temp_asm_source_files ${path}/*.s)
+    file(GLOB temp_c_source_files ${path}/*.c)
+    file(GLOB temp_cpp_source_files ${path}/*.cpp)
+    set(asm_source_files ${asm_source_files} ${temp_asm_source_files})
+    set(c_source_files ${c_source_files} ${temp_c_source_files})
+    set(cpp_source_files ${cpp_source_files} ${temp_cpp_source_files})
+endmacro()
+
+macro(find_source_files_special path)
+    file(GLOB temp_cpp_source_files ${path}/*.cpp)
+    set(cpp_source_files_special ${cpp_source_files_special} ${temp_cpp_source_files})
+endmacro()
+
+macro(find_header_and_source_files path)
+    find_header_files(${path})
+    find_source_files(${path})
+endmacro()
+
+macro(combine_all_files)
+    set(files ${files} ${header_files} ${asm_source_files} ${c_source_files} ${cpp_source_files} ${cpp_source_files_special})
+endmacro()

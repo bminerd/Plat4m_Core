@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,12 +32,12 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiRectangle.cpp
- * @author Ben Minerd
- * @date 9/19/2013
- * @brief UiRectangle class.
- */
+///
+/// @file UiRectangle.cpp
+/// @author Ben Minerd
+/// @date 9/19/2013
+/// @brief UiRectangle class source file.
+///
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -45,8 +45,10 @@
 
 #include <UiRectangle.h>
 
+using Plat4m::UiRectangle;
+
 /*------------------------------------------------------------------------------
- * Public constructors and destructors
+ * Public constructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
@@ -54,10 +56,12 @@ UiRectangle::UiRectangle(UiPrinter& printer,
                          UiView* view,
                          UiItem* parent,
                          const int width,
-                         const int height,
-                         const int thickness) :
+                         const int height) :
     UiItem(printer, view, parent),
-    myThickness(thickness)
+    myLineWidth(1),
+    myFill(FILL_NONE),
+    myLineColor(0xFFFF),
+    myFillColor(0x0000)
 {
     setWidthHeight(width, height);
 }
@@ -67,19 +71,55 @@ UiRectangle::UiRectangle(UiPrinter& printer,
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-int UiRectangle::getThickness() const
+int UiRectangle::getLineWidth() const
 {
-    return myThickness;
+    return myLineWidth;
 }
 
 //------------------------------------------------------------------------------
-void UiRectangle::setThickness(const int thickness)
+void UiRectangle::setLineWidth(const int lineWidth)
 {
-    if (thickness != myThickness)
+    if (lineWidth != myLineWidth)
     {
-        myThickness = thickness;
+        myLineWidth = lineWidth;
         update();
     }
+}
+
+//------------------------------------------------------------------------------
+UiRectangle::Fill UiRectangle::getFill() const
+{
+    return myFill;
+}
+
+//------------------------------------------------------------------------------
+void UiRectangle::setFill(const Fill fill)
+{
+    myFill = fill;
+}
+
+//------------------------------------------------------------------------------
+uint16_t UiRectangle::getLineColor() const
+{
+    return myLineColor;
+}
+
+//------------------------------------------------------------------------------
+void UiRectangle::setLineColor(const uint16_t lineColor)
+{
+    myLineColor = lineColor;
+}
+
+//------------------------------------------------------------------------------
+uint16_t UiRectangle::getFillColor() const
+{
+    return myFillColor;
+}
+
+//------------------------------------------------------------------------------
+void UiRectangle::setFillColor(const uint16_t fillColor)
+{
+    myFillColor = fillColor;
 }
 
 /*------------------------------------------------------------------------------

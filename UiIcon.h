@@ -49,10 +49,17 @@
 #include <Plat4m.h>
 #include <UiImage.h>
 #include <UiPrinter.h>
-#include <image_types.h>
+//#include <image_types.h>
 
 /*------------------------------------------------------------------------------
- * Classes
+ * Namespace
+ *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
+
+/*------------------------------------------------------------------------------
+ * Class
  *----------------------------------------------------------------------------*/
 
 class UiIcon : public UiImage
@@ -70,7 +77,7 @@ public:
     UiIcon(UiPrinter& printer,
            UiView* view,
            UiItem* parent,
-           const tImage** images,
+//           const tImage** images,
            const unsigned int nImages);
         
     /*--------------------------------------------------------------------------
@@ -85,8 +92,10 @@ private:
      * Private data members
      *------------------------------------------------------------------------*/
     
-    const tImage** myImages;
+//    const tImage** myImages;
     const unsigned int myNImages;
 };
+
+}; // namespace Plat4m
 
 #endif // _UI_ICON_H_
