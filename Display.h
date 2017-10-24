@@ -1,83 +1,98 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2016 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file Display.h
- * @author Ben Minerd
- * @date 4/11/2013
- * @brief Display class.
- */
+///
+/// @file Display.h
+/// @author Ben Minerd
+/// @date 4/11/2013
+/// @brief Display class header file.
+///
 
-#ifndef _DISPLAY_H_
-#define _DISPLAY_H_
+#ifndef DISPLAY_H
+#define DISPLAY_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
-class Display
+namespace Plat4m
+{
+
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
+
+class Display : public Module
 {
 public:
     
-    /*--------------------------------------------------------------------------
-     * Public enumerations
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public enumerations
+    //--------------------------------------------------------------------------
     
     /**
      * @brief Enumeration of display errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_PARAMETER_INVALID,
-        ERROR_SECTION_INVALID,
-        ERROR_ALIGNMENT_INVALID,
-        ERROR_TRANSITION_INVALID,
-        ERROR_FONT_INVALID,
-        ERROR_NOT_ENABLED,
-        ERROR_COMMUNICATION
+        ERROR_CODE_NONE,
+        ERROR_CODE_PARAMETER_INVALID,
+        ERROR_CODE_SECTION_INVALID,
+        ERROR_CODE_ALIGNMENT_INVALID,
+        ERROR_CODE_TRANSITION_INVALID,
+        ERROR_CODE_FONT_INVALID,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_COMMUNICATION_FAILED
     };
+
+    //--------------------------------------------------------------------------
+    // Public typedefs
+    //--------------------------------------------------------------------------
+
+    typedef ErrorTemplate<ErrorCode> Error;
     
-    /*--------------------------------------------------------------------------
-     * Public structures
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public structures
+    //--------------------------------------------------------------------------
     
     struct Config
     {
@@ -92,53 +107,27 @@ public:
         unsigned int height;
     };
     
-    /*--------------------------------------------------------------------------
-     * Public virtual destructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public virtual methods
+    //--------------------------------------------------------------------------
     
-    virtual ~Display();
-    
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
-
-    unsigned int getWidth() const;
-    
-    unsigned int getHeight() const;
-    
-    Frame& getFrame();
-    
-    /**
-     * @brief Sets this display enabled or disabled.
-     * @param enable Flag that indicates if this display should be enabled or
-     * disabled.
-     * @return Display error.
-     */
-    Error enable(const bool enable);
-
-    /**
-     * @brief Checks to see if this display is enabled or disabled.
-     * @param isEnabled Flag that indicates if this display is enabled or
-     * disabled.
-     * @return Display error.
-     */
-    Error isEnabled(bool& isEnabled);
+    virtual Frame& getFrame();
 
     /**
      * @brief Configures this display.
      * @param config Display configuration.
      * @return Display error.
      */
-    Error configure(const Config& config);
+    virtual Error configure(const Config& config);
 
-    Error writeFrame();
+    virtual Error writeFrame();
 
     /**
      * @brief Clears this display.
      * @param display Display to access.
      * @return Display error.
      */
-    Error clear();
+    virtual Error clear();
 
     /**
      * @brief Sets this display brightness.
@@ -146,31 +135,41 @@ public:
      * @param brightness Brightness value.
      * @return Display error.
      */
-    Error setBrightnessPercent(const float brightnessPercent);
+    virtual Error setBrightnessPercent(const float brightnessPercent);
     
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    unsigned int getWidth() const;
+
+    unsigned int getHeight() const;
+
 protected:
     
-    /*--------------------------------------------------------------------------
-     * Protected constructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Protected constructors
+    //--------------------------------------------------------------------------
 
     Display(Frame& frame);
     
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~Display();
+
 private:
     
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
-    
-    bool myIsEnabled;
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
     
     Frame& myFrame;
     
-    /*--------------------------------------------------------------------------
-     * Private virtual methods
-     *------------------------------------------------------------------------*/
-    
-    virtual Error driverEnable(const bool enable) = 0;
+    //--------------------------------------------------------------------------
+    // Private pure virtual methods
+    //--------------------------------------------------------------------------
     
     virtual Error driverConfigure(const Config& config) = 0;
     
@@ -181,4 +180,6 @@ private:
     virtual Error driverSetBrightnessPercent(const float brightnessPercent) = 0;
 };
 
-#endif // _DISPLAY_H_
+}; // namespace Plat4m
+
+#endif // DISPLAY_H

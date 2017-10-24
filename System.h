@@ -1,77 +1,79 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2015 Benjamin Minerd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file System.h
- * @author Ben Minerd
- * @date 6/4/2013
- * @brief System class.
- */
+///
+/// @file System.h
+/// @author Ben Minerd
+/// @date 6/4/2013
+/// @brief System class header file.
+///
 
-#ifndef SYSTEM_H
-#define SYSTEM_H
+#ifndef PLAT4M_SYSTEM_H
+#define PLAT4M_SYSTEM_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <Plat4m.h>
 #include <ErrorTemplate.h>
-#include <Mutex.h>
 #include <Thread.h>
+#include <Mutex.h>
+#include <WaitCondition.h>
+#include <Queue.h>
+
+#include <stdint.h>
+
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
 namespace Plat4m
 {
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
 
-/**
- * @brief Handles all core and OS functionality including timing, task
- * scheduling, and mutex creation.
- */
 class System
 {
 public:
-    /*--------------------------------------------------------------------------
-     * Public enumerations
-     *------------------------------------------------------------------------*/
 
-    /**
-     * @brief Enumeration of timer errors.
-     */
+    //--------------------------------------------------------------------------
+    // Public enumerations
+    //--------------------------------------------------------------------------
+
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -80,77 +82,91 @@ public:
         ERROR_CODE_NOT_ENABLED
     };
 
-    /*--------------------------------------------------------------------------
-     * Public typedefs
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public typedefs
+    //--------------------------------------------------------------------------
 
     typedef ErrorTemplate<ErrorCode> Error;
     
-    /*--------------------------------------------------------------------------
-     * Public static methods
-     *------------------------------------------------------------------------*/
-    
-    static const char* getName();
+    //--------------------------------------------------------------------------
+    // Public static methods
+    //--------------------------------------------------------------------------
 
-    static void addThread(Thread& thread);
+    static Thread& createThread(Thread::RunCallback& callback,
+                                const TimeMs periodMs = 0);
+
+    static Mutex& createMutex();
+
+    static WaitCondition& createWaitCondition();
+
+    //--------------------------------------------------------------------------
+    template <typename T>
+    static Queue<T>& createQueue(const uint32_t nValues)
+	{
+    	return *(new Queue<T>(myDriver->driverCreateQueueDriver(nValues,
+    														    sizeof(T))));
+	}
 
     static void run();
     
     static bool isRunning();
 
-    static void timeMsHandler();
+    static TimeMs getTimeMs();
 
-    static uint32_t timeGetMs();
+    static TimeUs getTimeUs();
 
-    static void timeDelayMs(const uint32_t timeMs);
+    static void delayTimeMs(const TimeMs timeMs);
 
-    static bool timeCheckMs(const uint32_t timeMs);
-
-    static Mutex& getMutex();
+    static bool checkTimeMs(const TimeMs timeMs);
     
 protected:
     
-    /*--------------------------------------------------------------------------
-     * Protected constructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Protected constructors
+    //--------------------------------------------------------------------------
 
-    System(const char* name);
+    System();
 
-    /*--------------------------------------------------------------------------
-     * Protected destructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
 
     virtual ~System();
 
 private:
     
-    /*--------------------------------------------------------------------------
-     * Private static data members
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
     
     static System* myDriver;
     
     static bool myIsRunning;
     
-    static const char* myName;
-    
-    /*--------------------------------------------------------------------------
-     * Private virtual methods
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Private pure virtual methods
+    //--------------------------------------------------------------------------
 
-    virtual void driverAddThread(Thread& thread) = 0;
+    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
+                                       const TimeMs periodMs) = 0;
+
+    virtual Mutex& driverCreateMutex() = 0;
+
+    virtual WaitCondition& driverCreateWaitCondition() = 0;
+
+    virtual QueueDriver& driverCreateQueueDriver(
+    										 const uint32_t nValues,
+    									     const uint32_t valueSizeBytes) = 0;
 
     virtual void driverRun() = 0;
 
-    virtual void driverTimeMsHandler() = 0;
+    virtual TimeMs driverGetTimeMs() = 0;
 
-    virtual uint32_t driverTimeGetMs() = 0;
+    virtual TimeMs driverGetTimeUs() = 0;
 
-    virtual void driverTimeDelayMs(const uint32_t timeMs) = 0;
-
-    virtual Mutex& driverGetMutex() = 0;
+    virtual void driverDelayTimeMs(const TimeMs timeMs) = 0;
 };
 
 }; // namespace Plat4m
 
-#endif // SYSTEM_H
+#endif // PLAT4M_SYSTEM_H

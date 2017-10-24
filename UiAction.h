@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,15 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file UiAction.h
- * @author Ben Minerd
- * @date 11/19/2013
- * @brief UiAction class.
- */
+///
+/// @file UiAction.h
+/// @author Ben Minerd
+/// @date 11/19/2013
+/// @brief UiAction class.
+///
 
-#ifndef _UI_ACTION_H_
-#define _UI_ACTION_H_
+#ifndef UI_ACTION_H
+#define UI_ACTION_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -52,6 +52,9 @@
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
+
+namespace Plat4m
+{
 
 class UiAction
 {
@@ -94,4 +97,6 @@ private:
     ActionCallback& myCallback;
 };
 
-#endif // _UI_ACTION_H_
+}; // namespace Plat4m
+
+#endif // UI_ACTION_H

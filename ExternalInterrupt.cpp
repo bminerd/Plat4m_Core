@@ -1,57 +1,58 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2015 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2016 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file ExternalInterrupt.cpp
- * @author Ben Minerd
- * @date 9/25/15
- * @brief ExternalInterrupt class.
- */
+///
+/// @file ExternalInterrupt.cpp
+/// @author Ben Minerd
+/// @date 9/25/15
+/// @brief ExternalInterrupt class.
+///
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <ExternalInterrupt.h>
 #include <System.h>
 
 using Plat4m::ExternalInterrupt;
 using Plat4m::GpioPin;
+using Plat4m::Module;
 
-/*------------------------------------------------------------------------------
- * Local variables
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Local variables
+//------------------------------------------------------------------------------
 
 /**
  * @brief Trigger mode map.
@@ -83,18 +84,9 @@ static const bool activeLevelMap[2][2] =
     }
 };
 
-/*------------------------------------------------------------------------------
- * Public virtual destructors
- *----------------------------------------------------------------------------*/
-
 //------------------------------------------------------------------------------
-ExternalInterrupt::~ExternalInterrupt()
-{
-}
-
-/*------------------------------------------------------------------------------
- * Public methods
- *----------------------------------------------------------------------------*/
+// Public virtual methods
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 ExternalInterrupt::Error ExternalInterrupt::configure(const Config& config)
@@ -110,21 +102,31 @@ ExternalInterrupt::Error ExternalInterrupt::configure(const Config& config)
     if (error.getCode() == ERROR_CODE_NONE)
     {
         myConfig = config;
+
+        if (isValidPointer(myHandlerCallback))
+        {
+            GpioPin::Level level;
+            myGpioPin.readLevel(level);
+
+            bool isActive = activeLevelMap[myConfig.activeLevel][level];
+
+            if (isActive)
+            {
+                myHandlerCallback->call(isActive);
+            }
+        }
     }
 
     return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-ExternalInterrupt::Error ExternalInterrupt::setHandlerCallback(
-                                               HandlerCallback& handlerCallback)
+void ExternalInterrupt::setHandlerCallback(HandlerCallback& handlerCallback)
 {
-    if (IS_NULL_POINTER(myHandlerCallback))
+    if (isNullPointer(myHandlerCallback))
     {
         myHandlerCallback = &handlerCallback;
     }
-    
-    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -139,32 +141,52 @@ ExternalInterrupt::Error ExternalInterrupt::isActive(bool& isActive)
 }
 
 //------------------------------------------------------------------------------
-void ExternalInterrupt::handler()
+void ExternalInterrupt::interruptHandler()
 {
-    if (IS_VALID_POINTER(myHandlerCallback))
+    if (isValidPointer(myHandlerCallback))
     {
         bool isActive = true;
-            
+
         if (myConfig.trigger == TRIGGER_RISING_FALLING)
         {
             GpioPin::Level level;
             myGpioPin.readLevel(level);
-            
+
             isActive = activeLevelMap[myConfig.activeLevel][level];
         }
-    
+
         myHandlerCallback->call(isActive);
     }
 }
 
-/*------------------------------------------------------------------------------
- * Protected constructors
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 ExternalInterrupt::ExternalInterrupt(GpioPin& gpioPin) :
-    myIsEnabled(false),
     myGpioPin(gpioPin),
-    myHandlerCallback(NULL_POINTER)
+    myHandlerCallback(0)
 {
+}
+
+//------------------------------------------------------------------------------
+// Protected virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+ExternalInterrupt::~ExternalInterrupt()
+{
+}
+
+//------------------------------------------------------------------------------
+// Private virtual methods implemented from Module
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Module::Error ExternalInterrupt::interfaceEnable(const bool enable)
+{
+    myGpioPin.enable(enable);
+
+    return Module::Error(Module::ERROR_CODE_NONE);
 }

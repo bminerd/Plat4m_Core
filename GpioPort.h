@@ -1,73 +1,81 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2016 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file GpioPort.h
- * @author Ben Minerd
- * @date 3/25/13
- * @brief GpioPort class.
- */
+///
+/// @file GpioPort.h
+/// @author Ben Minerd
+/// @date 3/25/13
+/// @brief GpioPort class.
+///
 
-#ifndef _GPIO_PORT_H_
-#define _GPIO_PORT_H_
+#ifndef PLAT4M_GPIO_PORT_H
+#define PLAT4M_GPIO_PORT_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <GpioPin.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
-class GpioPort
+namespace Plat4m
+{
+
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
+
+template <typename TValue>
+class GpioPort : public Module
 {
 public:
     
-    /*--------------------------------------------------------------------------
-     * Public enumerations
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public enumerations
+    //--------------------------------------------------------------------------
     
     /**
      * @brief Enumeration of GPIO errors.
      */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_NOT_ENABLED
+        ERROR_CODE_NONE,
+        ERROR_CODE_NOT_ENABLED
     };
 
     /**
@@ -75,7 +83,8 @@ public:
      */
     enum Mode
     {
-        MODE_DIGITAL_OUTPUT = 0,
+        MODE_DIGITAL_OUTPUT_PUSH_PULL = 0,
+        MODE_DIGITAL_OUTPUT_OPEN_DRAIN,
         MODE_DIGITAL_INPUT
     };
 
@@ -89,71 +98,126 @@ public:
         RESISTOR_PULL_DOWN
     };
     
-    /*--------------------------------------------------------------------------
-     * Public structures
-     *------------------------------------------------------------------------*/
-    
-    typedef id_t Id;
+    typedef ErrorTemplate<ErrorCode> Error;
+
+    //--------------------------------------------------------------------------
+    // Public structures
+    //--------------------------------------------------------------------------
 
     struct Config
     {
         Mode mode;
         Resistor resistor;
     };
+
+    //--------------------------------------------------------------------------
+    // Public pure virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual void setValueFast(const TValue value) = 0;
     
-    /*--------------------------------------------------------------------------
-     * Public virtual destructors
-     *------------------------------------------------------------------------*/
+    virtual TValue getValueFast() = 0;
+
+    virtual TValue readValueFast() = 0;
+
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
     
-    virtual ~GpioPort();
+    //--------------------------------------------------------------------------
+    Error configure(const Config& config)
+    {
+        Error error = driverConfigure(config);
+
+        if (error.getCode() == ERROR_CODE_NONE)
+        {
+            myConfig = config;
+        }
+
+        return error;
+    }
     
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    Error setValue(const TValue value)
+    {
+        if (!isEnabled())
+        {
+            return Error(ERROR_CODE_NOT_ENABLED);
+        }
+
+        Error error = driverSetValue(value);
+
+        return error;
+    }
     
-    Error enable(const bool enable);
+    //--------------------------------------------------------------------------
+    Error getValue(TValue& value)
+    {
+        if (!isEnabled())
+        {
+            return Error(ERROR_CODE_NOT_ENABLED);
+        }
+
+        Error error = driverGetValue(value);
+
+        return error;
+    }
     
-    Error isEnabled(bool& isEnabled);
-    
-    Error configure(const Config& config);
-    
-    Error setValue(const unsigned int value);
-    
-    Error getValue(unsigned int& value);
-    
-    Error readValue(unsigned int& value);
+    //--------------------------------------------------------------------------
+    Error readValue(TValue& value)
+    {
+        if (!isEnabled())
+        {
+            return Error(ERROR_CODE_NOT_ENABLED);
+        }
+
+        Error error = driverReadValue(value);
+
+        return error;
+    }
     
 protected:
     
-    /*--------------------------------------------------------------------------
-     * Protected constructors and destructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Protected constructors
+    //--------------------------------------------------------------------------
     
-    GpioPort();
+    //--------------------------------------------------------------------------
+    GpioPort() :
+        myConfig()
+    {
+    }
     
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    virtual ~GpioPort()
+    {
+    }
+
 private:
     
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
-    
-    bool myIsEnabled;
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
     
     Config myConfig;
     
-    /*--------------------------------------------------------------------------
-     * Private virtual methods
-     *------------------------------------------------------------------------*/
-    
-    virtual Error driverEnable(const bool enable) = 0;
+    //--------------------------------------------------------------------------
+    // Private pure virtual methods
+    //--------------------------------------------------------------------------
     
     virtual Error driverConfigure(const Config& config) = 0;
     
-    virtual Error driverSetValue(const unsigned int value) = 0;
+    virtual Error driverSetValue(const TValue value) = 0;
     
-    virtual Error driverGetValue(unsigned int& value) = 0;
+    virtual Error driverGetValue(TValue& value) = 0;
     
-    virtual Error driverReadValue(unsigned int& value) = 0;
+    virtual Error driverReadValue(TValue& value) = 0;
 };
 
-#endif // _GPIO_PORT_H_
+}; // namespace Plat4m
+
+#endif // PLAT4M_GPIO_PORT_H

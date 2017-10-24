@@ -1,90 +1,99 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2016 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file SpiDevice.h
- * @author Ben Minerd
- * @date 4/4/13
- * @brief SpiDevice class.
- */
+///
+/// @file SpiDevice.h
+/// @author Ben Minerd
+/// @date 4/4/13
+/// @brief SpiDevice class source file.
+///
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <SpiDevice.h>
+#include <Plat4m.h>
 
 using Plat4m::SpiDevice;
 using Plat4m::SlaveDevice;
 using Plat4m::Module;
 
-/*------------------------------------------------------------------------------
- * Public constructors
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Public constructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-SpiDevice::SpiDevice(GpioPin* chipSelectGpioPin, Spi& spi) :
+SpiDevice::SpiDevice(Spi& spi) :
     SlaveDevice(),
-    myChipSelectGpioPin(chipSelectGpioPin),
-    mySpi(spi)
+    mySpi(spi),
+    myChipSelectGpioPin(0)
 {
 }
 
-/*------------------------------------------------------------------------------
- * Public destructors
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+SpiDevice::SpiDevice(Spi& spi, GpioPin& chipSelectGpioPin) :
+    SlaveDevice(),
+    mySpi(spi),
+    myChipSelectGpioPin(&chipSelectGpioPin)
+{
+}
+
+//------------------------------------------------------------------------------
+// Public destructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 SpiDevice::~SpiDevice()
 {
 }
 
-/*------------------------------------------------------------------------------
- * Private implemented methods
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Private methods implemented from Module
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Module::Error SpiDevice::driverEnable(const bool enable)
+Module::Error SpiDevice::driverSetEnabled(const bool enabled)
 {
-    if (IS_VALID_POINTER(myChipSelectGpioPin))
+    if (isValidPointer(myChipSelectGpioPin))
     {
-        myChipSelectGpioPin->enable(enable);
+        myChipSelectGpioPin->setEnabled(enabled);
     
-        if (enable)
+        if (enabled)
         {
             GpioPin::Config gpioConfig;
-            gpioConfig.mode     = GpioPin::MODE_DIGITAL_OUTPUT;
+            gpioConfig.mode     = GpioPin::MODE_DIGITAL_OUTPUT_PUSH_PULL;
             gpioConfig.resistor = GpioPin::RESISTOR_PULL_UP;
             
             myChipSelectGpioPin->configure(gpioConfig);
@@ -96,28 +105,31 @@ Module::Error SpiDevice::driverEnable(const bool enable)
 }
 
 //------------------------------------------------------------------------------
-SlaveDevice::Error SpiDevice::driverTx(const ByteArray& byteArray,
-                                       const bool waitUntilDone,
-                                       const uint32_t timeoutMs)
+// Private methods implemented from SlaveDevice
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+SlaveDevice::Error SpiDevice::driverTransmit(const ByteArray& byteArray,
+                                             const bool waitUntilDone,
+                                             const int32_t mailboxIndex)
 {
     ByteArray emptyByteArray;
 
     Spi::TransferMode transferMode;
-    
+
     if (waitUntilDone)
     {
-        transferMode = Spi::TRANSFER_MODE_TX_WAIT;
+        transferMode = Spi::TRANSFER_MODE_TRANSMIT_WAIT;
     }
     else
     {
-        transferMode = Spi::TRANSFER_MODE_TX;
+        transferMode = Spi::TRANSFER_MODE_TRANSMIT;
     }
-    
+
     Spi::Error error = mySpi.masterTransfer(transferMode,
                                             myChipSelectGpioPin,
                                             byteArray,
-                                            emptyByteArray,
-                                            timeoutMs);
+                                            emptyByteArray);
 
     if (error.getCode() != Spi::ERROR_CODE_NONE)
     {
@@ -128,40 +140,40 @@ SlaveDevice::Error SpiDevice::driverTx(const ByteArray& byteArray,
 }
 
 //------------------------------------------------------------------------------
-SlaveDevice::Error SpiDevice::driverRx(ByteArray& byteArray,
-                                       const uint32_t timeoutMs)
+SlaveDevice::Error SpiDevice::driverReceive(ByteArray& byteArray,
+                                            const int32_t mailboxIndex)
 {
     ByteArray emptyByteArray;
 
-    Spi::Error error = mySpi.masterTransfer(Spi::TRANSFER_MODE_RX,
+    Spi::Error error = mySpi.masterTransfer(Spi::TRANSFER_MODE_RECEIVE_WAIT,
                                             myChipSelectGpioPin,
                                             emptyByteArray,
-                                            byteArray,
-                                            timeoutMs);
+                                            byteArray);
 
     if (error.getCode() != Spi::ERROR_CODE_NONE)
     {
         return Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
     }
-    
+
     return Error(SlaveDevice::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-SlaveDevice::Error SpiDevice::driverTxRx(const ByteArray& txByteArray,
-                                         ByteArray& rxByteArray,
-                                         const uint32_t timeoutMs)
+SlaveDevice::Error SpiDevice::driverTransmitReceive(
+                                             const ByteArray& transmitByteArray,
+                                             ByteArray& receiveByteArray,
+                                             const int32_t mailboxIndex)
 {
-    Spi::Error error = mySpi.masterTransfer(Spi::TRANSFER_MODE_TX_RX_SEQUENTIAL,
-                                            myChipSelectGpioPin,
-                                            txByteArray,
-                                            rxByteArray,
-                                            timeoutMs);
+    Spi::Error error = mySpi.masterTransfer(
+                                 Spi::TRANSFER_MODE_TRANSMIT_RECEIVE_SEQUENTIAL,
+                                 myChipSelectGpioPin,
+                                 transmitByteArray,
+                                 receiveByteArray);
 
     if (error.getCode() != Spi::ERROR_CODE_NONE)
     {
         return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
     }
     
-    return SlaveDevice::Error(ERROR_CODE_NONE);
+    return Error(ERROR_CODE_NONE);
 }

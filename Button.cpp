@@ -1,71 +1,73 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file Button.cpp
- * @author Ben Minerd
- * @date 7/23/2013
- * @brief Button class.
- */
+///
+/// @file Button.cpp
+/// @author Ben Minerd
+/// @date 7/23/2013
+/// @brief Button class source file.
+///
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <Button.h>
 #include <System.h>
-#include <MutexLock.h>
 
-/*------------------------------------------------------------------------------
- * Local variables
- *----------------------------------------------------------------------------*/
+using Plat4m::Button;
+using Plat4m::Module;
+
+//------------------------------------------------------------------------------
+// Local variables
+//------------------------------------------------------------------------------
     
-static const uint32_t debounceTimeMs = 10;
+static const Plat4m::TimeMs debounceTimeMs = 10;
 
 static const Button::Sequence::State pressSequenceStates[] =
 {
     // First state (inactive)
     {
-        0,
-        0,
-        false
+        false, // .isActive
+        0,     // .minDurationMs
+        0      // .maxDurationMs
     },
     // Second state (active)
     {
-        0,
-        0,
-        true
+        true, // .isActive
+        0,    // .minDurationMs
+        0     // .maxDurationMs
     }
 };
 
@@ -73,15 +75,15 @@ static const Button::Sequence::State releaseSequenceStates[] =
 {
     // First state (active)
     {
-        0,
-        0,
-        true
+        true, // .isActive
+        0,    // .minDurationMs
+        0     // .maxDurationMs
     },
     // Second state (inactive)
     {
-        0,
-        0,
-        false
+        false, // .isActive
+        0,     // .minDurationMs
+        0      // .maxDurationMs
     }
 };
 
@@ -89,15 +91,15 @@ static const Button::Sequence::State holdSequenceStates[] =
 {
     // First state (inactive)
     {
-        0,
-        0,
-        false
+        false, // .isActive
+        0,     // .minDurationMs
+        0      // .maxDurationMs
     },
     // Second state (active)
     {
-        1000,
-        0,
-        true
+        true, // .isActive
+        1000, // .minDurationMs
+        0     // .maxDurationMs
     }
 };
 
@@ -105,21 +107,21 @@ static const Button::Sequence::State singleTapSequenceStates[] =
 {
     // First state (inactive)
     {
-        0,
-        0,
-        false
+        false, // .isActive
+        0,     // .minDurationMs
+        0      // .maxDurationMs
     },
     // Second state (active)
     {
-        0,
-        999,
-        true
+        true, // .isActive
+        0,    // .minDurationMs
+        999   // .maxDurationMs
     },
     // Third state (inactive)
     {
-        0,
-        0,
-        false
+        false, // .isActive
+        0,     // .minDurationMs
+        0      // .maxDurationMs
     }
 };
 
@@ -127,33 +129,33 @@ static const Button::Sequence::State doubleTapSequenceStates[] =
 {
     // First state (inactive)
     {
-        0,
-        0,
-        false
+        false, // .isActive
+        0,     // .minDurationMs
+        0      // .maxDurationMs
     },
     // Second state (active)
     {
-        0,
-        1999,
-        true
+        true, // .isActive
+        0,    // .minDurationMs
+        1999  // .maxDurationMs
     },
     // Third state (inactive)
     {
-        0,
-        250,
-        false
+        false, // .isActive
+        0,     // .minDurationMs
+        250    // .maxDurationMs
     },
     // Fourth state (active)
     {
-        0,
-        1999,
-        true
+        true, // .isActive
+        0,    // .minDurationMs
+        1999  // .maxDurationMs
     },
     // Fifth state (inactive)
     {
-        0,
-        0,
-        false
+        false, // .isActive
+        0,     // .minDurationMs
+        0      // .maxDurationMs
     }
 };
 
@@ -191,9 +193,9 @@ static const Button::Sequence sequences[] =
     }
 };
 
-/*------------------------------------------------------------------------------
- * Public constructors and destructors
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Public constructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Button::Button(EnableLine& enableLine) :
@@ -201,33 +203,46 @@ Button::Button(EnableLine& enableLine) :
     myEnableLine(enableLine)
 {
     // Initialize state log
-    for (int i = 0; i < ARRAY_SIZE(myStateLog); i++)
+    for (uint32_t i = 0; i < ARRAY_SIZE(myStateLog); i++)
     {
         myStateLog[i].isActive      = false;
         myStateLog[i].timeStampMs   = 0;
     }
     
     // Initialize event behavior map
-    for (int i = 0; i < ARRAY_SIZE(myEventBehaviorMap); i++)
+    for (uint32_t i = 0; i < ARRAY_SIZE(myEventBehaviorMap); i++)
     {
         myEventBehaviorMap[i].isEnabled                 = false;
         myEventBehaviorMap[i].mode                      = Event::MODE_SINGLE;
         myEventBehaviorMap[i].persistentDelayMs         = 50;
         myEventBehaviorMap[i].lastPersistentTimestampMs = 0;
-        myEventBehaviorMap[i].nStatesSinceEvent         = 0;
+        // TODO: Make option for enabling/disabling initial power-on state
+        // logging (ex. power button that enables processor power supply may not
+        // wanted to be detected as an initial press)
+        myEventBehaviorMap[i].nStatesSinceEvent         = 1;
     }
 }
 
-/*------------------------------------------------------------------------------
- * Public implemented methods
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Public virtual destructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void Button::poll(const uint32_t timeMs, Array<UiInput::Event>& events)
+Button::~Button()
+{
+}
+
+//------------------------------------------------------------------------------
+// Public virtual methods implemented from UiInput
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void Button::poll(const TimeMs timeMs, Array<UiInput::Event>& events)
 {
     bool isActive;
     
-    if (myEnableLine.isActive(isActive) != EnableLine::ERROR_NONE)
+    if (myEnableLine.isActive(isActive).getCode() !=
+    												EnableLine::ERROR_CODE_NONE)
     {
         // Error
     }
@@ -237,7 +252,7 @@ void Button::poll(const uint32_t timeMs, Array<UiInput::Event>& events)
          (myStateLog[0].timeStampMs == 0))
     {
         // Push all old events back one slot
-        for (int i = ARRAY_SIZE(myStateLog) - 1; i > 0; i--)
+        for (uint32_t i = ARRAY_SIZE(myStateLog) - 1; i > 0; i--)
         {
             myStateLog[i] = myStateLog[(i - 1)];
         }
@@ -245,7 +260,7 @@ void Button::poll(const uint32_t timeMs, Array<UiInput::Event>& events)
         myStateLog[0].isActive      = isActive;
         myStateLog[0].timeStampMs   = timeMs;
         
-        for (int i = 0; i < ARRAY_SIZE(myEventBehaviorMap); i++)
+        for (uint32_t i = 0; i < ARRAY_SIZE(myEventBehaviorMap); i++)
         {
             myEventBehaviorMap[i].nStatesSinceEvent++;
         }
@@ -254,14 +269,15 @@ void Button::poll(const uint32_t timeMs, Array<UiInput::Event>& events)
     matchSequence(timeMs, events);
 }
 
-/*------------------------------------------------------------------------------
- * Public methods
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Public virtual methods
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Button::Error Button::isActive(bool& isActive)
 {    
-    if (myEnableLine.isActive(isActive) != EnableLine::ERROR_NONE)
+    if (myEnableLine.isActive(isActive).getCode() !=
+    											    EnableLine::ERROR_CODE_NONE)
     {
         // Error
     }
@@ -270,9 +286,9 @@ Button::Error Button::isActive(bool& isActive)
 }
 
 //------------------------------------------------------------------------------
-Button::Error Button::enableEvent(const Event::Id id, const bool enable)
+Button::Error Button::setEventEnabled(const Event::Id id, const bool enabled)
 {
-    myEventBehaviorMap[id].isEnabled = enable;
+    myEventBehaviorMap[id].isEnabled = enabled;
     
     return ERROR_NONE;
 }
@@ -285,30 +301,35 @@ Button::Error Button::setEventMode(const Event::Id id, const Event::Mode mode)
     return ERROR_NONE;
 }
 
-/*------------------------------------------------------------------------------
- * Private implemented methods
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Private virtual methods implemented from Module
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-UiInput::Error Button::driverEnable(const bool enable)
+Module::Error Button::driverEnable(const bool enable)
 {
-    myEnableLine.enable(enable);
+	Module::Error error = myEnableLine.enable(enable);
+
+    if (error.getCode() != Module::ERROR_CODE_NONE)
+    {
+    	return error;
+    }
     
-    return ERROR_NONE;
+    return Module::Error(Module::ERROR_CODE_NONE);
 }
 
-/*------------------------------------------------------------------------------
- * Private methods
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Private methods
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void Button::matchSequence(const uint32_t timeMs, Array<UiInput::Event>& events)
+void Button::matchSequence(const TimeMs timeMs, Array<UiInput::Event>& events)
 {
-    for (int i = 0; i < ARRAY_SIZE(sequences); i++)
+    for (uint32_t i = 0; i < ARRAY_SIZE(sequences); i++)
     {
         const Sequence& sequence = sequences[i];
-        int logIndex = 0;
-        int j;
+        int32_t logIndex = 0;
+        int32_t j;
         
         if ((myEventBehaviorMap[i].nStatesSinceEvent >= sequence.nStates) ||
             ((myEventBehaviorMap[i].mode == Event::MODE_PERSISTENT) &&
@@ -361,8 +382,8 @@ void Button::matchSequence(const uint32_t timeMs, Array<UiInput::Event>& events)
             if (j == -1)
             {
                 UiInput::Event event;
-                event.id        = (Event::Id) i;
-                event.timeMs    = timeMs;
+                event.id     = (Event::Id) i;
+                event.timeMs = timeMs;
                 
                 events.append(event);
                 

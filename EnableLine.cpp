@@ -1,96 +1,102 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2016 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file EnableLine.cpp
- * @author Ben Minerd
- * @date 4/18/13
- * @brief EnableLine class.
- */
+///
+/// @file EnableLine.cpp
+/// @author Ben Minerd
+/// @date 4/18/13
+/// @brief EnableLine class.
+///
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <EnableLine.h>
-#include <System.h>
 
 using Plat4m::EnableLine;
 using Plat4m::Module;
 using Plat4m::GpioPin;
 
-/*------------------------------------------------------------------------------
- * Local variables
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Local variables
+//------------------------------------------------------------------------------
 
-static GpioPin::Resistor gpioResistorMap[] =
+static const GpioPin::Mode gpioModeMap[] =
 {
-    GpioPin::RESISTOR_PULL_DOWN,    // Active::LEVEL_HIGH
-    GpioPin::RESISTOR_PULL_UP       // Active::LEVEL_LOW
+	GpioPin::MODE_DIGITAL_INPUT, /// EnableLine::MODE_INPUT
+	GpioPin::MODE_DIGITAL_INPUT, /// EnableLine::MODE_OUTPUT_PUSH_PULL
+	GpioPin::MODE_DIGITAL_INPUT  /// EnableLine::MODE_OUTPUT_OPEN_DRAIN
 };
 
-static GpioPin::Level gpioLevelMap[2][2] =
+static const GpioPin::Resistor gpioResistorMap[] =
 {
-    // Active::HIGH
-    {
-        GpioPin::LEVEL_LOW,     // Active == false
-        GpioPin::LEVEL_HIGH     // Active == true
-    },
-    // Active::LOW
-    {
-        GpioPin::LEVEL_HIGH,    // Active == false
-        GpioPin::LEVEL_LOW      // Active == true
-    }
+    GpioPin::RESISTOR_PULL_DOWN, /// EnableLine::LEVEL_HIGH
+    GpioPin::RESISTOR_PULL_UP    /// EnableLine::LEVEL_LOW
 };
 
-static bool activeLevelMap[2][2] =
+static const GpioPin::Level gpioLevelMap[2][2] =
 {
     // Active::HIGH
     {
-        false,  // GpioPin::LEVEL_LOW
-        true    // GpioPin::LEVEL_HIGH
+        GpioPin::LEVEL_LOW, /// Active == false
+        GpioPin::LEVEL_HIGH /// Active == true
     },
     // Active::LOW
     {
-        true,   // GpioPin::LEVEL_LOW
-        false   // GpioPin::LEVEL_HIGH
+        GpioPin::LEVEL_HIGH, /// Active == false
+        GpioPin::LEVEL_LOW   /// Active == true
     }
 };
 
-/*------------------------------------------------------------------------------
- * Public constructors
- *----------------------------------------------------------------------------*/
+static const bool activeLevelMap[2][2] =
+{
+    // Active::HIGH
+    {
+        false, /// GpioPin::LEVEL_LOW
+        true   /// GpioPin::LEVEL_HIGH
+    },
+    // Active::LOW
+    {
+        true, /// GpioPin::LEVEL_LOW
+        false /// GpioPin::LEVEL_HIGH
+    }
+};
+
+//------------------------------------------------------------------------------
+// Public constructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 EnableLine::EnableLine(const Mode mode,
@@ -105,18 +111,24 @@ EnableLine::EnableLine(const Mode mode,
 {
 }
 
-/*------------------------------------------------------------------------------
- * Public constructors
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Public destructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 EnableLine::~EnableLine()
 {
 }
 
-/*------------------------------------------------------------------------------
- * Public methods
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Public virtual methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+GpioPin& EnableLine::getGpioPin()
+{
+	return myGpioPin;
+}
 
 //------------------------------------------------------------------------------
 EnableLine::Error EnableLine::setActive(const bool active)
@@ -161,28 +173,14 @@ EnableLine::Error EnableLine::isActive(bool& isActive)
 }
 
 //------------------------------------------------------------------------------
-EnableLine::Error EnableLine::pulseActive(const bool active,
-                                          const uint32_t timeMs)
-{
-    Error error = setActive(active);
-    
-    if (timeMs != 0)
-    {
-        System::timeDelayMs(timeMs);
-    }
-    
-    return setActive(!active);
-}
-
-//------------------------------------------------------------------------------
 EnableLine::Error EnableLine::toggleActive()
 {
     return setActive(!myIsActive);
 }
 
-/*------------------------------------------------------------------------------
- * Private methods implemented from Module
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Private virtual methods implemented from Module
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error EnableLine::driverEnable(const bool enable)
@@ -205,7 +203,8 @@ Module::Error EnableLine::driverEnable(const bool enable)
         }
         else // myMode == MODE_OUTPUT
         {
-            gpioConfig.mode = GpioPin::MODE_DIGITAL_OUTPUT;
+        	// TODO: Update GpioPin to improve output mode selection
+            gpioConfig.mode = GpioPin::MODE_DIGITAL_OUTPUT_PUSH_PULL;
         }
 
         if (myUsePullResistor)
@@ -228,7 +227,7 @@ Module::Error EnableLine::driverEnable(const bool enable)
     if ((moduleError.getCode() != Module::ERROR_CODE_NONE) ||
         (gpioPinError.getCode() != GpioPin::ERROR_CODE_NONE))
     {
-        return Module::Error(Module::ERROR_CODE_ENABLE);
+        return Module::Error(Module::ERROR_CODE_ENABLE_FAILED);
     }
 
     return Module::Error(Module::ERROR_CODE_NONE);

@@ -1,64 +1,72 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2016 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file DacIc.h
- * @author Ben Minerd
- * @date 4/3/2013
- * @brief DacIc class.
- */
+///
+/// @file DacIc.h
+/// @author Ben Minerd
+/// @date 4/3/2013
+/// @brief DacIc class header file.
+///
 
-#ifndef _DAC_IC_H_
-#define _DAC_IC_H_
+#ifndef DAC_IC_H
+#define DAC_IC_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <Plat4m.h>
+#include <Module.h>
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
-class DacIc
+namespace Plat4m
+{
+
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
+
+class DacIc : public Module
 {
 public:
     
-    /*--------------------------------------------------------------------------
-     * Public enumerations
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public enumerations
+    //--------------------------------------------------------------------------
     
     /**
      * @brief Enumeration of DAC IC errors.
@@ -71,79 +79,57 @@ public:
         ERROR_COMMUNICATION
     };
     
-    /*--------------------------------------------------------------------------
-     * Public virtual destructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public virtual methods
+    //--------------------------------------------------------------------------
     
-    virtual ~DacIc();
+    virtual Error registerRead(const Id registerId, uint16_t& value);
     
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
+    virtual Error registerWrite(const Id registerId, const uint16_t value);
     
-    /**
-     * @brief Enables or disables this DAC IC.
-     * @param enable Flag that indicates if this DAC IC should be enabled or
-     * disabled.
-     * @return DAC IC error.
-     */
-    Error enable(const bool enable);
+    virtual Error registerReadBit(const Id registerId,
+                                  const unsigned int bit,
+                                  Plat4m::BitValue& bitValue);
     
-    /**
-     * @brief Checks to see if this DAC IC is enabled or disabled.
-     * @param isEnabled Flag that indicates if the DAC IC is enabled or
-     * disabled.
-     * @return DAC IC error.
-     */
-    Error isEnabled(bool& isEnabled);
-    
-    Error registerRead(const id_t registerId, uint16_t& value);
-    
-    Error registerWrite(const id_t registerId, const uint16_t value);
-    
-    Error registerReadBit(const id_t registerId,
-                          const unsigned int bit,
-                          Plat4m::BitValue& bitValue);
-    
-    Error registerWriteBit(const id_t registerId,
-                           const unsigned int bit,
-                           const Plat4m::BitValue bitValue);
+    virtual Error registerWriteBit(const Id registerId,
+                                   const unsigned int bit,
+                                   const Plat4m::BitValue bitValue);
     
 protected:
     
-    /*--------------------------------------------------------------------------
-     * Protected constructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Protected constructors
+    //--------------------------------------------------------------------------
     
     DacIc();
     
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~DacIc();
+
 private:
     
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Private pure virtual methods
+    //--------------------------------------------------------------------------
     
-    bool myIsEnabled;
-    
-    /*--------------------------------------------------------------------------
-     * Private virtual methods
-     *------------------------------------------------------------------------*/
-        
-    virtual Error driverEnable(const bool enable) = 0;
-    
-    virtual Error driverRegisterRead(const id_t registerId,
+    virtual Error driverRegisterRead(const Id registerId,
                                      uint16_t& value) = 0;
     
-    virtual Error driverRegisterWrite(const id_t registerId,
+    virtual Error driverRegisterWrite(const Id registerId,
                                       const uint16_t value) = 0;
     
-    virtual Error driverRegisterReadBit(const id_t registerId,
+    virtual Error driverRegisterReadBit(const Id registerId,
                                         const unsigned int bit,
                                         Plat4m::BitValue& bitValue) = 0;
     
-    virtual Error driverRegisterWriteBit(const id_t registerId,
+    virtual Error driverRegisterWriteBit(const Id registerId,
                                          const unsigned int bit,
                                          const Plat4m::BitValue bitValue) = 0;
 };
 
-#endif // _DAC_IC_H_
+}; // namespace Plat4m
+
+#endif // DAC_IC_H

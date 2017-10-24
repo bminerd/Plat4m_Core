@@ -1,80 +1,90 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2015 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2016 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file System.cpp
- * @author Ben Minerd
- * @date 6/4/2013
- * @brief System class.
- */
+///
+/// @file System.cpp
+/// @author Ben Minerd
+/// @date 6/4/2013
+/// @brief System class.
+///
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <System.h>
 #include <List.h>
 
 using Plat4m::System;
-
-/*------------------------------------------------------------------------------
- * Static data members
- *----------------------------------------------------------------------------*/
-
-System* System::myDriver    = nullptr;
-bool System::myIsRunning    = false;
-const char* System::myName  = nullptr;
-
-/*------------------------------------------------------------------------------
- * Public static methods
- *----------------------------------------------------------------------------*/
+using Plat4m::Thread;
+using Plat4m::Mutex;
+using Plat4m::WaitCondition;
 
 //------------------------------------------------------------------------------
-const char* System::getName()
+// Private static data members
+//------------------------------------------------------------------------------
+
+System* System::myDriver = 0;
+bool System::myIsRunning = false;
+
+//------------------------------------------------------------------------------
+// Public static methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Thread& System::createThread(Thread::RunCallback& callback,
+                             const TimeMs periodMs)
 {
-    return myName;
+    return (myDriver->driverCreateThread(callback, periodMs));
 }
 
 //------------------------------------------------------------------------------
-void System::addThread(Thread& thread)
+Mutex& System::createMutex()
 {
-    myDriver->driverAddThread(thread);
+    return (myDriver->driverCreateMutex());
+}
+
+//------------------------------------------------------------------------------
+WaitCondition& System::createWaitCondition()
+{
+    return (myDriver->driverCreateWaitCondition());
 }
 
 //------------------------------------------------------------------------------
 void System::run()
 {
+	myIsRunning = true;
     myDriver->driverRun();
 }
 
@@ -85,45 +95,54 @@ bool System::isRunning()
 }
 
 //------------------------------------------------------------------------------
-void System::timeMsHandler()
+uint32_t System::getTimeMs()
 {
-    myDriver->driverTimeMsHandler();
+    return (myDriver->driverGetTimeMs());
 }
 
 //------------------------------------------------------------------------------
-uint32_t System::timeGetMs()
+uint32_t System::getTimeUs()
 {
-    return myDriver->driverTimeGetMs();
+    return (myDriver->driverGetTimeUs());
 }
 
 //------------------------------------------------------------------------------
-void System::timeDelayMs(const uint32_t timeMs)
+void System::delayTimeMs(const uint32_t timeMs)
 {
-    myDriver->driverTimeDelayMs(timeMs);
+    myDriver->driverDelayTimeMs(timeMs);
 }
 
 //------------------------------------------------------------------------------
-bool System::timeCheckMs(const uint32_t timeMs)
+bool System::checkTimeMs(const uint32_t timeMs)
 {
-    return (timeMs <= timeGetMs());
+    return (timeMs <= getTimeMs());
 }
 
 //------------------------------------------------------------------------------
-Mutex& System::getMutex()
-{
-    return myDriver->driverGetMutex();
-}
-
-/*------------------------------------------------------------------------------
-* Protected constructors and destructors
- *----------------------------------------------------------------------------*/
+// Protected constructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-System::System(const char* name)
+System::System()
 {
     if (isNullPointer(myDriver))
     {
-        myName      = name;
-        myDriver    = this;
+        myDriver = this;
     }
+    else
+    {
+        // System lockup, trying to instantiate more than one System
+        while (true)
+        {
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+// Protected virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+System::~System()
+{
 }

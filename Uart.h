@@ -1,106 +1,94 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file Uart.h
- * @author Ben Minerd
- * @date 3/22/13
- * @brief Uart class.
- */
+///
+/// @file Uart.h
+/// @author Ben Minerd
+/// @date 3/22/13
+/// @brief Uart class header file.
+///
 
-#ifndef _UART_H_
-#define _UART_H_
+#ifndef PLAT4M_UART_H
+#define PLAT4M_UART_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <Plat4m.h>
 #include <ComInterface.h>
-#include <Buffer.h>
+#include <ErrorTemplate.h>
 
-/*------------------------------------------------------------------------------
- * Defines
- *----------------------------------------------------------------------------*/
-     
-#define UART_TX_BUFFER_SIZE 256
-#define UART_RX_BUFFER_SIZE 256
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+namespace Plat4m
+{
+
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
 
 class Uart : public ComInterface
 {
 public:
     
-    /*--------------------------------------------------------------------------
-     * Public enumerations
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public enumerations
+    //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of UART errors.
-     */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,                 /// No error.
-        ERROR_PARAMETER_INVALID,    /// Parameter is invalid.
-        ERROR_NOT_ENABLED,          /// UART is not enabled.
-        ERROR_TX_BUFFER_FULL        /// UART transmit buffer is full.
+        ERROR_CODE_NONE,
+        ERROR_CODE_PARAMETER_INVALID,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_TX_BUFFER_FULL
     };
     
-    /**
-     * @brief Enumeration of UART word lengths.
-     */
     enum WordBits
     {
         WORD_BITS_8 = 0,
         WORD_BITS_9
     };
 
-    /**
-     * @brief Enumeration of UART stop bits.
-     */
     enum StopBits
     {
         STOP_BITS_1 = 0,
         STOP_BITS_2
     };
 
-    /**
-     * @brief Enumeration of UART parities.
-     */
     enum Parity
     {
         PARITY_NONE = 0,
@@ -108,30 +96,27 @@ public:
         PARITY_ODD
     };
 
-    /**
-     * @brief Enumeration of UART hardware flow controls.
-     */
     enum HardwareFlowControl
     {
         HARDWARE_FLOW_CONTROL_NONE = 0
     };
 
-    /**
-     * @brief Enumeration of UART interrupts.
-     */
     enum Interrupt
     {
         INTERRUPT_TX = 0,   /// Transmit interrupt.
         INTERRUPT_RX        /// Receive interrupt.
     };
+
+    //--------------------------------------------------------------------------
+    // Public typedefs
+    //--------------------------------------------------------------------------
+
+    typedef ErrorTemplate<ErrorCode> Error;
     
-    /*--------------------------------------------------------------------------
-     * Public structures
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public structures
+    //--------------------------------------------------------------------------
     
-    /**
-     * @brief UART configuration type.
-     */
     struct Config
     {
         uint32_t baudRate;
@@ -141,74 +126,65 @@ public:
         HardwareFlowControl hardwareFlowControl;
     };
     
-    /*--------------------------------------------------------------------------
-     * Public virtual destructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public methods implemented from ComInterface
+    //--------------------------------------------------------------------------
     
-    virtual ~Uart();
+    ComInterface::Error transmitBytes(const ByteArray& byteArray,
+                                              const bool waitUntilDone = false);
     
-    /*--------------------------------------------------------------------------
-     * Public implemented methods
-     *------------------------------------------------------------------------*/
+    uint32_t getReceivedBytesCount();
     
-    ComInterface::Error tx(const ByteArray& byteArray);
+    ComInterface::Error getReceivedBytes(ByteArray& byteArray,
+                                                 const uint32_t nBytes = 0);
     
-    unsigned int rxBytesAvailable();
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
     
-    ComInterface::Error getRxBytes(ByteArray& byteArray,
-                                   unsigned int nBytes = 0);
-    
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
-    
-    Error enable(const bool enable);
-    
-    Error isEnabled(bool& isEnabled);
-    
-    Error configure(const Config& config);
-    
-    void interruptHandler(const Interrupt interrupt);
+    Config getConfig() const;
+
+    Error setConfig(const Config& config);
     
 protected:
     
-    /*--------------------------------------------------------------------------
-     * Protected constructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Protected constructors
+    //--------------------------------------------------------------------------
     
-    /**
-     * @brief Constructor for Uart.
-     */
     Uart();
     
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~Uart();
+
 private:
-    
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
-    
-    bool myIsEnabled;
-    
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
     Config myConfig;
     
-    Buffer<uint8_t, UART_TX_BUFFER_SIZE> myTxBuffer;
+    //--------------------------------------------------------------------------
+    // Private pure virtual methods
+    //--------------------------------------------------------------------------
     
-    Buffer<uint8_t, UART_RX_BUFFER_SIZE> myRxBuffer;
+    virtual Error driverSetConfig(const Config& config) = 0;
     
-    /*--------------------------------------------------------------------------
-     * Private pure virtual methods
-     *------------------------------------------------------------------------*/
-    
-    virtual Error driverEnable(const bool enable) = 0;
-    
-    virtual Error driverConfigure(const Config& config) = 0;
-    
-    virtual Error driverTx(const uint8_t byte) = 0;
-    
-    virtual Error driverRx(uint8_t& byte) = 0;
-    
-    virtual Error driverInterruptEnable(const Interrupt interrupt,
-                                        const bool enable) = 0;
+    virtual ComInterface::Error driverTransmitBytes(
+                                                  const ByteArray& byteArray,
+                                                  const bool waitUntilDone) = 0;
+
+    virtual uint32_t driverGetReceivedBytesCount() = 0;
+
+    virtual ComInterface::Error driverGetReceivedBytes(
+                                                     ByteArray& byteArray,
+                                                     const uint32_t nBytes) = 0;
 };
 
-#endif // _UART_H_
+}; // namespace plat4m
+
+#endif // PLAT4M_UART_H

@@ -1,271 +1,87 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file Plat4m.h
- * @author Ben Minerd
- * @date 7/30/12
- * @brief Plat4m namespace.
- */
+///
+/// @file Plat4m.h
+/// @author Ben Minerd
+/// @date 7/30/12
+/// @brief Plat4m namespace.
+///
 
-#ifndef _PLAT4M_H_
-#define _PLAT4M_H_
+#ifndef PLAT4M_H
+#define PLAT4M_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
-#include <Callback.h>
-#include <CallbackFunction.h>
-#include <CallbackMethod.h>
+#include <Plat4mCoreConfig.h>
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdint>
+#include <float.h>
 #include <math.h>
 
-/*------------------------------------------------------------------------------
- * Defines
- *----------------------------------------------------------------------------*/
+using namespace std;
 
+//------------------------------------------------------------------------------
+// Defines
+//------------------------------------------------------------------------------
 
-/**
- * @brief Defines a more verbose null pointer.
- */
-#define NULL_POINTER 0
-
-#define IS_VALID_POINTER(pointer) pointer
-
-/**
- * @brief Checks to see if the given pointer is null.
- * @param pointer Pointer to check if null.
- */
-#define IS_NULL_POINTER(pointer) (!IS_VALID_POINTER(pointer))
-
-/**
- * @brief Returns the number of elements of any given array.
- * @param array Array to get number of elements.
- */
+///
+/// @brief Returns the number of elements of any given array.
+/// @param array Array to get number of elements.
+///
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
 #define ARRAY_SIZE_2D(array) (sizeof(array) / sizeof(array[0][0]))
 
-/**
- * @brief Initializes a byte array type with the given byte array.
- * @param array Array of bytes to put into the byte array type.
- */
-#define BYTE_ARRAY(array) { .bytes = array, .size = ARRAY_SIZE(array) }
-
-/**
- * @brief Initializes a byte array type with the given string.
- * @param string String to put into the byte array type.
- */
-#define BYTE_ARRAY_STRING(string) { .bytes = string, .size = strlen(string) }
-
-/**
- * @brief Initializes a data array type with the given array of bytes.
- * @param array Array of bytes to put into the data array type.
- */
-#define DATA_ARRAY(array)                               \
-                                                        \
-    {                                                   \
-        .data.bytes     = (uint8_t*) array,             \
-        .data.size      = sizeof(array),                \
-        .size           = ARRAY_SIZE(array),            \
-        .elementSize    = sizeof(array[0])              \
-    } // No semicolon
-
-#define DATA_ARRAY_POINTER(name, type, array) \
-    type* name = (type*) (array.data.bytes) // No semicolon
-
 #define FOREVER while (true)
 
-#define MHZ * 1000000
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
-#define LOG_N(value, n) (log(value) / log(n))
-
-#define LOG_2(value) LOG_N(value, 2)
-
-#define BIT_SET(value, mask) value |= mask
-
-#define BIT_CLEAR(value, mask) value &= ~mask
-
-#define IS_BIT_SET(value, mask) ((value & mask) == mask)
-
-#define IS_BIT_CLEAR(value, mask) (!IS_BIT_SET(value, mask))
-
-/*------------------------------------------------------------------------------
- * Enums
- *----------------------------------------------------------------------------*/
-
-/**
- * @brief Enumeration of bit values.
- */
-typedef enum _bit_value_e_
-{
-    BIT_VALUE_0 = 0,
-    BIT_VALUE_1
-} bit_value_e;
-
-/**
- * @brief Enumeration of setting value types.
- */
-typedef enum _value_type_e_
-{
-    VALUE_TYPE_BOOLEAN,
-    VALUE_TYPE_UINT,
-    VALUE_TYPE_UINT8,
-    VALUE_TYPE_UINT16,
-    VALUE_TYPE_UINT32,
-    VALUE_TYPE_INT,
-    VALUE_TYPE_INT8,
-    VALUE_TYPE_INT16,
-    VALUE_TYPE_INT32,
-    VALUE_TYPE_FLOAT32,
-    VALUE_TYPE_STRING
-} value_type_e;
-
-
-/*------------------------------------------------------------------------------
- * Types
- *----------------------------------------------------------------------------*/
-
-/**
- * @brief ID type.
- */
-typedef unsigned int id_t;
-
-/**
- * @brief Millisecond time type.
- */
-typedef uint32_t time_ms_t;
-
-/**
- * @brief Generic data type.
- */
-typedef uint8_t generic_data_t;
-
-/**
- * @brief Function type for a procedure.
- */
-typedef void procedure_f(void);
-
-/**
- * @brief Function type that sets a value enabled or disabled.
- * @param enabled Flag that indicates if the value should be enabled or
- * disabled.
- */
-typedef void set_enabled_f(bool enabled);
-
-/**
- * @brief Function type for a data callback.
- * @param data Byte to use.
- */
-typedef void data_callback_f(const uint8_t data);
-
-/**
- * @brief Byte array type.
- */
-typedef struct _byte_array_t_
-{
-    uint8_t* bytes;
-    unsigned int size;
-} byte_array_t;
-
-/**
- * @brief Data array type.
- */
-typedef struct _data_array_t_
-{
-    byte_array_t data;
-    unsigned int size;
-    unsigned int elementSize;
-} data_array_t;
-
-/**
- * @brief Dimension data array type.
- */
-typedef struct _dimension_data_array_t_
-{
-    data_array_t data;
-    unsigned int width;
-    unsigned int height;
-} dimension_data_array_t;
-
-/**
- * @brief Value type.
- */
-typedef union _value_t_
-{
-    bool boolean;
-    unsigned int intUnsigned;
-    int intSigned;
-    float float32;
-    char* string;
-} value_t;
-
-typedef void handle_t;
-
-typedef struct _handle_map_t_
-{
-    handle_t** entries;
-    unsigned int size;
-} handle_map_t;
-
-typedef void layer_info_t;
-
-/**
- * @brief Function type that handles received data from a UART.
- * @param byte Byte received.
- */
-typedef void rx_callback_f(const id_t id, const uint8_t byte);
-
-/*------------------------------------------------------------------------------
- * Namespaces
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
 namespace Plat4m
 {
-    /*--------------------------------------------------------------------------
-     * Enumerations
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Types
+    //--------------------------------------------------------------------------
 
-    /**
-     * @brief Enumeration of bit values.
-     */
     enum BitValue
     {
         BIT_VALUE_0 = 0,
@@ -278,119 +94,382 @@ namespace Plat4m
         LOGIC_LEVEL_HIGH    = 1
     };
 
-    /**
-     * @brief Enumeration of setting value types.
-     */
-    enum ValueType
+    enum Endian
     {
-        VALUE_TYPE_BOOLEAN,
-        VALUE_TYPE_UINT,
-        VALUE_TYPE_UINT8,
-        VALUE_TYPE_UINT16,
-        VALUE_TYPE_UINT32,
-        VALUE_TYPE_INT,
-        VALUE_TYPE_INT8,
-        VALUE_TYPE_INT16,
-        VALUE_TYPE_INT32,
-        VALUE_TYPE_FLOAT32,
-        VALUE_TYPE_STRING
+        ENDIAN_LITTLE,
+        ENDIAN_BIG
     };
 
-    /*--------------------------------------------------------------------------
-     * Typedefs
-     *------------------------------------------------------------------------*/
+    typedef uint32_t Id;
 
-    /**
-     * @brief ID type.
-     */
-    typedef unsigned int Id;
-
-    /**
-     * @brief Millisecond time type.
-     */
+    typedef uint32_t TimeUs;
     typedef uint32_t TimeMs;
 
-    /**
-     * @brief Generic data type.
-     */
-    typedef uint8_t GenericData;
+    typedef RealNumber VoltageV;
+    typedef RealNumber VoltageMv;
 
-    /*--------------------------------------------------------------------------
-     * Structures
-     *------------------------------------------------------------------------*/
+    typedef RealNumber CurrentA;
+    typedef RealNumber CurrentMa;
 
-    /**
-     * @brief Data array type.
-     */
-    struct DataArray
-    {
-        byte_array_t data;
-        unsigned int size;
-        unsigned int elementSize;
-    };
+    typedef RealNumber PositionM;
 
-    /**
-     * @brief Dimension data array type.
-     */
-    struct DimensionDataArray
-    {
-        data_array_t data;
-        unsigned int width;
-        unsigned int height;
-    };
+    typedef RealNumber VelocityMpS;
+    typedef RealNumber VelocityMpm;
+    typedef RealNumber VelocityKph;
+    typedef RealNumber VelocityFps;
+    typedef RealNumber VelocityFpm;
+    typedef RealNumber VelocityMph;
 
-    /**
-     * @brief Value type.
-     */
-    union Value
-    {
-        bool boolean;
-        unsigned int intUnsigned;
-        int intSigned;
-        float float32;
-        Id id;
-        char* string;
-    };
+    typedef RealNumber AccelerationG;
+    typedef RealNumber AccelerationMg;
 
-    /*--------------------------------------------------------------------------
-     * Variables
-     *------------------------------------------------------------------------*/
+    typedef RealNumber FrequencyHz;
 
-    static const char* version = "0.0.2";
+    typedef RealNumber AngleDegrees;
+    typedef RealNumber AngleRadians;
 
-    /*--------------------------------------------------------------------------
-     * Functions
-     *------------------------------------------------------------------------*/
+    typedef RealNumber AngularSpeedDps;
+    typedef RealNumber AngularSpeedRadPs;
+    typedef RealNumber AngularSpeedRpm;
+
+    typedef RealNumber AngularVelocityDps;
+    typedef RealNumber AngularVelocityRadPs;
+    typedef RealNumber AngularVelocityRpm;
+
+    typedef RealNumber AngularAccelerationDps2;
+    typedef RealNumber AngularAccelerationRadPs2;
 
     //--------------------------------------------------------------------------
-    inline bool isNullPointer(void* pointer)
+    // Variables
+    //--------------------------------------------------------------------------
+
+    static const char* plat4mVersion = "0.0.22";
+
+    //--------------------------------------------------------------------------
+    // Inline functions
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    template <typename T>
+    inline bool isNullPointer(const T* pointer)
     {
-    	return pointer;
+        return (pointer == 0);
     }
 
     //--------------------------------------------------------------------------
-	inline bool isValidPointer(void* pointer)
+    template <typename T>
+	inline bool isValidPointer(const T* pointer)
 	{
-		return (!pointer);
+		return (pointer != 0);
 	}
 
     //--------------------------------------------------------------------------
-    template <typename TReturn, typename... TParameters>
-    Callback<TReturn, TParameters...>& createCallback(
-                                            TReturn (*callback)(TParameters...))
+    template <typename TValue, typename TMask>
+    inline void setBits(TValue& value, const TMask mask)
     {
-        return *(new CallbackFunction<TReturn, TParameters...>(callback));
+    	value |= mask;
     }
 
     //--------------------------------------------------------------------------
-    template <class TClass, typename TReturn, typename... TParameters>
-    Callback<TReturn, TParameters...>& createCallback(
-                                   TClass* object,
-                                   TReturn (TClass::*callback)(TParameters ...))
+    template <typename TValue, typename TMask>
+    inline void clearBits(TValue& value, const TMask mask)
     {
-        return *(new CallbackMethod<TClass, TReturn, TParameters...>(object,
-                                                                     callback));
+        value &= ~mask;
     }
-};
 
-#endif // _PLAT4M_H_
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline void setBit(TValue& value, const uint8_t bitPosition)
+    {
+    	setBits(value, (TValue) (((TValue) 1) << bitPosition));
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline void clearBit(TValue& value, const uint8_t bitPosition)
+    {
+        clearBits(value, (TValue) (((TValue) 1) << bitPosition));
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue, typename TClearMask, typename TSetMask>
+    inline void clearAndSetBits(TValue& value,
+                                const TClearMask clearMask,
+                                const TSetMask setMask)
+    {
+        TValue tempValue = value;
+
+        clearBits(tempValue, clearMask);
+        setBits(tempValue, setMask);
+
+        value = tempValue;
+    }
+
+    //--------------------------------------------------------------------------
+	template <typename TValue, typename TMask>
+	inline void setBitsSet(TValue& value,
+						   const TMask mask,
+						   const bool set)
+	{
+		if (set)
+		{
+			setBits(value, mask);
+		}
+		else
+		{
+			clearBits(value, mask);
+		}
+	}
+
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline void setBitSet(TValue& value,
+                          const uint8_t bitPosition,
+                          const bool set)
+    {
+        if (set)
+        {
+            setBit(value, bitPosition);
+        }
+        else
+        {
+            clearBit(value, bitPosition);
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue, typename TMask>
+    inline bool areBitsSet(const TValue value, const TMask mask)
+    {
+    	return ((value & mask) == mask);
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue, typename TMask>
+    inline bool isBitSet(const TValue value, const uint8_t bitIndex)
+    {
+        return areBitsSet(value, (TMask) (((TMask) 1) << bitIndex));
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue, typename TMask>
+    inline bool areBitsClear(const TValue value, const TMask mask)
+    {
+    	return (!areBitsSet(value, mask));
+    }
+
+	//--------------------------------------------------------------------------
+	template <typename TValue, typename TMask>
+	inline bool isBitClear(const TValue value, const uint8_t bitIndex)
+	{
+		return areBitsClear(value, (TMask) (((TMask) 1) << bitIndex));
+	}
+
+	//--------------------------------------------------------------------------
+	template <typename TValue, typename TMask>
+	inline void toggleBits(TValue& value, const TMask mask)
+	{
+	    value ^= mask;
+	}
+
+    //--------------------------------------------------------------------------
+    template <typename TValue, typename TMask>
+    inline void toggleBit(TValue& value, const uint8_t bitIndex)
+    {
+        toggleBits(value, (TMask) (((TMask) 1) << bitIndex));
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline bool equals(const TValue value1, const TValue value2)
+    {
+        return (value1 == value2);
+    }
+
+    //--------------------------------------------------------------------------
+    template <>
+    inline bool equals(const float value1, const float value2)
+    {
+        return (fabs(value1 - value2) <= (FLT_EPSILON + FLT_EPSILON));
+    }
+
+    //--------------------------------------------------------------------------
+    template <>
+    inline bool equals(const double value1, const double value2)
+    {
+        return (fabs(value1 - value2) <= (DBL_EPSILON + DBL_EPSILON));
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline bool findValueIndex(const TValue value,
+                               const TValue valueTable[],
+                               const uint32_t valueTableSize,
+                               uint32_t& index)
+    {
+        uint32_t i;
+
+        for (i = 0; i < valueTableSize; i++)
+        {
+            if (value == valueTable[i])
+            {
+                break;
+            }
+        }
+
+        if (i == valueTableSize)
+        {
+            return false;
+        }
+
+        index = i;
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
+    template <>
+    inline bool findValueIndex(const float value,
+                               const float valueTable[],
+                               const uint32_t valueTableSize,
+                               uint32_t& index)
+    {
+        uint32_t i;
+
+        for (i = 0; i < valueTableSize; i++)
+        {
+            if (equals(value, valueTable[i]))
+            {
+                break;
+            }
+        }
+
+        if (i == valueTableSize)
+        {
+            return false;
+        }
+
+        index = i;
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
+    template <>
+    inline bool findValueIndex(const double value,
+                               const double valueTable[],
+                               const uint32_t valueTableSize,
+                               uint32_t& index)
+    {
+        uint32_t i;
+
+        for (i = 0; i < valueTableSize; i++)
+        {
+            if (equals(value, valueTable[i]))
+            {
+                break;
+            }
+        }
+
+        if (i == valueTableSize)
+        {
+            return false;
+        }
+
+        index = i;
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
+    inline char uint8ToAscii(const uint8_t value)
+    {
+        return (0x30 + value);
+    }
+
+    //--------------------------------------------------------------------------
+    inline uint8_t asciiToUint8(const char character)
+    {
+        return (character - 0x30);
+    }
+
+    //--------------------------------------------------------------------------
+    template<typename TValue>
+    inline void limitValue(TValue& value,
+                           const TValue lowerLimit,
+                           const TValue upperLimit)
+    {
+        if (value < lowerLimit)
+        {
+            value = lowerLimit;
+        }
+        else if (value > upperLimit)
+        {
+            value = upperLimit;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    inline AngleDegrees radiansToDegrees(const AngleRadians angleRadians)
+    {
+        return (angleRadians * (180.0 / M_PI));
+    }
+
+    //--------------------------------------------------------------------------
+    inline AngleRadians degreesToRadians(const AngleDegrees angleDegrees)
+    {
+        return (angleDegrees * (M_PI / 180.0));
+    }
+
+    //--------------------------------------------------------------------------
+    inline AngularVelocityDps radPsToDps(const AngularVelocityRadPs radPs)
+    {
+        return (radPs * (180.0 / M_PI));
+    }
+
+    //--------------------------------------------------------------------------
+    inline AngularVelocityRadPs dpsToRadPs(const AngularVelocityDps dps)
+    {
+        return (dps * (M_PI / 180.0));
+    }
+
+    //--------------------------------------------------------------------------
+    inline AngularAccelerationDps2 radPs2ToDps2(
+    									 const AngularAccelerationRadPs2 radPs2)
+    {
+        return (radPs2 * (180.0 / M_PI));
+    }
+
+    //--------------------------------------------------------------------------
+    inline AngularAccelerationRadPs2 dps2ToRadPs2(
+    										 const AngularAccelerationDps2 dps2)
+    {
+        return (dps2 * (M_PI / 180.0));
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue, uint32_t NValues>
+    inline uint32_t arraySize(const TValue (&valueArray)[NValues])
+    {
+        return NValues;
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline void findMinMax(const TValue value,
+    					   TValue& minValue,
+						   TValue& maxValue)
+    {
+    	if (value < minValue)
+    	{
+    		minValue = value;
+    	}
+    	else if (value > maxValue)
+    	{
+    		maxValue = value;
+    	}
+    }
+
+}; // namespace Plat4m
+
+#endif // PLAT4M_H

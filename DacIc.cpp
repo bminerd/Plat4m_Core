@@ -1,86 +1,58 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2016 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file DacIc.cpp
- * @author Ben Minerd
- * @date 4/3/2013
- * @brief DacIc class.
- */
+///
+/// @file DacIc.cpp
+/// @author Ben Minerd
+/// @date 4/3/2013
+/// @brief DacIc class source file.
+///
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <DacIc.h>
 
-/*------------------------------------------------------------------------------
- * Public virtual destructors
- *----------------------------------------------------------------------------*/
+using Plat4m::DacIc;
 
 //------------------------------------------------------------------------------
-DacIc::~DacIc()
-{
-}
-
-/*------------------------------------------------------------------------------
- * Public methods
- *----------------------------------------------------------------------------*/
+// Public virtual methods
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-DacIc::Error DacIc::enable(const bool enable)
-{
-    if (enable == myIsEnabled)
-    {
-        return ERROR_NONE;
-    }
-    
-    Error error = driverEnable(enable);
-
-    return error;
-}
-
-//------------------------------------------------------------------------------
-DacIc::Error DacIc::isEnabled(bool& isEnabled)
-{
-    isEnabled = myIsEnabled;
-
-    return ERROR_NONE;
-}
-
-//------------------------------------------------------------------------------
-DacIc::Error DacIc::registerRead(const id_t registerId, uint16_t& value)
+DacIc::Error DacIc::registerRead(const Id registerId, uint16_t& value)
 {
     Error error = driverRegisterRead(registerId, value);
     
@@ -88,7 +60,7 @@ DacIc::Error DacIc::registerRead(const id_t registerId, uint16_t& value)
 }
     
 //------------------------------------------------------------------------------
-DacIc::Error DacIc::registerWrite(const id_t registerId, const uint16_t value)
+DacIc::Error DacIc::registerWrite(const Id registerId, const uint16_t value)
 {
     Error error = driverRegisterWrite(registerId, value);
     
@@ -96,7 +68,7 @@ DacIc::Error DacIc::registerWrite(const id_t registerId, const uint16_t value)
 }
 
 //------------------------------------------------------------------------------
-DacIc::Error DacIc::registerReadBit(const id_t registerId,
+DacIc::Error DacIc::registerReadBit(const Id registerId,
                                     const unsigned int bit,
                                     Plat4m::BitValue& bitValue)
 {
@@ -106,7 +78,7 @@ DacIc::Error DacIc::registerReadBit(const id_t registerId,
 }
 
 //------------------------------------------------------------------------------
-DacIc::Error DacIc::registerWriteBit(const id_t registerId,
+DacIc::Error DacIc::registerWriteBit(const Id registerId,
                                      const unsigned int bit,
                                      const Plat4m::BitValue bitValue)
 {
@@ -115,12 +87,21 @@ DacIc::Error DacIc::registerWriteBit(const id_t registerId,
     return error;
 }
 
-/*------------------------------------------------------------------------------
- * Protected constructors
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 DacIc::DacIc() :
-    myIsEnabled(false)
+    Module()
+{
+}
+
+//------------------------------------------------------------------------------
+// Protected virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+DacIc::~DacIc()
 {
 }

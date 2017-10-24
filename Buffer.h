@@ -1,83 +1,151 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file Buffer.h
- * @author Ben Minerd
- * @date 3/25/13
- * @brief Buffer class.
- */
+///
+/// @file Buffer.h
+/// @author Ben Minerd
+/// @date 3/25/13
+/// @brief Buffer class header file.
+///
 
-#ifndef _BUFFER_H_
-#define _BUFFER_H_
+#ifndef PLAT4M_BUFFER_H
+#define PLAT4M_BUFFER_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
-#include <Plat4m.h>
+#include <stdint.h>
+#include <Array.h>
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
-template <typename T, int N>
+namespace Plat4m
+{
+
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
+
+template <typename T>
 class Buffer
 {
 public:
     
-    /*--------------------------------------------------------------------------
-     * Public constructors and destructors
-     *------------------------------------------------------------------------*/
-    
+    //--------------------------------------------------------------------------
+    // Public constructors
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
     Buffer() :
+        myItems(0),
+        myNItems(0),
         myWriteIndex(0),
         myReadIndex(0),
         myCount(0)
     {
     }
     
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    Buffer(T* items, const uint32_t nItems) :
+        myItems(items),
+        myNItems(nItems),
+        myWriteIndex(0),
+        myReadIndex(0),
+        myCount(0)
+    {
+    }
+    
+    //--------------------------------------------------------------------------
+    Buffer(const Buffer& buffer) :
+        myItems(buffer.myItems),
+        myNItems(buffer.myNItems),
+        myWriteIndex(buffer.myWriteIndex),
+        myReadIndex(buffer.myReadIndex),
+        myCount(buffer.myCount)
+    {
+    }
 
-    /**
-     * @brief Writes the given data to the given buffer.
-     * @param buffer Buffer to access.
-     * @param data Data to write to buffer.
-     * @return True if the function was successful, false if not.
-     */
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    T* getItems() const
+    {
+        return myItems;
+    }
+
+    //--------------------------------------------------------------------------
+    uint32_t getSize() const
+    {
+        return myNItems;
+    }
+
+    //--------------------------------------------------------------------------
+    uint32_t getWriteIndex() const
+    {
+        return myWriteIndex;
+    }
+
+    //--------------------------------------------------------------------------
+    uint32_t getReadIndex() const
+    {
+        return myReadIndex;
+    }
+
+    //--------------------------------------------------------------------------
+    uint32_t count()
+    {
+        return myCount;
+    }
+
+    //--------------------------------------------------------------------------
+    bool isEmpty()
+    {
+        return (myCount == 0);
+    }
+
+    //--------------------------------------------------------------------------
+    bool isFull()
+    {
+        return (myCount >= myNItems);
+    }
+
+    //--------------------------------------------------------------------------
     bool write(const T& element)
     {
         if (isFull())
@@ -85,24 +153,30 @@ public:
             return false;
         }
         
-        myMemory[myWriteIndex++] = element;
-        
-        myCount++;
-
-        if (myWriteIndex >= ARRAY_SIZE(myMemory))
-        {
-            myWriteIndex = 0;
-        }
+        writePrivate(element);
         
         return true;
     }
 
-    /**
-     * @brief Reads data from the given buffer.
-     * @param buffer Buffer to access.
-     * @param data Data read from buffer.
-     * @return True if the function was successful, false if not.
-     */
+    //--------------------------------------------------------------------------
+    bool write(const Array<T>& array)
+    {
+    	uint32_t size = array.getSize();
+
+        if ((myCount + size) > myNItems)
+        {
+            return false;
+        }
+
+        for (uint32_t i = 0; i < size; i++)
+        {
+            writePrivate(array[i]);
+        }
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
     bool read(T& element)
     {
         if (isEmpty())
@@ -110,80 +184,148 @@ public:
             return false;
         }
         
-        element = myMemory[myReadIndex++];
-        
-        myCount--;
-
-        if (myReadIndex >= ARRAY_SIZE(myMemory))
-        {
-            myReadIndex = 0;
-        }
+        element = readPrivate();
         
         return true;
     }
 
-    /**
-     * @brief Returns a copy of the first element in the buffer.
-     * @param buffer Buffer to access.
-     * @param data Pointer to first element.
-     * @return True if the function was successful, false if not.
-     */
+    //--------------------------------------------------------------------------
+    bool read(Array<T>& array)
+    {
+        uint32_t maxSize = array.getMaxSize();
+        uint32_t size = array.getSize();
+        uint32_t nItemsToRead = maxSize - size;
+
+        if (nItemsToRead > myCount)
+        {
+            nItemsToRead = myCount;
+        }
+
+        for (uint32_t i = 0; i < nItemsToRead; i++)
+        {
+            array.append(readPrivate());
+        }
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
     bool peek(T*& element)
     {
         if (isEmpty())
         {
-            element = NULL_POINTER;
+            element = 0;
             
             return false;
         }
 
-        element = (&myMemory[myReadIndex]);
+        element = &(myItems[myReadIndex]);
+
+        return true;
+    }
+    
+    //--------------------------------------------------------------------------
+    bool emptyRead()
+    {
+        if (isEmpty())
+        {
+            return false;
+        }
+
+        readPrivate();
 
         return true;
     }
 
-    /**
-     * @brief Checks to see if the given queue is empty.
-     * @param buffer Buffer to access.
-     * @param isEmpty Flag that indicates if the buffer is empty.
-     * @return True if the function was successful, false if not.
-     */
-    bool isEmpty()
+    //--------------------------------------------------------------------------
+    void clear()
     {
-        return (myCount == 0);
+        myWriteIndex = 0;
+        myReadIndex  = 0;
+        myCount      = 0;
     }
 
-    /**
-     * @brief Checks to see if the given buffer is full.
-     * @param buffer Buffer to access.
-     * @param isFull Flag that indicates if the buffer is full.
-     * @return True if the function was successful, false if not.
-     */
-    bool isFull()
+    //--------------------------------------------------------------------------
+    void setItems(T* items,
+                  const uint32_t nItems,
+                  const bool bufferItems = false)
     {
-        return (myCount >= ARRAY_SIZE(myMemory));
+        myItems      = items;
+        myNItems     = nItems;
+        myWriteIndex = 0;
+        myReadIndex  = 0;
+
+        if (bufferItems)
+        {
+            myCount = nItems;
+        }
+        else
+        {
+            myCount = 0;
+        }
     }
 
-    /**
-     * @brief Gets the number of elements currently in the given buffer.
-     * @param buffer Buffer to access.
-     * @param count Number of elements in the buffer.
-     * @return True if the function was successful, false if not.
-     */
-    unsigned int count()
+    //--------------------------------------------------------------------------
+    void setCount(const uint32_t count)
     {
-        return myCount;
+    	myCount = count;
     }
-    
+
+    //--------------------------------------------------------------------------
+    void setWriteIndex(const uint32_t writeIndex)
+    {
+    	myWriteIndex = writeIndex;
+    }
+
 private:
     
-    T myMemory[N];
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    T* myItems;
+
+    uint32_t myNItems;
     
-    unsigned int myWriteIndex;
+    uint32_t myWriteIndex;
     
-    unsigned int myReadIndex;
-    
-    unsigned int myCount;
+    uint32_t myReadIndex;
+
+    uint32_t myCount;
+
+    //--------------------------------------------------------------------------
+    // Private inline methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    inline void writePrivate(const T& element)
+    {
+        myItems[myWriteIndex++] = element;
+
+        myCount++;
+
+        if (myWriteIndex >= myNItems)
+        {
+            myWriteIndex = 0;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    inline T& readPrivate()
+    {
+        T& element = myItems[myReadIndex++];
+
+        myCount--;
+
+        if (myReadIndex >= myNItems)
+        {
+            myReadIndex = 0;
+        }
+
+        return element;
+    }
 };
 
-#endif // _BUFFER_H_
+}; // namespace Plat4m
+
+#endif // PLAT4M_BUFFER_H

@@ -1,64 +1,63 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file List.h
- * @author Ben Minerd
- * @date 6/13/13
- * @brief List class.
- */
+///
+/// @file List.h
+/// @author Ben Minerd
+/// @date 6/13/13
+/// @brief List class.
+///
 
-#ifndef _LIST_H_
-#define _LIST_H_
+#ifndef PLAT4M_LIST_H
+#define PLAT4M_LIST_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <Plat4m.h>
 
-/*------------------------------------------------------------------------------
- * Defines
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
-/*------------------------------------------------------------------------------
- * Forward class declarations
- *----------------------------------------------------------------------------*/
+namespace Plat4m
+{
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
 
 template <typename T>
 class List
@@ -72,25 +71,27 @@ public:
         Item* nextItem;
     };
     
-    /*--------------------------------------------------------------------------
-     * Public friend classes
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public friend classes
+    //--------------------------------------------------------------------------
     
     class Iterator
     {
     public:
         
+        //----------------------------------------------------------------------
         Iterator(List<T>& list) :
             myList(list),
             myCurrentItem(myList.myFirstItem)
         {
         }
-        
+        //----------------------------------------------------------------------
         bool hasCurrent()
         {
-            return (IS_VALID_POINTER(myCurrentItem));
+            return (isValidPointer(myCurrentItem));
         }
         
+        //----------------------------------------------------------------------
         bool next()
         {
             if (!hasCurrent())
@@ -103,6 +104,7 @@ public:
             return true;
         }
         
+        //----------------------------------------------------------------------
         bool previous()
         {
             if (!hasCurrent())
@@ -115,17 +117,20 @@ public:
             return true;
         }
         
+        //----------------------------------------------------------------------
         void first()
         {
             myCurrentItem = myList.myFirstItem;
         }
         
+        //----------------------------------------------------------------------
         void last()
         {
             myCurrentItem = myList.myLastItem;
         }
         
-        T current()
+        //----------------------------------------------------------------------
+        T& current()
         {
             return (myCurrentItem->value);
         }
@@ -137,45 +142,48 @@ public:
         List<T>::Item* myCurrentItem;
     };
     
-    /*--------------------------------------------------------------------------
-     * Public constructors and destructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public constructors
+    //--------------------------------------------------------------------------
     
     List() :
          mySize(0),
-         myFirstItem(NULL_POINTER),
-         myLastItem(NULL_POINTER)
+         myFirstItem(0),
+         myLastItem(0)
     {
     }
     
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
     
-    unsigned int size()
+    //--------------------------------------------------------------------------
+    uint32_t size() const
     {
         return mySize;
     }
     
+    //--------------------------------------------------------------------------
     bool isEmpty()
     {
         return (mySize == 0);
     }
     
+    //--------------------------------------------------------------------------
     void append(T& value)
     {
         Item* item = new Item;
         
         item->value = value;
-        item->previousItem = NULL_POINTER;
-        item->nextItem = NULL_POINTER;
+        item->previousItem = 0;
+        item->nextItem = 0;
         
         // Advance myLastItem pointer
-        if (IS_NULL_POINTER(myFirstItem))
+        if (isNullPointer(myFirstItem))
         {
             myFirstItem = item;
         }
-        else if (IS_NULL_POINTER(myLastItem))
+        else if (isNullPointer(myLastItem))
         {
             myLastItem = item;
             myFirstItem->nextItem = myLastItem;
@@ -192,20 +200,21 @@ public:
         mySize++;
     }
     
+    //--------------------------------------------------------------------------
     void prepend(T& value)
     {
         Item* item = new Item;
         
         item->value = value;
-        item->previousItem = NULL_POINTER;
-        item->nextItem = NULL_POINTER;
+        item->previousItem = 0;
+        item->nextItem = 0;
         
         // Advance myLastItem pointer
-        if (IS_NULL_POINTER(myFirstItem))
+        if (isNullPointer(myFirstItem))
         {
             myFirstItem = item;
         }
-        else if (IS_NULL_POINTER(myLastItem))
+        else if (isNullPointer(myLastItem))
         {
             myLastItem = item;
             myFirstItem->nextItem = myLastItem;
@@ -222,16 +231,19 @@ public:
         mySize++;
     }
     
+    //--------------------------------------------------------------------------
     T& first()
     {
         return myFirstItem->value;
     }
     
+    //--------------------------------------------------------------------------
     T& last()
     {
         return myFirstItem->value;
     }
     
+    //--------------------------------------------------------------------------
     Iterator iterator()
     {
         return Iterator(*this);
@@ -239,14 +251,16 @@ public:
     
 private:
     
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
     
-    unsigned int mySize;
+    uint32_t mySize;
     
     Item* myFirstItem;
     Item* myLastItem;
 };
 
-#endif // _LIST_H_
+}; // namespace Plat4m
+
+#endif // PLAT4M_LIST_H

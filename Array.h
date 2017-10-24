@@ -1,74 +1,118 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file Array.h
- * @author Ben Minerd
- * @date 6/25/13
- * @brief Array class.
- */
+///
+/// @file Array.h
+/// @author Ben Minerd
+/// @date 6/25/13
+/// @brief Array template class header file.
+///
 
-#ifndef _ARRAY_H_
-#define _ARRAY_H_
+#ifndef PLAT4M_ARRAY_H
+#define PLAT4M_ARRAY_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
-#include <Plat4m.h>
+#include <stdint.h>
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
+
+namespace Plat4m
+{
+
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
 
 template <typename T>
 class Array
 {
 public:
     
-    /*--------------------------------------------------------------------------
-     * Public constructors and destructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public constructors
+    //--------------------------------------------------------------------------
     
     //--------------------------------------------------------------------------
     Array() :
-        myItems(NULL_POINTER),
+        myItems(0),
         myNMaxItems(0),
         myNUsedItems(0)
     {
     }
+
+    //--------------------------------------------------------------------------
+    Array(T* items, const uint32_t nMaxItems, const int32_t nUsedItems = -1) :
+        myItems(items),
+        myNMaxItems(nMaxItems),
+        myNUsedItems(0)
+    {
+        if (nUsedItems == -1)
+        {
+            myNUsedItems = myNMaxItems;
+        }
+        else
+        {
+            myNUsedItems = nUsedItems;
+        }
+    }
     
+    //--------------------------------------------------------------------------
+    template <uint32_t nMaxItems>
+    Array(T (&items)[nMaxItems], const int32_t nUsedItems = -1) :
+        myItems(items),
+        myNMaxItems(nMaxItems),
+        myNUsedItems(0)
+    {
+        if (nUsedItems == -1)
+        {
+            myNUsedItems = myNMaxItems;
+        }
+        else
+        {
+            myNUsedItems = nUsedItems;
+        }
+    }
+    
+    //--------------------------------------------------------------------------
+    // Public copy constructors
+    //--------------------------------------------------------------------------
+
     //--------------------------------------------------------------------------
     Array(const Array<T>& array) :
         myItems(array.myItems),
@@ -76,33 +120,83 @@ public:
         myNUsedItems(array.myNUsedItems)
     {
     }
-    
+
     //--------------------------------------------------------------------------
-    Array(T items[], const unsigned int nMaxItems, const int nUsedItems = -1) :
-        myItems(items),
-        myNMaxItems(nMaxItems),
-        myNUsedItems((nUsedItems == -1) ? nMaxItems : nUsedItems)
-    {
-    }
-    
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
+    // Public methods
+    //--------------------------------------------------------------------------
     
     //--------------------------------------------------------------------------
     T* getItems() const
     {
         return myItems;
     }
+
+    //--------------------------------------------------------------------------
+    T* getData()
+    {
+        return myItems;
+    }
     
     //--------------------------------------------------------------------------
-    unsigned int getSize() const
+    T& getItem(const uint32_t index) const
+    {
+        return (myItems[index]);
+    }
+
+    //--------------------------------------------------------------------------
+    void setItems(T* items, uint32_t nMaxItems, const int32_t nUsedItems = -1)
+    {
+        myItems      = items;
+        myNMaxItems  = nMaxItems;
+
+        if (nUsedItems == -1)
+        {
+            myNUsedItems = nMaxItems;
+        }
+        else
+        {
+            myNUsedItems = nUsedItems;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    template <uint32_t nMaxItems>
+    void setItems(T (&items)[nMaxItems], const int32_t nUsedItems = -1)
+    {
+        myItems      = items;
+        myNMaxItems  = nMaxItems;
+
+        if (nUsedItems == -1)
+        {
+            myNUsedItems = nMaxItems;
+        }
+        else
+        {
+            myNUsedItems = nUsedItems;
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    uint32_t getSize() const
     {
         return myNUsedItems;
     }
     
     //--------------------------------------------------------------------------
-    unsigned int getMaxSize() const
+    bool setSize(const uint32_t size)
+    {
+        if (size > myNMaxItems)
+        {
+            return false;
+        }
+
+        myNUsedItems = size;
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
+    uint32_t getMaxSize() const
     {
         return myNMaxItems;
     }
@@ -121,38 +215,73 @@ public:
     }
     
     //--------------------------------------------------------------------------
-    bool append(const T items[], const unsigned int nItems)
+    bool append(const T* items,
+                const uint32_t nItems,
+                const bool greedy = false)
     {
-        if ((myNUsedItems + nItems) > myNMaxItems)
+        uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
+        uint32_t nItemsToAppend = nItems;
+
+        bool returnValue;
+
+        if (nItemsToAppend > nRemainingItems)
         {
-            return false;
+            returnValue = false;
+
+            if (greedy)
+            {
+                nItemsToAppend = nRemainingItems;
+            }
+            else
+            {
+                return returnValue;
+            }
         }
-        
-        for (int i = 0; i < nItems; i++)
+        else
+        {
+            returnValue = true;
+        }
+
+        for (uint32_t i = 0; i < nItemsToAppend; i++)
         {
             myItems[myNUsedItems++] = items[i];
         }
-        
-        return true;
+
+        return returnValue;
     }
-    
+
     //--------------------------------------------------------------------------
-    bool append(const Array<T>& array)
+    template <uint32_t nItems>
+    bool append(const T (&items)[nItems],
+                const bool greedy = false)
     {
-        return append(array.getItems(), array.getSize());
+        return append(items, nItems, greedy);
     }
     
     //--------------------------------------------------------------------------
-    bool prepend(T item)
+    bool append(const Array<T>& array, const bool greedy = false)
+    {
+        return append(array.getItems(), array.getSize(), greedy);
+    }
+    
+    //--------------------------------------------------------------------------
+    bool prepend(T item, const bool greedy = false)
     {
         if (myNUsedItems == myNMaxItems)
         {
-            return false;
+        	if (greedy)
+        	{
+        		myNUsedItems = myNMaxItems - 1;
+        	}
+        	else
+        	{
+        		return false;
+        	}
         }
         
-        for (int i = myNUsedItems; i > 0; i--)
+        for (uint32_t i = myNUsedItems; i > 0; i--)
         {
-            myItems[i] = myItems[i - 1];
+            myItems[i] = myItems[(i - 1)];
         }
         
         myItems[0] = item;
@@ -162,43 +291,68 @@ public:
     }
     
     //--------------------------------------------------------------------------
-    bool prepend(T items[], const unsigned int nItems)
+    bool prepend(T items[], const uint32_t nItems, const bool greedy = false)
     {
-        if ((myNUsedItems + nItems) >= myNMaxItems)
+        uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
+        uint32_t nItemsToPrepend = nItems;
+
+        bool returnValue;
+
+        if (nItemsToPrepend > nRemainingItems)
         {
-            return false;
+            returnValue = false;
+
+            if (greedy)
+            {
+                nItemsToPrepend = nRemainingItems;
+            }
+            else
+            {
+                return returnValue;
+            }
+        }
+        else
+        {
+            returnValue = true;
         }
         
-        for (int i = (myNUsedItems + nItems); i > 0; i--)
+        for (int32_t i = (myNUsedItems - 1); i >= 0; i--)
         {
-            myItems[i] = myItems[i - nItems - 1];
+            myItems[(i + nItemsToPrepend)] = myItems[i];
         }
         
-        for (int i = 0; i < nItems; i++)
+        for (uint32_t i = 0; i < nItemsToPrepend; i++)
         {
             myItems[i] = items[i];
         }
         
-        myNUsedItems += nItems;
+        myNUsedItems += nItemsToPrepend;
         
-        return true;
+        return returnValue;
     }
     
     //--------------------------------------------------------------------------
-    bool prepend(const Array<T>& array)
+    template <uint32_t nItems>
+    bool prepend(T (&items)[nItems], const bool greedy = false)
     {
-        return prepend(array.getItems(), array.getSize());
+        return prepend(items, nItems, greedy);
+    }
+
+    //--------------------------------------------------------------------------
+    bool prepend(const Array<T>& array, const bool greedy = false)
+    {
+        return prepend(array.getItems(), array.getSize(), greedy);
     }
     
     //--------------------------------------------------------------------------
-    bool insert(T item, const unsigned int index)
+    bool insert(T item, const uint32_t index)
     {
         if (myNUsedItems == myNMaxItems)
         {
             return false;
         }
         
-        for (int i = myNUsedItems; i > index; i--)
+        for (uint32_t i = myNUsedItems; i > index; i--)
         {
             myItems[i] = myItems[i - 1];
         }
@@ -210,21 +364,21 @@ public:
     }
     
     //--------------------------------------------------------------------------
-    bool insert(T items[], const unsigned int nItems, const unsigned int index)
+    bool insert(T items[], const uint32_t nItems, const uint32_t index)
     {
         if ((myNUsedItems + nItems) >= myNMaxItems)
         {
             return false;
         }
         
-        for (int i = (myNUsedItems + nItems); i > index; i--)
+        for (int32_t i = (myNUsedItems - 1); i >= 0; i--)
         {
-            myItems[i] = myItems[i - nItems - 1];
+            myItems[(i + nItems)] = myItems[i];
         }
         
-        for (int i = index; i < nItems; i++)
+        for (uint32_t i = 0; i < nItems; i++)
         {
-            myItems[index + i] = items[i];
+            myItems[(index + i)] = items[i];
         }
         
         myNUsedItems += nItems;
@@ -233,67 +387,93 @@ public:
     }
     
     //--------------------------------------------------------------------------
-    bool replace(T item, const unsigned int index)
+    template <uint32_t nItems>
+    bool insert(T (&items)[nItems], const uint32_t index)
     {
+        return insert(items, nItems, index);
+    }
+
+    //--------------------------------------------------------------------------
+    bool replace(T item, const uint32_t index)
+    {
+        if (index >= myNMaxItems)
+        {
+            return false;
+        }
+
         myItems[index] = item;
         
         return true;
     }
     
     //--------------------------------------------------------------------------
-    Array<T> subArray(const unsigned int index,
-                      const unsigned int nItems = 0) const
+    Array<T> subArray(const uint32_t index,
+                      const uint32_t nItems = 0) const
     {
-        if (nItems == 0)
+        // If starting index is greater than number of items, return empty Array
+        if (index >= myNMaxItems)
         {
-            return Array<T>(&(myItems[index]), myNUsedItems - index);
+            return Array<T>();
+        }
+
+        int subNMaxItems  = 0;
+
+        if ((nItems == 0) || (nItems > (myNMaxItems - index)))
+        {
+            subNMaxItems = myNMaxItems - index;
+        }
+        else
+        {
+            subNMaxItems = nItems;
+        }
+
+        int subNUsedItems = myNUsedItems - index;
+
+        if (subNUsedItems < 0)
+        {
+            subNUsedItems = 0;
+        }
+        else if ((subNUsedItems > nItems) && (nItems != 0))
+        {
+            subNUsedItems = nItems;
         }
         
-        return Array<T>(&(myItems[index]), nItems);
+        return Array<T>(&(myItems[index]), subNMaxItems, subNUsedItems);
     }
     
     //--------------------------------------------------------------------------
     void clear()
     {
-        // Memset all items?
         myNUsedItems = 0;
     }
     
     //--------------------------------------------------------------------------
-    T& operator[](const int index) const
+    T& operator[](const uint32_t index) const
     {
         return myItems[index];
     }
     
     //--------------------------------------------------------------------------
-    void operator=(const Array<T>& array)
+    Array<T>& operator=(const Array<T>& array)
     {
-        myItems         = array.myItems;
-        myNMaxItems     = array.myNMaxItems;
-        myNUsedItems    = array.myNUsedItems;
+        myItems      = array.myItems;
+        myNMaxItems  = array.myNMaxItems;
+        myNUsedItems = array.myNUsedItems;
+
+        return (*this);
     }
 
-    //--------------------------------------------------------------------------
-    void setSize(const unsigned int size)
-    {
-        myNUsedItems = size;
-    }
-
-    //--------------------------------------------------------------------------
-    T* getData()
-    {
-    	return myItems;
-    }
-    
 private:
     
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
     
     T* myItems;
-    unsigned int myNMaxItems;
-    unsigned int myNUsedItems;
+    uint32_t myNMaxItems;
+    uint32_t myNUsedItems;
 };
 
-#endif // _ARRAY_H_
+}; // namespace Plat4m
+
+#endif // PLAT4M_ARRAY_H

@@ -1,214 +1,126 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file Uart.cpp
- * @author Ben Minerd
- * @date 3/22/13
- * @brief Uart class.
- */
+///
+/// @file Uart.cpp
+/// @author Ben Minerd
+/// @date 3/22/13
+/// @brief Uart class source file.
+///
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <Uart.h>
 #include <System.h>
-#include <MutexLock.h>
 
-/*------------------------------------------------------------------------------
- * Public virtual destructors
- *----------------------------------------------------------------------------*/
+using Plat4m::Uart;
+using Plat4m::ComInterface;
 
 //------------------------------------------------------------------------------
-Uart::~Uart()
-{
-}
-
-/*------------------------------------------------------------------------------
- * Public implemented methods
- *----------------------------------------------------------------------------*/
+// Public methods implemented from ComInterface
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ComInterface::Error Uart::tx(const ByteArray& byteArray)
+ComInterface::Error Uart::transmitBytes(const ByteArray& byteArray,
+                                        const bool waitUntilDone)
 {
-    if (!myIsEnabled)
+    if (!isEnabled())
     {
-        return ComInterface::ERROR_NOT_ENABLED;
+        return ComInterface::Error(ComInterface::ERROR_CODE_NOT_ENABLED);
     }
-    
-    int size = byteArray.getSize();
-    
-    for (int i = 0; i < size; i++)
-    {
-        if (!(myTxBuffer.write(byteArray[i])))
-        {
-            return ComInterface::ERROR_TX_BUFFER_FULL;
-        }
-    }
-    
-    Error error = driverInterruptEnable(INTERRUPT_TX, true);
-    
-    return ComInterface::ERROR_NONE;
+
+    return driverTransmitBytes(byteArray, waitUntilDone);
 }
 
 //------------------------------------------------------------------------------
-unsigned int Uart::rxBytesAvailable()
+uint32_t Uart::getReceivedBytesCount()
 {
-    return myRxBuffer.count();
+    return driverGetReceivedBytesCount();
 }
 
 //------------------------------------------------------------------------------
-ComInterface::Error Uart::getRxBytes(ByteArray& byteArray, unsigned int nBytes)
+ComInterface::Error Uart::getReceivedBytes(ByteArray& byteArray,
+                                           const uint32_t nBytes)
 {
-    unsigned int size;
-    
-    if (nBytes == 0)
-    {
-        size = myRxBuffer.count();
-    }
-    else
-    {
-        size = nBytes;
-    }
-    
-    for (int i = 0; i < size; i++)
-    {
-        uint8_t byte;
-        
-        if (myRxBuffer.read(byte))
-        {
-            byteArray.append(byte);
-        }
-    }
-    
-    return ComInterface::ERROR_NONE;
-}
-
-/*------------------------------------------------------------------------------
- * Public methods
- *----------------------------------------------------------------------------*/
-
-//------------------------------------------------------------------------------
-Uart::Error Uart::enable(const bool enable)
-{
-    if (enable == myIsEnabled)
-    {
-        return ERROR_NONE;
-    }
-
-    Error error = driverEnable(enable);
-    
-    if (error == ERROR_NONE)
-    {
-        myIsEnabled = enable;
-    }
-    
-    error = driverInterruptEnable(Uart::INTERRUPT_RX, enable);
-    
-    return error;
+    return driverGetReceivedBytes(byteArray, nBytes);
 }
 
 //------------------------------------------------------------------------------
-Uart::Error Uart::isEnabled(bool& isEnabled)
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Uart::Config Uart::getConfig() const
 {
-    isEnabled = myIsEnabled;
-    
-    return ERROR_NONE;
+    return myConfig;
 }
 
 //------------------------------------------------------------------------------
-Uart::Error Uart::configure(const Config& config)
+Uart::Error Uart::setConfig(const Config& config)
 {
-    if (!myIsEnabled)
+    if (!isEnabled())
     {
-        return ERROR_NOT_ENABLED;
+        return Error(ERROR_CODE_NOT_ENABLED);
     }
-    
-    Error error = driverConfigure(config);
-    
-    if (error == ERROR_NONE)
+
+    Error error = driverSetConfig(config);
+
+    if (error == ERROR_CODE_NONE)
     {
         myConfig = config;
     }
-    
+
     return error;
 }
 
 //------------------------------------------------------------------------------
-void Uart::interruptHandler(const Interrupt interrupt)
-{
-    uint8_t byte;
-    Error error;
-    
-    switch (interrupt)
-    {
-        case INTERRUPT_TX:
-        {
-            if (myTxBuffer.read(byte))
-            {
-                error = driverTx(byte);
-            }
-            else
-            {
-                error = driverInterruptEnable(INTERRUPT_TX, false);
-            }
-            
-            break;
-        }
-        case INTERRUPT_RX:
-        {
-            error = driverRx(byte);
-            
-            // Rx callback?
-            
-            if (!myRxBuffer.write(byte))
-            {
-                // Error
-            }
-            
-            break;
-        }
-    }
-}
-
-/*------------------------------------------------------------------------------
- * Protected constructors
- *----------------------------------------------------------------------------*/
+// Protected constructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Uart::Uart() :
-     myIsEnabled(false)
+    ComInterface()
+{
+}
+
+//------------------------------------------------------------------------------
+// Protected virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Uart::~Uart()
 {
 }

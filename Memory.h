@@ -1,165 +1,183 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file Memory.h
- * @author Ben Minerd
- * @date 4/18/2013
- * @brief Memory class.
- */
+///
+/// @file Memory.h
+/// @author Ben Minerd
+/// @date 4/18/2013
+/// @brief Memory class header file.
+///
 
-#ifndef _MEMORY_H_
-#define _MEMORY_H_
+#ifndef PLAT4M_MEMORY_H
+#define PLAT4M_MEMORY_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <Plat4m.h>
+#include <Module.h>
+#include <ErrorTemplate.h>
+#include <ByteArray.h>
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
-class Memory
+namespace Plat4m
+{
+
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
+
+template <typename TAddress>
+class Memory : public Module
 {
 public:
 
-    /*--------------------------------------------------------------------------
-     * Public enumerations
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of memory errors.
-     */
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE,
-        ERROR_PARAMETER_INVALID,
-        ERROR_DRIVER_NOT_SET,
-        ERROR_NOT_INITIALIZED,
-        ERROR_NOT_ENABLED,
-        ERROR_COMMUNICATION
+        ERROR_CODE_NONE,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_COMMUNICATION
     };
-    
-    /*--------------------------------------------------------------------------
-     * Public structures
-     *------------------------------------------------------------------------*/
+
+    typedef ErrorTemplate<ErrorCode> Error;
     
     struct Config
     {
         int a; // Placeholder
     };
     
-    /*--------------------------------------------------------------------------
-     * Public virtual destructors
-     *------------------------------------------------------------------------*/
-    
-    virtual ~Memory();
-    
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public virtual methods
+    //--------------------------------------------------------------------------
 
-    /**
-     * @brief Sets this memory enabled or disabled.
-     * @param enable Flag that indicates if the memory should be enabled or
-     * disabled.
-     * @return External memory error.
-     */
-    Error enable(const bool enable);
+    virtual Error configure(const Config& config)
+    {
+        Error error = driverConfigure(config);
 
-    /**
-     * @brief Checks to see if this memory is enabled or disabled.
-     * @param isEnabled Flag that indicates if the memory is enabled or
-     * disabled.
-     * @return External memory error.
-     */
-    Error isEnabled(bool& isEnabled);
+        return error;
+    }
 
-    /**
-     * @brief Configures this memory.
-     * @param config External memory configuration.
-     * @return External memory error.
-     */
-    Error configure(const Config& config);
+    //--------------------------------------------------------------------------
+    virtual Error clear(const TAddress address, const uint32_t nBytes)
+    {
+        if (!isEnabled())
+        {
+            return Error(ERROR_CODE_NOT_ENABLED);
+        }
 
-    /**
-     * @brief Gets a memory reading.
-     * @param reading External memory reading.
-     * @return External memory error.
-     */
-    Error read(data_array_t& data, const unsigned int address);
+        Error error = driverClear(address, nBytes);
 
-    /**
-     * @brief Gets a memory reading.
-     * @param reading External memory reading.
-     * @return External memory error.
-     */
-    Error write(const data_array_t& data, const unsigned int address);
+        return error;
+    }
+
+    //--------------------------------------------------------------------------
+    virtual Error read(const TAddress address, ByteArray& dataArray)
+    {
+        if (!isEnabled())
+        {
+            return Error(ERROR_CODE_NOT_ENABLED);
+        }
+
+        Error error = driverRead(address, dataArray);
+
+        return error;
+    }
+
+    //--------------------------------------------------------------------------
+    virtual Error write(const TAddress address, const ByteArray& dataArray)
+    {
+        if (!isEnabled())
+        {
+            return Error(ERROR_CODE_NOT_ENABLED);
+        }
+
+        Error error = driverWrite(address, dataArray);
+
+        return error;
+    }
     
 protected:
     
-    /*--------------------------------------------------------------------------
-     * Protected constructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Protected constructors
+    //--------------------------------------------------------------------------
    
-    Memory();
+    //--------------------------------------------------------------------------
+    Memory()
+    {
+    }
     
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    virtual ~Memory()
+    {
+    }
+
 private:
     
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
-    
-    bool myIsEnabled;
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
     
     Config myConfig;
     
-    /*--------------------------------------------------------------------------
-     * Private virtual methods
-     *------------------------------------------------------------------------*/
-    
-    virtual Error driverEnable(const bool enable) = 0;
+    //--------------------------------------------------------------------------
+    // Private pure virtual methods
+    //--------------------------------------------------------------------------
     
     virtual Error driverConfigure(const Config& config) = 0;
     
-    virtual Error driverRead(data_array_t& data,
-                             const unsigned int address) = 0;
+    virtual Error driverClear(const TAddress address,
+                              const uint32_t nBytes) = 0;
+
+    virtual Error driverRead(const TAddress address, ByteArray& byteArray) = 0;
     
-    virtual Error driverWrite(const data_array_t& data,
-                              const unsigned int address) = 0;
+    virtual Error driverWrite(const TAddress address,
+                              const ByteArray& byteArray) = 0;
 };
 
-#endif // _EXTERNAL_MEMORY_H_
+}; // namespace Plat4m
+
+#endif // PLAT4M_MEMORY_H

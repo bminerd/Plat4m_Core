@@ -1,74 +1,77 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file ComProtocol.h
- * @author Ben Minerd
- * @date 4/22/13
- * @brief ComProtocol class.
- */
+///
+/// @file ComProtocol.h
+/// @author Ben Minerd
+/// @date 4/22/2013
+/// @brief ComProtocol class.
+///
 
-#ifndef COM_PROTOCOL_H
-#define COM_PROTOCOL_H
+#ifndef PLAT4M_COM_PROTOCOL_H
+#define PLAT4M_COM_PROTOCOL_H
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
 #include <Plat4m.h>
 #include <Module.h>
 #include <ErrorTemplate.h>
 #include <ByteArray.h>
+#include <Callback.h>
+#include <ComLink.h>
+
+//------------------------------------------------------------------------------
+// Namespaces
+//------------------------------------------------------------------------------
 
 namespace Plat4m
 {
 
-/*------------------------------------------------------------------------------
- * Classes
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Classes
+//------------------------------------------------------------------------------
 
 class ComProtocol : public Module
 {
 public:
     
-    /*--------------------------------------------------------------------------
-     * Public enumerations
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public enumerations
+    //--------------------------------------------------------------------------
 
-    /**
-     * @brief Enumeration of communication errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -77,63 +80,68 @@ public:
 
     enum ParseStatus
     {
-        PARSE_STATUS_NOT_A_MESSAGE,
-        PARSE_STATUS_MID_MESSAGE,
-        PARSE_STATUS_INVALID_MESSAGE,
-        PARSE_STATUS_UNSUPPORTED_MESSAGE,
-        PARSE_STATUS_FOUND_MESSAGE
+        PARSE_STATUS_NOT_A_FRAME,
+        PARSE_STATUS_MID_FRAME,
+        PARSE_STATUS_INVALID_FRAME,
+        PARSE_STATUS_UNSUPPORTED_FRAME,
+        PARSE_STATUS_FOUND_FRAME
     };
 
-    /*--------------------------------------------------------------------------
-	 * Public typedefs
-	 *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public typedefs
+    //--------------------------------------------------------------------------
 
     typedef ErrorTemplate<ErrorCode> Error;
 
-    /*--------------------------------------------------------------------------
-     * Public methods
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
     
     uint32_t getParseTimeoutMs();
     
-    ParseStatus parseData(const ByteArray& rxByteArray, ByteArray& txByteArray);
+    ParseStatus parseData(const ByteArray& receiveByteArray,
+                          ByteArray& transmitByteArray,
+                          Callback<>*& followUpCallback);
     
 protected:
     
-    /*--------------------------------------------------------------------------
-	 * Protected constructors
-	 *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Protected constructors
+    //--------------------------------------------------------------------------
 
-	ComProtocol(const uint32_t parseTimeoutMs);
+	ComProtocol(const uint32_t parseTimeoutMs, ComLink& comLink);
 
-    /*--------------------------------------------------------------------------
-     * Protected destructors
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
 
-    ~ComProtocol();
+    virtual ~ComProtocol();
     
+    //--------------------------------------------------------------------------
+    // Protected methods
+    //--------------------------------------------------------------------------
+
+    ComLink& getComLink();
+
 private:
     
-    /*--------------------------------------------------------------------------
-     * Private members
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
     
     const uint32_t myParseTimeoutMs;
 
-    /*--------------------------------------------------------------------------
-     * Private methods implemented from Module
-     *------------------------------------------------------------------------*/
+    ComLink& myComLink;
 
-    Module::Error driverEnable(const bool enable) override;
+    //--------------------------------------------------------------------------
+    // Private pure virtual methods
+    //--------------------------------------------------------------------------
 
-    /*--------------------------------------------------------------------------
-	 * Private virtual methods
-	 *------------------------------------------------------------------------*/
-
-    virtual ParseStatus driverParseData(const ByteArray& rxByteArray,
-    									ByteArray& txByteArray) = 0;
+    virtual ParseStatus driverParseData(const ByteArray& receiveByteArray,
+    									ByteArray& transmitByteArray,
+    									Callback<>*& followUpCallback) = 0;
 };
 
 }; // namespace Plat4m
 
-#endif // COM_PROTOCOL_H
+#endif // PLAT4M_COM_PROTOCOL_H
