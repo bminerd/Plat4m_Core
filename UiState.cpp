@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,42 +33,28 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ByteArray.cpp
+/// @file UiState.h
 /// @author Ben Minerd
-/// @date 6/17/13
-/// @brief ByteArray class source file.
+/// @date 7/22/2013
+/// @brief UiState class.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ByteArray.h>
-#include <string.h>
+#include <UiState.h>
 
-using Plat4m::ByteArray;
+using Plat4m::UiState;
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ByteArray::ByteArray() :
-    Array<uint8_t>()
-{
-}
-
-//------------------------------------------------------------------------------
-ByteArray::ByteArray(uint8_t bytes[],
-                     const uint32_t nBytes,
-                     const int32_t nUsedBytes) :
-    Array<uint8_t>(bytes, nBytes, nUsedBytes)
-{
-}
-
-//------------------------------------------------------------------------------
-ByteArray::ByteArray(const char string[]) :
-    Array<uint8_t>((uint8_t*) string, strlen(string), strlen(string))
+UiState::UiState(EnterCallback& enterCallback, ExitCallback& exitCallback) :
+    myEnterCallback(enterCallback),
+    myExitCallback(exitCallback)
 {
 }
 
@@ -77,43 +63,13 @@ ByteArray::ByteArray(const char string[]) :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-bool ByteArray::append(const char* string, const bool greedy)
+void UiState::enter()
 {
-    return Array<uint8_t>::append((uint8_t*) string, strlen(string), greedy);
+    myEnterCallback.call();
 }
 
 //------------------------------------------------------------------------------
-bool ByteArray::append(const ByteArray& byteArray, const bool greedy)
+void UiState::exit()
 {
-    return Array<uint8_t>::append(byteArray, greedy);
-}
-
-//------------------------------------------------------------------------------
-bool ByteArray::prepend(const char string[])
-{
-    return Array<uint8_t>::prepend((uint8_t*) string, strlen(string));
-}
-
-//------------------------------------------------------------------------------
-bool ByteArray::insert(const char string[], const uint32_t index)
-{
-    return Array<uint8_t>::insert((uint8_t*) string, strlen(string), index);
-}
-
-//------------------------------------------------------------------------------
-void ByteArray::clear(const bool clearMemory)
-{
-    Array<uint8_t>::clear();
-
-    if (clearMemory)
-    {
-        memset(getItems(), 0x00, getMaxSize());
-    }
-}
-
-//------------------------------------------------------------------------------
-void ByteArray::setValue(const uint8_t value)
-{
-    memset(getItems(), value, getMaxSize());
-    setSize(getMaxSize());
+    myExitCallback.call();
 }

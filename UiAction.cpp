@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Benjamin Minerd
+ * Copyright (c) 2013 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,51 +33,36 @@
  *----------------------------------------------------------------------------*/
 
 /**
- * @file Led.cpp
+ * @file UiAction.cpp
  * @author Ben Minerd
- * @date 1/22/2014
- * @brief Led class.
+ * @date 11/19/2013
+ * @brief UiAction class.
  */
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <Led.h>
+#include <UiAction.h>
+
+using Plat4m::UiAction;
 
 /*------------------------------------------------------------------------------
  * Public constructors and destructors
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-Led::Led(EnableLine& redEnableLine,
-         EnableLine& greenEnableLine,
-         EnableLine& blueEnableLine) :
-    myIsEnabled(false),
-    myRedEnableLine(redEnableLine),
-    myGreenEnableLine(greenEnableLine),
-    myBlueEnableLine(blueEnableLine)
+UiAction::UiAction(ActionCallback& callback) :
+    myCallback(callback)
 {
 }
 
 /*------------------------------------------------------------------------------
- * Public methods
+ * Public implemented methods
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-void Led::enable(const bool enable)
+void UiAction::call()
 {
-    if (enable == myIsEnabled)
-    {
-        return;
-    }
-    
-    
-}
-
-//------------------------------------------------------------------------------
-void Led::setColor(const Color color)
-{
-#warning Stubbed function (complete it)   
-   // if (color == myColor)
+    myCallback.call();
 }

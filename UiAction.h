@@ -11,7 +11,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Benjamin Minerd
+ * Copyright (c) 2016 Benjamin Minerd
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,59 +32,61 @@
  * SOFTWARE.
  *----------------------------------------------------------------------------*/
 
-/**
- * @file Led.h
- * @author Ben Minerd
- * @date 1/22/2014
- * @brief Led class.
- */
+///
+/// @file UiAction.h
+/// @author Ben Minerd
+/// @date 11/19/2013
+/// @brief UiAction class.
+///
 
-#ifndef _LED_H_
-#define _LED_H_
+#ifndef UI_ACTION_H
+#define UI_ACTION_H
 
 /*------------------------------------------------------------------------------
  * Include files
  *----------------------------------------------------------------------------*/
 
 #include <Plat4m.h>
-#include <EnableLine.h>
-#include <Sequencer.h>
+#include <Callback.h>
+
 /*------------------------------------------------------------------------------
  * Classes
  *----------------------------------------------------------------------------*/
 
-class Led 
+namespace Plat4m
+{
+
+class UiAction
 {
 public:
     
     /*--------------------------------------------------------------------------
-     * Public enumerations
+     * Public structures
      *------------------------------------------------------------------------*/
     
-    enum Color
+    struct Map
     {
-        COLOR_RED,
-        COLOR_GREEN,
-        COLOR_BLUE
+        UiAction** actions;
+        unsigned int nActions;
     };
+    
+    /*--------------------------------------------------------------------------
+     * Public typedefs
+     *------------------------------------------------------------------------*/
+    
+    typedef Callback<> ActionCallback;
     
     /*--------------------------------------------------------------------------
      * Public constructors and destructors
      *------------------------------------------------------------------------*/
     
-    Led(EnableLine& redEnableLine,
-        EnableLine& greenEnableLine,
-        EnableLine& blueEnableLine);
+    UiAction(ActionCallback& callback);
     
     /*--------------------------------------------------------------------------
-     * Public methods
+     * Public implemented methods
      *------------------------------------------------------------------------*/
     
-    void enable(const bool enable);
-    
-    bool isEnabled();
-    
-    void setColor(const Color color);
+    void call();
     
 private:
     
@@ -92,13 +94,9 @@ private:
      * Private data members
      *------------------------------------------------------------------------*/
     
-    bool myIsEnabled;
-    
-    EnableLine& myRedEnableLine;
-    EnableLine& myGreenEnableLine;
-    EnableLine& myBlueEnableLine;
-    
-    Color myColor;
+    ActionCallback& myCallback;
 };
 
-#endif // _LED_H_
+}; // namespace Plat4m
+
+#endif // UI_ACTION_H

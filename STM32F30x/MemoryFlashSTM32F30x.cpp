@@ -65,7 +65,7 @@ MemoryFlashSTM32F30x& MemoryFlashSTM32F30x::get()
 {
     if (isNullPointer(myObject))
     {
-        myObject = new MemoryFlashSTM32F30x();
+//        myObject = new MemoryFlashSTM32F30x();
     }
 
     return (*myObject);

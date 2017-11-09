@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,87 +33,83 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ByteArray.cpp
+/// @file UiState.h
 /// @author Ben Minerd
-/// @date 6/17/13
-/// @brief ByteArray class source file.
+/// @date 7/22/2013
+/// @brief UiState class header file.
 ///
+
+#ifndef UI_STATE_H
+#define UI_STATE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ByteArray.h>
-#include <string.h>
-
-using Plat4m::ByteArray;
+#include <Plat4m.h>
+#include <Callback.h>
 
 //------------------------------------------------------------------------------
-// Public constructors
+// Namespaces
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-ByteArray::ByteArray() :
-    Array<uint8_t>()
+namespace Plat4m
 {
-}
 
 //------------------------------------------------------------------------------
-ByteArray::ByteArray(uint8_t bytes[],
-                     const uint32_t nBytes,
-                     const int32_t nUsedBytes) :
-    Array<uint8_t>(bytes, nBytes, nUsedBytes)
+// Classes
+//------------------------------------------------------------------------------
+
+class UiState
 {
-}
-
-//------------------------------------------------------------------------------
-ByteArray::ByteArray(const char string[]) :
-    Array<uint8_t>((uint8_t*) string, strlen(string), strlen(string))
-{
-}
-
-//------------------------------------------------------------------------------
-// Public methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-bool ByteArray::append(const char* string, const bool greedy)
-{
-    return Array<uint8_t>::append((uint8_t*) string, strlen(string), greedy);
-}
-
-//------------------------------------------------------------------------------
-bool ByteArray::append(const ByteArray& byteArray, const bool greedy)
-{
-    return Array<uint8_t>::append(byteArray, greedy);
-}
-
-//------------------------------------------------------------------------------
-bool ByteArray::prepend(const char string[])
-{
-    return Array<uint8_t>::prepend((uint8_t*) string, strlen(string));
-}
-
-//------------------------------------------------------------------------------
-bool ByteArray::insert(const char string[], const uint32_t index)
-{
-    return Array<uint8_t>::insert((uint8_t*) string, strlen(string), index);
-}
-
-//------------------------------------------------------------------------------
-void ByteArray::clear(const bool clearMemory)
-{
-    Array<uint8_t>::clear();
-
-    if (clearMemory)
+public:
+    
+    //--------------------------------------------------------------------------
+    // Public enumerations
+    //--------------------------------------------------------------------------
+    
+    enum Error
     {
-        memset(getItems(), 0x00, getMaxSize());
-    }
-}
+        ERROR_NONE
+    };
+    
+    //--------------------------------------------------------------------------
+    // Public tyepdefs
+    //--------------------------------------------------------------------------
+    
+    typedef Callback<> EnterCallback;
+    typedef Callback<> ExitCallback;
+    
+    //--------------------------------------------------------------------------
+    // Public constructors
+    //--------------------------------------------------------------------------
+    
+    UiState(EnterCallback& enterCallback, ExitCallback& exitCallback);
+    
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+    
+    void enter();
+    
+    void exit();
+    
+private:
+    
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+    
+    EnterCallback& myEnterCallback;
+    ExitCallback& myExitCallback;
+    
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-void ByteArray::setValue(const uint8_t value)
-{
-    memset(getItems(), value, getMaxSize());
-    setSize(getMaxSize());
-}
+
+};
+
+}; // namespace Plat4m
+
+#endif // _UI_STATE_H_

@@ -46,9 +46,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#ifdef PLAT4M_CORE_CONFIG
 #include <Plat4mCoreConfig.h>
+#endif
 
-#include <cstdint>
+#include <stdint.h>
 #include <float.h>
 #include <math.h>
 
@@ -104,6 +106,10 @@ namespace Plat4m
 
     typedef uint32_t TimeUs;
     typedef uint32_t TimeMs;
+
+#ifndef PLAT4M_CORE_CONFIG
+    typedef float RealNumber;
+#endif
 
     typedef RealNumber VoltageV;
     typedef RealNumber VoltageMv;

@@ -39,8 +39,8 @@
  * @brief RotarySwitch class.
  */
 
-#ifndef _ROTARY_SWITCH_H_
-#define _ROTARY_SWITCH_H_
+#ifndef ROTARY_SWITCH_H
+#define ROTARY_SWITCH_H
 
 /*------------------------------------------------------------------------------
  * Include files
@@ -49,6 +49,9 @@
 #include <Plat4m.h>
 #include <UiInput.h>
 #include <EnableLine.h>
+
+namespace Plat4m
+{
 
 /*------------------------------------------------------------------------------
  * Classes
@@ -83,16 +86,16 @@ public:
      * Public constructors and destructors
      *------------------------------------------------------------------------*/
     
-    RotarySwitch(EnableLine* enableLine1 = NULL_POINTER,
-                 EnableLine* enableLine2 = NULL_POINTER,
-                 EnableLine* enableLine3 = NULL_POINTER,
-                 EnableLine* enableLine4 = NULL_POINTER,
-                 EnableLine* enableLine5 = NULL_POINTER,
-                 EnableLine* enableLine6 = NULL_POINTER,
-                 EnableLine* enableLine7 = NULL_POINTER,
-                 EnableLine* enableLine8 = NULL_POINTER,
-                 EnableLine* enableLine9 = NULL_POINTER,
-                 EnableLine* enableLine10 = NULL_POINTER);
+    RotarySwitch(EnableLine* enableLine1 = 0,
+                 EnableLine* enableLine2 = 0,
+                 EnableLine* enableLine3 = 0,
+                 EnableLine* enableLine4 = 0,
+                 EnableLine* enableLine5 = 0,
+                 EnableLine* enableLine6 = 0,
+                 EnableLine* enableLine7 = 0,
+                 EnableLine* enableLine8 = 0,
+                 EnableLine* enableLine9 = 0,
+                 EnableLine* enableLine10 = 0);
     
     /*--------------------------------------------------------------------------
      * Public implemented methods
@@ -119,7 +122,9 @@ private:
      * Private implemented methods
      *------------------------------------------------------------------------*/
     
-    Error driverEnable(const bool enable);
+    Module::Error driverEnable(const bool enable);
 };
 
-#endif // _ROTARY_SWITCH_H_
+}; // namespace Plat4m
+
+#endif // ROTARY_SWITCH_H

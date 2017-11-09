@@ -45,6 +45,10 @@
 
 #include <RotarySwitch.h>
 
+using Plat4m::RotarySwitch;
+using Plat4m::UiInput;
+using Plat4m::Module;
+
 /*------------------------------------------------------------------------------
  * Local variables
  *----------------------------------------------------------------------------*/
@@ -93,11 +97,11 @@ RotarySwitch::RotarySwitch(EnableLine* enableLine1,
 //------------------------------------------------------------------------------
 void RotarySwitch::poll(const uint32_t timeMs, Array<UiInput::Event>& events)
 {
-    for (int i = 0; i < ARRAY_SIZE(myEnableLines); i++)
+    for (uint32_t i = 0; i < arraySize(myEnableLines); i++)
     {
         EnableLine* enableLine = myEnableLines[i];
         
-        if (IS_VALID_POINTER(enableLine))
+        if (isValidPointer(enableLine))
         {
             bool isActive;
             
@@ -128,17 +132,17 @@ void RotarySwitch::poll(const uint32_t timeMs, Array<UiInput::Event>& events)
  *----------------------------------------------------------------------------*/
 
 //------------------------------------------------------------------------------
-UiInput::Error RotarySwitch::driverEnable(const bool enable)
+Module::Error RotarySwitch::driverEnable(const bool enable)
 {
-    for (int i = 0; i < ARRAY_SIZE(myEnableLines); i++)
+    for (int i = 0; i < arraySize(myEnableLines); i++)
     {
         EnableLine* enableLine = myEnableLines[i];
         
-        if (IS_VALID_POINTER(enableLine))
+        if (isValidPointer(enableLine))
         {
             enableLine->enable(enable);
         }
     }
     
-    return ERROR_NONE;
+    return Module::Error(Module::ERROR_CODE_NONE);
 }

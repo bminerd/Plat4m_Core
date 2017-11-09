@@ -67,6 +67,19 @@ ComInterface::Error Usb::transmitBytes(const ByteArray& byteArray,
 }
 
 //------------------------------------------------------------------------------
+uint32_t Usb::getReceivedBytesCount()
+{
+	return 0;
+}
+
+//------------------------------------------------------------------------------
+ComInterface::Error Usb::getReceivedBytes(ByteArray& byteArray,
+                                          const uint32_t nBytes)
+{
+    return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
 // Public methods
 //------------------------------------------------------------------------------
 
