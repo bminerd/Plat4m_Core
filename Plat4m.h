@@ -149,7 +149,7 @@ namespace Plat4m
     // Variables
     //--------------------------------------------------------------------------
 
-    static const char* plat4mVersion = "0.0.22";
+    static const char* plat4mVersion = "0.0.23";
 
     //--------------------------------------------------------------------------
     // Inline functions

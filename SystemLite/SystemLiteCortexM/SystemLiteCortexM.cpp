@@ -46,7 +46,7 @@
 #include <SystemLiteCortexM.h>
 
 // TODO: For now
-#include <stm32f10x.h>
+#include <stm32f30x.h>
 
 using Plat4m::SystemLiteCortexM;
 using Plat4m::SystemLite;

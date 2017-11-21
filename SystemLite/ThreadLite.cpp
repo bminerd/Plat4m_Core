@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -62,6 +62,15 @@ ThreadLite::ThreadLite(RunCallback& callback, const TimeMs periodMs) :
 }
 
 //------------------------------------------------------------------------------
+// Public virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+ThreadLite::~ThreadLite()
+{
+}
+
+//------------------------------------------------------------------------------
 // Public methods
 //------------------------------------------------------------------------------
 
@@ -104,15 +113,15 @@ void ThreadLite::setWorstCaseRunTimeMs(const TimeMs worstCaseRunTimeMs)
 //------------------------------------------------------------------------------
 bool ThreadLite::isCallTime() const
 {
-    return System::timeCheckMs(myCallTimeMs);
+    return System::checkTimeMs(myCallTimeMs);
 }
 
 //------------------------------------------------------------------------------
 bool ThreadLite::canRunInTimeWindow(const TimeMs timeWindowMs)
 {
-    uint32_t timeWindowEndTimeMs = System::timeGetMs() + timeWindowMs;
+    uint32_t timeWindowEndTimeMs = System::getTimeMs() + timeWindowMs;
 
-    return ((System::timeGetMs() + myWorstCaseRunTimeMs) < timeWindowEndTimeMs);
+    return ((System::getTimeMs() + myWorstCaseRunTimeMs) < timeWindowEndTimeMs);
 }
 
 //------------------------------------------------------------------------------
@@ -124,11 +133,11 @@ void ThreadLite::run()
 {
     myIsActive = true;
 
-    TimeMs startTimeMs = System::timeGetMs();
+    TimeMs startTimeMs = System::getTimeMs();
 
     Thread::run();
 
-    TimeMs dTimeMs = System::timeGetMs() - startTimeMs;
+    TimeMs dTimeMs = System::getTimeMs() - startTimeMs;
 
     if ((myWorstCaseRunTimeMs == 0xFFFFFFFF) ||
         (dTimeMs > myWorstCaseRunTimeMs))
@@ -148,5 +157,11 @@ void ThreadLite::run()
 //------------------------------------------------------------------------------
 void ThreadLite::driverSetPeriodMs(const TimeMs periodMs)
 {
-    myCallTimeMs = System::timeGetMs() + periodMs;
+    myCallTimeMs = System::getTimeMs() + periodMs;
+}
+
+//------------------------------------------------------------------------------
+uint32_t ThreadLite::driverSetPriority(const uint32_t priority)
+{
+	return 0;
 }

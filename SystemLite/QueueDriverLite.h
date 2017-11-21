@@ -33,25 +33,21 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file System.h
+/// @file QueueDriverLite.h
 /// @author Ben Minerd
-/// @date 6/4/2013
-/// @brief System class header file.
+/// @date 11/20/2017
+/// @brief QueueDriverLite class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_H
-#define PLAT4M_SYSTEM_H
+#ifndef QUEUE_DRIVER_LITE_H
+#define QUEUE_DRIVER_LITE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <ErrorTemplate.h>
-#include <Thread.h>
-#include <Mutex.h>
-#include <WaitCondition.h>
-#include <Queue.h>
+#include <QueueDriver.h>
+#include <ArrayN.h>
 
 #include <stdint.h>
 
@@ -66,107 +62,86 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class System
+template <uint32_t nValues>
+class QueueDriverLite : public QueueDriver
 {
 public:
 
     //--------------------------------------------------------------------------
-    // Public enumerations
+    // Public constructors
     //--------------------------------------------------------------------------
 
-    enum ErrorCode
-    {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID,
-        ERROR_CODE_MODE_INVALID,
-        ERROR_CODE_NOT_ENABLED
-    };
-
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
-
-    typedef ErrorTemplate<ErrorCode> Error;
-    
-    //--------------------------------------------------------------------------
-    // Public static methods
-    //--------------------------------------------------------------------------
-
-    static Thread& createThread(Thread::RunCallback& callback,
-                                const TimeMs periodMs = 0);
-
-    static Mutex& createMutex();
-
-    static WaitCondition& createWaitCondition();
-
-    //--------------------------------------------------------------------------
-    template <typename T>
-    static Queue<T>& createQueue(const uint32_t nValues)
+	//--------------------------------------------------------------------------
+    QueueDriverLite() :
+    	QueueDriver(),
+		myValues()
 	{
-    	return *(new Queue<T>(myDriver->driverCreateQueueDriver(nValues,
-    														    sizeof(T))));
 	}
 
-    static void run();
-    
-    static bool isRunning();
-
-    static TimeMs getTimeMs();
-
-    static TimeUs getTimeUs();
-
-    static void delayTimeMs(const TimeMs timeMs);
-
-    static bool checkTimeMs(const TimeMs timeMs);
-    
-protected:
-    
     //--------------------------------------------------------------------------
-    // Protected constructors
+    // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    System();
+    //--------------------------------------------------------------------------
+    virtual ~QueueDriverLite()
+    {
+    }
 
     //--------------------------------------------------------------------------
-    // Protected virtual destructors
+    // Public methods implemented from QueueDriver
     //--------------------------------------------------------------------------
 
-    virtual ~System();
+    //--------------------------------------------------------------------------
+	uint32_t driverGetSize()
+	{
+		return 0;
+	}
+
+	//--------------------------------------------------------------------------
+	uint32_t driverGetSizeFast()
+	{
+		return 0;
+	}
+
+	//--------------------------------------------------------------------------
+	bool driverEnqueue(const void* value)
+	{
+		return true;
+	}
+
+	//--------------------------------------------------------------------------
+	bool driverEnqueueFast(const void* value)
+	{
+		return true;
+	}
+
+	//--------------------------------------------------------------------------
+	bool driverDequeue(void* value)
+	{
+		return true;
+	}
+
+	//--------------------------------------------------------------------------
+	bool driverDequeueFast(void* value)
+	{
+		return true;
+	}
+
+	//--------------------------------------------------------------------------
+	void driverClear()
+	{
+
+	}
 
 private:
-    
+
     //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-    
-    static System* myDriver;
-    
-    static bool myIsRunning;
-    
-    //--------------------------------------------------------------------------
-    // Private pure virtual methods
+    // Private data members
     //--------------------------------------------------------------------------
 
-    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs) = 0;
-
-    virtual Mutex& driverCreateMutex() = 0;
-
-    virtual WaitCondition& driverCreateWaitCondition() = 0;
-
-    virtual QueueDriver& driverCreateQueueDriver(
-    										 const uint32_t nValues,
-    									     const uint32_t valueSizeBytes) = 0;
-
-    virtual void driverRun() = 0;
-
-    virtual TimeMs driverGetTimeMs() = 0;
-
-    virtual TimeUs driverGetTimeUs() = 0;
-
-    virtual void driverDelayTimeMs(const TimeMs timeMs) = 0;
+	ArrayN<uint8_t, nValues> myValues;
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_SYSTEM_H
+#endif // QUEUE_DRIVER_LITE_H

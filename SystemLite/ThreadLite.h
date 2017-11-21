@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -71,6 +71,12 @@ public:
     ThreadLite(RunCallback& callback, const TimeMs periodMs = 0);
 
     //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~ThreadLite();
+
+    //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
 
@@ -111,6 +117,8 @@ private:
     //--------------------------------------------------------------------------
 
     void driverSetPeriodMs(const TimeMs periodMs);
+
+    uint32_t driverSetPriority(const uint32_t priority);
 };
 
 }; // namespace Plat4m

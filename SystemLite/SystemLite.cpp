@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,7 @@
 #include <SystemLite.h>
 #include <MutexLite.h>
 #include <WaitConditionLite.h>
+#include <QueueDriverLite.h>
 #include <Processor.h>
 
 using Plat4m::SystemLite;
@@ -53,6 +54,7 @@ using Plat4m::Processor;
 using Plat4m::Thread;
 using Plat4m::Mutex;
 using Plat4m::WaitCondition;
+using Plat4m::QueueDriver;
 
 //------------------------------------------------------------------------------
 // Private static data members
@@ -109,13 +111,20 @@ Thread& SystemLite::driverCreateThread(Thread::RunCallback& callback,
 //------------------------------------------------------------------------------
 Mutex& SystemLite::driverCreateMutex()
 {
-    return *(new MutexLite());
+    return *(new MutexLite);
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& SystemLite::driverCreateWaitCondition()
 {
-    return *(new WaitConditionLite());
+    return *(new WaitConditionLite);
+}
+
+//------------------------------------------------------------------------------
+QueueDriver& SystemLite::driverCreateQueueDriver(const uint32_t nValues,
+												 const uint32_t valueSizeBytes)
+{
+	return *(new QueueDriverLite<0>);
 }
 
 //------------------------------------------------------------------------------
@@ -128,13 +137,19 @@ void SystemLite::driverRun()
 }
 
 //------------------------------------------------------------------------------
-Plat4m::TimeMs SystemLite::driverTimeGetMs()
+Plat4m::TimeMs SystemLite::driverGetTimeMs()
 {
     return myTimeMs;
 }
 
 //------------------------------------------------------------------------------
-void SystemLite::driverTimeDelayMs(const TimeMs timeMs)
+Plat4m::TimeUs SystemLite::driverGetTimeUs()
+{
+    return (myTimeMs * 1000);
+}
+
+//------------------------------------------------------------------------------
+void SystemLite::driverDelayTimeMs(const TimeMs timeMs)
 {
     const TimeMs delayTimeMs = myTimeMs + timeMs;
 

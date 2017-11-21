@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -100,7 +100,7 @@ private:
 
     //--------------------------------------------------------------------------
     // Private data members
-    //--------------------------------------------------------------------------\
+    //--------------------------------------------------------------------------
 
     static volatile TimeMs myTimeMs;
 
@@ -130,11 +130,16 @@ private:
 
     WaitCondition& driverCreateWaitCondition();
 
+    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
+    									 const uint32_t valueSizeBytes);
+
     void driverRun();
 
-    TimeMs driverTimeGetMs();
+    TimeMs driverGetTimeMs();
 
-    void driverTimeDelayMs(const uint32_t timeMs);
+    TimeUs driverGetTimeUs();
+
+    void driverDelayTimeMs(const TimeMs timeMs);
 
     //--------------------------------------------------------------------------
     // Private methods
