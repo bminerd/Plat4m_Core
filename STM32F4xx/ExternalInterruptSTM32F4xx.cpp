@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -134,8 +134,8 @@ static const EXTITrigger_TypeDef triggerMap[] =
 ExternalInterruptSTM32F4xx::ExternalInterruptSTM32F4xx(
                                                     GpioPinSTM32F4xx& gpioPin) :
     ExternalInterrupt(gpioPin),
-    myId((Id) gpioPin.getPinId()),
-    myGpioPortId(gpioPin.getPortId()),
+    myId((Id) gpioPin.getId()),
+    myGpioPortId(gpioPin.getGpioPort().getId()),
     myInterrupt(myInterruptIdMap[myId],
                 createCallback(
                           this,

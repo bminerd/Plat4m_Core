@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,24 +35,24 @@
 ///
 /// @file AdcSTM32F4xx.h
 /// @author Ben Minerd
-/// @date 4/10/13
+/// @date 4/10/2013
 /// @brief AdcSTM32F4xx class header file.
 ///
 
-#ifndef ADC_STM32F4XX_H
-#define ADC_STM32F4XX_H
+#ifndef PLAT4M_ADC_STM32F4XX_H
+#define PLAT4M_ADC_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
+
+#include <stm32f4xx.h>
 
 #include <Plat4m.h>
 #include <ErrorTemplate.h>
 #include <Array.h>
 #include <InterruptSTM32F4xx.h>
 #include <DmaStreamSTM32F4xx.h>
-
-#include <stm32f4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -78,9 +78,6 @@ public:
         ERROR_CODE_NONE = 0
     };
 
-    /**
-     * @brief Enumeration of ADC IDs.
-     */
     enum Id
     {
         ID_1 = 0,
@@ -88,9 +85,6 @@ public:
         ID_3
     };
     
-    /**
-     * @brief Enumeration of ADC channels.
-     */
     enum ChannelId
     {
         CHANNEL_ID_1 = 0,
@@ -122,7 +116,7 @@ public:
     enum Alignment
     {
         ALIGNMENT_RIGHT = 0,
-        ALIGNMENT_LEFT  = ADC_CFGR_ALIGN
+        ALIGNMENT_LEFT  = ADC_CR2_ALIGN
     };
 
     enum ExternalTriggerMode
@@ -267,9 +261,9 @@ public:
     void setDmaStream(DmaStreamSTM32F4xx& dmaStream,
                       DmaStreamSTM32F4xx::TransferCompleteCallback& callback);
 
-    Error readChannelVoltage(const ChannelId channelId, float& voltage);
+    Error readChannelVoltageV(const ChannelId channelId, VoltageV& voltageV);
 
-    float readChannelVoltageFast(const ChannelId channelId);
+    VoltageV readChannelVoltageVFast(const ChannelId channelId);
 
     Error readAllVoltages();
     
@@ -400,4 +394,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // ADC_STM32F4XX_H
+#endif // PLAT4M_ADC_STM32F4XX_H

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,27 +33,29 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file TimerSTM32F30x.h
+/// @file TimerSTM32F4xx.h
 /// @author Ben Minerd
 /// @date 7/12/2016
-/// @brief TimerSTM32F30x class header file.
+/// @brief TimerSTM32F4xx class header file.
 ///
 
-#ifndef TIMER_STM32F30X_H
-#define TIMER_STM32F30X_H
+#ifndef PLAT4M_TIMER_STM32F4XX_H
+#define PLAT4M_TIMER_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
+#include <stdint.h>
+
+#include <stm32f4xx.h>
+
 #include <Module.h>
 #include <ErrorTemplate.h>
 #include <Callback.h>
-#include <GpioPinSTM32F30x.h>
-#include <InterruptSTM32F30x.h>
-#include <ProcessorSTM32F30x.h>
-
-#include <stdint.h>
+#include <GpioPinSTM32F4xx.h>
+#include <InterruptSTM32F4xx.h>
+#include <ProcessorSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -66,7 +68,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class TimerSTM32F30x : public Module
+class TimerSTM32F4xx : public Module
 {
 public:
     
@@ -79,27 +81,24 @@ public:
         ERROR_CODE_NONE = 0
     };
 
-    /**
-     * @brief Enumeration of timers.
-     */
     enum Id
     {
         ID_1 = 0,
         ID_2,
         ID_3,
         ID_4,
+		ID_5,
         ID_6,
         ID_7,
         ID_8,
-        ID_15,
-        ID_16,
-        ID_17,
-        ID_20
+		ID_9,
+		ID_10,
+		ID_11,
+		ID_12,
+		ID_13,
+		ID_14
     };
 
-    /**
-     * @brief Enumeration of timer channels.
-     */
     enum ChannelId
     {
         CHANNEL_ID_1 = 0,
@@ -129,34 +128,28 @@ public:
 
     enum CaptureCompareMode
     {
-        CAPTURE_COMPARE_MODE_OUTPUT     = 0,
-        CAPTURE_COMPARE_MODE_INPUT_TI_1 = 1,
-        CAPTURE_COMPARE_MODE_INPUT_TI_2 = 2,
-        CAPTURE_COMPARE_MODE_INPUT_TRC  = 3
+        CAPTURE_COMPARE_MODE_OUTPUT = 0,
+        CAPTURE_COMPARE_MODE_INPUT_TI_1,
+        CAPTURE_COMPARE_MODE_INPUT_TI_2,
+        CAPTURE_COMPARE_MODE_INPUT_TRC
     };
 
     enum OutputCompareMode
     {
-        OUTPUT_COMPARE_MODE_FROZEN                   = 0,
-        OUTPUT_COMPARE_MODE_ACTIVE_ON_MATCH          = 1,
-        OUTPUT_COMPARE_MODE_INACTIVE_ON_MATCH        = 2,
-        OUTPUT_COMPARE_MODE_TOGGLE                   = 3,
-        OUTPUT_COMPARE_MODE_FORCE_INACTIVE           = 4,
-        OUTPUT_COMPARE_MODE_FORCE_ACTIVE             = 5,
-        OUTPUT_COMPARE_MODE_PWM_MODE_1               = 6,
-        OUTPUT_COMPARE_MODE_PWM_MODE_2               = 7,
-        OUTPUT_COMPARE_MODE_RETRIGGERABLE_OPM_MODE_1 = 8,
-        OUTPUT_COMPARE_MODE_RETRIGGERABLE_OPM_MODE_2 = 9,
-        OUTPUT_COMPARE_MODE_COMBINED_PWM_MODE_1      = 12,
-        OUTPUT_COMPARE_MODE_COMBINED_PWM_MODE_2      = 13,
-        OUTPUT_COMPARE_MODE_ASYMMETRIC_PWM_MODE_1    = 14,
-        OUTPUT_COMPARE_MODE_ASYMMETRIC_PWM_MODE_2    = 15
+        OUTPUT_COMPARE_MODE_FROZEN = 0,
+        OUTPUT_COMPARE_MODE_ACTIVE_ON_MATCH,
+        OUTPUT_COMPARE_MODE_INACTIVE_ON_MATCH,
+        OUTPUT_COMPARE_MODE_TOGGLE,
+        OUTPUT_COMPARE_MODE_FORCE_INACTIVE,
+        OUTPUT_COMPARE_MODE_FORCE_ACTIVE,
+        OUTPUT_COMPARE_MODE_PWM_MODE_1,
+        OUTPUT_COMPARE_MODE_PWM_MODE_2
     };
 
     enum Polarity
     {
         POLARITY_HIGH = 0,
-        POLARITY_LOW  = 1
+        POLARITY_LOW
     };
 
     enum Resolution
@@ -168,10 +161,10 @@ public:
 
     enum Alignment
     {
-        ALIGNMENT_EDGE           = 0,
-        ALIGNMENT_CENTER_DOWN    = 1,
-        ALIGNMENT_CENTER_UP      = 2,
-        ALIGNMENT_CENTER_UP_DOWN = 3
+        ALIGNMENT_EDGE = 0,
+        ALIGNMENT_CENTER_DOWN,
+        ALIGNMENT_CENTER_UP,
+        ALIGNMENT_CENTER_UP_DOWN
     };
 
     enum Direction
@@ -199,11 +192,6 @@ public:
         INTERRUPT_TIM_20_UP,
         INTERRUPT_TIM_20_TRG_COM,
         INTERRUPT_TIM_20_CC
-//        INTERRUPT_UPDATE,
-//        INTERRUPT_BREAK,
-//        INTERRUPT_CAPTURE_COMPARE,
-//        INTERRUPT_TRIGGER,
-//        INTERRUPT_COMMUTATION
     };
 
     typedef ErrorTemplate<ErrorCode> Error;
@@ -247,9 +235,9 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-    TimerSTM32F30x(const Id id);
+    TimerSTM32F4xx(const Id id);
 
-    TimerSTM32F30x(const Id id,
+    TimerSTM32F4xx(const Id id,
                    UpdateInterruptCallback& updateInterruptCallback);
 
     //--------------------------------------------------------------------------
@@ -300,17 +288,11 @@ private:
 
     // Constants
 
-    static const ProcessorSTM32F30x::Peripheral myPeripheralMap[];
+    static const ProcessorSTM32F4xx::Peripheral myPeripheralMap[];
 
-    static const GpioSTM32F30x::AlternateFunction myAlternateFunctionMap[];
+    static const InterruptSTM32F4xx::Id myInterruptIdMap[];
 
-    static const uint16_t myCounterModeMap[];
-
-    static const uint16_t myPolarityMap[];
-
-    static const InterruptSTM32F30x::Id myInterruptIdMap[];
-
-    static const GpioSTM32F30x::OutputSpeed myDefaultGpioSpeed;
+    static const GpioPinSTM32F4xx::OutputSpeed myDefaultGpioSpeed;
 
     // Variables
 
@@ -324,9 +306,9 @@ private:
     
     TIM_TypeDef* myTimer;
     
-    GpioPinSTM32F30x* myGpioPin;
+    GpioPinSTM32F4xx* myGpioPin;
     
-    InterruptSTM32F30x myUpdateInterrupt;
+    InterruptSTM32F4xx* myUpdateInterrupt;
 
     float myInputClockFrequencyHz;
     
@@ -399,4 +381,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // TIMER_STM32F30X_H
+#endif // PLAT4M_TIMER_STM32F4XX_H

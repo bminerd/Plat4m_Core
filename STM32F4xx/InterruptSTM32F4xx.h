@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,19 +39,17 @@
 /// @brief InterruptSTM32F4xx class header file.
 ///
 
-#ifndef INTERRUPT_STM32F4XX_H
-#define INTERRUPT_STM32F4XX_H
+#ifndef PLAT4M_INTERRUPT_STM32F4XX_H
+#define PLAT4M_INTERRUPT_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
+#include <stm32f4xx.h>
+
 #include <Plat4m.h>
 #include <Interrupt.h>
-     
-#include <stm32f4xx.h>
-#include <stm32f4xx_exti.h>
-#include <stm32f4xx_rcc.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -72,9 +70,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of interrupts.
-     */
     enum Id
     {
         ID_NON_MASKABLE = 0,
@@ -172,8 +167,6 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-    InterruptSTM32F4xx(const Id id);
-
     InterruptSTM32F4xx(const Id irqNumber, HandlerCallback& handlerCallback);
 
 private:
@@ -205,4 +198,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // INTERRUPT_STM32F4XX_H
+#endif // PLAT4M_INTERRUPT_STM32F4XX_H

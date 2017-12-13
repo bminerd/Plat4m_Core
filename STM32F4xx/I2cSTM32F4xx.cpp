@@ -47,15 +47,12 @@
 #include <System.h>
 #include <CallbackMethod.h>
 
-#include <stm32f4xx_rcc.h>
-#include <misc.h>
-
 using Plat4m::I2cSTM32F4xx;
 using Plat4m::I2c;
-using Plat4m::GpioSTM32F4xx;
 using Plat4m::GpioPinSTM32F4xx;
 using Plat4m::InterruptSTM32F4xx;
 using Plat4m::Module;
+using Plat4m::ProcessorSTM32F4xx;
 
 //------------------------------------------------------------------------------
 // Local variables
@@ -67,59 +64,39 @@ static InterruptSTM32F4xx* interruptObjectMap[3][2];
 // Private static data members
 //------------------------------------------------------------------------------
 
-/**
- * @brief I2C clock map.
- */
-const uint32_t I2cSTM32F4xx::myClockMap[] =
+const ProcessorSTM32F4xx::Peripheral I2cSTM32F4xx::myPeripheralMap[] =
 {
-    RCC_APB1Periph_I2C1, /// I2cSTM32F4xx::ID_1
-    RCC_APB1Periph_I2C2, /// I2cSTM32F4xx::ID_2
-    RCC_APB1Periph_I2C3  /// I2cSTM32F4xx::ID_3
+	ProcessorSTM32F4xx::PERIPHERAL_I2C_1, /// ID_1
+	ProcessorSTM32F4xx::PERIPHERAL_I2C_2  /// ID_2
 };
 
-/**
- * @brief I2C alternate function map.
- */
-const GpioSTM32F4xx::AlternateFunction I2cSTM32F4xx::myAlternateFunctionMap[] =
-{
-    GpioSTM32F4xx::ALTERNATE_FUNCTION_I2C1, /// I2cSTM32F4xx::ID_1
-    GpioSTM32F4xx::ALTERNATE_FUNCTION_I2C2, /// I2cSTM32F4xx::ID_2
-    GpioSTM32F4xx::ALTERNATE_FUNCTION_I2C3  /// I2cSTM32F4xx::ID_3
-};
-
-/**
- * @brief I2C IRQ map.
- */
 const InterruptSTM32F4xx::Id I2cSTM32F4xx::myInterruptIdMap[][2] =
 {
-    /// I2cSTM32F4xx::ID_1
+    /// ID_1
     {
         InterruptSTM32F4xx::ID_I2C_1_EV,
         InterruptSTM32F4xx::ID_I2C_1_ER
     },
-    /// I2cSTM32F4xx::ID_2
+    /// ID_2
     {
         InterruptSTM32F4xx::ID_I2C_2_EV,
         InterruptSTM32F4xx::ID_I2C_2_ER
     },
-    /// I2cSTM32F4xx::ID_3
+    /// ID_3
     {
         InterruptSTM32F4xx::ID_I2C_3_EV,
         InterruptSTM32F4xx::ID_I2C_3_ER
     }
 };
 
-/**
- * @brief I2C address bits map.
- */
 const uint16_t I2cSTM32F4xx::myAddressBitsMap[] =
 {
     I2C_AcknowledgedAddress_7bit, /// I2c::ADDRESS_BITS_7
     I2C_AcknowledgedAddress_10bit /// I2c::ADDRESS_BITS_10
 };
 
-const GpioSTM32F4xx::OutputSpeed I2cSTM32F4xx::myDefaultOutputSpeed =
-                                              GpioSTM32F4xx::OUTPUT_SPEED_50MHZ;
+const GpioPinSTM32F4xx::OutputSpeed I2cSTM32F4xx::myDefaultOutputSpeed =
+										   GpioPinSTM32F4xx::OUTPUT_SPEED_50MHZ;
 
 const uint16_t I2cSTM32F4xx::myInterruptMap[] =
 {
@@ -128,14 +105,11 @@ const uint16_t I2cSTM32F4xx::myInterruptMap[] =
     I2C_IT_ERR  /// INTERRUPT_ERROR
 };
 
-/**
- * @brief I2C driver map.
- */
 I2C_TypeDef* I2cSTM32F4xx::myI2cMap[] =
 {
-    I2C1, /// I2cSTM32F4xx::ID_1
-    I2C2, /// I2cSTM32F4xx::ID_2
-    I2C3  /// I2cSTM32F4xx::ID_3
+    I2C1, /// ID_1
+    I2C2, /// ID_2
+    I2C3  /// ID_3
 };
 
 //------------------------------------------------------------------------------
@@ -183,14 +157,15 @@ I2cSTM32F4xx::I2cSTM32F4xx(const Id id,
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Module::Error I2cSTM32F4xx::driverEnable(const bool enable)
+Module::Error I2cSTM32F4xx::driverSetEnabled(const bool enabled)
 {
-    mySclGpioPin.enable(enable);
-    mySdaGpioPin.enable(enable);
+    mySclGpioPin.setEnabled(enabled);
+    mySdaGpioPin.setEnabled(enabled);
 
-    RCC_APB1PeriphClockCmd(myClockMap[myId], (FunctionalState) enable);
+    ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
+    											  enabled);
 
-    if (enable)
+    if (enabled)
     {
         // Configure GPIO
 
@@ -202,21 +177,13 @@ Module::Error I2cSTM32F4xx::driverEnable(const bool enable)
         mySclGpioPin.configure(gpioConfig);
         mySdaGpioPin.configure(gpioConfig);
 
-        // Specific GpioPinSTM32F4xx configuration
-        GpioSTM32F4xx::Config gpioDriverConfig;
-        gpioDriverConfig.alternateFunction = myAlternateFunctionMap[myId];
-        gpioDriverConfig.outputSpeed       = myDefaultOutputSpeed;
-
-        mySclGpioPin.configureDriver(gpioDriverConfig);
-        mySdaGpioPin.configureDriver(gpioDriverConfig);
-
         softwareReset();
     }
 
-    I2C_Cmd(myI2c, (FunctionalState) enable);
+    I2C_Cmd(myI2c, (FunctionalState) enabled);
 
-    myEventInterrupt.enable(enable);
-    myErrorInterrupt.enable(enable);
+    myEventInterrupt.setEnabled(enabled);
+    myErrorInterrupt.setEnabled(enabled);
 
     return Module::Error(Module::ERROR_CODE_NONE);
 }
@@ -590,10 +557,9 @@ void I2cSTM32F4xx::softwareReset()
 void I2cSTM32F4xx::reset()
 {
     softwareReset();
-    driverEnable(true);
+    driverSetEnabled(true);
     driverSetConfig(getConfig());
 }
-
 
 //------------------------------------------------------------------------------
 void I2cSTM32F4xx::eventInterruptHandler()

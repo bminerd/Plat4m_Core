@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,24 +35,25 @@
 ///
 /// @file I2cSTM32F4xx.h
 /// @author Ben Minerd
-/// @date 3/25/13
-/// @brief I2cSTM32F4xx class.
+/// @date 3/25/2013
+/// @brief I2cSTM32F4xx class header file.
 ///
 
-#ifndef I2C_STM32F4XX_H
-#define I2C_STM32F4XX_H
+#ifndef PLAT4M_I2C_STM32F4XX_H
+#define PLAT4M_I2C_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
+#include <stm32f4xx.h>
+#include <stm32f4xx_i2c.h>
+
 #include <I2c.h>
 #include <GpioPinSTM32F4xx.h>
 #include <Module.h>
 #include <InterruptSTM32F4xx.h>
-
-#include <stm32f4xx.h>
-#include <stm32f4xx_i2c.h>
+#include <ProcessorSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -73,9 +74,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
 
-    /**
-     * @brief Enumeration of I2Cs.
-     */
     enum Id
     {
         ID_1 = 0,
@@ -83,9 +81,6 @@ public:
         ID_3
     };
 
-    /**
-	 * @brief Enumeration of I2C interrupts.
-	 */
 	enum Interrupt
 	{
 		INTERRUPT_EVENT = 0,
@@ -219,15 +214,13 @@ private:
 
     // Constants
 
-    static const uint32_t myClockMap[];
-
-    static const GpioSTM32F4xx::AlternateFunction myAlternateFunctionMap[];
+    static const ProcessorSTM32F4xx::Peripheral myPeripheralMap[];
 
     static const InterruptSTM32F4xx::Id myInterruptIdMap[][2];
 
     static const uint16_t myAddressBitsMap[];
 
-    static const GpioSTM32F4xx::OutputSpeed myDefaultOutputSpeed;
+    static const GpioPinSTM32F4xx::OutputSpeed myDefaultOutputSpeed;
 
     static const uint16_t myInterruptMap[];
 
@@ -261,7 +254,7 @@ private:
     // Private methods implemented from Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverEnable(const bool enable);
+    Module::Error driverSetEnabled(const bool enable);
 
     //--------------------------------------------------------------------------
     // Private methods implemented from I2c

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file GpioPinSTM32F4xx.cpp
 /// @author Ben Minerd
-/// @date 3/22/13
+/// @date 3/22/2013
 /// @brief GpioPinSTM32F4xx class source file.
 ///
 
@@ -46,39 +46,45 @@
 #include <GpioPinSTM32F4xx.h>
 
 using Plat4m::GpioPinSTM32F4xx;
-using Plat4m::GpioSTM32F4xx;
 using Plat4m::GpioPin;
+using Plat4m::GpioPortSTM32F4xx;
+using Plat4m::ProcessorSTM32F4xx;
 using Plat4m::Module;
 
 //------------------------------------------------------------------------------
-// Local variables
+// Private static members
 //------------------------------------------------------------------------------
 
-static const GpioSTM32F4xx::OutputSpeed defaultOutputSpeed =
-                                              GpioSTM32F4xx::OUTPUT_SPEED_50MHZ;
+const GPIOMode_TypeDef GpioPinSTM32F4xx::myModeMap[] =
+{
+    GPIO_Mode_OUT,  /// GpioPin::MODE_DIGITAL_OUTPUT_PUSH_PULL
+    GPIO_Mode_OUT,  /// GpioPin::MODE_DIGITAL_OUTPUT_OPEN_DRAIN
+    GPIO_Mode_IN,   /// GpioPin::MODE_DIGITAL_INPUT
+    GPIO_Mode_AN,   /// GpioPin::MODE_ANALOG_INPUT
+    GPIO_Mode_AF    /// GpioPin::MODE_ALTERNATE_FUNCTION
+};
+
+const GPIOPuPd_TypeDef GpioPinSTM32F4xx::myResistorMap[] =
+{
+    GPIO_PuPd_NOPULL,   /// GpioPin::RESISTOR_NONE
+    GPIO_PuPd_UP,       /// GpioPin::RESISTOR_PULL_UP
+    GPIO_PuPd_DOWN      /// GpioPin::RESISTOR_PULL_DOWN
+};
+
+const GpioPinSTM32F4xx::OutputSpeed GpioPinSTM32F4xx::myDefaultOutputSpeed =
+															 OUTPUT_SPEED_50MHZ;
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-GpioPinSTM32F4xx::GpioPinSTM32F4xx(const GpioSTM32F4xx::PortId portId,
-                                   const GpioSTM32F4xx::PinId pinId) :
+GpioPinSTM32F4xx::GpioPinSTM32F4xx(GpioPortSTM32F4xx& gpioPort, const Id id) :
     GpioPin(),
-    myPortId(portId),
-    myPinId(pinId),
-    myPinBitMask(1 << pinId),
-    myPort(GpioSTM32F4xx::portMap[portId])
-{
-}
-
-//------------------------------------------------------------------------------
-GpioPinSTM32F4xx::GpioPinSTM32F4xx(const GpioPin::Id id) :
-    GpioPin(),
-    myPortId((GpioSTM32F4xx::PortId) id.portId),
-    myPinId((GpioSTM32F4xx::PinId) id.pinId),
-    myPinBitMask(1 << (id.pinId)),
-    myPort(GpioSTM32F4xx::portMap[(id.portId)])
+    myGpioPort(gpioPort),
+    myId(id),
+    myPinBitMask(1 << myId),
+	mySTM32F4xxConfig()
 {
 }
 
@@ -91,30 +97,30 @@ void GpioPinSTM32F4xx::setLevelFast(const Level level)
 {
     if (level == LEVEL_LOW)
     {
-        myPort->BSRRH = myPinBitMask;
+        myGpioPort.getPort()->BSRRH = myPinBitMask;
     }
     else // (level == LEVEL_HIGH)
     {
-        myPort->BSRRL = myPinBitMask;
+        myGpioPort.getPort()->BSRRL = myPinBitMask;
     }
 }
 
 //------------------------------------------------------------------------------
 GpioPin::Level GpioPinSTM32F4xx::getLevelFast()
 {
-    return ((Level) areBitsSet(myPort->ODR, myPinBitMask));
+    return ((Level) areBitsSet(myGpioPort.getPort()->ODR, myPinBitMask));
 }
 
 //------------------------------------------------------------------------------
 GpioPin::Level GpioPinSTM32F4xx::readLevelFast()
 {
-    return ((Level) areBitsSet(myPort->IDR, myPinBitMask));
+    return ((Level) areBitsSet(myGpioPort.getPort()->IDR, myPinBitMask));
 }
 
 //------------------------------------------------------------------------------
 void GpioPinSTM32F4xx::toggleLevelFast()
 {
-    toggleBits(myPort->ODR, myPinBitMask);
+    toggleBits(myGpioPort.getPort()->ODR, myPinBitMask);
 }
 
 //------------------------------------------------------------------------------
@@ -122,39 +128,39 @@ void GpioPinSTM32F4xx::toggleLevelFast()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-GpioSTM32F4xx::PortId GpioPinSTM32F4xx::getPortId() const
+GpioPortSTM32F4xx& GpioPinSTM32F4xx::getGpioPort()
 {
-    return myPortId;
+    return myGpioPort;
 }
 
 //------------------------------------------------------------------------------
-GpioSTM32F4xx::PinId GpioPinSTM32F4xx::getPinId() const
+GpioPinSTM32F4xx::Id GpioPinSTM32F4xx::getId() const
 {
-    return myPinId;
+    return myId;
 }
 
 //------------------------------------------------------------------------------
-void GpioPinSTM32F4xx::configureDriver(GpioSTM32F4xx::Config& config)
+void GpioPinSTM32F4xx::setSTM32F4xxConfig(STM32F4xxConfig& config)
 {
     switch (config.alternateFunction)
     {
         // I2C
-        case GpioSTM32F4xx::ALTERNATE_FUNCTION_4:
+        case GpioPinSTM32F4xx::ALTERNATE_FUNCTION_4:
         {
-            setOutputType(GpioSTM32F4xx::OUTPUT_TYPE_OPEN_DRAIN);
+            setOutputType(GpioPinSTM32F4xx::OUTPUT_TYPE_OPEN_DRAIN);
             
             break;
         }
         default:
         {
-            setOutputType(GpioSTM32F4xx::OUTPUT_TYPE_PUSH_PULL);
+            setOutputType(GpioPinSTM32F4xx::OUTPUT_TYPE_PUSH_PULL);
             
             break;
         }
     }
     
     setOutputSpeed(config.outputSpeed);
-    GPIO_PinAFConfig(myPort, myPinId, config.alternateFunction);
+    GPIO_PinAFConfig(myGpioPort.getPort(), myId, config.alternateFunction);
 }
 
 //------------------------------------------------------------------------------
@@ -162,10 +168,9 @@ void GpioPinSTM32F4xx::configureDriver(GpioSTM32F4xx::Config& config)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Module::Error GpioPinSTM32F4xx::driverEnable(const bool enable)
+Module::Error GpioPinSTM32F4xx::driverSetEnabled(const bool enabled)
 {
-    RCC_AHB1PeriphClockCmd(GpioSTM32F4xx::clockMap[myPortId],
-    					   (FunctionalState) enable);
+    myGpioPort.setEnabled(enabled);
     
     return Module::Error(Module::ERROR_CODE_NONE);
 }
@@ -178,26 +183,20 @@ Module::Error GpioPinSTM32F4xx::driverEnable(const bool enable)
 GpioPin::Error GpioPinSTM32F4xx::driverConfigure(const Config& config)
 {
     // Set mode
-    
-    // Clear mode bits for this pin
-    myPort->MODER &= ~(GPIO_MODER_MODER0 << (myPinId * 2));
-    // Set mode bits for this pin
-    myPort->MODER |= (((uint32_t) GpioSTM32F4xx::modeMap[config.mode]) <<
-                      (myPinId * 2));
+    clearAndSetBits(myGpioPort.getPort()->MODER,
+    				(GPIO_MODER_MODER0 << (myId * 2)),
+					(((uint32_t) myModeMap[config.mode]) << (myId * 2)));
     
     // Set resistor
-    
-    // Clear resistor bits for this pin
-    myPort->PUPDR &= ~(GPIO_PUPDR_PUPDR0 << (myPinId * 2));
-    // Set resistor bits for this pin
-    myPort->PUPDR |= (((uint32_t)
-                       GpioSTM32F4xx::resistorMap[config.resistor]) <<
-                      (myPinId * 2));
+    clearAndSetBits(
+    			   myGpioPort.getPort()->PUPDR,
+    			   (GPIO_PUPDR_PUPDR0 << (myId * 2)),
+				   (((uint32_t) myResistorMap[config.resistor]) << (myId * 2)));
     
     if (config.mode == MODE_DIGITAL_OUTPUT_PUSH_PULL)
     {
-        setOutputSpeed(defaultOutputSpeed);
-        setOutputType(GpioSTM32F4xx::OUTPUT_TYPE_PUSH_PULL);
+        setOutputSpeed(myDefaultOutputSpeed);
+        setOutputType(GpioPinSTM32F4xx::OUTPUT_TYPE_PUSH_PULL);
     }
     
     return Error(ERROR_CODE_NONE);
@@ -208,11 +207,11 @@ GpioPin::Error GpioPinSTM32F4xx::driverSetLevel(const Level level)
 {
     if (level == LEVEL_LOW)
     {
-        myPort->BSRRH = myPinBitMask;
+        myGpioPort.getPort()->BSRRH = myPinBitMask;
     }
     else
     {
-        myPort->BSRRL = myPinBitMask;
+        myGpioPort.getPort()->BSRRL = myPinBitMask;
     }
     
     return Error(ERROR_CODE_NONE);
@@ -221,7 +220,7 @@ GpioPin::Error GpioPinSTM32F4xx::driverSetLevel(const Level level)
 //------------------------------------------------------------------------------
 GpioPin::Error GpioPinSTM32F4xx::driverGetLevel(Level& level)
 {
-    level = (Level) areBitsSet(myPort->ODR, myPinBitMask);
+    level = (Level) areBitsSet(myGpioPort.getPort()->ODR, myPinBitMask);
     
     return Error(ERROR_CODE_NONE);
 }
@@ -229,7 +228,7 @@ GpioPin::Error GpioPinSTM32F4xx::driverGetLevel(Level& level)
 //------------------------------------------------------------------------------
 GpioPin::Error GpioPinSTM32F4xx::driverReadLevel(Level& level)
 {
-    level = (Level) areBitsSet(myPort->IDR, myPinBitMask);
+    level = (Level) areBitsSet(myGpioPort.getPort()->IDR, myPinBitMask);
     
     return Error(ERROR_CODE_NONE);
 }
@@ -237,7 +236,7 @@ GpioPin::Error GpioPinSTM32F4xx::driverReadLevel(Level& level)
 //------------------------------------------------------------------------------
 GpioPin::Error GpioPinSTM32F4xx::driverToggleLevel()
 {
-    toggleBits(myPort->ODR, myPinBitMask);
+    toggleBits(myGpioPort.getPort()->ODR, myPinBitMask);
     
     return Error(ERROR_CODE_NONE);
 }
@@ -247,22 +246,19 @@ GpioPin::Error GpioPinSTM32F4xx::driverToggleLevel()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void GpioPinSTM32F4xx::setOutputType(const GpioSTM32F4xx::OutputType outputType)
+void GpioPinSTM32F4xx::setOutputType(const OutputType outputType)
 {
-    // Clear output bits for this pin
-    clearBits(myPort->OTYPER, GPIO_OTYPER_OT_0 << myPinId);
-    
     // Set output bits for this pin
-    setBits(myPort->OTYPER, ((uint32_t) outputType) << myPinId);
+    clearAndSetBits(myGpioPort.getPort()->OTYPER,
+                    GPIO_OTYPER_OT_0 << myId,
+                    ((uint32_t) outputType) << myId);
 }
 
 //------------------------------------------------------------------------------
-void GpioPinSTM32F4xx::setOutputSpeed(
-                                   const GpioSTM32F4xx::OutputSpeed outputSpeed)
+void GpioPinSTM32F4xx::setOutputSpeed(const OutputSpeed outputSpeed)
 {
-    // Clear speed bits for this pin
-    clearBits(myPort->OSPEEDR, GPIO_OSPEEDER_OSPEEDR0 << (myPinId * 2));
-
     // Set speed bits for this pin
-    setBits(myPort->OSPEEDR, ((uint32_t) outputSpeed) << (myPinId * 2));
+    clearAndSetBits(myGpioPort.getPort()->OSPEEDR,
+                    GPIO_OSPEEDER_OSPEEDR0 << (myId * 2),
+                    ((uint32_t) outputSpeed) << (myId * 2));
 }

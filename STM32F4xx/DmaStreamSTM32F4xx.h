@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,8 +39,8 @@
 /// @brief DmaStreamSTM32F4xx class header file.
 ///
 
-#ifndef DMA_STREAM_STM32F4XX_H
-#define DMA_STREAM_STM32F4XX_H
+#ifndef PLAT4M_DMA_STREAM_STM32F4XX_H
+#define PLAT4M_DMA_STREAM_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -124,7 +124,8 @@ public:
         bool memoryToMemoryModeEnabled;
         uint16_t nDataToTransfer;
         uint32_t peripheralAddress;
-        uint32_t memoryAddress;
+        uint32_t memory0Address;
+        uint32_t memory1Address;
     };
 
     //--------------------------------------------------------------------------
@@ -209,7 +210,9 @@ private:
 
     inline void setPeripheralAddress(const uint32_t address);
 
-    inline void setMemoryAddress(const uint32_t address);
+    inline void setMemory0Address(const uint32_t address);
+
+    inline void setMemory1Address(const uint32_t address);
 
     inline void setInterruptEventEnabled(
                               const DmaSTM32F4xx::InterruptEvent interruptEvent,

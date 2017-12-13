@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,22 +33,22 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file AnalogInputSTM32F30x.cpp
+/// @file AnalogInputSTM32F4xx.cpp
 /// @author Ben Minerd
 /// @date 8/9/16
-/// @brief AnalogInputSTM32F30x class source file.
+/// @brief AnalogInputSTM32F4xx class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AnalogInputSTM32F30x.h>
+#include <AnalogInputSTM32F4xx.h>
 #include <Processor.h>
 
-using Plat4m::AnalogInputSTM32F30x;
+using Plat4m::AnalogInputSTM32F4xx;
 using Plat4m::AnalogInput;
-using Plat4m::AdcSTM32F30x;
+using Plat4m::AdcSTM32F4xx;
 using Plat4m::Module;
 
 //------------------------------------------------------------------------------
@@ -56,13 +56,13 @@ using Plat4m::Module;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-AnalogInputSTM32F30x::AnalogInputSTM32F30x(
-                                        AdcSTM32F30x& adc,
-                                        const AdcSTM32F30x::ChannelId channelId,
-                                        GpioPinSTM32F30x& gpioPin) :
+AnalogInputSTM32F4xx::AnalogInputSTM32F4xx(
+                                        AdcSTM32F4xx& adc,
+                                        const AdcSTM32F4xx::ChannelId channelId,
+                                        GpioPinSTM32F4xx& gpioPin) :
     AnalogInput(),
+	myAdc(adc),
     myChannelId(channelId),
-    myAdc(adc),
     myGpioPin(gpioPin)
 {
 }
@@ -72,7 +72,7 @@ AnalogInputSTM32F30x::AnalogInputSTM32F30x(
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-AnalogInputSTM32F30x::~AnalogInputSTM32F30x()
+AnalogInputSTM32F4xx::~AnalogInputSTM32F4xx()
 {
 }
 
@@ -81,9 +81,9 @@ AnalogInputSTM32F30x::~AnalogInputSTM32F30x()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-float AnalogInputSTM32F30x::readVoltageFast()
+Plat4m::VoltageV AnalogInputSTM32F4xx::readVoltageVFast()
 {
-    return (myAdc.readChannelVoltageFast(myChannelId));
+    return (myAdc.readChannelVoltageVFast(myChannelId));
 }
 
 //------------------------------------------------------------------------------
@@ -91,16 +91,16 @@ float AnalogInputSTM32F30x::readVoltageFast()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-AdcSTM32F30x& AnalogInputSTM32F30x::getAdc()
+AdcSTM32F4xx& AnalogInputSTM32F4xx::getAdc()
 {
     return myAdc;
 }
 
 //------------------------------------------------------------------------------
-void AnalogInputSTM32F30x::setSTM32F30xChannelConfig(
-                                      const AdcSTM32F30x::ChannelConfig& config)
+void AnalogInputSTM32F4xx::setSTM32F4xxChannelConfig(
+                                      const AdcSTM32F4xx::ChannelConfig& config)
 {
-    myAdc.setSTM32F30xChannelConfig(myChannelId, config);
+    myAdc.setSTM32F4xxChannelConfig(myChannelId, config);
 }
 
 //------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ void AnalogInputSTM32F30x::setSTM32F30xChannelConfig(
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Module::Error AnalogInputSTM32F30x::driverSetEnabled(const bool enabled)
+Module::Error AnalogInputSTM32F4xx::driverSetEnabled(const bool enabled)
 {
     myGpioPin.setEnabled(enabled);
 
@@ -129,9 +129,9 @@ Module::Error AnalogInputSTM32F30x::driverSetEnabled(const bool enabled)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-AnalogInput::Error AnalogInputSTM32F30x::driverReadVoltage(float& voltage)
+AnalogInput::Error AnalogInputSTM32F4xx::driverReadVoltageV(VoltageV& voltageV)
 {
-    myAdc.readChannelVoltage(myChannelId, voltage);
+    myAdc.readChannelVoltageV(myChannelId, voltageV);
 
     return Error(ERROR_CODE_NONE);
 }

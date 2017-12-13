@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -131,7 +131,7 @@ DmaStreamSTM32F4xx::DmaStreamSTM32F4xx(
 {
     if (myDma.getId() == DmaSTM32F4xx::ID_1)
     {
-        myDmaStream = myDmaStreamMap[myStreamId];
+        myDmaStream = myDmaStreamMap[(myDma.getId())][myStreamId];
 
         interruptObjectMap[myStreamId] = &myInterrupt;
     }
@@ -145,7 +145,7 @@ DmaStreamSTM32F4xx::DmaStreamSTM32F4xx(
             }
         }
 
-        myDmaStream = myDmaStreamMap[(myStreamId + 7)];
+        myDmaStream = myDmaStreamMap[(myDma.getId())][(myStreamId + 7)];
 
         interruptObjectMap[(myStreamId + 7)] = &myInterrupt;
     }
@@ -185,7 +185,8 @@ DmaStreamSTM32F4xx::Error DmaStreamSTM32F4xx::setConfig(const Config& config)
     // TODO Address bounds error checking?
 
     setPeripheralAddress(config.peripheralAddress);
-    setMemoryAddress(config.memoryAddress);
+    setMemory0Address(config.memory0Address);
+    setMemory1Address(config.memory1Address);
 
     myConfig = config;
 
@@ -230,82 +231,88 @@ Module::Error DmaStreamSTM32F4xx::driverSetEnabled(const bool enabled)
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setEnabledPrivate(const bool enabled)
 {
-    setBitsSet(myDmaStream->CCR, DMA_CCR_EN, enabled);
+    setBitsSet(myDmaStream->CR, DMA_SxCR_EN, enabled);
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setDataTransferDirection(
                               const DataTransferDirection dataTransferDirection)
 {
-    clearAndSetBits(myDmaStream->CCR,
-                    DMA_CCR_DIR,
+    clearAndSetBits(myDmaStream->CR,
+                    DMA_SxCR_DIR,
                     ((uint32_t) dataTransferDirection) << 4);
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setCircularModeEnabled(const bool enabled)
 {
-    setBitsSet(myDmaStream->CCR, DMA_CCR_CIRC, enabled);
+    setBitsSet(myDmaStream->CR, DMA_SxCR_CIRC, enabled);
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setPeripheralIncrementModeEnabled(const bool enabled)
 {
-    setBitsSet(myDmaStream->CCR, DMA_CCR_PINC, enabled);
+    setBitsSet(myDmaStream->CR, DMA_SxCR_PINC, enabled);
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setMemoryIncrementModeEnabled(const bool enabled)
 {
-    setBitsSet(myDmaStream->CCR, DMA_CCR_MINC, enabled);
+    setBitsSet(myDmaStream->CR, DMA_SxCR_MINC, enabled);
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setPeripheralSize(const PeripheralSize peripheralSize)
 {
-    clearAndSetBits(myDmaStream->CCR,
-                    DMA_CCR_PSIZE,
-                    ((uint32_t) peripheralSize) << 8);
+    clearAndSetBits(myDmaStream->CR,
+    				DMA_SxCR_PSIZE,
+                    ((uint32_t) peripheralSize) << 11);
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setMemorySize(const MemorySize memorySize)
 {
-    clearAndSetBits(myDmaStream->CCR,
-                    DMA_CCR_MSIZE,
-                    ((uint32_t) memorySize) << 10);
+    clearAndSetBits(myDmaStream->CR,
+    				DMA_SxCR_MSIZE,
+                    ((uint32_t) memorySize) << 13);
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setPriorityLevel(const PriorityLevel priorityLevel)
 {
-    clearAndSetBits(myDmaStream->CCR,
-                    DMA_CCR_PL,
-                    ((uint32_t) priorityLevel) << 12);
+    clearAndSetBits(myDmaStream->CR,
+    				DMA_SxCR_PL,
+                    ((uint32_t) priorityLevel) << 16);
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setMemoryToMemoryModeEnabled(const bool enabled)
 {
-    setBitsSet(myDmaStream->CCR, DMA_CCR_MEM2MEM, enabled);
+//    setBitsSet(myDmaStream->CCR, DMA_CCR_MEM2MEM, enabled);
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setNDataToTransfer(const uint16_t nData)
 {
-    myDmaStream->CNDTR = nData;
+    myDmaStream->NDTR = nData;
 }
 
 //------------------------------------------------------------------------------
 void DmaStreamSTM32F4xx::setPeripheralAddress(const uint32_t address)
 {
-    myDmaStream->CPAR = address;
+    myDmaStream->PAR = address;
 }
 
 //------------------------------------------------------------------------------
-void DmaStreamSTM32F4xx::setMemoryAddress(const uint32_t address)
+void DmaStreamSTM32F4xx::setMemory0Address(const uint32_t address)
 {
-    myDmaStream->CMAR = address;
+    myDmaStream->M0AR = address;
+}
+
+//------------------------------------------------------------------------------
+void DmaStreamSTM32F4xx::setMemory1Address(const uint32_t address)
+{
+    myDmaStream->M1AR = address;
 }
 
 //------------------------------------------------------------------------------
@@ -313,17 +320,28 @@ void DmaStreamSTM32F4xx::setInterruptEventEnabled(
                               const DmaSTM32F4xx::InterruptEvent interruptEvent,
                               const bool enabled)
 {
-    setBitsSet(myDmaStream->CCR,
-               ((uint32_t) 1) << (interruptEvent + 1),
-               enabled);
+	if (interruptEvent == DmaSTM32F4xx::INTERRUPT_EVENT_FIFO_OVERRUN_UNDERRUN)
+	{
+		setBitsSet(myDmaStream->FCR, DMA_SxFCR_FEIE, enabled);
+	}
+	else
+	{
+		setBitsSet(myDmaStream->CR,
+				   ((uint32_t) 1) << (interruptEvent + 1),
+				   enabled);
+	}
 }
 
 //------------------------------------------------------------------------------
 bool DmaStreamSTM32F4xx::isInterruptEventEnabled(
                               const DmaSTM32F4xx::InterruptEvent interruptEvent)
 {
-    return areBitsSet(myDmaStream->CCR,
-                      ((uint32_t) 1) << (interruptEvent + 1));
+	if (interruptEvent == DmaSTM32F4xx::INTERRUPT_EVENT_FIFO_OVERRUN_UNDERRUN)
+	{
+		return areBitsSet(myDmaStream->FCR, DMA_SxFCR_FEIE);
+	}
+
+	return areBitsSet(myDmaStream->CR, ((uint32_t) 1) << (interruptEvent + 1));
 }
 
 //------------------------------------------------------------------------------

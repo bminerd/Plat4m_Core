@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,23 +35,25 @@
 ///
 /// @file UartSTM32F4xx.h
 /// @author Ben Minerd
-/// @date 5/14/13
-/// @brief UartSTM32F4xx class.
+/// @date 5/14/2013
+/// @brief UartSTM32F4xx class header file.
 ///
 
-#ifndef UART_STM32F4XX_H
-#define UART_STM32F4XX_H
+#ifndef PLAT4M_UART_STM32F4XX_H
+#define PLAT4M_UART_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
+#include <stdint.h>
+
+#include <stm32f4xx.h>
+
 #include <Uart.h>
 #include <GpioPinSTM32F4xx.h>
 #include <InterruptSTM32F4xx.h>
-
-#include <stm32f4xx_usart.h>
+#include <ProcessorSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -72,9 +74,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of UART driver IDs.
-     */
     enum Id
     {
         ID_1 = 0,
@@ -102,9 +101,15 @@ public:
     //--------------------------------------------------------------------------
 
     UartSTM32F4xx(const Id id,
-                  GpioPinSTM32F4xx& txGpioPin,
-                  GpioPinSTM32F4xx& rxGpioPin);
+                  GpioPinSTM32F4xx& transmitGpioPin,
+                  GpioPinSTM32F4xx& receiveGpioPin);
     
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~UartSTM32F4xx();
+
 private:
 
     //--------------------------------------------------------------------------
@@ -113,10 +118,14 @@ private:
 
     // Constants
 
+    static const ProcessorSTM32F4xx::Peripheral myPeripheralMap[];
+
     static const InterruptSTM32F4xx::Id myInterruptIdMap[];
 
     // Variables
     
+    static USART_TypeDef* myUartMap[];
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
@@ -125,9 +134,9 @@ private:
     
     USART_TypeDef* myUart;
     
-    GpioPinSTM32F4xx& myTxGpioPin;
+    GpioPinSTM32F4xx& myTransmitGpioPin;
     
-    GpioPinSTM32F4xx& myRxGpioPin;
+    GpioPinSTM32F4xx& myReceiveGpioPin;
     
     InterruptSTM32F4xx myInterrupt;
 
@@ -137,21 +146,21 @@ private:
     // Private methods implemented from Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverEnable(const bool enable);
+    Module::Error driverSetEnabled(const bool enable);
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Uart
     //--------------------------------------------------------------------------
     
-    Error driverConfigure(const Config& config);
+    Error driverSetConfig(const Config& config);
     
-    ComInterface::Error driverTx(const ByteArray& byteArray,
-                                 const bool waitUntilDone);
+    ComInterface::Error driverTransmitBytes(const ByteArray& byteArray,
+                                            const bool waitUntilDone);
 
-    unsigned int driverRxBytesAvailable();
+    uint32_t driverGetReceivedBytesCount();
 
-    ComInterface::Error driverGetRxBytes(ByteArray& byteArray,
-                                         unsigned int nBytes);
+    ComInterface::Error driverGetReceivedBytes(ByteArray& byteArray,
+                                               const uint32_t nBytes);
 
     //--------------------------------------------------------------------------
     // Private inline methods
@@ -171,4 +180,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // UART_STM32F4XX_H
+#endif // PLAT4M_UART_STM32F4XX_H

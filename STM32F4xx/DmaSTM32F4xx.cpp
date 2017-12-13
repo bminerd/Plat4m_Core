@@ -104,21 +104,21 @@ DmaSTM32F4xx::Error DmaSTM32F4xx::setConfig(const Config& config)
 }
 
 //------------------------------------------------------------------------------
-bool DmaSTM32F4xx::isChannelInterruptEventPending(
-                                            const ChannelId channelId,
+bool DmaSTM32F4xx::isStreamInterruptEventPending(
+                                            const StreamId streamId,
                                             const InterruptEvent interruptEvent)
 {
-    return areBitsSet(myDma->ISR,
-                      ((uint32_t) 1) << ((channelId * 4) + interruptEvent + 1));
+    return areBitsSet(myDma->LISR,
+                      ((uint32_t) 1) << ((streamId * 4) + interruptEvent + 1));
 }
 
 //------------------------------------------------------------------------------
-void DmaSTM32F4xx::clearChannelInterruptEvent(
-                                            const ChannelId channelId,
+void DmaSTM32F4xx::clearStreamInterruptEvent(
+                                            const StreamId streamId,
                                             const InterruptEvent interruptEvent)
 {
-    setBits(myDma->IFCR,
-            ((uint32_t) 1) << ((channelId * 4) + interruptEvent + 1));
+    setBits(myDma->LIFCR,
+            ((uint32_t) 1) << ((streamId * 4) + interruptEvent + 1));
 }
 
 //------------------------------------------------------------------------------

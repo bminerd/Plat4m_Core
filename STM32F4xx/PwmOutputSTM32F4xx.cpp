@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,32 +33,29 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file PwmOutputSTM32F30x.cpp
+/// @file PwmOutputSTM32F4xx.cpp
 /// @author Ben Minerd
-/// @date 7/12/2016
-/// @brief PwmOutputSTM32F30x class.
+/// @date 11/23/2017
+/// @brief PwmOutputSTM32F4xx class.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <PwmOutputSTM32F30x.h>
-#include <ProcessorSTM32F30x.h>
+#include <PwmOutputSTM32F4xx.h>
+#include <ProcessorSTM32F4xx.h>
 
-using Plat4m::PwmOutputSTM32F30x;
+using Plat4m::PwmOutputSTM32F4xx;
 using Plat4m::PwmOutput;
 using Plat4m::Module;
-using Plat4m::GpioSTM32F30x;
 
 //------------------------------------------------------------------------------
 // Local variables
 //------------------------------------------------------------------------------
 
-//static const GpioSTM32F30x::OutputSpeed gpioSpeed =
-//                                             GpioSTM32F30x::OUTPUT_SPEED_100MHZ;
-
-static PwmOutputSTM32F30x* objectMap[14][4];
+//static const GpioSTM32F4xx::OutputSpeed gpioSpeed =
+//                                             GpioSTM32F4xx::OUTPUT_SPEED_100MHZ;
 
 static const float maxFrequencyErrorPercent = 0.5;
 
@@ -67,10 +64,10 @@ static const float maxFrequencyErrorPercent = 0.5;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-PwmOutputSTM32F30x::PwmOutputSTM32F30x(
-                                      TimerSTM32F30x& timer,
-                                      const TimerSTM32F30x::ChannelId channelId,
-                                      GpioPinSTM32F30x& gpioPin) :
+PwmOutputSTM32F4xx::PwmOutputSTM32F4xx(
+                                      TimerSTM32F4xx& timer,
+                                      const TimerSTM32F4xx::ChannelId channelId,
+                                      GpioPinSTM32F4xx& gpioPin) :
     PwmOutput(),
     myTimer(timer),
     myChannelId(channelId),
@@ -80,11 +77,11 @@ PwmOutputSTM32F30x::PwmOutputSTM32F30x(
 }
 
 //------------------------------------------------------------------------------
-PwmOutputSTM32F30x::PwmOutputSTM32F30x(
-                                      TimerSTM32F30x& timer,
-                                      const TimerSTM32F30x::ChannelId channelId,
-                                      GpioPinSTM32F30x& gpioPin,
-                                      GpioPinSTM32F30x& complementaryGpioPin) :
+PwmOutputSTM32F4xx::PwmOutputSTM32F4xx(
+                                      TimerSTM32F4xx& timer,
+                                      const TimerSTM32F4xx::ChannelId channelId,
+                                      GpioPinSTM32F4xx& gpioPin,
+                                      GpioPinSTM32F4xx& complementaryGpioPin) :
     PwmOutput(),
     myTimer(timer),
     myChannelId(channelId),
@@ -98,7 +95,7 @@ PwmOutputSTM32F30x::PwmOutputSTM32F30x(
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Module::Error PwmOutputSTM32F30x::driverSetEnabled(const bool enabled)
+Module::Error PwmOutputSTM32F4xx::driverSetEnabled(const bool enabled)
 {
     myGpioPin.setEnabled(enabled);
 
@@ -115,61 +112,34 @@ Module::Error PwmOutputSTM32F30x::driverSetEnabled(const bool enabled)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-PwmOutput::Error PwmOutputSTM32F30x::driverSetConfig(const Config& config)
+PwmOutput::Error PwmOutputSTM32F4xx::driverSetConfig(const Config& config)
 {
     GpioPin::Config gpioPinConfig;
     gpioPinConfig.mode     = GpioPin::MODE_ALTERNATE_FUNCTION;
     gpioPinConfig.resistor = GpioPin::RESISTOR_NONE;
 
-    GpioSTM32F30x::Config gpioSTM32F30xConfig;
-    // TODO Create alternate function map
-    gpioSTM32F30xConfig.alternateFunction = GpioSTM32F30x::ALTERNATE_FUNCTION_6;
-    gpioSTM32F30xConfig.outputSpeed       = GpioSTM32F30x::OUTPUT_SPEED_50MHZ;
-
-    // TODO TEST ONLY
-    if (myChannelId == TimerSTM32F30x::CHANNEL_ID_4)
-    {
-        gpioSTM32F30xConfig.alternateFunction =
-                                           GpioSTM32F30x::ALTERNATE_FUNCTION_11;
-    }
-
     myGpioPin.configure(gpioPinConfig);
-    myGpioPin.setSTM32F30xConfig(gpioSTM32F30xConfig);
 
     if (isValidPointer(myComplementaryGpioPin))
     {
         myComplementaryGpioPin->configure(gpioPinConfig);
-        myComplementaryGpioPin->setSTM32F30xConfig(gpioSTM32F30xConfig);
     }
 
     myTimer.setChannelCaptureCompareMode(
                                    myChannelId,
-                                   TimerSTM32F30x::CAPTURE_COMPARE_MODE_OUTPUT);
+                                   TimerSTM32F4xx::CAPTURE_COMPARE_MODE_OUTPUT);
     myTimer.setChannelOutputCompareMode(
                                 myChannelId,
-                                TimerSTM32F30x::OUTPUT_COMPARE_MODE_PWM_MODE_2);
+                                TimerSTM32F4xx::OUTPUT_COMPARE_MODE_PWM_MODE_2);
     myTimer.setChannelOutputComparePreloadEnabled(myChannelId, true);
     myTimer.setChannelPolarity(myChannelId,
-                               (TimerSTM32F30x::Polarity) config.polarity);
+                               (TimerSTM32F4xx::Polarity) config.polarity);
 
     if (config.complementaryOutputEnabled)
     {
-//        if (config.polarity == TimerSTM32F30x::POLARITY_HIGH)
-//        {
-//            myTimer.setComplementaryChannelPolarity(
-//                               (TimerSTM32F30x::ComplementaryChannelId) myChannelId,
-//                               TimerSTM32F30x::POLARITY_LOW);
-//        }
-//        else
-//        {
-//            myTimer.setComplementaryChannelPolarity(
-//                               (TimerSTM32F30x::ComplementaryChannelId) myChannelId,
-//                               TimerSTM32F30x::POLARITY_HIGH);
-//        }
-
         myTimer.setComplementaryChannelPolarity(
-                           (TimerSTM32F30x::ComplementaryChannelId) myChannelId,
-                           (TimerSTM32F30x::Polarity) config.polarity);
+                           (TimerSTM32F4xx::ComplementaryChannelId) myChannelId,
+                           (TimerSTM32F4xx::Polarity) config.polarity);
     }
 
     uint32_t period = myTimer.getPeriod();
@@ -186,7 +156,7 @@ PwmOutput::Error PwmOutputSTM32F30x::driverSetConfig(const Config& config)
     if (config.complementaryOutputEnabled)
     {
         myTimer.setComplementaryChannelCaptureCompareEnabled(
-                           (TimerSTM32F30x::ComplementaryChannelId) myChannelId,
+                           (TimerSTM32F4xx::ComplementaryChannelId) myChannelId,
                            true);
     }
 
@@ -196,7 +166,7 @@ PwmOutput::Error PwmOutputSTM32F30x::driverSetConfig(const Config& config)
 }
 
 //------------------------------------------------------------------------------
-PwmOutput::Error PwmOutputSTM32F30x::driverSetDutyCyclePercent(
+PwmOutput::Error PwmOutputSTM32F4xx::driverSetDutyCyclePercent(
                                                    const float dutyCyclePercent)
 {
     uint32_t period = myTimer.getPeriod();

@@ -56,7 +56,7 @@ using Plat4m::InterruptSTM32F4xx;
 // Local variables
 //------------------------------------------------------------------------------
 
-static AdcSTM32F4xx* interruptObjectMap[3][16];
+static AdcSTM32F4xx* interruptObjectMap[3];
 
 //------------------------------------------------------------------------------
 // Private static data members
@@ -69,6 +69,13 @@ const ProcessorSTM32F4xx::Peripheral AdcSTM32F4xx::myPeripheralMap[] =
     ProcessorSTM32F4xx::PERIPHERAL_ADC_1, /// ID_1
     ProcessorSTM32F4xx::PERIPHERAL_ADC_2, /// ID_2
     ProcessorSTM32F4xx::PERIPHERAL_ADC_3  /// ID_3
+};
+
+const InterruptSTM32F4xx::Id AdcSTM32F4xx::myInterruptIdMap[] =
+{
+	InterruptSTM32F4xx::ID_ADC_1_2_3, /// ID_1
+	InterruptSTM32F4xx::ID_ADC_1_2_3, /// ID_2
+	InterruptSTM32F4xx::ID_ADC_1_2_3  /// ID_3
 };
 
 const uint32_t AdcSTM32F4xx::myResolutionMap[] =
@@ -89,9 +96,6 @@ const float AdcSTM32F4xx::myResolutionMaxValueMap[] =
 
 // Variables
 
-/**
- * @brief ADC map.
- */
 ADC_TypeDef* AdcSTM32F4xx::myAdcMap[] =
 {
     ADC1, /// ID_1
@@ -129,19 +133,51 @@ AdcSTM32F4xx::~AdcSTM32F4xx()
 }
 
 //------------------------------------------------------------------------------
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void AdcSTM32F4xx::setSTM32F4xxChannelConfig(const ChannelId channelId,
+							   	   	   	     const ChannelConfig& channelConfig)
+{
+
+}
+
+//------------------------------------------------------------------------------
+AdcSTM32F4xx::Error AdcSTM32F4xx::readChannelVoltageV(const ChannelId channelId,
+													  VoltageV& voltageV)
+{
+	return Error(ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+Plat4m::VoltageV AdcSTM32F4xx::readChannelVoltageVFast(
+													  const ChannelId channelId)
+{
+	return 0.0;
+}
+
+//------------------------------------------------------------------------------
 // Private methods implemented from Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error AdcSTM32F4xx::driverSetEnabled(const bool enabled)
 {
-//    RCC_APB2PeriphClockCmd(clockMap[myId], (FunctionalState) enable);
-//    ADC_Cmd(myAdc, (FunctionalState) enable);
-
-    ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
+	ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
                                                   enabled);
     
     return Module::Error(Module::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+// Private methods implemented from Module
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void AdcSTM32F4xx::interruptHandler()
+{
+
 }
 
 //------------------------------------------------------------------------------

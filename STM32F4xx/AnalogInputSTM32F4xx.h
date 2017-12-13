@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file AnalogInputSTM32F30x.h
+/// @file AnalogInputSTM32F4xx.h
 /// @author Ben Minerd
-/// @date 8/9/16
-/// @brief AnalogInputSTM32F30x class header file.
+/// @date 8/9/2016
+/// @brief AnalogInputSTM32F4xx class header file.
 ///
 
-#ifndef ANALOG_INPUT_STM32F30X_H
-#define ANALOG_INPUT_STM32F30X_H
+#ifndef PLAT4M_ANALOG_INPUT_STM32F4XX_H
+#define PLAT4M_ANALOG_INPUT_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,8 +48,8 @@
 
 #include <Plat4m.h>
 #include <AnalogInput.h>
-#include <AdcSTM32F30x.h>
-#include <GpioPinSTM32F30x.h>
+#include <AdcSTM32F4xx.h>
+#include <GpioPinSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -62,7 +62,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class AnalogInputSTM32F30x : public AnalogInput
+class AnalogInputSTM32F4xx : public AnalogInput
 {
 public:
     
@@ -74,29 +74,29 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-    AnalogInputSTM32F30x(AdcSTM32F30x& adc,
-                         const AdcSTM32F30x::ChannelId channelId,
-                         GpioPinSTM32F30x& gpioPin);
+    AnalogInputSTM32F4xx(AdcSTM32F4xx& adc,
+                         const AdcSTM32F4xx::ChannelId channelId,
+                         GpioPinSTM32F4xx& gpioPin);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
     
-    virtual ~AnalogInputSTM32F30x();
+    virtual ~AnalogInputSTM32F4xx();
 
     //--------------------------------------------------------------------------
     // Public methods implemented from AnalogInput
     //--------------------------------------------------------------------------
 
-    float readVoltageFast();
+    VoltageV readVoltageVFast();
     
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
 
-    AdcSTM32F30x& getAdc();
+    AdcSTM32F4xx& getAdc();
 
-    void setSTM32F30xChannelConfig(const AdcSTM32F30x::ChannelConfig& config);
+    void setSTM32F4xxChannelConfig(const AdcSTM32F4xx::ChannelConfig& config);
 
 private:
 
@@ -104,11 +104,11 @@ private:
     // Private static data members
     //--------------------------------------------------------------------------
     
-    AdcSTM32F30x& myAdc;
+    AdcSTM32F4xx& myAdc;
 
-    const AdcSTM32F30x::ChannelId myChannelId;
+    const AdcSTM32F4xx::ChannelId myChannelId;
     
-    GpioPinSTM32F30x& myGpioPin;
+    GpioPinSTM32F4xx& myGpioPin;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Module
@@ -120,9 +120,9 @@ private:
     // Private methods implemented from AnalogInput
     //--------------------------------------------------------------------------
     
-    AnalogInput::Error driverReadVoltage(float& voltage);
+    AnalogInput::Error driverReadVoltageV(VoltageV& voltageV);
 };
 
 }; // namespace Plat4m
 
-#endif // ANALOG_INPUT_STM32F30X_H
+#endif // PLAT4M_ANALOG_INPUT_STM32F4XX_H

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,17 +39,18 @@
 /// @brief HardwareTimerSTM32F4xx class header file.
 ///
 
-#ifndef HARDWARE_TIMER_STM32F4XX_H
-#define HARDWARE_TIMER_STM32F4XX_H
+#ifndef PLAT4M_HARDWARE_TIMER_STM32F4XX_H
+#define PLAT4M_HARDWARE_TIMER_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <HardwareTimer.h>
-#include <GpioPinSTM32F4xx.h>
-
 #include <stdint.h>
+
+#include <HardwareTimer.h>
+#include <TimerSTM32F4xx.h>
+#include <InterruptSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -65,52 +66,27 @@ namespace Plat4m
 class HardwareTimerSTM32F4xx : public HardwareTimer
 {
 public:
-    
-    //--------------------------------------------------------------------------
-    // Public types
-    //--------------------------------------------------------------------------
-    
-    /**
-     * @brief Enumeration of timers.
-     */
-    enum Id
-    {
-        ID_1 = 0,
-        ID_2,
-        ID_3,
-        ID_4,
-        ID_5,
-        ID_6,
-        ID_7,
-        ID_8,
-        ID_9,
-        ID_10,
-        ID_11,
-        ID_12,
-        ID_13,
-        ID_14
-    };
-
-    /**
-     * @brief Enumeration of timer channels.
-     */
-    enum ChannelId
-    {
-        CHANNEL_ID_1 = 0,
-        CHANNEL_ID_2,
-        CHANNEL_ID_3,
-        CHANNEL_ID_4
-    };
 
     //--------------------------------------------------------------------------
-    // Private constructors
+    // Public constructors
     //--------------------------------------------------------------------------
 
-    HardwareTimerSTM32F4xx(const Id id, const ChannelId channelId);
+    HardwareTimerSTM32F4xx(const TimerSTM32F4xx::Id id);
 
-    HardwareTimerSTM32F4xx(const Id id,
-                           const ChannelId channelId,
-                           GpioPinSTM32F4xx& gpioPin);
+    HardwareTimerSTM32F4xx(const TimerSTM32F4xx::Id id,
+    					   InterruptHandlerCallback& interruptHandlerCallback);
+
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~HardwareTimerSTM32F4xx();
+
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    TimerSTM32F4xx& getTimer();
 
 private:
     
@@ -118,25 +94,17 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
     
-    const Id myId;
-    
-    const ChannelId myChannelId;
-    
-    TIM_TypeDef* myHardwareTimer;
-    
-    GpioPinSTM32F4xx* myGpioPin;
-    
-    float myInputClockFrequencyHz;
-    
-    float myOutputClockFrequencyHz;
-    
+    InterruptSTM32F4xx* myUpdateInterrupt;
+
+    TimerSTM32F4xx myTimer;
+
     uint32_t myPeriod;
     
     //--------------------------------------------------------------------------
     // Private methods implemented from Module
     //--------------------------------------------------------------------------
     
-    Module::Error driverEnable(const bool enable);
+    Module::Error driverSetEnabled(const bool enable);
     
     //--------------------------------------------------------------------------
     // Private methods implemented from HardwareTimer
@@ -147,4 +115,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // HARDWARE_TIMER_STM32F4XX_H
+#endif // PLAT4M_HARDWARE_TIMER_STM32F4XX_H

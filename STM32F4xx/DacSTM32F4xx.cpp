@@ -101,7 +101,7 @@ DacSTM32F4xx& DacSTM32F4xx::get(const ChannelId channelId,
 //------------------------------------------------------------------------------
 DacSTM32F4xx::DacSTM32F4xx(const ChannelId channelId,
                            GpioPinSTM32F4xx& gpioPin) :
-    Dac(Processor::getCoreVoltage(), maxValue),
+    Dac(Processor::getCoreVoltageV(), maxValue),
     myChannelId(channelId),
     myGpioPin(gpioPin)
 {

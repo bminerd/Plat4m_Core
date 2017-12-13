@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,8 +39,8 @@
 /// @brief DmaSTM32F4xx class header file.
 ///
 
-#ifndef DMA_STM32F4XX_H
-#define DMA_STM32F4XX_H
+#ifndef PLAT4M_DMA_STM32F4XX_H
+#define PLAT4M_DMA_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -78,18 +78,12 @@ public:
         ERROR_CODE_NONE = 0
     };
 
-    /**
-     * @brief Enumeration of timers.
-     */
     enum Id
     {
         ID_1 = 0,
         ID_2
     };
 
-    /**
-     * @brief Enumeration of timer channels.
-     */
     enum StreamId
     {
         STREAM_ID_1 = 0,
@@ -103,9 +97,11 @@ public:
 
     enum InterruptEvent
     {
-        INTERRUPT_EVENT_TRANSFER_COMPLETE = 0,
-        INTERRUPT_EVENT_HALF_TRANSFER,
-        INTERRUPT_EVENT_TRANSFER_ERROR
+    	INTERRUPT_EVENT_DIRECT_MODE_ERROR = 0,
+		INTERRUPT_EVENT_TRANSFER_ERROR,
+		INTERRUPT_EVENT_HALF_TRANSFER,
+        INTERRUPT_EVENT_TRANSFER_COMPLETE,
+		INTERRUPT_EVENT_FIFO_OVERRUN_UNDERRUN
     };
 
     typedef ErrorTemplate<ErrorCode> Error;
@@ -168,4 +164,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // DMA_STM32F4XX_H
+#endif // PLAT4M_DMA_STM32F4XX_H

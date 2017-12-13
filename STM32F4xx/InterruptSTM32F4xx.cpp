@@ -153,13 +153,6 @@ const IRQn_Type InterruptSTM32F4xx::myIrqNumberMap[] =
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-InterruptSTM32F4xx::InterruptSTM32F4xx(const Id id) :
-    Interrupt(),
-    myId(id)
-{
-}
-
-//------------------------------------------------------------------------------
 InterruptSTM32F4xx::InterruptSTM32F4xx(const Id id,
                                        HandlerCallback& handlerCallback) :
     Interrupt(handlerCallback),

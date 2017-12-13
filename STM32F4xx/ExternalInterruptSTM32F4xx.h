@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,22 +39,21 @@
 /// @brief ExternalInterruptSTM32F4xx class header file.
 ///
 
-#ifndef EXTERNAL_INTERRUPT_STM32F4XX_H
-#define EXTERNAL_INTERRUPT_STM32F4XX_H
+#ifndef PLAT4M_EXTERNAL_INTERRUPT_STM32F4XX_H
+#define PLAT4M_EXTERNAL_INTERRUPT_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ExternalInterrupt.h>
-#include <GpioPinSTM32F4xx.h>
-#include <InterruptSTM32F4xx.h>
+#include <stdint.h>
 
 #include <stm32f4xx.h>
-#include <stm32f4xx_exti.h>
-#include <stm32f4xx_rcc.h>
 
-#include <stdint.h>
+#include <ExternalInterrupt.h>
+#include <GpioPortSTM32F4xx.h>
+#include <GpioPinSTM32F4xx.h>
+#include <InterruptSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -74,10 +73,7 @@ public:
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
-    /**
-     * @brief Enumeration of interrupts.
-     */
+
     enum Id
     {
         ID_0 = 0,
@@ -132,7 +128,7 @@ private:
     
     const Id myId;
     
-    const GpioSTM32F4xx::PortId myGpioPortId;
+    const GpioPortSTM32F4xx::Id myGpioPortId;
     
     InterruptSTM32F4xx myInterrupt;
     
@@ -165,4 +161,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // EXTERNAL_INTERRUPT_STM32F4XX_H
+#endif // PLAT4M_EXTERNAL_INTERRUPT_STM32F4XX_H

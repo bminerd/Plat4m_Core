@@ -33,119 +33,78 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file TimerSTM32F30x.cpp
+/// @file TimerSTM32F4xx.cpp
 /// @author Ben Minerd
 /// @date 7/12/2016
-/// @brief TimerSTM32F30x class.
+/// @brief TimerSTM32F4xx class.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <TimerSTM32F30x.h>
+#include <TimerSTM32F4xx.h>
 #include <CallbackMethod.h>
 
-#include <stm32f30x_tim.h>
+#include <STM32F4xx_tim.h>
 
-using Plat4m::TimerSTM32F30x;
+using Plat4m::TimerSTM32F4xx;
 using Plat4m::Module;
-using Plat4m::GpioSTM32F30x;
-using Plat4m::InterruptSTM32F30x;
-using Plat4m::ProcessorSTM32F30x;
+using Plat4m::InterruptSTM32F4xx;
+using Plat4m::ProcessorSTM32F4xx;
 
 //------------------------------------------------------------------------------
 // Local variables
 //------------------------------------------------------------------------------
 
-static InterruptSTM32F30x* interruptObjectMap[17];
+static InterruptSTM32F4xx* interruptObjectMap[17];
 
 //------------------------------------------------------------------------------
 // Private static data members
 //------------------------------------------------------------------------------
 
-const ProcessorSTM32F30x::Peripheral TimerSTM32F30x::myPeripheralMap[] =
+const ProcessorSTM32F4xx::Peripheral TimerSTM32F4xx::myPeripheralMap[] =
 {
-    ProcessorSTM32F30x::PERIPHERAL_TIM_1,  /// ID_1
-    ProcessorSTM32F30x::PERIPHERAL_TIM_2,  /// ID_2
-    ProcessorSTM32F30x::PERIPHERAL_TIM_3,  /// ID_3
-    ProcessorSTM32F30x::PERIPHERAL_TIM_4,  /// ID_4
-    ProcessorSTM32F30x::PERIPHERAL_TIM_6,  /// ID_6
-    ProcessorSTM32F30x::PERIPHERAL_TIM_7,  /// ID_7
-    ProcessorSTM32F30x::PERIPHERAL_TIM_8,  /// ID_8
-    ProcessorSTM32F30x::PERIPHERAL_TIM_15, /// ID_15
-    ProcessorSTM32F30x::PERIPHERAL_TIM_16, /// ID_16
-    ProcessorSTM32F30x::PERIPHERAL_TIM_17, /// ID_17
-    ProcessorSTM32F30x::PERIPHERAL_TIM_20  /// ID_20
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_1,  /// ID_1
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_2,  /// ID_2
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_3,  /// ID_3
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_4,  /// ID_4
+	ProcessorSTM32F4xx::PERIPHERAL_TIM_5,  /// ID_5
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_6,  /// ID_6
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_7,  /// ID_7
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_8,  /// ID_8
+	ProcessorSTM32F4xx::PERIPHERAL_TIM_9,  /// ID_9
+	ProcessorSTM32F4xx::PERIPHERAL_TIM_10, /// ID_10
+	ProcessorSTM32F4xx::PERIPHERAL_TIM_11, /// ID_11
+	ProcessorSTM32F4xx::PERIPHERAL_TIM_12, /// ID_12
+	ProcessorSTM32F4xx::PERIPHERAL_TIM_13, /// ID_13
+	ProcessorSTM32F4xx::PERIPHERAL_TIM_14  /// ID_14
 };
 
-const GpioSTM32F30x::AlternateFunction
-                                      TimerSTM32F30x::myAlternateFunctionMap[] =
+const InterruptSTM32F4xx::Id TimerSTM32F4xx::myInterruptIdMap[] =
 {
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM1,  /// ID_1
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM2,  /// ID_2
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM3,  /// ID_3
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM4,  /// ID_4
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM5,  /// ID_5
-    (GpioSTM32F30x::AlternateFunction) 0,    /// ID_6
-    (GpioSTM32F30x::AlternateFunction) 0,    /// ID_7
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM8,  /// ID_8
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM9,  /// ID_9
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM10, /// ID_10
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM11, /// ID_11
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM12, /// ID_12
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM13, /// ID_13
-    GpioSTM32F30x::ALTERNATE_FUNCTION_TIM14  /// ID_14
+	InterruptSTM32F4xx::ID_TIM_1_BRK_TIM_9,
+	InterruptSTM32F4xx::ID_TIM_1_UP_TIM_10,
+	InterruptSTM32F4xx::ID_TIM_1_TRG_COM_TIM_11,
+	InterruptSTM32F4xx::ID_TIM_1_CC,
+	InterruptSTM32F4xx::ID_TIM_2,
+	InterruptSTM32F4xx::ID_TIM_3,
+	InterruptSTM32F4xx::ID_TIM_4,
+	InterruptSTM32F4xx::ID_TIM_8_BRK_TIM_12,
+	InterruptSTM32F4xx::ID_TIM_8_UP_TIM_13,
+	InterruptSTM32F4xx::ID_TIM_8_TRG_COM_TIM_14,
+	InterruptSTM32F4xx::ID_TIM_8_CC
 };
 
-const uint16_t TimerSTM32F30x::myCounterModeMap[] =
+TIM_TypeDef* TimerSTM32F4xx::myTimerMap[] =
 {
-    TIM_CounterMode_Up,   /// MODE_COUNTING_UP
-    TIM_CounterMode_Down, /// MODE_COUNTING_DOWN
-    TIM_CounterMode_Up,   /// MODE_COUNTING_UP_DOWN
-    TIM_CounterMode_Up,   /// MODE_INPUT_CAPTURE
-    TIM_CounterMode_Up,   /// MODE_OUTPUT_COMPARE
-    TIM_CounterMode_Up,   /// MODE_PWM_INPUT
-    TIM_CounterMode_Up,   /// MODE_PWM_OUTPUT
-    TIM_CounterMode_Up,   /// MODE_PULSE
-};
-
-const uint16_t TimerSTM32F30x::myPolarityMap[] =
-{
-    TIM_OCPolarity_High, /// POLARITY_HIGH
-    TIM_OCPolarity_Low   /// POLARITY_LOW
-};
-
-const InterruptSTM32F30x::Id TimerSTM32F30x::myInterruptIdMap[] =
-{
-//    InterruptSTM32F30x::ID_TIM_1_BRK_TIM_15,
-//    InterruptSTM32F30x::ID_TIM_1_UP_TIM_16,
-//    InterruptSTM32F30x::ID_TIM_1_TRG_COM_TIM_17,
-//    InterruptSTM32F30x::ID_TIM_1_CC,
-//    InterruptSTM32F30x::ID_TIM_2,
-//    InterruptSTM32F30x::ID_TIM_3,
-//    InterruptSTM32F30x::ID_TIM_4,
-//    InterruptSTM32F30x::ID_TIM_8_BRK,
-//    InterruptSTM32F30x::ID_TIM_8_UP,
-    InterruptSTM32F30x::ID_TIM_8_UP
-};
-
-const GpioSTM32F30x::OutputSpeed TimerSTM32F30x::myDefaultGpioSpeed =
-                                              GpioSTM32F30x::OUTPUT_SPEED_50MHZ;
-
-TIM_TypeDef* TimerSTM32F30x::myTimerMap[] =
-{
-    TIM1,  /// TimerSTM32F30x::ID_1
-    TIM2,  /// TimerSTM32F30x::ID_2
-    TIM3,  /// TimerSTM32F30x::ID_3
-    TIM4,  /// TimerSTM32F30x::ID_4
-    TIM6,  /// TimerSTM32F30x::ID_6
-    TIM7,  /// TimerSTM32F30x::ID_7
-    TIM8,  /// TimerSTM32F30x::ID_8
-    TIM15, /// TimerSTM32F30x::ID_15
-    TIM16, /// TimerSTM32F30x::ID_16
-    TIM17, /// TimerSTM32F30x::ID_17
-    TIM20  /// TimerSTM32F30x::ID_20
+    TIM1, /// TimerSTM32F4xx::ID_1
+    TIM2, /// TimerSTM32F4xx::ID_2
+    TIM3, /// TimerSTM32F4xx::ID_3
+    TIM4, /// TimerSTM32F4xx::ID_4
+    TIM6, /// TimerSTM32F4xx::ID_6
+    TIM7, /// TimerSTM32F4xx::ID_7
+    TIM8  /// TimerSTM32F4xx::ID_8
 };
 
 //------------------------------------------------------------------------------
@@ -153,25 +112,23 @@ TIM_TypeDef* TimerSTM32F30x::myTimerMap[] =
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-TimerSTM32F30x::TimerSTM32F30x(const Id id) :
+TimerSTM32F4xx::TimerSTM32F4xx(const Id id) :
     myId(id),
     myTimer(myTimerMap[id]),
     myGpioPin(0),
-    myUpdateInterrupt(InterruptSTM32F30x::ID_TIM_6_DAC)
+    myUpdateInterrupt(0)
 {
     initialize();
 }
 
 //------------------------------------------------------------------------------
-TimerSTM32F30x::TimerSTM32F30x(
+TimerSTM32F4xx::TimerSTM32F4xx(
                              const Id id,
                              UpdateInterruptCallback& updateInterruptCallback) :
     myId(id),
     myTimer(myTimerMap[id]),
     myGpioPin(0),
-    myUpdateInterrupt(
-                 InterruptSTM32F30x::ID_TIM_6_DAC,
-                 createCallback(this, &TimerSTM32F30x::updateInterruptHandler)),
+    myUpdateInterrupt(0),
     myUpdateInterruptCallback(&updateInterruptCallback)
 {
     // Timers 6 and 7 do not have a related GPIO pin
@@ -191,19 +148,19 @@ TimerSTM32F30x::TimerSTM32F30x(
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-TimerSTM32F30x::Id TimerSTM32F30x::getId() const
+TimerSTM32F4xx::Id TimerSTM32F4xx::getId() const
 {
     return myId;
 }
 
 //------------------------------------------------------------------------------
-TIM_TypeDef* TimerSTM32F30x::getTimer()
+TIM_TypeDef* TimerSTM32F4xx::getTimer()
 {
     return myTimer;
 }
 
 //------------------------------------------------------------------------------
-TimerSTM32F30x::Error TimerSTM32F30x::setConfig(const Config& config)
+TimerSTM32F4xx::Error TimerSTM32F4xx::setConfig(const Config& config)
 {
     // TODO: Incorporate clock division (for reeeeally slow timers)
 
@@ -212,7 +169,7 @@ TimerSTM32F30x::Error TimerSTM32F30x::setConfig(const Config& config)
     float outputClockFrequencyHz;
 
     myInputClockFrequencyHz =
-        ProcessorSTM32F30x::getPeripheralInputClockFrequencyHz(
+        ProcessorSTM32F4xx::getPeripheralInputClockFrequencyHz(
                                                          myPeripheralMap[myId]);
 
     switch (config.resolution)
@@ -388,13 +345,13 @@ TimerSTM32F30x::Error TimerSTM32F30x::setConfig(const Config& config)
 }
 
 //------------------------------------------------------------------------------
-uint32_t TimerSTM32F30x::getPeriod() const
+uint32_t TimerSTM32F4xx::getPeriod() const
 {
     return myPeriod;
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setChannelCaptureCompareEnabled(const ChannelId channelId,
+void TimerSTM32F4xx::setChannelCaptureCompareEnabled(const ChannelId channelId,
                                                      const bool enabled)
 {
     // TODO Handle channels > 4
@@ -412,7 +369,7 @@ void TimerSTM32F30x::setChannelCaptureCompareEnabled(const ChannelId channelId,
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setComplementaryChannelCaptureCompareEnabled(
+void TimerSTM32F4xx::setComplementaryChannelCaptureCompareEnabled(
                             const ComplementaryChannelId complementaryChannelId,
                             const bool enabled)
 {
@@ -424,7 +381,7 @@ void TimerSTM32F30x::setComplementaryChannelCaptureCompareEnabled(
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setChannelCaptureCompareMode(
+void TimerSTM32F4xx::setChannelCaptureCompareMode(
                                     const ChannelId channelId,
                                     const CaptureCompareMode captureCompareMode)
 {
@@ -466,7 +423,7 @@ void TimerSTM32F30x::setChannelCaptureCompareMode(
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setChannelOutputCompareMode(
+void TimerSTM32F4xx::setChannelOutputCompareMode(
                                       const ChannelId channelId,
                                       const OutputCompareMode outputCompareMode)
 {
@@ -474,73 +431,33 @@ void TimerSTM32F30x::setChannelOutputCompareMode(
     {
         case CHANNEL_ID_1:
         {
-            clearBits(myTimer->CCMR1, TIM_CCMR1_OC1M);
-
-            uint32_t mask;
-
-            // Bits[2:0]
-            mask = TIM_CCMR1_OC1M_0 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;
-            setBits(myTimer->CCMR1,
-                    (((uint32_t) outputCompareMode) << 4) & mask);
-
-            // Bits[3]
-            mask = TIM_CCMR1_OC1M_3;
-            setBits(myTimer->CCMR1,
-                    (((uint32_t) outputCompareMode) << 13) & mask);
+            clearAndSetBits(myTimer->CCMR1,
+            				TIM_CCMR1_OC1M,
+							((uint32_t) outputCompareMode) << 4);
 
             break;
         }
         case CHANNEL_ID_2:
         {
-            clearBits(myTimer->CCMR1, TIM_CCMR1_OC2M);
-
-            uint32_t mask;
-
-            // Bits[2:0]
-            mask = TIM_CCMR1_OC2M_0 | TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2;
-            setBits(myTimer->CCMR1,
-                    (((uint32_t) outputCompareMode) << 12) & mask);
-
-            // Bits[3]
-            mask = TIM_CCMR1_OC1M_3;
-            setBits(myTimer->CCMR1,
-                    (((uint32_t) outputCompareMode) << 21) & mask);
+            clearAndSetBits(myTimer->CCMR1,
+            				TIM_CCMR1_OC2M,
+							((uint32_t) outputCompareMode) << 12);
 
             break;
         }
         case CHANNEL_ID_3:
         {
-            clearBits(myTimer->CCMR2, TIM_CCMR2_OC3M);
-
-            uint32_t mask;
-
-            // Bits[2:0]
-            mask = TIM_CCMR2_OC3M_0 | TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC3M_2;
-            setBits(myTimer->CCMR2,
-                    (((uint32_t) outputCompareMode) << 4) & mask);
-
-            // Bits[3]
-            mask = TIM_CCMR2_OC3M_3;
-            setBits(myTimer->CCMR2,
-                    (((uint32_t) outputCompareMode) << 13) & mask);
+            clearAndSetBits(myTimer->CCMR2,
+            				TIM_CCMR2_OC3M,
+							((uint32_t) outputCompareMode) << 4);
 
             break;
         }
         case CHANNEL_ID_4:
         {
-            clearBits(myTimer->CCMR2, TIM_CCMR2_OC4M);
-
-            uint32_t mask;
-
-            // Bits[2:0]
-            mask = TIM_CCMR2_OC4M_0 | TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2;
-            setBits(myTimer->CCMR2,
-                    (((uint32_t) outputCompareMode) << 12) & mask);
-
-            // Bits[3]
-            mask = TIM_CCMR2_OC4M_3;
-            setBits(myTimer->CCMR2,
-                    (((uint32_t) outputCompareMode) << 21) & mask);
+            clearAndSetBits(myTimer->CCMR2,
+            				TIM_CCMR2_OC4M,
+							((uint32_t) outputCompareMode) << 12);
 
             break;
         }
@@ -548,7 +465,7 @@ void TimerSTM32F30x::setChannelOutputCompareMode(
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setChannelOutputComparePreloadEnabled(
+void TimerSTM32F4xx::setChannelOutputComparePreloadEnabled(
                                                       const ChannelId channelId,
                                                       const bool enabled)
 {
@@ -582,7 +499,7 @@ void TimerSTM32F30x::setChannelOutputComparePreloadEnabled(
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setChannelPolarity(const ChannelId channelId,
+void TimerSTM32F4xx::setChannelPolarity(const ChannelId channelId,
                                         const Polarity polarity)
 {
     // TODO Handle channels > 3
@@ -595,7 +512,7 @@ void TimerSTM32F30x::setChannelPolarity(const ChannelId channelId,
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setComplementaryChannelPolarity(
+void TimerSTM32F4xx::setComplementaryChannelPolarity(
                             const ComplementaryChannelId complementaryChannelId,
                             const Polarity polarity)
 {
@@ -609,7 +526,7 @@ void TimerSTM32F30x::setComplementaryChannelPolarity(
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setChannelCaptureCompareValue(const ChannelId channelId,
+void TimerSTM32F4xx::setChannelCaptureCompareValue(const ChannelId channelId,
                                                    const uint32_t value)
 {
     switch (channelId)
@@ -642,7 +559,7 @@ void TimerSTM32F30x::setChannelCaptureCompareValue(const ChannelId channelId,
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::generateCaptureCompareControlUpdate()
+void TimerSTM32F4xx::generateCaptureCompareControlUpdate()
 {
     setBits(myTimer->EGR, TIM_EGR_COMG);
 }
@@ -652,7 +569,7 @@ void TimerSTM32F30x::generateCaptureCompareControlUpdate()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::tim1BrkTim15InterruptHandler()
+void TimerSTM32F4xx::tim1BrkTim15InterruptHandler()
 {
 
 }
@@ -662,7 +579,7 @@ void TimerSTM32F30x::tim1BrkTim15InterruptHandler()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Module::Error TimerSTM32F30x::driverSetEnabled(const bool enabled)
+Module::Error TimerSTM32F4xx::driverSetEnabled(const bool enabled)
 {
     if (isValidPointer(myGpioPin))
     {
@@ -677,17 +594,10 @@ Module::Error TimerSTM32F30x::driverSetEnabled(const bool enabled)
             gpioConfig.resistor = GpioPin::RESISTOR_PULL_DOWN;
 
             myGpioPin->configure(gpioConfig);
-
-            // Specific GpioPinSTM32F30x configuration
-            GpioSTM32F30x::Config gpioDriverConfig;
-            gpioDriverConfig.alternateFunction = myAlternateFunctionMap[myId];
-            gpioDriverConfig.outputSpeed       = myDefaultGpioSpeed;
-
-            myGpioPin->setSTM32F30xConfig(gpioDriverConfig);
         }
     }
 
-    ProcessorSTM32F30x::setPeripheralClockEnabled(myPeripheralMap[myId],
+    ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
                                                   enabled);
 
     privateSetEnabled(enabled);
@@ -695,12 +605,12 @@ Module::Error TimerSTM32F30x::driverSetEnabled(const bool enabled)
     // TODO: Clean this up
     setBitsSet(myTimer->DIER, TIM_DIER_UIE, enabled);
 
-    myUpdateInterrupt.setEnabled(enabled);
+    myUpdateInterrupt->setEnabled(enabled);
 
-    InterruptSTM32F30x::Config config;
+    InterruptSTM32F4xx::Config config;
     config.priority = 2;
 
-    myUpdateInterrupt.configure(config);
+    myUpdateInterrupt->configure(config);
 
     // TODO: For now
     setBitsSet(myTimer->CR2, TIM_CR2_MMS_1, enabled);
@@ -713,31 +623,31 @@ Module::Error TimerSTM32F30x::driverSetEnabled(const bool enabled)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::privateSetEnabled(const bool enabled)
+void TimerSTM32F4xx::privateSetEnabled(const bool enabled)
 {
     setBitsSet(myTimer->CR1, TIM_CR1_CEN, enabled);
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setPrescaler(const uint32_t prescaler)
+void TimerSTM32F4xx::setPrescaler(const uint32_t prescaler)
 {
     myTimer->PSC = prescaler - 1;
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setClockDivision(const uint32_t clockDivision)
+void TimerSTM32F4xx::setClockDivision(const uint32_t clockDivision)
 {
     // Empty for now
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setPeriod(const uint32_t period)
+void TimerSTM32F4xx::setPeriod(const uint32_t period)
 {
     myTimer->ARR = period - 1;
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setDirection(const Direction direction)
+void TimerSTM32F4xx::setDirection(const Direction direction)
 {
     clearAndSetBits(myTimer->CR1,
                     TIM_CR1_DIR,
@@ -745,7 +655,7 @@ void TimerSTM32F30x::setDirection(const Direction direction)
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setAlignment(const Alignment alignment)
+void TimerSTM32F4xx::setAlignment(const Alignment alignment)
 {
     clearAndSetBits(myTimer->CR1,
                     TIM_CR1_CMS,
@@ -753,19 +663,19 @@ void TimerSTM32F30x::setAlignment(const Alignment alignment)
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setAutoReloadPreloadEnabled(const bool enabled)
+void TimerSTM32F4xx::setAutoReloadPreloadEnabled(const bool enabled)
 {
     setBitsSet(myTimer->CR1, TIM_CR1_ARPE, enabled);
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setMainOutputEnabled(const bool enabled)
+void TimerSTM32F4xx::setMainOutputEnabled(const bool enabled)
 {
     setBitsSet(myTimer->BDTR, TIM_BDTR_MOE, enabled);
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::setCaptureComparePreloadEnabled(const bool enabled)
+void TimerSTM32F4xx::setCaptureComparePreloadEnabled(const bool enabled)
 {
     setBitsSet(myTimer->CR2, TIM_CR2_CCPC, enabled);
 }
@@ -775,45 +685,48 @@ void TimerSTM32F30x::setCaptureComparePreloadEnabled(const bool enabled)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::initialize()
+void TimerSTM32F4xx::initialize()
 {
     // TODO: This is temporary only!
     if (myId == ID_6)
     {
-        interruptObjectMap[7] = &myUpdateInterrupt;
+    	myUpdateInterrupt = new InterruptSTM32F4xx(
+				 InterruptSTM32F4xx::ID_TIM_6_DAC,
+    	         createCallback(this, &TimerSTM32F4xx::updateInterruptHandler));
+        interruptObjectMap[7] = myUpdateInterrupt;
     }
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::updateInterruptHandler()
+void TimerSTM32F4xx::updateInterruptHandler()
 {
     myUpdateInterruptCallback->call();
     clearBits(myTimer->SR, TIM_SR_UIF);
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::breakInterruptHandler()
+void TimerSTM32F4xx::breakInterruptHandler()
 {
     myBreakInterruptCallback->call();
     clearBits(myTimer->SR, TIM_SR_UIF);
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::captureCompareInterruptHandler()
+void TimerSTM32F4xx::captureCompareInterruptHandler()
 {
     myCaptureCompareInterruptCallback->call();
     clearBits(myTimer->SR, TIM_SR_UIF);
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::triggerInterruptHandler()
+void TimerSTM32F4xx::triggerInterruptHandler()
 {
     myTriggerInterruptCallback->call();
     clearBits(myTimer->SR, TIM_SR_UIF);
 }
 
 //------------------------------------------------------------------------------
-void TimerSTM32F30x::commutationInterruptHandler()
+void TimerSTM32F4xx::commutationInterruptHandler()
 {
     myCommutationInterruptCallback->call();
     clearBits(myTimer->SR, TIM_SR_UIF);
@@ -826,102 +739,102 @@ void TimerSTM32F30x::commutationInterruptHandler()
 //------------------------------------------------------------------------------
 extern "C" void TIM1_BRK_TIM15_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_1_BRK_TIM_15]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_1_BRK_TIM_15]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM1_UP_TIM16_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_1_UP_TIM_16]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_1_UP_TIM_16]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM1_TRG_COM_TIM17_IRQHandler(void)
 {
     interruptObjectMap[
-                     TimerSTM32F30x::INTERRUPT_TIM_1_TRG_COM_TIM_17]->handler();
+                     TimerSTM32F4xx::INTERRUPT_TIM_1_TRG_COM_TIM_17]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM1_CC_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_1_CC]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_1_CC]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM2_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_2]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_2]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM3_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_3]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_3]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM4_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_4]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_4]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM6_DAC_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_6_DAC]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_6_DAC]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM7_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_7]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_7]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM8_BRK_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_8_BRK]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_8_BRK]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM8_UP_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_8_UP]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_8_UP]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM8_TRG_COM_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_8_TRG_COM]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_8_TRG_COM]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM8_CC_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_8_CC]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_8_CC]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM20_BRK_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_20_BRK]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_20_BRK]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM20_UP_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_20_UP]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_20_UP]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM20_TRG_COM_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_20_TRG_COM]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_20_TRG_COM]->handler();
 }
 
 //------------------------------------------------------------------------------
 extern "C" void TIM20_CC_IRQHandler(void)
 {
-    interruptObjectMap[TimerSTM32F30x::INTERRUPT_TIM_20_CC]->handler();
+    interruptObjectMap[TimerSTM32F4xx::INTERRUPT_TIM_20_CC]->handler();
 }

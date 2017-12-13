@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file SpiSTM32F4xx.cpp
 /// @author Ben Minerd
-/// @date 4/4/13
+/// @date 4/4/2013
 /// @brief SpiSTM32F4xx class source file.
 ///
 
@@ -45,15 +45,13 @@
 
 #include <SpiSTM32F4xx.h>
 #include <ProcessorSTM32F4xx.h>
-
-#include <stm32f4xx_spi.h>
-#include <stm32f4xx_rcc.h>
+#include <CallbackMethod.h>
 
 using Plat4m::SpiSTM32F4xx;
 using Plat4m::Spi;
-using Plat4m::GpioSTM32F4xx;
 using Plat4m::Module;
 using Plat4m::InterruptSTM32F4xx;
+using Plat4m::ProcessorSTM32F4xx;
 
 //------------------------------------------------------------------------------
 // Local variables
@@ -65,75 +63,46 @@ static InterruptSTM32F4xx* interruptObjectMap[3];
 // Private static data members
 //------------------------------------------------------------------------------
 
-/**
- * @brief SPI clock map.
- */
-const uint32_t SpiSTM32F4xx::myClockMap[] =
+const ProcessorSTM32F4xx::Peripheral SpiSTM32F4xx::myPeripheralMap[] =
 {
-    RCC_APB2Periph_SPI1, /// ID_1
-    RCC_APB1Periph_SPI2, /// ID_2
-    RCC_APB1Periph_SPI3  /// ID_3
+	ProcessorSTM32F4xx::PERIPHERAL_SPI_1, /// ID_1
+	ProcessorSTM32F4xx::PERIPHERAL_SPI_2, /// ID_2
+	ProcessorSTM32F4xx::PERIPHERAL_SPI_3, /// ID_3
+	ProcessorSTM32F4xx::PERIPHERAL_SPI_4  /// ID_4
 };
 
-/**
- * @brief SPI IRQ map.
- */
-const IRQn_Type SpiSTM32F4xx::myIrqMap[] =
+const InterruptSTM32F4xx::Id SpiSTM32F4xx::myInterruptIdMap[] =
 {
-    SPI1_IRQn, /// ID_1
-    SPI2_IRQn, /// ID_2
-    SPI3_IRQn  /// ID_3
+	InterruptSTM32F4xx::ID_SPI_1, /// ID_1
+	InterruptSTM32F4xx::ID_SPI_2, /// ID_2
+	InterruptSTM32F4xx::ID_SPI_3, /// ID_3
+//	InterruptSTM32F4xx::ID_SPI_4  /// ID_4
 };
 
-/**
- * @brief SPI alternate function map.
- */
-const GpioSTM32F4xx::AlternateFunction SpiSTM32F4xx::myAlternateFunctionMap[] =
-{
-    GpioSTM32F4xx::ALTERNATE_FUNCTION_SPI1, /// ID_1
-    GpioSTM32F4xx::ALTERNATE_FUNCTION_SPI2, /// ID_2
-    GpioSTM32F4xx::ALTERNATE_FUNCTION_SPI3  /// ID_3
-};
-
-/**
- * @brief SPI mode map.
- */
 const uint16_t SpiSTM32F4xx::myModeMap[] =
 {
     SPI_Mode_Master, /// SPI_MODE_MASTER
     SPI_Mode_Slave   /// SPI_MODE_SLAVE
 };
 
-/**
- * @brief SPI data bits map.
- */
 const uint16_t SpiSTM32F4xx::myDataBitsMap[] =
 {
     SPI_DataSize_8b, /// SPI_DATA_BITS_8
     SPI_DataSize_16b /// SPI_DATA_BITS_16
 };
 
-/**
- * @brief SPI clock polarity map.
- */
 const uint16_t SpiSTM32F4xx::myClockPolarityMap[] =
 {
     SPI_CPOL_Low, /// SPI_CLOCK_POLARITY_LOW
     SPI_CPOL_High /// SPI_CLOCK_POLARITY_HIGH
 };
 
-/**
- * @brief SPI clock phase map.
- */
 const uint16_t SpiSTM32F4xx::myClockPhaseMap[] =
 {
     SPI_CPHA_1Edge, /// SPI_CLOCK_PHASE_LEADING_EDGE
     SPI_CPHA_2Edge  /// SPI_CLOCK_PHASE_TRAILING_EDGE
 };
 
-/**
- * @brief SPI clock prescaler map.
- */
 const SpiSTM32F4xx::Prescaler SpiSTM32F4xx::myClockPrescalerMap[] =
 {
     {2,   SPI_BaudRatePrescaler_2},   /// SPI_CLOCK_PRESCALER_2
@@ -146,18 +115,12 @@ const SpiSTM32F4xx::Prescaler SpiSTM32F4xx::myClockPrescalerMap[] =
     {256, SPI_BaudRatePrescaler_256}  /// SPI_CLOCK_PRESCALER_256
 };
 
-/**
- * @brief SPI data order map.
- */
 const uint16_t SpiSTM32F4xx::myBitOrderMap[] =
 {
     SPI_FirstBit_LSB,   /// SPI_BIT_ORDER_LSB_FIRST
     SPI_FirstBit_MSB    /// SPI_BIT_ORDER_MSB_FIRST
 };
 
-/**
- * @brief SPI interrupt map.
- */
 const uint8_t SpiSTM32F4xx::myInterruptMap[] =
 {
     SPI_I2S_IT_TXE,  /// INTERRUPT_TRANSMIT_BUFFER_EMPTY
@@ -165,12 +128,6 @@ const uint8_t SpiSTM32F4xx::myInterruptMap[] =
     SPI_I2S_IT_ERR   /// INTERRUPT_ERROR
 };
 
-const GpioSTM32F4xx::OutputSpeed SpiSTM32F4xx::myDefaultOutputSpeed =
-                                              GpioSTM32F4xx::OUTPUT_SPEED_50MHZ;
-
-/**
- * @brief SPI map.
- */
 SPI_TypeDef* SpiSTM32F4xx::mySpiMap[] =
 {
     SPI1, /// ID_1
@@ -194,6 +151,8 @@ SpiSTM32F4xx::SpiSTM32F4xx(const Id id,
     mySckGpioPin(sckGpioPin),
     myMisoGpioPin(&misoGpioPin),
     myMosiGpioPin(&mosiGpioPin),
+	myInterrupt(myInterruptIdMap[myId],
+				createCallback(this, &SpiSTM32F4xx::interruptHandler)),
     myClockPrescaler(),
     myState(STATE_IDLE),
     myTransfer(0)
@@ -211,6 +170,8 @@ SpiSTM32F4xx::SpiSTM32F4xx(const Id id,
     mySckGpioPin(sckGpioPin),
     myMisoGpioPin(0),
     myMosiGpioPin(0),
+	myInterrupt(myInterruptIdMap[myId],
+				createCallback(this, &SpiSTM32F4xx::interruptHandler)),
     myClockPrescaler(),
     myState(STATE_IDLE),
     myTransfer(0)
@@ -229,12 +190,25 @@ SpiSTM32F4xx::SpiSTM32F4xx(const Id id,
             
             break;
         }
+        default:
+        {
+        	break;
+        }
     }
 }
 
-/*------------------------------------------------------------------------------
- * Public methods
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Public virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+SpiSTM32F4xx::~SpiSTM32F4xx()
+{
+}
+
+//------------------------------------------------------------------------------
+// Public methods
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 void SpiSTM32F4xx::interruptHandler()
@@ -247,9 +221,9 @@ void SpiSTM32F4xx::interruptHandler()
     // NOTE:
     // Putting this check here implies that an additional interrupt is required
     // to stop the transfer
-    if ((myTransfer->txBuffer.isEmpty()) &&
-        (((myTransfer->rxCount) == 0) ||
-         ((myTransfer->rxCount) == myTransfer->rxBuffer.count())))
+    if ((myTransfer->transmitBuffer.isEmpty()) &&
+        (((myTransfer->receiveCount) == 0) ||
+         ((myTransfer->receiveCount) == myTransfer->receiveBuffer.count())))
     {
         setInterruptEnabled(INTERRUPT_TRANSMIT_BUFFER_EMPTY, false);
         setInterruptEnabled(INTERRUPT_RECEIVE_BUFFER_NOT_EMPTY, false);
@@ -261,20 +235,20 @@ void SpiSTM32F4xx::interruptHandler()
 
     // TODO Change to support 16bit data
     uint8_t byte = 0;
-    bool txIsEmpty, rxIsEmpty;
+    bool transmitIsEmpty, receiveIsEmpty;
 
-    txIsEmpty = myTransfer->txBuffer.isEmpty();
-    rxIsEmpty = myTransfer->rxBuffer.isEmpty();
+    transmitIsEmpty = myTransfer->transmitBuffer.isEmpty();
+    receiveIsEmpty = myTransfer->receiveBuffer.isEmpty();
 
     // Transmit flag
     if (SPI_I2S_GetFlagStatus(mySpi, SPI_I2S_FLAG_TXE))
     {
         switch (myTransfer->transferMode)
         {
-            case TRANSFER_MODE_TX_RX_SEQUENTIAL: // Fall through
-            case TRANSFER_MODE_TX_RX_SEQUENTIAL_MAILBOX:
+            case TRANSFER_MODE_TRANSMIT_RECEIVE_SEQUENTIAL: // Fall through
+            case TRANSFER_MODE_TRANSMIT_RECEIVE_SEQUENTIAL_MAILBOX:
             {
-                if (myTransfer->txBuffer.read(byte))
+                if (myTransfer->transmitBuffer.read(byte))
                 {
                     writeByte(byte);
                 }
@@ -285,12 +259,12 @@ void SpiSTM32F4xx::interruptHandler()
 
                 break;
             }
-            case TRANSFER_MODE_TX:                  // Fall through
-            case TRANSFER_MODE_TX_WAIT:             // Fall through
-            case TRANSFER_MODE_TX_RX_CONCURRENT:    // Fall through
-            case TRANSFER_MODE_TX_RX_CONCURRENT_MAILBOX:
+            case TRANSFER_MODE_TRANSMIT:                    // Fall through
+            case TRANSFER_MODE_TRANSMIT_WAIT:               // Fall through
+            case TRANSFER_MODE_TRANSMIT_RECEIVE_CONCURRENT: // Fall through
+            case TRANSFER_MODE_TRANSMIT_RECEIVE_CONCURRENT_MAILBOX:
             {
-                if (myTransfer->txBuffer.read(byte))
+                if (myTransfer->transmitBuffer.read(byte))
                 {
                     writeByte(byte);
                 }
@@ -307,27 +281,27 @@ void SpiSTM32F4xx::interruptHandler()
     else if (SPI_I2S_GetFlagStatus(mySpi, SPI_I2S_FLAG_RXNE))
     {
         bool isLastByte =
-                      (myTransfer->rxCount + 1) == myTransfer->rxBuffer.count();
+                      (myTransfer->receiveCount + 1) == myTransfer->receiveBuffer.count();
         byte = readByte();
 
         switch (myTransfer->transferMode)
         {
-            case TRANSFER_MODE_TX_RX_SEQUENTIAL: // Fall through
-            case TRANSFER_MODE_TX_RX_SEQUENTIAL_MAILBOX:
+            case TRANSFER_MODE_TRANSMIT_RECEIVE_SEQUENTIAL: // Fall through
+            case TRANSFER_MODE_TRANSMIT_RECEIVE_SEQUENTIAL_MAILBOX:
             {
-                if (myTransfer->txBuffer.isEmpty())
+                if (myTransfer->transmitBuffer.isEmpty())
                 {
-                    if (!(myTransfer->rxBuffer.write(byte)))
+                    if (!(myTransfer->receiveBuffer.write(byte)))
                     {
                     }
                 }
 
                 break;
             }
-            case TRANSFER_MODE_TX_RX_CONCURRENT: // Fall through
-            case TRANSFER_MODE_TX_RX_CONCURRENT_MAILBOX:
+            case TRANSFER_MODE_TRANSMIT_RECEIVE_CONCURRENT: // Fall through
+            case TRANSFER_MODE_TRANSMIT_RECEIVE_CONCURRENT_MAILBOX:
             {
-                if (!(myTransfer->rxBuffer.write(byte)))
+                if (!(myTransfer->receiveBuffer.write(byte)))
                 {
                     // Error?
                 }
@@ -339,57 +313,38 @@ void SpiSTM32F4xx::interruptHandler()
     //TODO: else if (SPI_I2S_GetFlagStatus(mySpi, ...)) More flags?
 }
 
-/*------------------------------------------------------------------------------
- * Private methods implemented from Module
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Private methods implemented from Module
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Module::Error SpiSTM32F4xx::driverEnable(const bool enable)
+Module::Error SpiSTM32F4xx::driverSetEnabled(const bool enabled)
 {
-    mySckGpioPin.enable(enable);
+    mySckGpioPin.enable(enabled);
     
     if (isValidPointer(myMisoGpioPin))
     {
-        myMisoGpioPin->enable(enable);
+        myMisoGpioPin->enable(enabled);
     }
     
     if (isValidPointer(myMosiGpioPin))
     {
-        myMosiGpioPin->enable(enable);
+        myMosiGpioPin->enable(enabled);
     }
     
-    switch (myId)
-    {
-        case ID_1:
-        {
-            RCC_APB2PeriphClockCmd(myClockMap[myId], (FunctionalState) enable);
-
-            break;
-        }
-        default:
-        {
-            RCC_APB1PeriphClockCmd(myClockMap[myId], (FunctionalState) enable);
-
-            break;
-        }
-    }
+    ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
+    											  enabled);
     
-    SPI_Cmd(mySpi, (FunctionalState) enable);
+    SPI_Cmd(mySpi, (FunctionalState) enabled);
 
-    NVIC_InitTypeDef nvicInit;
-    nvicInit.NVIC_IRQChannel                   = myIrqMap[myId];
-    nvicInit.NVIC_IRQChannelPreemptionPriority = 0;
-    nvicInit.NVIC_IRQChannelSubPriority        = 0;
-    nvicInit.NVIC_IRQChannelCmd                = (FunctionalState) enable;
-
-    NVIC_Init(&nvicInit);
+    myInterrupt.setEnabled(enabled);
     
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
-/*------------------------------------------------------------------------------
- * Private methods implemented from Spi
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Private methods implemented from Spi
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Spi::Error SpiSTM32F4xx::driverSetConfig(const Config& config)
@@ -397,22 +352,16 @@ Spi::Error SpiSTM32F4xx::driverSetConfig(const Config& config)
     GpioPin::Config gpioConfig;
     gpioConfig.mode     = GpioPin::MODE_ALTERNATE_FUNCTION;
     gpioConfig.resistor = GpioPin::RESISTOR_PULL_DOWN;
-    
-    GpioSTM32F4xx::Config gpioDriverConfig;
-    gpioDriverConfig.alternateFunction = myAlternateFunctionMap[myId];
-    gpioDriverConfig.outputSpeed       = myDefaultOutputSpeed;
 
     if (isValidPointer(myMisoGpioPin))
     {
         myMisoGpioPin->configure(gpioConfig);
-        myMisoGpioPin->configureDriver(gpioDriverConfig);
     }
     
     if (isValidPointer(myMosiGpioPin))
     {
         gpioConfig.resistor = GpioPin::RESISTOR_NONE;
         myMosiGpioPin->configure(gpioConfig);
-        myMosiGpioPin->configureDriver(gpioDriverConfig);
     }
     
     if ((config.clockPolarity) == CLOCK_POLARITY_HIGH)
@@ -421,10 +370,9 @@ Spi::Error SpiSTM32F4xx::driverSetConfig(const Config& config)
     }
     
     mySckGpioPin.configure(gpioConfig);
-    mySckGpioPin.configureDriver(gpioDriverConfig);
 
-    int i;
-    int size = ARRAY_SIZE(myClockPrescalerMap);
+    uint32_t i;
+    uint32_t size = arraySize(myClockPrescalerMap);
 
     for (i = 0; i < size; i++)
     {
@@ -472,9 +420,15 @@ Spi::Error SpiSTM32F4xx::driverSetConfig(const Config& config)
     return Spi::Error(Spi::ERROR_CODE_NONE);
 }
 
-/*------------------------------------------------------------------------------
- * Private methods
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+Spi::Error SpiSTM32F4xx::driverMasterTransfer(Transfer& transfer)
+{
+    return Spi::Error(Spi::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+// Private methods
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 void SpiSTM32F4xx::writeByte(const uint8_t byte)
@@ -497,9 +451,9 @@ void SpiSTM32F4xx::setInterruptEnabled(const Interrupt interrupt,
     SPI_I2S_ITConfig(mySpi, myInterruptMap[interrupt], (FunctionalState) enable);
 }
 
-/*------------------------------------------------------------------------------
- * Interrupt service routines
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Interrupt service routines
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 extern "C" void SPI1_IRQHandler(void)

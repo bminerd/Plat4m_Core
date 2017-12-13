@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,17 +36,18 @@
 /// @file ProcessorSTM32F4xx.h
 /// @author Ben Minerd
 /// @date 5/31/2013
-/// @brief ProcessorSTM32F4xx class.
+/// @brief ProcessorSTM32F4xx class header file.
 ///
 
-#ifndef PROCESSOR_STM32F4XX_H
-#define PROCESSOR_STM32F4XX_H
+#ifndef PLAT4M_PROCESSOR_STM32F4XX_H
+#define PLAT4M_PROCESSOR_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
+#include <stdint.h>
+
 #include <Processor.h>
 
 //------------------------------------------------------------------------------
@@ -174,8 +175,8 @@ public:
         PERIPHERAL_SPDIF_RX,
         PERIPHERAL_USART_2,
         PERIPHERAL_USART_3,
-        PERIPHERAL_USART_4,
-        PERIPHERAL_USART_5,
+        PERIPHERAL_UART_4,
+        PERIPHERAL_UART_5,
         PERIPHERAL_I2C_1,
         PERIPHERAL_I2C_2,
         PERIPHERAL_FMP_I2C_1,
@@ -258,7 +259,7 @@ public:
     // Public methods
     //--------------------------------------------------------------------------
     
-    Error setSTM32F4xxConfig(const Config& config);
+    Error setConfig(const Config& config);
     
     ClockSource getCoreClockSource();
     
@@ -272,7 +273,7 @@ private:
 
     struct Prescaler
     {
-        unsigned int value;
+        uint32_t value;
         uint32_t bits;
     };
     
@@ -316,11 +317,9 @@ private:
     
     Processor::Error driverSetPowerMode(const Processor::PowerMode powerMode);
 
-    Processor::Error driverSetSystemClockEnabled(const bool enabled);
-
-    Processor::Error driverJumpToAddress(const intptr_t address);
+    uint32_t driverGetCoreClockFrequencyHz();
 };
 
 }; // namespace Plat4m
 
-#endif // PROCESSOR_STM32F4XX_H
+#endif // PLAT4M_PROCESSOR_STM32F4XX_H

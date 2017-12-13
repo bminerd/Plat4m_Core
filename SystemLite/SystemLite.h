@@ -36,7 +36,7 @@
 /// @file SystemLite.h
 /// @author Ben Minerd
 /// @date 6/4/2013
-/// @brief SystemLite class.
+/// @brief SystemLite class header file.
 ///
 
 #ifndef PLAT4M_SYSTEM_LITE_H
@@ -46,11 +46,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <Plat4m.h>
 #include <System.h>
 #include <List.h>
 #include <ThreadLite.h>
-#include <Plat4m.h>
 #include <Mutex.h>
+#include <WaitCondition.h>
+#include <QueueDriver.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -99,7 +101,7 @@ protected:
 private:
 
     //--------------------------------------------------------------------------
-    // Private data members
+    // Private static data members
     //--------------------------------------------------------------------------
 
     static volatile TimeMs myTimeMs;

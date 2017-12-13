@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,19 +39,19 @@
 /// @brief GpioPortSTM32F4xx class header file.
 ///
 
-#ifndef GPIO_PORT_STM32F4XX_H
-#define GPIO_PORT_STM32F4XX_H
+#ifndef PLAT4M_GPIO_PORT_STM32F4XX_H
+#define PLAT4M_GPIO_PORT_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <GpioPort.h>
-#include <GpioSTM32F4xx.h>
-
-#include <stm32f4xx_gpio.h>
-
 #include <stdint.h>
+
+#include <stm32f4xx.h>
+
+#include <GpioPort.h>
+#include <ProcessorSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -64,16 +64,57 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class GpioPortSTM32F4xx : public GpioPort
+class GpioPortSTM32F4xx : public GpioPort<uint16_t>
 {
 public:
     
     //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
+
+    enum Id
+    {
+        ID_A = 0,
+        ID_B,
+        ID_C,
+        ID_D,
+        ID_E,
+        ID_F,
+        ID_G,
+        ID_H,
+        ID_I
+    };
+
+    //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
     
-    GpioPortSTM32F4xx(const GpioSTM32F4xx::PortId portId);
+    GpioPortSTM32F4xx(const Id id);
     
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~GpioPortSTM32F4xx();
+
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    Id getId() const;
+
+    GPIO_TypeDef* getPort();
+
+    //--------------------------------------------------------------------------
+    // Public methods implemented from GpioPort
+    //--------------------------------------------------------------------------
+
+    void setValueFast(const uint16_t value);
+
+    uint16_t getValueFast();
+
+    uint16_t readValueFast();
+
 private:
 
     //--------------------------------------------------------------------------
@@ -82,17 +123,19 @@ private:
 
     // Constants
 
+    static GPIO_TypeDef* myPortMap[];
+
+    static const ProcessorSTM32F4xx::Peripheral myPeripheralMap[];
+
     static const uint32_t myModeMap[];
 
     static const uint32_t myResistorMap[];
-    
-    static const GpioSTM32F4xx::OutputSpeed myDefaultOutputSpeed;
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
     
-    const GpioSTM32F4xx::PortId myPortId;
+    const Id myId;
     
     GPIO_TypeDef* myPort;
     
@@ -100,21 +143,21 @@ private:
     // Private methods implemented from Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverEnable(const bool enable);
+    Module::Error driverSetEnabled(const bool enable);
     
     //--------------------------------------------------------------------------
     // Private methods implemented from GpioPort
     //--------------------------------------------------------------------------
     
-    Error driverConfigure(const Config& config);
+    GpioPort<uint16_t>::Error driverConfigure(const Config& config);
     
-    Error driverSetValue(const unsigned int value);
+    GpioPort<uint16_t>::Error driverSetValue(const uint16_t value);
     
-    Error driverGetValue(unsigned int& value);
+    GpioPort<uint16_t>::Error driverGetValue(uint16_t& value);
     
-    Error driverReadValue(unsigned int& value);
+    GpioPort<uint16_t>::Error driverReadValue(uint16_t& value);
 };
 
 }; // namespace Plat4m
 
-#endif // GPIO_PORT_STM32F4XX_H
+#endif // PLAT4M_GPIO_PORT_STM32F4XX_H

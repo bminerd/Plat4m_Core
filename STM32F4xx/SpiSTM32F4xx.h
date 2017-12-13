@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,24 +35,25 @@
 ///
 /// @file SpiSTM32F4xx.h
 /// @author Ben Minerd
-/// @date 4/4/13
+/// @date 4/4/2013
 /// @brief SpiSTM32F4xx class header file.
 ///
 
-#ifndef SPI_STM32F4XX_H
-#define SPI_STM32F4XX_H
+#ifndef PLAT4M_SPI_STM32F4XX_H
+#define PLAT4M_SPI_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
+#include <stdint.h>
+
+#include <stm32f4xx.h>
+
 #include <Spi.h>
 #include <GpioPinSTM32F4xx.h>
 #include <Module.h>
 #include <InterruptSTM32F4xx.h>
-
-#include <stm32f4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -73,19 +74,14 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of SPIs.
-     */
     enum Id
     {
         ID_1 = 0,
         ID_2,
-        ID_3
+        ID_3,
+		ID_4
     };
     
-    /**
-     * @brief Enumeration of SPI clock prescalers.
-     */
     enum ClockPrescaler
     {
         CLOCK_PRESCALER_2 = 0,
@@ -107,14 +103,11 @@ public:
         EVENT_CRC_ERROR                = SPI_FLAG_CRCERR
     };
 
-    /**
-     * @brief Enumeration of SPI states.
-     */
     enum State
     {
         STATE_IDLE,
         STATE_BUSY,
-        STATE_ERROR // Split into multiple errors!
+        STATE_ERROR
     };
 
     enum Interrupt
@@ -125,7 +118,7 @@ public:
     };
     
     //--------------------------------------------------------------------------
-    // Public methods
+    // Public constructors
     //--------------------------------------------------------------------------
     
     SpiSTM32F4xx(const Id id,
@@ -140,6 +133,12 @@ public:
                  GpioPinSTM32F4xx& dataGpioPin);
     
     //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~SpiSTM32F4xx();
+
+    //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
 
@@ -153,7 +152,7 @@ private:
 
     struct Prescaler
     {
-        unsigned int value;
+        uint32_t value;
         uint32_t bits;
     };
 
@@ -163,11 +162,11 @@ private:
 
     // Constants
 
-    static const uint32_t myClockMap[];
+    static const ProcessorSTM32F4xx::Peripheral myPeripheralMap[];
+
+    static const InterruptSTM32F4xx::Id myInterruptIdMap[];
 
     static const IRQn_Type myIrqMap[];
-
-    static const GpioSTM32F4xx::AlternateFunction myAlternateFunctionMap[];
 
     static const uint16_t myModeMap[];
 
@@ -182,8 +181,6 @@ private:
     static const uint16_t myBitOrderMap[];
 
     static const uint8_t myInterruptMap[];
-
-    static const GpioSTM32F4xx::OutputSpeed myDefaultOutputSpeed;
 
     // Variables
 
@@ -203,6 +200,8 @@ private:
     
     GpioPinSTM32F4xx* myMosiGpioPin;
     
+    InterruptSTM32F4xx myInterrupt;
+
     ClockPrescaler myClockPrescaler;
 
     volatile State myState;
@@ -213,7 +212,7 @@ private:
     // Private methods implemented from Module
     //--------------------------------------------------------------------------
 
-	Module::Error driverEnable(const bool enable);
+	Module::Error driverSetEnabled(const bool enabled);
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Spi
@@ -237,4 +236,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // SPI_STM32F4XX_H
+#endif // PLAT4M_SPI_STM32F4XX_H

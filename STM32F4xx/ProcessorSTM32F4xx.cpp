@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2017 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +48,6 @@
 #include <Application.h>
 
 #include <stm32f4xx.h>
-#include <stm32f4xx_syscfg.h>
-#include <stm32f4xx_rcc.h>
 
 using Plat4m::ProcessorSTM32F4xx;
 using Plat4m::Processor;
@@ -164,8 +162,6 @@ const uint32_t ProcessorSTM32F4xx::myFlashWaitStatesFrequencyMap[][9] =
         0          /// FLASH_WAIT_STATES_8
     }
 };
-
-ProcessorSTM32F4xx* ProcessorSTM32F4xx::myObject = 0;
 
 ProcessorSTM32F4xx::Config ProcessorSTM32F4xx::myConfig;
 
@@ -381,8 +377,7 @@ uint32_t ProcessorSTM32F4xx::getPeripheralInputClockFrequencyHz(
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ProcessorSTM32F4xx::Error ProcessorSTM32F4xx::setSTM32F4xxConfig(
-                                                           const Config& config)
+ProcessorSTM32F4xx::Error ProcessorSTM32F4xx::setConfig(const Config& config)
 {
 //    if (config.coreClockFrequencyHz > 168000000)
 //    {
@@ -596,14 +591,14 @@ ProcessorSTM32F4xx::Error ProcessorSTM32F4xx::setSTM32F4xxConfig(
     
     // Should this be moved up?
     
-    if (getCoreVoltage() < myCoreVoltageMap[0])
+    if (getCoreVoltageV() < myCoreVoltageMap[0])
     {
         return ERROR_INPUT_VOLTAGE_INVALID;
     }
     
     for (i = 1; i < ARRAY_SIZE(myCoreVoltageMap); i++)
     {
-        if (getCoreVoltage() <= myCoreVoltageMap[i])
+        if (getCoreVoltageV() <= myCoreVoltageMap[i])
         {
             break;
         }
@@ -649,10 +644,6 @@ ProcessorSTM32F4xx::Error ProcessorSTM32F4xx::setSTM32F4xxConfig(
     
     // Vector Table Relocation in Internal FLASH
     SCB->VTOR = FLASH_BASE;
-    
-    SysTick_Config(config.coreClockFrequencyHz / 1000);
-    
-    NVIC_SetPriority(SysTick_IRQn, 1);
 
     // I/O compensation cell
     if (coreVoltage >= CORE_VOLTAGE_V2R4_TO_V2R7)
@@ -707,9 +698,6 @@ Processor::Error ProcessorSTM32F4xx::driverReset()
     // Disable all interrupts
     RCC->CIR = 0x00000000;
     
-    // Enable SYSCFG clock
-//    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-
     setPeripheralClockEnabled(PERIPHERAL_SYS_CFG, true);
     
     return Processor::Error(Processor::ERROR_CODE_NONE);
@@ -738,10 +726,9 @@ Processor::Error ProcessorSTM32F4xx::driverSetPowerMode(
 }
 
 //------------------------------------------------------------------------------
-Processor::Error ProcessorSTM32F4xx::driverSetSystemClockEnabled(
-                                                             const bool enabled)
+uint32_t ProcessorSTM32F4xx::driverGetCoreClockFrequencyHz()
 {
-    return Processor::Error(Processor::ERROR_CODE_NONE);
+    return (myConfig.coreClockFrequencyHz);
 }
 
 //------------------------------------------------------------------------------
@@ -751,18 +738,52 @@ Processor::Error ProcessorSTM32F4xx::driverSetSystemClockEnabled(
 //------------------------------------------------------------------------------
 extern "C" void SystemInit(void)
 {
-    // Do nothing
+    // FPU settings
+    if (__FPU_USED == 1)
+    {
+        // set CP10 and CP11 Full Access
+        SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));
+    }
+
+    // Reset the RCC clock configuration to the default reset state
+    // Set HSION bit */
+    RCC->CR |= (uint32_t)0x00000001;
+
+    // Reset CFGR register
+    RCC->CFGR = 0x00000000;
+
+    // Reset HSEON, CSSON and PLLON bits
+    RCC->CR &= (uint32_t)0xFEF6FFFF;
+
+    // Reset PLLCFGR register
+    RCC->PLLCFGR = 0x24003010;
+
+    // Reset HSEBYP bit
+    RCC->CR &= (uint32_t)0xFFFBFFFF;
+
+    // Disable all interrupts
+    RCC->CIR = 0x00000000;
+
+    ProcessorSTM32F4xx::setPeripheralClockEnabled(
+										 ProcessorSTM32F4xx::PERIPHERAL_SYS_CFG,
+										 true);
+
+    Plat4m::setBits(RCC->AHB1RSTR, 0xFFFFFFFF);
+    Plat4m::setBits(RCC->AHB2RSTR, 0xFFFFFFFF);
+    Plat4m::setBits(RCC->AHB3RSTR, 0xFFFFFFFF);
+    Plat4m::setBits(RCC->APB2RSTR, 0xFFFFFFFF);
+    Plat4m::setBits(RCC->APB1RSTR, 0xFFFFFFFF);
+
+    Plat4m::clearBits(RCC->AHB1RSTR, 0xFFFFFFFF);
+    Plat4m::clearBits(RCC->AHB2RSTR, 0xFFFFFFFF);
+    Plat4m::clearBits(RCC->AHB3RSTR, 0xFFFFFFFF);
+    Plat4m::clearBits(RCC->APB2RSTR, 0xFFFFFFFF);
+    Plat4m::clearBits(RCC->APB1RSTR, 0xFFFFFFFF);
 }
 
 //------------------------------------------------------------------------------
 // Interrupt service routines
 //------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-extern "C" void SysTick_Handler(void)
-{
-    Plat4m::System::timeMsHandler();
-}
 
 //------------------------------------------------------------------------------
 extern "C" void NMI_Handler(void)
