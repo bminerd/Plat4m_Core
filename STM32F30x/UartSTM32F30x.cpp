@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <UartSTM32F30x.h>
-#include <CallbackMethod.h>
+#include <Plat4m_Core/STM32F30x/UartSTM32F30x.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 using Plat4m::UartSTM32F30x;
 using Plat4m::Uart;

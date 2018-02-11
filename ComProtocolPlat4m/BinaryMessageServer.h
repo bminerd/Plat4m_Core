@@ -47,12 +47,12 @@
 //------------------------------------------------------------------------------
 
 // Plat4m includes
-#include <Plat4m.h>
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <BinaryMessageFrameHandler.h>
-#include <BinaryMessageHandler.h>
-#include <Frame.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageFrameHandler.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageHandler.h>
+#include <Plat4m_Core/ComProtocolPlat4m/Frame.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

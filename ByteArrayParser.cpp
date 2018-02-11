@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file ByteArrayParser.cpp
 /// @author Ben Minerd
-/// @date 6/17/13
+/// @date 6/17/2013
 /// @brief ByteArrayParser class source file.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ByteArrayParser.h>
+#include <Plat4m_Core/ByteArrayParser.h>
 
 using Plat4m::ByteArrayParser;
 

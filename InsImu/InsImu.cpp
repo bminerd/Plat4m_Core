@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file InsImu.cpp
 /// @author Ben Minerd
-/// @date 3/30/16
+/// @date 3/30/2016
 /// @brief InsImu class source file.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <InsImu.h>
+#include <Plat4m_Core/InsImu/InsImu.h>
 
 using Plat4m::InsImu;
 using Plat4m::Ins;

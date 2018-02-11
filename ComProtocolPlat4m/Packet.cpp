@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Packet.h>
-#include <ByteArrayParser.h>
-#include <Crc.h>
+#include <Plat4m_Core/ComProtocolPlat4m/Packet.h>
+#include <Plat4m_Core/ByteArrayParser.h>
+#include <Plat4m_Core/Crc.h>
 
 using Plat4m::Packet;
 using Plat4m::Frame;

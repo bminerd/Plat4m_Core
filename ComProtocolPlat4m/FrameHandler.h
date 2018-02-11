@@ -47,8 +47,8 @@
 //------------------------------------------------------------------------------
 
 #include <stdint.h>
-#include <Frame.h>
-#include <ComProtocol.h>
+#include <Plat4m_Core/ComProtocolPlat4m/Frame.h>
+#include <Plat4m_Core/ComProtocol.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

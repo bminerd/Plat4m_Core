@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Processor.h>
+#include <Plat4m_Core/Processor.h>
 
 using Plat4m::Processor;
 
@@ -55,6 +55,11 @@ Processor* Processor::myDriver               = 0;
 Plat4m::VoltageV Processor::myCoreVoltageV   = 0.0;
 uint32_t Processor::myClockSourceFrequencyHz = 0;
 Processor::Config Processor::myConfig;
+
+extern "C" uint32_t processorGetCoreClockFrequencyHz(void)
+{
+	return Processor::getCoreClockFrequencyHz();
+}
 
 //------------------------------------------------------------------------------
 // Public static methods

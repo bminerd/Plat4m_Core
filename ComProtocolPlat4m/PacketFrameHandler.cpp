@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <PacketFrameHandler.h>
-#include <Crc.h>
+#include <Plat4m_Core/ComProtocolPlat4m/PacketFrameHandler.h>
+#include <Plat4m_Core/Crc.h>
 
 using Plat4m::PacketFrameHandler;
 using Plat4m::ByteArray;

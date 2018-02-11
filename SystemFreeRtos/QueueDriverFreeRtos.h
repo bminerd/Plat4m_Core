@@ -64,6 +64,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
+template <uint32_t nBytes>
 class QueueDriverFreeRtos : public QueueDriver
 {
 public:

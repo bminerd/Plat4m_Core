@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,15 +46,15 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <ByteArray.h>
-#include <Buffer.h>
-#include <BufferN.h>
-#include <Callback.h>
-#include <MasterSlaveBus.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Buffer.h>
+#include <Plat4m_Core/BufferN.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/MasterSlaveBus.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

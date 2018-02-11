@@ -39,14 +39,14 @@
 /// @brief ImuServerGetConfigResponseMessage struct header file.
 ///
 
-#ifndef IMU_SERVER_GET_CONFIG_RESPONSE_MESSAGE_H
-#define IMU_SERVER_GET_CONFIG_RESPONSE_MESSAGE_H
+#ifndef PLAT4M_IMU_SERVER_GET_CONFIG_RESPONSE_MESSAGE_H
+#define PLAT4M_IMU_SERVER_GET_CONFIG_RESPONSE_MESSAGE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Message.h>
+#include <Plat4m_Core/ComProtocolPlat4m/Message.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -86,4 +86,4 @@ public:
 
 }; // namespace Plat4m
 
-#endif // IMU_SERVER_GET_CONFIG_RESPONSE_MESSAGE_H
+#endif // PLAT4M_IMU_SERVER_GET_CONFIG_RESPONSE_MESSAGE_H

@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <RotaryEncoder.h>
+#include <Plat4m_Core/RotaryEncoder.h>
 
 using Plat4m::RotaryEncoder;
 using Plat4m::Module;

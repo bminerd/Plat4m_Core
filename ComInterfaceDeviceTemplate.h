@@ -35,21 +35,21 @@
 ///
 /// @file ComInterfaceDeviceTemplate.h
 /// @author Ben Minerd
-/// @date 4/12/17
+/// @date 4/12/2017
 /// @brief ComInterfaceDeviceTemplate class header file.
 ///
 
-#ifndef COM_INTERFACE_DEVICE_TEMPLATE_H
-#define COM_INTERFACE_DEVICE_TEMPLATE_H
+#ifndef PLAT4M_COM_INTERFACE_DEVICE_TEMPLATE_H
+#define PLAT4M_COM_INTERFACE_DEVICE_TEMPLATE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ComInterfaceDevice.h>
-#include <BufferN.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/ComInterfaceDevice.h>
+#include <Plat4m_Core/BufferN.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -109,4 +109,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // COM_INTERFACE_DEVICE_TEMPLATE_H
+#endif // PLAT4M_COM_INTERFACE_DEVICE_TEMPLATE_H

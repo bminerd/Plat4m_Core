@@ -47,19 +47,19 @@
 //------------------------------------------------------------------------------
 
 // Plat4m includes
-#include <Plat4m.h>
-#include <BinaryMessageServer.h>
-#include <ErrorTemplate.h>
-#include <Ins.h>
-#include <List.h>
-#include <Thread.h>
-#include <WaitCondition.h>
-#include <ComProtocolPlat4mBinary.h>
-#include <InsMeasurementMessage.h>
-#include <InsServerSetConfigMessage.h>
-#include <InsServerSetConfigResponseMessage.h>
-#include <InsServerGetConfigMessage.h>
-#include <InsServerGetConfigResponseMessage.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageServer.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Ins.h>
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/ComProtocolPlat4m/ComProtocolPlat4mBinary.h>
+#include <Plat4m_Core/InsServer/InsMeasurementMessage.h>
+#include <Plat4m_Core/InsServer/InsServerSetConfigMessage.h>
+#include <Plat4m_Core/InsServer/InsServerSetConfigResponseMessage.h>
+#include <Plat4m_Core/InsServer/InsServerGetConfigMessage.h>
+#include <Plat4m_Core/InsServer/InsServerGetConfigResponseMessage.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

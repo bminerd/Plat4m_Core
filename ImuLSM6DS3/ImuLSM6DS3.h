@@ -46,17 +46,17 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Imu.h>
-#include <ErrorTemplate.h>
-#include <Module.h>
-#include <Spi.h>
-#include <GpioPin.h>
-#include <I2c.h>
-#include <ExternalInterrupt.h>
-#include <SlaveDevice.h>
-#include <ByteArrayN.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/Imu.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/Spi.h>
+#include <Plat4m_Core/GpioPin.h>
+#include <Plat4m_Core/I2c.h>
+#include <Plat4m_Core/ExternalInterrupt.h>
+#include <Plat4m_Core/SlaveDevice.h>
+#include <Plat4m_Core/ByteArrayN.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

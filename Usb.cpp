@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file Usb.cpp
 /// @author Ben Minerd
-/// @date 4/17/13
+/// @date 4/17/2013
 /// @brief Usb class source file.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Usb.h>
+#include <Plat4m_Core/Usb.h>
 
 using Plat4m::Usb;
 using Plat4m::ComInterface;

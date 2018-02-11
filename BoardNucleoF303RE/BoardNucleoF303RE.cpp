@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BoardNucleoF303RE.h>
+#include <Plat4m_Core/BoardNucleoF303RE/BoardNucleoF303RE.h>
 
 using Plat4m::BoardNucleoF303RE;
 using Plat4m::GpioPinSTM32F30x;

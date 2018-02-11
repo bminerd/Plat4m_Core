@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file AnalogInput.h
 /// @author Ben Minerd
-/// @date 8/9/16
+/// @date 8/9/2016
 /// @brief AnalogInput class header file.
 ///
 
@@ -46,9 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <ErrorTemplate.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -81,10 +81,6 @@ public:
     //--------------------------------------------------------------------------
 
     typedef ErrorTemplate<ErrorCode> Error;
-
-    //--------------------------------------------------------------------------
-    // Public structures
-    //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
     // Public pure virtual methods

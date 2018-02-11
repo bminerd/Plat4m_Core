@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2015 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,21 +35,21 @@
 ///
 /// @file ExternalInterrupt.h
 /// @author Ben Minerd
-/// @date 9/25/15
-/// @brief ExternalInterrupt class.
+/// @date 9/25/2015
+/// @brief ExternalInterrupt class header file.
 ///
 
-#ifndef EXTERNAL_INTERRUPT_H
-#define EXTERNAL_INTERRUPT_H
+#ifndef PLAT4M_EXTERNAL_INTERRUPT_H
+#define PLAT4M_EXTERNAL_INTERRUPT_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <Callback.h>
-#include <GpioPin.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/GpioPin.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -70,9 +70,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of external interrupt errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -80,9 +77,6 @@ public:
         ERROR_CODE_NOT_ENABLED
     };
 
-    /**
-     * @brief Enumeration of external interrupt triggers.
-     */
     enum Trigger
     {
         TRIGGER_RISING = 0,
@@ -118,12 +112,6 @@ public:
     // Public virtual methods
     //--------------------------------------------------------------------------
 
-    /**
-     * @brief Configures the given external interrupt.
-     * @param handle ExternalInterrupt handle to access.
-     * @param config ExternalInterrupt configuration.
-     * @return ExternalInterrupt error.
-     */
     virtual Error configure(const Config& config);
     
     virtual void setHandlerCallback(HandlerCallback& handlerCallback);
@@ -177,4 +165,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // EXTERNAL_INTERRUPT_H
+#endif // PLAT4M_EXTERNAL_INTERRUPT_H

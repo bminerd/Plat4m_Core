@@ -46,6 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <FreeRTOS/Source/Include/FreeRTOS.h>
 #include <FreeRTOS/Source/Include/task.h>
 
 #include <Plat4m_Core/Plat4m.h>

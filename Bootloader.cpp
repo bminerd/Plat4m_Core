@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Bootloader.h>
+#include <Plat4m_Core/Bootloader.h>
 
 using Plat4m::Bootloader;
 

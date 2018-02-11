@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file SpiDevice.h
 /// @author Ben Minerd
-/// @date 4/4/13
+/// @date 4/4/2013
 /// @brief SpiDevice class source file.
 ///
 
@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <SpiDevice.h>
-#include <Plat4m.h>
+#include <Plat4m_Core/SpiDevice.h>
+#include <Plat4m_Core/Plat4m.h>
 
 using Plat4m::SpiDevice;
 using Plat4m::SlaveDevice;

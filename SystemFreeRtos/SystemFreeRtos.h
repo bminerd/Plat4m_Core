@@ -46,13 +46,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <System.h>
-#include <List.h>
-#include <Thread.h>
-#include <Mutex.h>
-#include <WaitCondition.h>
-#include <QueueDriver.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/Mutex.h>
+#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/QueueDriver.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

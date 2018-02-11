@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <FrameHandler.h>
+#include <Plat4m_Core/ComProtocolPlat4m/FrameHandler.h>
 
 using Plat4m::FrameHandler;
 using Plat4m::ComProtocol;

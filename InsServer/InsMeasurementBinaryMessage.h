@@ -46,12 +46,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BinaryMessage.h>
-#include <InsMeasurementMessage.h>
-#include <ByteArray.h>
-#include <Array.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessage.h>
+#include <Plat4m_Core/InsServer/InsMeasurementMessage.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Array.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

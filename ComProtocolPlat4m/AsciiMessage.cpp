@@ -35,7 +35,7 @@
 ///
 /// @file AsciiMessage.cpp
 /// @author Ben Minerd
-/// @date 4/29/16
+/// @date 4/29/2016
 /// @brief AsciiMessage class source file.
 ///
 
@@ -43,11 +43,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AsciiMessage.h>
-
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <Plat4m_Core/ComProtocolPlat4m/AsciiMessage.h>
 
 using Plat4m::AsciiMessage;
 using Plat4m::ComProtocol;

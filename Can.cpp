@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Can.h>
-#include <System.h>
+#include <Plat4m_Core/Can.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::Can;
 

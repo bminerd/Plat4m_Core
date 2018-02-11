@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,20 +35,20 @@
 ///
 /// @file Accel.h
 /// @author Ben Minerd
-/// @date 2/27/13
-/// @brief Accel class.
+/// @date 2/27/2013
+/// @brief Accel class header file.
 ///
 
-#ifndef ACCEL_H
-#define ACCEL_H
+#ifndef PLAT4M_ACCEL_H
+#define PLAT4M_ACCEL_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <ErrorTemplate.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -69,9 +69,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of accelerometer errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -80,9 +77,6 @@ public:
         ERROR_CODE_COMMUNICATION_FAILED
     };
 
-    /**
-     * @brief Enumeration of accelerometer degrees of freedom.
-     */
     enum Dof
     {
         DOF_X = 0,
@@ -115,18 +109,8 @@ public:
     // Public virtual methods
     //--------------------------------------------------------------------------
 
-    ///
-    /// @brief Configures this accelerometer.
-    /// @param config Accelerometer configuration.
-    /// @return Accelerometer error.
-    ///
     virtual Error configure(const Config& config);
 
-    ///
-    /// @brief Gets an accelerometer reading.
-    /// @param reading Accelerometer reading.
-    /// @return Accelerometer error.
-    ///
     virtual Error getMeasurement(Measurement& measurement);
     
 protected:
@@ -164,4 +148,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // ACCEL_H
+#endif // PLAT4M_ACCEL_H

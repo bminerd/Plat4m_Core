@@ -46,12 +46,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <FrameHandler.h>
-#include <ByteArrayN.h>
-#include <BinaryMessageHandlerGroup.h>
-#include <List.h>
-#include <ComProtocolPlat4mBinary.h>
-#include <ComProtocol.h>
+#include <Plat4m_Core/ComProtocolPlat4m/FrameHandler.h>
+#include <Plat4m_Core/ByteArrayN.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageHandlerGroup.h>
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/ComProtocolPlat4m/ComProtocolPlat4mBinary.h>
+#include <Plat4m_Core/ComProtocol.h>
 
 #include <stdint.h>
 

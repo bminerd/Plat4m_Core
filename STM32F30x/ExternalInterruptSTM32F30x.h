@@ -39,22 +39,22 @@
 /// @brief ExternalInterruptSTM32F30x class header file.
 ///
 
-#ifndef EXTERNAL_INTERRUPT_STM32F30X_H
-#define EXTERNAL_INTERRUPT_STM32F30X_H
+#ifndef PLAT4M_EXTERNAL_INTERRUPT_STM32F30X_H
+#define PLAT4M_EXTERNAL_INTERRUPT_STM32F30X_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
-
-#include <Plat4m.h>
-#include <ExternalInterrupt.h>
-#include <GpioPinSTM32F30x.h>
-#include <GpioPortSTM32F30x.h>
-#include <InterruptSTM32F30x.h>
      
 #include <stm32f30x.h>
 #include <stm32f30x_exti.h>
 #include <stm32f30x_rcc.h>
+
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ExternalInterrupt.h>
+#include <Plat4m_Core/STM32F30x/GpioPinSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/GpioPortSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/InterruptSTM32F30x.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file Imu.h
 /// @author Ben Minerd
-/// @date 3/30/16
+/// @date 3/30/2016
 /// @brief Imu class header file.
 ///
 
@@ -46,9 +46,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <Callback.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/Accel.h>
+#include <Plat4m_Core/Gyro.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -84,20 +87,6 @@ public:
         ERROR_CODE_MAG_NOT_PRESENT
     };
 
-    enum Dof
-    {
-        DOF_X,
-        DOF_Y,
-        DOF_Z
-    };
-
-    enum Sensor
-    {
-        SENSOR_ACCEL,
-        SENSOR_GYRO,
-        SENSOR_MAG
-    };
-
     enum MeasurementMode
     {
         MEASUREMENT_MODE_SINGLE,
@@ -127,9 +116,9 @@ public:
     struct Config
     {
         MeasurementMode measurementMode;
-        float accelMeasurementRange;
+        AccelerationG accelMeasurementRangeAccelerationG;
         uint32_t accelMeasurementRateHz;
-        float gyroMeasurementRange;
+        AngularVelocityDps gyroMeasurementRangeAngularVelocityDps;
         uint32_t gyroMeasurementRateHz;
         float magMeasurementRange;
         uint32_t magMeasurementRateHz;
@@ -137,9 +126,9 @@ public:
 
     struct AccelMeasurement
     {
-        float x;
-        float y;
-        float z;
+    	AccelerationG x;
+    	AccelerationG y;
+    	AccelerationG z;
     };
 
     struct RawAccelMeasurement
@@ -151,9 +140,9 @@ public:
 
     struct GyroMeasurement
     {
-        float x;
-        float y;
-        float z;
+    	AngularVelocityDps x;
+    	AngularVelocityDps y;
+    	AngularVelocityDps z;
     };
 
     struct RawGyroMeasurement
@@ -233,11 +222,19 @@ public:
 
     Config getConfig() const;
 
-    Error setAccelMeasurementRange(const float range);
+    Error setAccelConfig(const Accel::Config& config);
+
+    Accel::Config getAccelConfig() const;
+
+    Error setGyroConfig(const Gyro::Config& config);
+
+    Gyro::Config getGyroConfig() const;
+
+    Error setAccelMeasurementRange(const AccelerationG range);
 
     Error setAccelMeasurementRateHz(const uint32_t rateHz);
 
-    Error setGyroMeasurementRange(const float range);
+    Error setGyroMeasurementRange(const AngularVelocityDps range);
 
     Error setGyroMeasurementRateHz(const uint32_t rateHz);
 
@@ -287,7 +284,7 @@ protected:
     // Protected constructors
     //--------------------------------------------------------------------------
     
-    Imu(const uint32_t accelDof, const uint32_t gyroDof, const uint32_t magDof);
+    Imu();
     
     //--------------------------------------------------------------------------
     // Protected virtual destructors
@@ -334,10 +331,6 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-
-    const uint32_t myAccelDof;
-    const uint32_t myGyroDof;
-    const uint32_t myMagDof;
 
     Config myConfig;
 

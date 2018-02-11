@@ -43,13 +43,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuLSM6DS3.h>
-#include <Plat4m.h>
-#include <SpiDeviceSt.h>
-#include <I2cDevice.h>
-#include <ByteArrayN.h>
-#include <CallbackMethod.h>
-#include <CallbackMethodParameter.h>
+#include <Plat4m_Core/ImuLSM6DS3/ImuLSM6DS3.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/SpiDeviceSt/SpiDeviceSt.h>
+#include <Plat4m_Core/I2cDevice.h>
+#include <Plat4m_Core/ByteArrayN.h>
+#include <Plat4m_Core/CallbackMethod.h>
+#include <Plat4m_Core/CallbackMethodParameter.h>
 
 using Plat4m::ImuLSM6DS3;
 using Plat4m::Imu;
@@ -210,7 +210,7 @@ ImuLSM6DS3::ImuLSM6DS3(Spi& spi,
                        GpioPin& chipSelectGpioPin,
 					   ExternalInterrupt* int1ExternalInterrupt,
 					   ExternalInterrupt* int2ExternalInterrupt) :
-    Imu(3, 3, 0),
+    Imu(),
 	mySlaveDevice(new SpiDeviceSt(spi, chipSelectGpioPin)),
 	myInt1ExternalInterrupt(int1ExternalInterrupt),
 	myInt2ExternalInterrupt(int2ExternalInterrupt),
@@ -230,7 +230,7 @@ ImuLSM6DS3::ImuLSM6DS3(const PinLevel sa0PinLevel,
 					   I2c& i2c,
 					   ExternalInterrupt* int1ExternalInterrupt,
 					   ExternalInterrupt* int2ExternalInterrupt) :
-    Imu(3, 3, 0),
+    Imu(),
 	mySlaveDevice(
 	            new I2cDevice(myI2cBaseAddress | ((uint8_t) sa0PinLevel), i2c)),
 	myInt1ExternalInterrupt(int1ExternalInterrupt),
@@ -497,7 +497,7 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
 
     value = 0;
 
-    if (!findValueIndex(config.accelMeasurementRange,
+    if (!findValueIndex(config.accelMeasurementRangeAccelerationG,
                         myAccelFullScaleMap,
                         ARRAY_SIZE(myAccelFullScaleMap),
                         index))
@@ -534,7 +534,7 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
 
     // Gyro measurement range (full scale)
 
-    if (!findValueIndex(config.gyroMeasurementRange,
+    if (!findValueIndex(config.gyroMeasurementRangeAngularVelocityDps,
                         myGyroFullScaleMap,
                         ARRAY_SIZE(myGyroFullScaleMap),
                         index))

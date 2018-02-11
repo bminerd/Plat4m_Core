@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ComProtocolPlat4mBinary.h>
+#include <Plat4m_Core/ComProtocolPlat4m/ComProtocolPlat4mBinary.h>
 
 using Plat4m::ComProtocolPlat4mBinary;
 using Plat4m::ComProtocol;

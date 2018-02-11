@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AsciiMessageHandler.h>
+#include <Plat4m_Core/ComProtocolPlat4m/AsciiMessageHandler.h>
 
 using Plat4m::AsciiMessageHandler;
 

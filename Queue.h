@@ -48,7 +48,7 @@
 
 #include <stdint.h>
 
-#include <QueueDriver.h>
+#include <Plat4m_Core/QueueDriver.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

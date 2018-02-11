@@ -39,17 +39,17 @@
 /// @brief BoardXNucleoIKS01A1 class header file.
 ///
 
-#ifndef BOARD_X_NUCLEO_IKS01A1_H
-#define BOARD_X_NUCLEO_IKS01A1_H
+#ifndef PLAT4M_BOARD_X_NUCLEO_IKS01A1_H
+#define PLAT4M_BOARD_X_NUCLEO_IKS01A1_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Board.h>
-#include <I2c.h>
-#include <ImuLSM6DS0.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Board.h>
+#include <Plat4m_Core/I2c.h>
+#include <Plat4m_Core/ImuLSM6DS0/ImuLSM6DS0.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -99,4 +99,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // BOARD_X_NUCLEO_IKS01A1_H
+#endif // PLAT4M_BOARD_X_NUCLEO_IKS01A1_H

@@ -35,7 +35,7 @@
 ///
 /// @file Message.cpp
 /// @author Ben Minerd
-/// @date 3/1/16
+/// @date 3/1/2016
 /// @brief Message class source file.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Message.h>
+#include <Plat4m_Core/ComProtocolPlat4m/Message.h>
 
 using Plat4m::Message;
 

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,10 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <EnableLine.h>
-#include <UiInput.h>
-#include <Callback.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/EnableLine.h>
+#include <Plat4m_Core/UiInput.h>
+#include <Plat4m_Core/Callback.h>
 
 //------------------------------------------------------------------------------
 // Defines

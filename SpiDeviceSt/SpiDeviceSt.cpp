@@ -35,7 +35,7 @@
 ///
 /// @file SpiDeviceSt.cpp
 /// @author Ben Minerd
-/// @date 4/4/13
+/// @date 4/4/2016
 /// @brief SpiDeviceSt class source file.
 ///
 
@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <SpiDeviceSt.h>
-#include <Plat4m.h>
+#include <Plat4m_Core/SpiDeviceSt/SpiDeviceSt.h>
+#include <Plat4m_Core/Plat4m.h>
 
 using Plat4m::SpiDeviceSt;
 using Plat4m::SpiDevice;

@@ -43,15 +43,15 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <InsServer.h>
-#include <BinaryMessageHandlerTemplate.h>
-#include <InsServerBinaryMessages.h>
-#include <InsMeasurementBinaryMessage.h>
-#include <InsServerSetConfigBinaryMessage.h>
-#include <InsServerSetConfigResponseBinaryMessage.h>
-#include <InsServerGetConfigBinaryMessage.h>
-#include <InsServerGetConfigResponseBinaryMessage.h>
-#include <ByteArrayN.h>
+#include <Plat4m_Core/InsServer/InsServer.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageHandlerTemplate.h>
+#include <Plat4m_Core/InsServer/InsServerBinaryMessages.h>
+#include <Plat4m_Core/InsServer/InsMeasurementBinaryMessage.h>
+#include <Plat4m_Core/InsServer/InsServerSetConfigBinaryMessage.h>
+#include <Plat4m_Core/InsServer/InsServerSetConfigResponseBinaryMessage.h>
+#include <Plat4m_Core/InsServer/InsServerGetConfigBinaryMessage.h>
+#include <Plat4m_Core/InsServer/InsServerGetConfigResponseBinaryMessage.h>
+#include <Plat4m_Core/ByteArrayN.h>
 
 #include <math.h>
 

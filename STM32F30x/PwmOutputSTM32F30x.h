@@ -46,11 +46,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <PwmOutput.h>
-#include <TimerSTM32F30x.h>
-#include <GpioPinSTM32F30x.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/PwmOutput.h>
+#include <Plat4m_Core/STM32F30x/TimerSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/GpioPinSTM32F30x.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

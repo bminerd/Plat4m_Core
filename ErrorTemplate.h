@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2015 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@
 /// @file ErrorTemplate.h
 /// @author Ben Minerd
 /// @date 5/25/15
-/// @brief Generic class for all modules to be subclasses of.
+/// @brief ErrorTemplate header file.
 ///
 
 #ifndef PLAT4M_ERROR_TEMPLATE_H
@@ -46,7 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
+#include <Plat4m_Core/Plat4m.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

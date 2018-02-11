@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuSetConfigAsciiMessage.h>
+#include <Plat4m_Core/ImuServer/ImuSetConfigAsciiMessage.h>
 
 #include <stdlib.h>
 #include <stdio.h>

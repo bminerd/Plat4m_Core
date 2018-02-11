@@ -39,17 +39,17 @@
 /// @brief ImuSetConfigAsciiMessage class header file.
 ///
 
-#ifndef IMU_SET_CONFIG_ASCII_MESSAGE_H
-#define IMU_SET_CONFIG_ASCII_MESSAGE_H
+#ifndef PLAT4M_IMU_SET_CONFIG_ASCII_MESSAGE_H
+#define PLAT4M_IMU_SET_CONFIG_ASCII_MESSAGE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AsciiMessage.h>
-#include <ImuSetConfigMessage.h>
-#include <ByteArray.h>
-#include <Array.h>
+#include <Plat4m_Core/ComProtocolPlat4m/AsciiMessage.h>
+#include <Plat4m_Core/ImuServer/ImuSetConfigMessage.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Array.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

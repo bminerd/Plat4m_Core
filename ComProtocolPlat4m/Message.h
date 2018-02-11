@@ -39,16 +39,16 @@
 /// @brief Message class header file.
 ///
 
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef PLAT4M_MESSAGE_H
+#define PLAT4M_MESSAGE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Frame.h>
-#include <ByteArray.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ComProtocolPlat4m/Frame.h>
+#include <Plat4m_Core/ByteArray.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -71,8 +71,7 @@ public:
 
     enum ErrorCode
     {
-        ERROR_CODE_NONE,
-        ERROR_CODE_INVALID_PARAMETER
+        ERROR_CODE_NONE
     };
 
     //--------------------------------------------------------------------------
@@ -101,4 +100,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // MESSAGE_H
+#endif // PLAT4M_MESSAGE_H

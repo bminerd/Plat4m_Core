@@ -46,14 +46,14 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Spi.h>
-#include <GpioPinSTM32F30x.h>
-#include <Module.h>
-#include <ProcessorSTM32F30x.h>
-#include <InterruptSTM32F30x.h>
-#include <DmaChannelSTM32F30x.h>
-
 #include <stm32f30x.h>
+
+#include <Plat4m_Core/Spi.h>
+#include <Plat4m_Core/STM32F30x/GpioPinSTM32F30x.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/STM32F30x/ProcessorSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/InterruptSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/DmaChannelSTM32F30x.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

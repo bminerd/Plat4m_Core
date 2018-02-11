@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,20 +35,20 @@
 ///
 /// @file Adc.h
 /// @author Ben Minerd
-/// @date 4/10/13
+/// @date 4/10/2013
 /// @brief Adc class header file.
 ///
 
-#ifndef ADC_H
-#define ADC_H
+#ifndef PLAT4M_ADC_H
+#define PLAT4M_ADC_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <ErrorTemplate.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -69,9 +69,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of ADC errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -79,18 +76,12 @@ public:
         ERROR_CODE_COMMUNICATION_FAILED
     };
     
-    /**
-     * @brief Enumeration of ADC modes.
-     */
     enum Mode
     {
         MODE_INDEPENDENT,
         MODE_INTERLEAVED
     };
     
-    /**
-     * @brief Enumeration of ADC conversions.
-     */
     enum ConversionMode
     {
         CONVERSION_MODE_SINGLE,
@@ -107,9 +98,6 @@ public:
     // Public structures
     //--------------------------------------------------------------------------
 
-    /**
-     * @brief ADC configuration type.
-     */
     struct Config
     {
         ConversionMode conversionMode;
@@ -119,18 +107,8 @@ public:
     // Public virtual methods
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Configures this ADC.
-     * @param config ADC configuration.
-     * @return ADC error.
-     */
     virtual Error configure(const Config& config);
 
-    /**
-     * @brief Reads a value from this ADC.
-     * @param voltage Voltage read from the ADC.
-     * @return ADC error.
-     */
     virtual Error readVoltage(float& voltage, const unsigned int nReadings = 1);
 
 protected:
@@ -166,4 +144,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // ADC_H
+#endif // PLAT4M_ADC_H

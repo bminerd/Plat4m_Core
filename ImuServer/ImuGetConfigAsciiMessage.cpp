@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuGetConfigAsciiMessage.h>
+#include <Plat4m_Core/ImuServer/ImuGetConfigAsciiMessage.h>
 
 using Plat4m::ImuGetConfigAsciiMessage;
 using Plat4m::ByteArray;

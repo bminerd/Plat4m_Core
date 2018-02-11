@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2015 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,20 +39,20 @@
 /// @brief ImuLSM6DS0 class header file.
 ///
 
-#ifndef IMU_LSM6DS0_H
-#define IMU_LSM6DS0_H
+#ifndef PLAT4M_IMU_LSM6DS0_H
+#define PLAT4M_IMU_LSM6DS0_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Imu.h>
-#include <ErrorTemplate.h>
-#include <Module.h>
-#include <Spi.h>
-#include <GpioPin.h>
-#include <I2c.h>
-#include <SlaveDevice.h>
+#include <Plat4m_Core/Imu.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/Spi.h>
+#include <Plat4m_Core/GpioPin.h>
+#include <Plat4m_Core/I2c.h>
+#include <Plat4m_Core/SlaveDevice.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -217,4 +217,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // IMU_LSM6DS0_H
+#endif // PLAT4M_IMU_LSM6DS0_H

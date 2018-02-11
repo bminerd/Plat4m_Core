@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <ErrorTemplate.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -78,8 +78,6 @@ public:
     //--------------------------------------------------------------------------
     // Public pure virtual methods
     //--------------------------------------------------------------------------
-
-    virtual void waitFast() = 0;
     
     virtual void notifyFast() = 0;
 

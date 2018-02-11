@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BoardXNucleoIKS01A1.h>
+#include <Plat4m_Core/BoardXNucleoIKS01A1/BoardXNucleoIKS01A1.h>
 
 using Plat4m::BoardXNucleoIKS01A1;
 using Plat4m::ImuLSM6DS0;

@@ -39,17 +39,17 @@
 /// @brief ImuSetConfigResponseAsciiMessage class header file.
 ///
 
-#ifndef IMU_SET_CONFIG_RESPONSE_ASCII_MESSAGE_H
-#define IMU_SET_CONFIG_RESPONSE_ASCII_MESSAGE_H
+#ifndef PLAT4M_IMU_SET_CONFIG_RESPONSE_ASCII_MESSAGE_H
+#define PLAT4M_IMU_SET_CONFIG_RESPONSE_ASCII_MESSAGE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AsciiMessage.h>
-#include <ImuSetConfigResponseMessage.h>
-#include <ByteArray.h>
-#include <Array.h>
+#include <Plat4m_Core/ComProtocolPlat4m/AsciiMessage.h>
+#include <Plat4m_Core/ImuServer/ImuSetConfigResponseMessage.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Array.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -105,4 +105,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // IMU_SET_CONFIG_RESPONSE_ASCII_MESSAGE_H
+#endif // PLAT4M_IMU_SET_CONFIG_RESPONSE_ASCII_MESSAGE_H

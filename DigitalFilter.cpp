@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,15 +35,15 @@
 ///
 /// @file DigitalFilter.cpp
 /// @author Ben Minerd
-/// @date 5/30/13
-/// @brief DigitalFilter class.
+/// @date 5/30/2013
+/// @brief DigitalFilter class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <DigitalFilter.h>
+#include <Plat4m_Core/DigitalFilter.h>
 
 using Plat4m::DigitalFilter;
 

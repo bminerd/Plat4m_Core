@@ -46,12 +46,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Ins.h>
-#include <ErrorTemplate.h>
-#include <Callback.h>
-#include <Imu.h>
-#include <Matrix.h>
-#include <Quaternion.h>
+#include <Plat4m_Core/Ins.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/Imu.h>
+#include <Plat4m_Math/Matrix.h>
+#include <Plat4m_Math/Quaternion.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

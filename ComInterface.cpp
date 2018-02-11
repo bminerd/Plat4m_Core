@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file ComInterface.cpp
 /// @author Ben Minerd
-/// @date 4/22/13
+/// @date 4/22/2013
 /// @brief ComInterface class source file.
 ///
 
@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ComInterface.h>
-#include <System.h>
+#include <Plat4m_Core/ComInterface.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::ComInterface;
 using Plat4m::Buffer;

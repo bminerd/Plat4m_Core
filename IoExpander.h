@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,17 +39,17 @@
 /// @brief IoExpander class header file.
 ///
 
-#ifndef IO_EXPANDER_H
-#define IO_EXPANDER_H
+#ifndef PLAT4M_IO_EXPANDER_H
+#define PLAT4M_IO_EXPANDER_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <GpioPin.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/GpioPin.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -154,4 +154,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // IO_EXPANDER_H
+#endif // PLAT4M_IO_EXPANDER_H

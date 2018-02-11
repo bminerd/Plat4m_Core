@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ComProtocolPlat4mAscii.h>
+#include <Plat4m_Core/ComProtocolPlat4m/ComProtocolPlat4mAscii.h>
 
 using Plat4m::ComProtocolPlat4mAscii;
 using Plat4m::ComProtocol;

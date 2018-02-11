@@ -35,7 +35,7 @@
 ///
 /// @file ComInterfaceDevice.cpp
 /// @author Ben Minerd
-/// @date 4/12/17
+/// @date 4/12/2017
 /// @brief ComInterfaceDevice class.
 ///
 
@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ComInterfaceDevice.h>
-#include <System.h>
+#include <Plat4m_Core/ComInterfaceDevice.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::ComInterface;
 using Plat4m::ComInterfaceDevice;

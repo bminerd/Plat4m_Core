@@ -39,16 +39,16 @@
 /// @brief InterruptPolicy class header file.
 ///
 
-#ifndef INTERRUPT_POLICY_H
-#define INTERRUPT_POLICY_H
+#ifndef PLAT4M_INTERRUPT_POLICY_H
+#define PLAT4M_INTERRUPT_POLICY_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <ErrorTemplate.h>
-#include <Callback.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Callback.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -137,4 +137,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // INTERRUPT_POLICY_H
+#endif // PLAT4M_INTERRUPT_POLICY_H

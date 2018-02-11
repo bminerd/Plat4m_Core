@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,11 +36,11 @@
 /// @file Callback.h
 /// @author Ben Minerd
 /// @date 7/8/2013
-/// @brief Callback class.
+/// @brief Callback class header file.
 ///
 
-#ifndef CALLBACK_H
-#define CALLBACK_H
+#ifndef PLAT4M_CALLBACK_H
+#define PLAT4M_CALLBACK_H
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -78,4 +78,4 @@ public:
 
 }; // namespace Plat4m
 
-#endif // CALLBACK_H
+#endif // PLAT4M_CALLBACK_H

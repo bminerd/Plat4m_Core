@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,15 +36,15 @@
 /// @file Thread.cpp
 /// @author Ben Minerd
 /// @date 6/14/2013
-/// @brief Thread class.
+/// @brief Thread class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Thread.h>
-#include <System.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::Thread;
 

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2014 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,15 +35,15 @@
 ///
 /// @file AllocationMemory.cpp
 /// @author Ben Minerd
-/// @date 4/8/14
-/// @brief AllocationMemory class.
+/// @date 4/8/2014
+/// @brief AllocationMemory class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AllocationMemory.h>
+#include <Plat4m_Core/AllocationMemory.h>
 
 using Plat4m::AllocationMemory;
 
@@ -52,6 +52,18 @@ using Plat4m::AllocationMemory;
 //------------------------------------------------------------------------------
 
 AllocationMemory* AllocationMemory::myDriver = 0;
+
+//------------------------------------------------------------------------------
+extern "C" void* allocationMemoryAllocate(size_t count)
+{
+	return AllocationMemory::allocate(count);
+}
+
+//------------------------------------------------------------------------------
+extern "C" void allocationMemoryDeallocate(void* pointer)
+{
+	AllocationMemory::deallocate(pointer);
+}
 
 //------------------------------------------------------------------------------
 // Public static methods

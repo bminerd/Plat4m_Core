@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,15 +39,15 @@
 /// @brief UiState class header file.
 ///
 
-#ifndef UI_STATE_H
-#define UI_STATE_H
+#ifndef PLAT4M_UI_STATE_H
+#define PLAT4M_UI_STATE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Callback.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Callback.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -112,4 +112,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // _UI_STATE_H_
+#endif // PLAT4M_UI_STATE_H

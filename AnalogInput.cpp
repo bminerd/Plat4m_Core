@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file AnalogInput.cpp
 /// @author Ben Minerd
-/// @date 8/9/16
+/// @date 8/9/2016
 /// @brief AnalogInput class source file.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AnalogInput.h>
+#include <Plat4m_Core/AnalogInput.h>
 
 using Plat4m::AnalogInput;
 

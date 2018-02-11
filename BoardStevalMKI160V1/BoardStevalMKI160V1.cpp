@@ -44,7 +44,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BoardStevalMKI160V1.h>
+#include <Plat4m_Core/BoardStevalMKI160V1/BoardStevalMKI160V1.h>
 
 using Plat4m::BoardStevalMKI160V1;
 using Plat4m::ImuLSM6DS3;

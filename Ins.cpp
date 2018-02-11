@@ -35,7 +35,7 @@
 ///
 /// @file Ins.cpp
 /// @author Ben Minerd
-/// @date 3/30/16
+/// @date 4/20/2017
 /// @brief Ins class source file.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Ins.h>
+#include <Plat4m_Core/Ins.h>
 
 using Plat4m::Ins;
 

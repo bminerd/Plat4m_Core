@@ -35,7 +35,7 @@
 ///
 /// @file WaitCondition.cpp
 /// @author Ben Minerd
-/// @date 6/18/2013
+/// @date 11/28/2016
 /// @brief WaitCondition class.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <WaitCondition.h>
+#include <Plat4m_Core/WaitCondition.h>
 
 using Plat4m::WaitCondition;
 

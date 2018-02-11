@@ -35,24 +35,24 @@
 ///
 /// @file SpiDeviceSt.h
 /// @author Ben Minerd
-/// @date 4/4/13
+/// @date 4/4/2016
 /// @brief SpiDeviceSt class header file.
 ///
 
-#ifndef SPI_DEVICE_ST_H
-#define SPI_DEVICE_ST_H
+#ifndef PLAT4M_SPI_DEVICE_ST_H
+#define PLAT4M_SPI_DEVICE_ST_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <SlaveDevice.h>
-#include <SpiDevice.h>
-#include <Spi.h>
-#include <GpioPin.h>
-#include <ByteArray.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/SlaveDevice.h>
+#include <Plat4m_Core/SpiDevice.h>
+#include <Plat4m_Core/Spi.h>
+#include <Plat4m_Core/GpioPin.h>
+#include <Plat4m_Core/ByteArray.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -115,4 +115,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // SPI_DEVICE_ST_H
+#endif // PLAT4M_SPI_DEVICE_ST_H

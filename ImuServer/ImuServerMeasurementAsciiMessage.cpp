@@ -43,10 +43,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuServerMeasurementAsciiMessage.h>
-
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <Plat4m_Core/ImuServer/ImuServerMeasurementAsciiMessage.h>
 
 using Plat4m::ImuServerMeasurementAsciiMessage;
 using Plat4m::ImuServerMeasurementMessage;

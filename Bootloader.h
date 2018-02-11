@@ -39,15 +39,15 @@
 /// @brief Bootloader class header file.
 ///
 
-#ifndef BOOTLOADER_H
-#define BOOTLOADER_H
+#ifndef PLAT4M_BOOTLOADER_H
+#define PLAT4M_BOOTLOADER_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Application.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Application.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -119,4 +119,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // BOOTLOADER_H
+#endif // PLAT4M_BOOTLOADER_H

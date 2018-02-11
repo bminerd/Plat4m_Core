@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file ComInterfaceDevice.h
 /// @author Ben Minerd
-/// @date 3/15/16
+/// @date 3/15/2016
 /// @brief ComInterfaceDevice class header file.
 ///
 
@@ -46,12 +46,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <ComInterface.h>
-#include <Buffer.h>
-#include <ByteArray.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/ComInterface.h>
+#include <Plat4m_Core/Buffer.h>
+#include <Plat4m_Core/ByteArray.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

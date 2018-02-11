@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuServerGetConfigBinaryMessage.h>
-#include <ImuServerBinaryMessages.h>
-#include <ByteArrayParser.h>
+#include <Plat4m_Core/ImuServer/ImuServerGetConfigBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerBinaryMessages.h>
+#include <Plat4m_Core/ByteArrayParser.h>
 
 using Plat4m::ImuServerGetConfigBinaryMessage;
 using namespace Plat4m::ImuServerBinaryMessages;

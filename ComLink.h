@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,8 @@
 ///
 /// @file ComLink.h
 /// @author Ben Minerd
-/// @date 4/22/13
-/// @brief ComLink class.
+/// @date 4/22/2013
+/// @brief ComLink class header file.
 ///
 
 #ifndef PLAT4M_COM_LINK_H
@@ -46,19 +46,19 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <ComInterfaceDevice.h>
-#include <ErrorTemplate.h>
-#include <List.h>
-#include <ComInterface.h>
-#include <Thread.h>
-#include <CallbackMethod.h>
-#include <System.h>
-#include <WaitCondition.h>
-#include <Mutex.h>
-#include <MutexLock.h>
-#include <Queue.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ComInterfaceDevice.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/ComInterface.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/CallbackMethod.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/Mutex.h>
+#include <Plat4m_Core/MutexLock.h>
+#include <Plat4m_Core/Queue.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

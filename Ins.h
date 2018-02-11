@@ -46,11 +46,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <Callback.h>
-#include <Matrix.h>
-#include <Vector.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Math/Matrix.h>
+#include <Plat4m_Math/Vector.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

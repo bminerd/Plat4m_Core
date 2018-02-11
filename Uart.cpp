@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file Uart.cpp
 /// @author Ben Minerd
-/// @date 3/22/13
+/// @date 3/22/2013
 /// @brief Uart class source file.
 ///
 
@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Uart.h>
-#include <System.h>
+#include <Plat4m_Core/Uart.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::Uart;
 using Plat4m::ComInterface;

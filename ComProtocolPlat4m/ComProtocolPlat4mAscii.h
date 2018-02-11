@@ -48,17 +48,17 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ComProtocol.h>
-#include <ErrorTemplate.h>
-#include <Callback.h>
-#include <ByteArray.h>
-#include <ByteArrayN.h>
-#include <Message.h>
-#include <AsciiMessageHandler.h>
-#include <List.h>
-#include <ArrayN.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/ComProtocol.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/ByteArrayN.h>
+#include <Plat4m_Core/ComProtocolPlat4m/Message.h>
+#include <Plat4m_Core/ComProtocolPlat4m/AsciiMessageHandler.h>
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/ArrayN.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

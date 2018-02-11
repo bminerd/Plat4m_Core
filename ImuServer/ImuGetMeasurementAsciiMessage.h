@@ -35,20 +35,20 @@
 ///
 /// @file ImuGetMeasurementAsciiMessage.h
 /// @author Ben Minerd
-/// @date 5/24/16
+/// @date 5/24/2016
 /// @brief ImuGetMeasurementAsciiMessage class header file.
 ///
 
-#ifndef IMU_GET_MEASUREMENT_ASCII_MESSAGE_H
-#define IMU_GET_MEASUREMENT_ASCII_MESSAGE_H
+#ifndef PLAT4M_IMU_GET_MEASUREMENT_ASCII_MESSAGE_H
+#define PLAT4M_IMU_GET_MEASUREMENT_ASCII_MESSAGE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <AsciiMessage.h>
-#include <ImuGetMeasurementMessage.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ComProtocolPlat4m/AsciiMessage.h>
+#include <Plat4m_Core/ImuServer/ImuGetMeasurementMessage.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -94,4 +94,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // IMU_GET_MEASUREMENT_ASCII_MESSAGE_H
+#endif // PLAT4M_IMU_GET_MEASUREMENT_ASCII_MESSAGE_H

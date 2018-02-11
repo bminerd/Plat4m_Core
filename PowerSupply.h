@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,21 +35,21 @@
 ///
 /// @file PowerSupply.h
 /// @author Ben Minerd
-/// @date 4/19/13
+/// @date 4/19/2013
 /// @brief PowerSupply class header file.
 ///
 
-#ifndef POWER_SUPPLY_H
-#define POWER_SUPPLY_H
+#ifndef PLAT4M_POWER_SUPPLY_H
+#define PLAT4M_POWER_SUPPLY_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <EnableLine.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/EnableLine.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -70,9 +70,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of enable line errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -146,4 +143,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // _POWER_SUPPLY_H_
+#endif // PLAT4M_POWER_SUPPLY_H

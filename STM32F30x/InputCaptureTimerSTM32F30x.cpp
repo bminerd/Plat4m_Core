@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <InputCaptureTimerSTM32F30x.h>
-#include <ProcessorSTM32F30x.h>
-#include <CallbackMethod.h>
+#include <Plat4m_Core/STM32F30x/InputCaptureTimerSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/ProcessorSTM32F30x.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 using Plat4m::InputCaptureTimerSTM32F30x;
 using Plat4m::InputCaptureTimer;

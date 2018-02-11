@@ -33,10 +33,10 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ThreadFreeRTOS.cpp
+/// @file ThreadFreeRtos.cpp
 /// @author Ben Minerd
 /// @date 12/23/2017
-/// @brief ThreadFreeRTOS class source file.
+/// @brief ThreadFreeRtos class source file.
 ///
 
 //------------------------------------------------------------------------------
@@ -46,23 +46,24 @@
 #include <Plat4m_Core/SystemFreeRTOS/ThreadFreeRTOS.h>
 #include <Plat4m_Core/System.h>
 
-using Plat4m::ThreadFreeRTOS;
+using Plat4m::ThreadFreeRtos;
+using Plat4m::Module;
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadFreeRTOS::ThreadFreeRTOS(RunCallback& callback, const TimeMs periodMs) :
+ThreadFreeRtos::ThreadFreeRtos(RunCallback& callback, const TimeMs periodMs) :
     Thread(callback, periodMs),
 	myTaskHandle(0)
 {
-	BaseType_t returnValue = xTaskCreate(&ThreadFreeRTOS::taskCallback,
+	BaseType_t returnValue = xTaskCreate(&ThreadFreeRtos::taskCallback,
 										 "",
 										 256,
 										 (void*) this,
 										 tskIDLE_PRIORITY,
-										 &myTaskHadle);
+										 &myTaskHandle);
 
 	if (returnValue != pdPASS)
 	{
@@ -71,6 +72,8 @@ ThreadFreeRTOS::ThreadFreeRTOS(RunCallback& callback, const TimeMs periodMs) :
 			// Unable to create task, loop forever
 		}
 	}
+
+	vTaskSuspend(myTaskHandle);
 }
 
 //------------------------------------------------------------------------------
@@ -78,16 +81,18 @@ ThreadFreeRTOS::ThreadFreeRTOS(RunCallback& callback, const TimeMs periodMs) :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadFreeRTOS::~ThreadFreeRTOS()
+ThreadFreeRtos::~ThreadFreeRtos()
 {
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Thread
+// Private static methods implemented from Thread
 //------------------------------------------------------------------------------
-void ThreadFreeRTOS::taskCallback(void* parameters)
+
+//------------------------------------------------------------------------------
+void ThreadFreeRtos::taskCallback(void* parameter)
 {
-	ThreadFreeRTOS* thread = static_cast<ThreadFreeRTOS*>(parameters);
+	ThreadFreeRtos* thread = static_cast<ThreadFreeRtos*>(parameter);
 	TickType_t lastWakeTime = xTaskGetTickCount();
 
 	while (true) // Loop forever
@@ -102,17 +107,36 @@ void ThreadFreeRTOS::taskCallback(void* parameters)
 }
 
 //------------------------------------------------------------------------------
+// Private methods implemented from Module
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Module::Error ThreadFreeRtos::driverSetEnabled(const bool enabled)
+{
+	if (enabled)
+	{
+		vTaskResume(myTaskHandle);
+	}
+	else
+	{
+		vTaskSuspend(myTaskHandle);
+	}
+
+	return Module::Error(Module::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
 // Private methods implemented from Thread
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void ThreadFreeRTOS::driverSetPeriodMs(const TimeMs periodMs)
+void ThreadFreeRtos::driverSetPeriodMs(const TimeMs periodMs)
 {
     // Do nothing
 }
 
 //------------------------------------------------------------------------------
-uint32_t ThreadFreeRTOS::driverSetPriority(const uint32_t priority)
+uint32_t ThreadFreeRtos::driverSetPriority(const uint32_t priority)
 {
 	vTaskPrioritySet(myTaskHandle, priority);
 

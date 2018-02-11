@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,8 @@
 ///
 /// @file GpioPort.h
 /// @author Ben Minerd
-/// @date 3/25/13
-/// @brief GpioPort class.
+/// @date 3/25/2013
+/// @brief GpioPort class header file.
 ///
 
 #ifndef PLAT4M_GPIO_PORT_H
@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Module.h>
-#include <ErrorTemplate.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

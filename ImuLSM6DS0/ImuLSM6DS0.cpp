@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2015 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,10 +43,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuLSM6DS0.h>
-#include <SpiDeviceSt.h>
-#include <I2cDevice.h>
-#include <ByteArrayN.h>
+#include <Plat4m_Core/ImuLSM6DS0/ImuLSM6DS0.h>
+#include <Plat4m_Core/SpiDeviceSt/SpiDeviceSt.h>
+#include <Plat4m_Core/I2cDevice.h>
+#include <Plat4m_Core/ByteArrayN.h>
 
 using Plat4m::ImuLSM6DS0;
 using Plat4m::Imu;
@@ -95,7 +95,7 @@ static const float gyroFullScaleSensitivityMap[3] =
 
 //------------------------------------------------------------------------------
 ImuLSM6DS0::ImuLSM6DS0(Plat4m::Spi& spi, Plat4m::GpioPin& chipSelectGpioPin) :
-    Imu(3, 3, 0),
+    Imu(),
 	mySlaveDevice(0),
 	myConfig()
 {
@@ -104,7 +104,7 @@ ImuLSM6DS0::ImuLSM6DS0(Plat4m::Spi& spi, Plat4m::GpioPin& chipSelectGpioPin) :
 
 //------------------------------------------------------------------------------
 ImuLSM6DS0::ImuLSM6DS0(const PinLevel sa0PinLevel, Plat4m::I2c& i2c) :
-    Imu(3, 3, 0),
+    Imu(),
 	mySlaveDevice(0),
 	myConfig()
 {

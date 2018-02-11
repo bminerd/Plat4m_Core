@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <SpiSTM32F30x.h>
-#include <Buffer.h>
-#include <CallbackMethod.h>
+#include <Plat4m_Core/STM32F30x/SpiSTM32F30x.h>
+#include <Plat4m_Core/Buffer.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 using Plat4m::SpiSTM32F30x;
 using Plat4m::Spi;

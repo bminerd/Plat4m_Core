@@ -46,11 +46,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <ByteArray.h>
-#include <Callback.h>
-#include <BinaryMessage.h>
-#include <ComProtocol.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/ComProtocol.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessage.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

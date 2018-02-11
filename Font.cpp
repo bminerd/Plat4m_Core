@@ -43,7 +43,7 @@
  * Include files
  *----------------------------------------------------------------------------*/
 
-#include <Font.h>
+#include <Plat4m_Core/Font.h>
 
 using Plat4m::Font;
 

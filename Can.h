@@ -39,20 +39,20 @@
 /// @brief Can class header file.
 ///
 
-#ifndef CAN_H
-#define CAN_H
+#ifndef PLAT4M_CAN_H
+#define PLAT4M_CAN_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <ByteArrayN.h>
-#include <Callback.h>
-#include <List.h>
-#include <BufferN.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/ByteArrayN.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/BufferN.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -73,9 +73,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of CAN errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,              		   /// No error.
@@ -108,9 +105,6 @@ public:
     // Public structures
     //--------------------------------------------------------------------------
     
-    ///
-    /// @brief CAN configuration structure.
-    ///
     struct Config
     {
     	uint32_t baudRate;
@@ -142,13 +136,6 @@ public:
     // Public virtual methods
     //--------------------------------------------------------------------------
     
-    ///
-    /// @brief Configures this CAN object with the given configuration
-    /// structure.
-    /// @return Error with a code: 1) ERROR_CODE_NONE if configuration was
-    /// successful, 2) ERROR_CODE_NOT_ENABLED if ::enable(true) method wasn't
-    /// previously called...
-    ///
     virtual Error setConfig(const Config& config);
     
     virtual Error addReceivedMessageHandler(
@@ -174,10 +161,7 @@ protected:
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
-    /**
-     * @brief Constructor for Can.
-     */
+
     Can();
     
     //--------------------------------------------------------------------------
@@ -221,4 +205,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // CAN_H
+#endif // PLAT4M_CAN_H

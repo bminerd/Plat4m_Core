@@ -46,9 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BinaryMessage.h>
-#include <InsServerGetConfigMessage.h>
-#include <ByteArray.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessage.h>
+#include <Plat4m_Core/InsServer/InsServerGetConfigMessage.h>
+#include <Plat4m_Core/ByteArray.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

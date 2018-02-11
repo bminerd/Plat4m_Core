@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2036 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,15 +36,15 @@
 /// @file System.cpp
 /// @author Ben Minerd
 /// @date 6/4/2013
-/// @brief System class.
+/// @brief System class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <System.h>
-#include <List.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/List.h>
 
 using Plat4m::System;
 using Plat4m::Thread;

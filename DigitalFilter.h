@@ -36,7 +36,7 @@
 /// @file DigitalFilter.h
 /// @author Ben Minerd
 /// @date 4/5/2017
-/// @brief DigitalFilter class.
+/// @brief DigitalFilter class header file.
 ///
 
 #ifndef PLAT4M_DIGITAL_FILTER_H
@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

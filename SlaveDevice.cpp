@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2014 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file SlaveDevice.cpp
 /// @author Ben Minerd
-/// @date 4/24/14
+/// @date 4/24/2014
 /// @brief SlaveDevice class source file.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <SlaveDevice.h>
+#include <Plat4m_Core/SlaveDevice.h>
 
 using Plat4m::SlaveDevice;
 using Plat4m::Array;

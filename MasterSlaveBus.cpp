@@ -36,15 +36,15 @@
 /// @file MasterSlaveBus.cpp
 /// @author Ben Minerd
 /// @date 7/5/2016
-/// @brief I2C class source file.
+/// @brief MasterSlaveBus class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <MasterSlaveBus.h>
-#include <System.h>
+#include <Plat4m_Core/MasterSlaveBus.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::MasterSlaveBus;
 using Plat4m::Buffer;

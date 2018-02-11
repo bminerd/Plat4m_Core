@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,12 +43,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AdcSTM32F30x.h>
-#include <Processor.h>
-#include <CallbackMethod.h>
+#include <Plat4m_Core/STM32F30x/AdcSTM32F30x.h>
+#include <Plat4m_Core/Processor.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 // TODO Create a way to delay without System include
-#include <System.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::AdcSTM32F30x;
 using Plat4m::Module;

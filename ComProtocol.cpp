@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,16 +35,16 @@
 ///
 /// @file ComProtocol.cpp
 /// @author Ben Minerd
-/// @date 4/22/13
-/// @brief ComProtocol class.
+/// @date 4/22/2013
+/// @brief ComProtocol class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ComProtocol.h>
-#include <System.h>
+#include <Plat4m_Core/ComProtocol.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::ComProtocol;
 using Plat4m::ComLink;

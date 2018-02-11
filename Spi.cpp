@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Spi.h>
-#include <System.h>
+#include <Plat4m_Core/Spi.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::Spi;
 using Plat4m::Module;

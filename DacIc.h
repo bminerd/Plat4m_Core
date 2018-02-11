@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,15 +39,15 @@
 /// @brief DacIc class header file.
 ///
 
-#ifndef DAC_IC_H
-#define DAC_IC_H
+#ifndef PLAT4M_DAC_IC_H
+#define PLAT4M_DAC_IC_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -68,9 +68,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of DAC IC errors.
-     */
     enum Error
     {
         ERROR_NONE,
@@ -132,4 +129,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // DAC_IC_H
+#endif // PLAT4M_DAC_IC_H

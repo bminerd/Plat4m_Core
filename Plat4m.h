@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2012 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,8 @@
 ///
 /// @file Plat4m.h
 /// @author Ben Minerd
-/// @date 7/30/12
-/// @brief Plat4m namespace.
+/// @date 7/30/2012
+/// @brief Plat4m namespace file.
 ///
 
 #ifndef PLAT4M_H
@@ -46,13 +46,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#ifdef PLAT4M_CORE_CONFIG
-#include <Plat4mCoreConfig.h>
-#endif
-
 #include <stdint.h>
 #include <float.h>
 #include <math.h>
+
+#ifdef PLAT4M_CORE_CONFIG
+#include <Plat4mCoreConfig.h>
+#endif
 
 using namespace std;
 
@@ -149,7 +149,7 @@ namespace Plat4m
     // Variables
     //--------------------------------------------------------------------------
 
-    static const char* plat4mVersion = "0.0.23";
+    static const char* plat4mVersion = "0.0.24";
 
     //--------------------------------------------------------------------------
     // Inline functions

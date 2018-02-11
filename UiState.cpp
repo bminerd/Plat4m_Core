@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,17 +33,17 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file UiState.h
+/// @file UiState.cpp
 /// @author Ben Minerd
 /// @date 7/22/2013
-/// @brief UiState class.
+/// @brief UiState class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <UiState.h>
+#include <Plat4m_Core/UiState.h>
 
 using Plat4m::UiState;
 

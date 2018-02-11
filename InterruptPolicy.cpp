@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <InterruptPolicy.h>
-#include <Interrupt.h>
+#include <Plat4m_Core/InterruptPolicy.h>
+#include <Plat4m_Core/Interrupt.h>
 
 using Plat4m::InterruptPolicy;
 

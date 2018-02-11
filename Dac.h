@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,16 +39,16 @@
 /// @brief Dac class header file.
 ///
 
-#ifndef DAC_H
-#define DAC_H
+#ifndef PLAT4M_DAC_H
+#define PLAT4M_DAC_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Module.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/Module.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -69,9 +69,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of DAC errors.
-     */
     enum Error
     {
         ERROR_NONE,
@@ -95,18 +92,8 @@ public:
     // Public virtual methods
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Configures this DAC.
-     * @param config DAC configuration.
-     * @return DAC error.
-     */
     virtual Error configure(const Config& config);
 
-    /**
-     * @brief Sets a voltage on this DAC.
-     * @param voltage Voltage to set on the DAC.
-     * @return DAC error.
-     */
     virtual Error setVoltage(const float voltage);
     
     //--------------------------------------------------------------------------
@@ -166,4 +153,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // _DAC_H_
+#endif // PLAT4M_DAC_H

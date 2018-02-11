@@ -46,12 +46,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BinaryMessage.h>
-#include <ImuMeasurementMessage.h>
-#include <ByteArray.h>
-#include <Array.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuMeasurementMessage.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Array.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

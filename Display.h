@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,16 +39,16 @@
 /// @brief Display class header file.
 ///
 
-#ifndef DISPLAY_H
-#define DISPLAY_H
+#ifndef PLAT4M_DISPLAY_H
+#define PLAT4M_DISPLAY_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <ErrorTemplate.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -69,9 +69,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of display errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -113,28 +110,12 @@ public:
     
     virtual Frame& getFrame();
 
-    /**
-     * @brief Configures this display.
-     * @param config Display configuration.
-     * @return Display error.
-     */
     virtual Error configure(const Config& config);
 
     virtual Error writeFrame();
 
-    /**
-     * @brief Clears this display.
-     * @param display Display to access.
-     * @return Display error.
-     */
     virtual Error clear();
 
-    /**
-     * @brief Sets this display brightness.
-     * @param display Display to access.
-     * @param brightness Brightness value.
-     * @return Display error.
-     */
     virtual Error setBrightnessPercent(const float brightnessPercent);
     
     //--------------------------------------------------------------------------
@@ -182,4 +163,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // DISPLAY_H
+#endif // PLAT4M_DISPLAY_H

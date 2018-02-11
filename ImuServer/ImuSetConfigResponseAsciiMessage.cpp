@@ -35,7 +35,7 @@
 ///
 /// @file ImuSetConfigResponseAsciiMessage.cpp
 /// @author Ben Minerd
-/// @date 6/7/16
+/// @date 6/7/2016
 /// @brief ImuSetConfigResponseAsciiMessage class source file.
 ///
 
@@ -43,11 +43,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuSetConfigResponseAsciiMessage.h>
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <Plat4m_Core/ImuServer/ImuSetConfigResponseAsciiMessage.h>
 
 using Plat4m::ImuSetConfigResponseAsciiMessage;
 using Plat4m::ByteArray;

@@ -46,9 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-// Plat4m includes
-#include <Module.h>
-#include <Callback.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/Callback.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

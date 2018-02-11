@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Processor.h>
+#include <stdint.h>
+
+#include <Plat4m_Core/Processor.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -262,6 +263,8 @@ public:
     // Public static methods
     //--------------------------------------------------------------------------
     
+    static Config getDefaultConfig();
+
     static uint32_t getCoreClockFrequencyHz();
     
     static void setCoreClockFrequencyHz(const uint32_t coreClockFrequencyHz);

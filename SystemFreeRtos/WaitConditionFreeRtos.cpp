@@ -75,7 +75,8 @@ WaitConditionFreeRtos::~WaitConditionFreeRtos()
 //------------------------------------------------------------------------------
 void WaitConditionFreeRtos::notifyFast()
 {
-	vTaskNotifyGiveFromISR(myTaskHandle);
+	BaseType_t higherPriorityTaskWasWoken = pdFALSE;
+	vTaskNotifyGiveFromISR(myTaskHandle, &higherPriorityTaskWasWoken);
 }
 
 //------------------------------------------------------------------------------
@@ -87,7 +88,7 @@ WaitCondition::Error WaitConditionFreeRtos::driverWait(const TimeMs waitTimeMs)
 {
 	myTaskHandle = xTaskGetCurrentTaskHandle();
 
-	xTaskNotifyTake(pdFALSE, (TickType_t) waitTimeMs);
+	ulTaskNotifyTake(pdFALSE, (TickType_t) waitTimeMs);
 
     return Error(ERROR_CODE_NONE);
 }

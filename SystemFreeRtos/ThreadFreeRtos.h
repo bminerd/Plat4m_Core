@@ -33,10 +33,10 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ThreadFreeRTOS.h
+/// @file ThreadFreeRtos.h
 /// @author Ben Minerd
 /// @date 7/1/2016
-/// @brief ThreadFreeRTOS class header file.
+/// @brief ThreadFreeRtos class header file.
 ///
 
 #ifndef PLAT4M_THREAD_FREERTOS_H
@@ -63,7 +63,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class ThreadFreeRTOS : public Thread
+class ThreadFreeRtos : public Thread
 {
 public:
 
@@ -71,19 +71,13 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-    ThreadFreeRTOS(RunCallback& callback, const TimeMs periodMs = 0);
+	ThreadFreeRtos(RunCallback& callback, const TimeMs periodMs = 0);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    virtual ~ThreadFreeRTOS();
-
-    //--------------------------------------------------------------------------
-    // Public methods overloaded from Thread
-    //--------------------------------------------------------------------------
-
-    void run();
+    virtual ~ThreadFreeRtos();
 
 private:
 
@@ -97,7 +91,13 @@ private:
     // Private static methods
     //--------------------------------------------------------------------------
 
-    void taskCallback();
+    static void taskCallback(void* parameter);
+
+    //--------------------------------------------------------------------------
+    // Private methods implemented from Module
+    //--------------------------------------------------------------------------
+
+    Module::Error driverSetEnabled(const bool enabled);
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Thread

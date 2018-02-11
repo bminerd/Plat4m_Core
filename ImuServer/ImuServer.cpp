@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,21 +43,21 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuServer.h>
-#include <BinaryMessageHandlerTemplate.h>
-#include <ImuGetMeasurementBinaryMessage.h>
-#include <ImuMeasurementBinaryMessage.h>
-#include <ImuSetConfigBinaryMessage.h>
-#include <ImuSetConfigResponseBinaryMessage.h>
-#include <ImuGetConfigBinaryMessage.h>
-#include <ImuGetConfigResponseBinaryMessage.h>
-#include <ImuMeasurementBinaryMessage.h>
-#include <ImuServerSetConfigBinaryMessage.h>
-#include <ImuServerSetConfigResponseBinaryMessage.h>
-#include <ImuServerGetConfigBinaryMessage.h>
-#include <ImuServerGetConfigResponseBinaryMessage.h>
-#include <ByteArrayN.h>
-#include <System.h>
+#include <Plat4m_Core/ImuServer/ImuServer.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageHandlerTemplate.h>
+#include <Plat4m_Core/ImuServer/ImuGetMeasurementBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuMeasurementBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuSetConfigBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuSetConfigResponseBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuGetConfigBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuGetConfigResponseBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuMeasurementBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerSetConfigBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerSetConfigResponseBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerGetConfigBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerGetConfigResponseBinaryMessage.h>
+#include <Plat4m_Core/ByteArrayN.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::ImuServer;
 using Plat4m::Module;
@@ -313,9 +313,9 @@ void ImuServer::imuSetConfigMessageCallback(
 
     Imu::Config config;
     config.measurementMode     = (Imu::MeasurementMode) request.measurementMode;
-    config.accelMeasurementRange  = request.accelMeasurementRange;
+    config.accelMeasurementRangeAccelerationG  = request.accelMeasurementRange;
     config.accelMeasurementRateHz = request.accelMeasurementRateHz;
-    config.gyroMeasurementRange   = request.gyroMeasurementRange;
+    config.gyroMeasurementRangeAngularVelocityDps   = request.gyroMeasurementRange;
     config.gyroMeasurementRateHz  = request.gyroMeasurementRateHz;
     config.magMeasurementRange    = request.magMeasurementRange;
     config.magMeasurementRateHz   = request.magMeasurementRateHz;
@@ -354,9 +354,10 @@ void ImuServer::imuGetConfigMessageCallback(
 
     response.index                  = request.index;
     response.measurementMode        = (uint8_t) config.measurementMode;
-    response.accelMeasurementRange  = config.accelMeasurementRange;
+    response.accelMeasurementRange  = config.accelMeasurementRangeAccelerationG;
     response.accelMeasurementRateHz = config.accelMeasurementRateHz;
-    response.gyroMeasurementRange   = config.gyroMeasurementRange;
+    response.gyroMeasurementRange   =
+    							  config.gyroMeasurementRangeAngularVelocityDps;
     response.gyroMeasurementRateHz  = config.gyroMeasurementRateHz;
     response.magMeasurementRange    = config.magMeasurementRange;
     response.magMeasurementRateHz   = config.magMeasurementRateHz;

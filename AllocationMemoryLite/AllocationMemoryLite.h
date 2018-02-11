@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2014 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file AllocationMemoryLite.h
 /// @author Ben Minerd
-/// @date 4/9/14
+/// @date 4/9/2014
 /// @brief AllocationMemoryLite class header file.
 ///
 
@@ -46,10 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AllocationMemory.h>
-
 #include <stdint.h>
 #include <string.h>
+
+#include <Plat4m_Core/AllocationMemory.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

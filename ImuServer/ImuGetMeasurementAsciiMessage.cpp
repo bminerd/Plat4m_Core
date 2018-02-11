@@ -35,7 +35,7 @@
 ///
 /// @file ImuGetMeasurementAsciiMessage.cpp
 /// @author Ben Minerd
-/// @date 5/24/16
+/// @date 5/24/2016
 /// @brief ImuGetMeasurementAsciiMessage class source file.
 ///
 
@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuGetMeasurementAsciiMessage.h>
-
 #include <string.h>
+
+#include <Plat4m_Core/ImuServer/ImuGetMeasurementAsciiMessage.h>
 
 using Plat4m::ImuGetMeasurementAsciiMessage;
 using Plat4m::ByteArray;

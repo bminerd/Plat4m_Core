@@ -39,16 +39,16 @@
 /// @brief ImuServerGetConfigAsciiMessage class header file.
 ///
 
-#ifndef IMU_SERVER_GET_CONFIG_ASCII_MESSAGE_H
-#define IMU_SERVER_GET_CONFIG_ASCII_MESSAGE_H
+#ifndef PLAT4M_IMU_SERVER_GET_CONFIG_ASCII_MESSAGE_H
+#define PLAT4M_IMU_SERVER_GET_CONFIG_ASCII_MESSAGE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AsciiMessage.h>
-#include <ImuServerGetConfigMessage.h>
-#include <ByteArray.h>
+#include <Plat4m_Core/ComProtocolPlat4m/AsciiMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerGetConfigMessage.h>
+#include <Plat4m_Core/ByteArray.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -94,4 +94,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // IMU_SERVER_GET_CONFIG_ASCII_MESSAGE_H
+#endif // PLAT4M_IMU_SERVER_GET_CONFIG_ASCII_MESSAGE_H

@@ -43,13 +43,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ProcessorSTM32F30x.h>
-#include <System.h>
-#include <Application.h>
-
 #include <stm32f30x.h>
 #include <stm32f30x_syscfg.h>
 #include <stm32f30x_rcc.h>
+
+#include <Plat4m_Core/STM32F30x/ProcessorSTM32F30x.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/Application.h>
 
 using Plat4m::ProcessorSTM32F30x;
 using Plat4m::Processor;
@@ -235,6 +235,24 @@ ProcessorSTM32F30x::ProcessorSTM32F30x(
 //------------------------------------------------------------------------------
 // Public static methods
 //------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+ProcessorSTM32F30x::Config ProcessorSTM32F30x::getDefaultConfig()
+{
+    Config config;
+    config.clockSource = ProcessorSTM32F30x::CLOCK_SOURCE_EXTERNAL;
+    config.coreClockFrequencyHz = 72000000; // 72 MHz
+    config.ahbClockFrequencyHz = 72000000; 	// 72 MHz
+    config.apb1ClockFrequencyHz = 36000000; // 36 MHz
+    config.apb2ClockFrequencyHz = 72000000; // 72 MHz
+    config.isUsbOtgFs = false;
+    config.isSdio = false;
+    config.isRng = false;
+    config.isEthernet = false;
+    config.vectorTableAddress = FLASH_BASE;
+
+    return config;
+}
 
 //------------------------------------------------------------------------------
 uint32_t ProcessorSTM32F30x::getCoreClockFrequencyHz()

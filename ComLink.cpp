@@ -35,7 +35,7 @@
 ///
 /// @file ComLink.cpp
 /// @author Ben Minerd
-/// @date 4/12/17
+/// @date 4/12/2017
 /// @brief ComLink class source file.
 ///
 
@@ -43,10 +43,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ComLink.h>
-#include <ComProtocol.h>
-#include <System.h>
-#include <CallbackMethodParameter.h>
+#include <Plat4m_Core/ComLink.h>
+#include <Plat4m_Core/ComProtocol.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/CallbackMethodParameter.h>
 
 using Plat4m::ComLink;
 using Plat4m::Module;

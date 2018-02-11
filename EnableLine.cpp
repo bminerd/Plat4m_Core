@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,15 +35,15 @@
 ///
 /// @file EnableLine.cpp
 /// @author Ben Minerd
-/// @date 4/18/13
-/// @brief EnableLine class.
+/// @date 4/18/2013
+/// @brief EnableLine class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <EnableLine.h>
+#include <Plat4m_Core/EnableLine.h>
 
 using Plat4m::EnableLine;
 using Plat4m::Module;

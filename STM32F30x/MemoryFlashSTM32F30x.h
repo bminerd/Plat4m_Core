@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Memory.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Memory.h>
      
 #include <stm32f30x.h>
 #include <stm32f30x_flash.h>

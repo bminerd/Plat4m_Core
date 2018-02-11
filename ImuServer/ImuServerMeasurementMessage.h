@@ -35,19 +35,19 @@
 ///
 /// @file ImuServerMeasurementMessage.h
 /// @author Ben Minerd
-/// @date 6/30/16
+/// @date 6/30/2016
 /// @brief ImuServerMeasurementMessage struct header file.
 ///
 
-#ifndef IMU_SERVER_MEASUREMENT_MESSAGE_H
-#define IMU_SERVER_MEASUREMENT_MESSAGE_H
+#ifndef PLAT4M_IMU_SERVER_MEASUREMENT_MESSAGE_H
+#define PLAT4M_IMU_SERVER_MEASUREMENT_MESSAGE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Message.h>
-#include <Imu.h>
+#include <Plat4m_Core/ComProtocolPlat4m/Message.h>
+#include <Plat4m_Core/Imu.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -103,4 +103,4 @@ struct ImuServerMeasurementMessage
 
 }; // namespace Plat4m
 
-#endif // IMU_SERVER_MEASUREMENT_MESSAGE_H
+#endif // PLAT4M_IMU_SERVER_MEASUREMENT_MESSAGE_H

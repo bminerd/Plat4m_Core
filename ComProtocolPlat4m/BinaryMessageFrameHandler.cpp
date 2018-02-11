@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BinaryMessageFrameHandler.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageFrameHandler.h>
 
 using Plat4m::BinaryMessageFrameHandler;
 using Plat4m::ByteArray;

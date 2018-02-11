@@ -35,20 +35,20 @@
 ///
 /// @file AsciiMessage.h
 /// @author Ben Minerd
-/// @date 4/29/16
+/// @date 4/29/2016
 /// @brief AsciiMessage class header file.
 ///
 
-#ifndef ASCII_MESSAGE_H
-#define ASCII_MESSAGE_H
+#ifndef PLAT4M_ASCII_MESSAGE_H
+#define PLAT4M_ASCII_MESSAGE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Array.h>
-#include <ByteArray.h>
-#include <ComProtocol.h>
+#include <Plat4m_Core/Array.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/ComProtocol.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -166,4 +166,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // ASCII_MESSAGE_H
+#endif // PLAT4M_ASCII_MESSAGE_H

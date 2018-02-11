@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,14 +46,14 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Uart.h>
-#include <GpioPinSTM32F30x.h>
-#include <InterruptSTM32F30x.h>
-#include <ProcessorSTM32F30x.h>
-#include <DmaChannelSTM32F30x.h>
-
 #include <stm32f30x.h>
+
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Uart.h>
+#include <Plat4m_Core/STM32F30x/GpioPinSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/InterruptSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/ProcessorSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/DmaChannelSTM32F30x.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

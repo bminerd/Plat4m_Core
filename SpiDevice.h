@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,14 +46,14 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <SlaveDevice.h>
-#include <Spi.h>
-#include <GpioPin.h>
-#include <ByteArray.h>
-#include <Module.h>
-#include <MasterSlaveBus.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/SlaveDevice.h>
+#include <Plat4m_Core/Spi.h>
+#include <Plat4m_Core/GpioPin.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/MasterSlaveBus.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

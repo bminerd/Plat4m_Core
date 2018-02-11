@@ -43,9 +43,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <FreeRTOS/Source/include/FreeRTOS.h>
 #include <FreeRTOS/Source/include/task.h>
 
 #include <Plat4m_Core/SystemFreeRtos/SystemFreeRtos.h>
+#include <Plat4m_Core/SystemFreeRtos/ThreadFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/MutexFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/WaitConditionFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/QueueDriverFreeRtos.h>
@@ -59,10 +61,26 @@ using Plat4m::WaitCondition;
 using Plat4m::QueueDriver;
 
 //------------------------------------------------------------------------------
-// Private static data members
+// External functions
 //------------------------------------------------------------------------------
 
-volatile Plat4m::TimeMs SystemFreeRtos::myTimeMs = 0;
+//------------------------------------------------------------------------------
+extern "C" void vApplicationTickHook(void)
+{
+
+}
+
+//------------------------------------------------------------------------------
+extern "C" void vApplicationIdleHook(void)
+{
+
+}
+
+//------------------------------------------------------------------------------
+extern "C" void vApplicationStackOverflowHook(void)
+{
+
+}
 
 //------------------------------------------------------------------------------
 // Protected constructors
@@ -70,9 +88,7 @@ volatile Plat4m::TimeMs SystemFreeRtos::myTimeMs = 0;
 
 //------------------------------------------------------------------------------
 SystemFreeRtos::SystemFreeRtos() :
-    System(),
-    myThreadList(),
-    myThreadDepth(0)
+    System()
 {
 }
 
@@ -103,13 +119,9 @@ Plat4m::TimeUs SystemFreeRtos::driverGetTimeUs()
 
 //------------------------------------------------------------------------------
 Thread& SystemFreeRtos::driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs)
+                                       	   const TimeMs periodMs)
 {
-    ThreadFreeRtos* thread = new ThreadFreeRtos(callback, periodMs);
-
-    myThreadList.append(thread);
-
-    return (*thread);
+    return *(new ThreadFreeRtos(callback, periodMs));
 }
 
 //------------------------------------------------------------------------------
@@ -129,7 +141,7 @@ QueueDriver& SystemFreeRtos::driverCreateQueueDriver(
 												  const uint32_t nValues,
 												  const uint32_t valueSizeBytes)
 {
-	return *(new QueueDriverFreeRtos<0>);
+	return *(new QueueDriverFreeRtos<0>(nValues, valueSizeBytes));
 }
 
 //------------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file ByteArrayN.h
 /// @author Ben Minerd
-/// @date 6/17/13
+/// @date 6/17/2013
 /// @brief ByteArrayN class header file.
 ///
 
@@ -46,10 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ByteArray.h>
-
 #include <stdint.h>
 #include <string.h>
+
+#include <Plat4m_Core/ByteArray.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

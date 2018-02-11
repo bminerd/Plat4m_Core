@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <CurrentSensor.h>
+#include <Plat4m_Core/CurrentSensor.h>
 
 using Plat4m::CurrentSensor;
 using Plat4m::Module;

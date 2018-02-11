@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file Buffer.h
 /// @author Ben Minerd
-/// @date 3/25/13
+/// @date 3/25/2013
 /// @brief Buffer class header file.
 ///
 
@@ -47,7 +47,7 @@
 //------------------------------------------------------------------------------
 
 #include <stdint.h>
-#include <Array.h>
+#include <Plat4m_Core/Array.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

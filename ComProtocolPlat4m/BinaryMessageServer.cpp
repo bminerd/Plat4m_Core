@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BinaryMessageServer.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageServer.h>
 
 using Plat4m::BinaryMessageServer;
 using Plat4m::Module;

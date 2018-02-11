@@ -46,10 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Frame.h>
-#include <ByteArray.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/ComProtocolPlat4m/Frame.h>
+#include <Plat4m_Core/ByteArray.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuServerGetConfigResponseAsciiMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerGetConfigResponseAsciiMessage.h>
 
 #include <stdlib.h>
 #include <stdio.h>

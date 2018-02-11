@@ -46,12 +46,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BinaryMessage.h>
-#include <BinaryMessageHandler.h>
-#include <List.h>
-#include <ComProtocol.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/ComProtocol.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessage.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageHandler.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

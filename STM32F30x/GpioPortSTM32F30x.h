@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,11 +46,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <GpioPort.h>
-
 #include <stm32f30x.h>
 #include <stm32f30x_gpio.h>
 #include <stm32f30x_rcc.h>
+
+#include <Plat4m_Core/GpioPort.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <DmaChannelSTM32F30x.h>
-#include <CallbackMethod.h>
+#include <Plat4m_Core/STM32F30x/DmaChannelSTM32F30x.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 using Plat4m::DmaChannelSTM32F30x;
 using Plat4m::Module;

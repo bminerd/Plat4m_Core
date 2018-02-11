@@ -46,9 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <BinaryMessage.h>
-#include <ImuGetMeasurementMessage.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuGetMeasurementMessage.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

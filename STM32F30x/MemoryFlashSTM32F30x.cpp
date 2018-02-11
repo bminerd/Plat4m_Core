@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <MemoryFlashSTM32F30x.h>
-#include <ByteArrayN.h>
+#include <Plat4m_Core/STM32F30x/MemoryFlashSTM32F30x.h>
+#include <Plat4m_Core/ByteArrayN.h>
 
 using Plat4m::MemoryFlashSTM32F30x;
 using Plat4m::Memory;

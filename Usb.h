@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file Usb.h
 /// @author Ben Minerd
-/// @date 4/17/13
+/// @date 4/17/2013
 /// @brief Usb class header file.
 ///
 
@@ -46,10 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <ComInterface.h>
-#include <ByteArray.h>
-#include <BufferN.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ComInterface.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/BufferN.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

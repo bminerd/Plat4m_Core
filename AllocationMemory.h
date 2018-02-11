@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2014 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,19 +35,18 @@
 ///
 /// @file AllocationMemory.h
 /// @author Ben Minerd
-/// @date 4/8/14
-/// @brief AllocationMemory class.
+/// @date 4/8/2014
+/// @brief AllocationMemory class header file.
 ///
 
-#ifndef ALLOCATION_MEMORY_H
-#define ALLOCATION_MEMORY_H
+#ifndef PLAT4M_ALLOCATION_MEMORY_H
+#define PLAT4M_ALLOCATION_MEMORY_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <string.h>
+#include <Plat4m_Core/Plat4m.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -117,4 +116,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // ALLOCATION_MEMORY_H
+#endif // PLAT4M_ALLOCATION_MEMORY_H

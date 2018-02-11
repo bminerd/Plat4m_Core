@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <InsServerGetConfigBinaryMessage.h>
-#include <InsServerBinaryMessages.h>
-#include <ByteArrayParser.h>
+#include <Plat4m_Core/InsServer/InsServerGetConfigBinaryMessage.h>
+#include <Plat4m_Core/InsServer/InsServerBinaryMessages.h>
+#include <Plat4m_Core/ByteArrayParser.h>
 
 using Plat4m::InsServerGetConfigBinaryMessage;
 using namespace Plat4m::InsServerBinaryMessages;

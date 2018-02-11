@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,14 +43,14 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <I2cSTM32F30x.h>
-#include <System.h>
-#include <CallbackMethod.h>
-#include <Plat4m.h>
-#include <Interrupt.h>
-
 #include <stm32f30x_rcc.h>
 #include <stm32f30x_misc.h>
+
+#include <Plat4m_Core/STM32F30x/I2cSTM32F30x.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/CallbackMethod.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Interrupt.h>
 
 using Plat4m::I2cSTM32F30x;
 using Plat4m::I2c;

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,25 +47,25 @@
 //------------------------------------------------------------------------------
 
 // Plat4m includes
-#include <Plat4m.h>
-#include <BinaryMessageServer.h>
-#include <ErrorTemplate.h>
-#include <Imu.h>
-#include <List.h>
-#include <Thread.h>
-#include <ComProtocolPlat4mAscii.h>
-#include <ComProtocolPlat4mBinary.h>
-#include <ImuGetMeasurementMessage.h>
-#include <ImuMeasurementMessage.h>
-#include <ImuSetConfigMessage.h>
-#include <ImuSetConfigResponseMessage.h>
-#include <ImuGetConfigMessage.h>
-#include <ImuGetConfigResponseMessage.h>
-#include <ImuMeasurementMessage.h>
-#include <ImuServerSetConfigMessage.h>
-#include <ImuServerSetConfigResponseMessage.h>
-#include <ImuServerGetConfigMessage.h>
-#include <ImuServerGetConfigResponseMessage.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageServer.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Imu.h>
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/ComProtocolPlat4m/ComProtocolPlat4mAscii.h>
+#include <Plat4m_Core/ComProtocolPlat4m/ComProtocolPlat4mBinary.h>
+#include <Plat4m_Core/ImuServer/ImuGetMeasurementMessage.h>
+#include <Plat4m_Core/ImuServer/ImuMeasurementMessage.h>
+#include <Plat4m_Core/ImuServer/ImuSetConfigMessage.h>
+#include <Plat4m_Core/ImuServer/ImuSetConfigResponseMessage.h>
+#include <Plat4m_Core/ImuServer/ImuGetConfigMessage.h>
+#include <Plat4m_Core/ImuServer/ImuGetConfigResponseMessage.h>
+#include <Plat4m_Core/ImuServer/ImuMeasurementMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerSetConfigMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerSetConfigResponseMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerGetConfigMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerGetConfigResponseMessage.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

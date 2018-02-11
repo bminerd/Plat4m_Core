@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,8 @@
 ///
 /// @file Board.h
 /// @author Ben Minerd
-/// @date 5/30/13
-/// @brief Board class.
+/// @date 5/30/2013
+/// @brief Board class header file.
 ///
 
 #ifndef PLAT4M_BOARD_H
@@ -46,7 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Module.h>
+#include <Plat4m_Core/Module.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

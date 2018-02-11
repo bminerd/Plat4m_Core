@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,15 +39,15 @@
 /// @brief Compass class header file.
 ///
 
-#ifndef COMPASS_H
-#define COMPASS_H
+#ifndef PLAT4M_COMPASS_H
+#define PLAT4M_COMPASS_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Module.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -68,9 +68,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of compass errors.
-     */
     enum Error
     {
         ERROR_NONE,
@@ -98,18 +95,8 @@ public:
     // Public virtual methods
     //--------------------------------------------------------------------------
 
-    /**
-     * @brief Configures this compass.
-     * @param config Compass configuration.
-     * @return Compass error.
-     */
     virtual Error configure(const Config& config);
 
-    /**
-     * @brief Gets a compass reading.
-     * @param reading Compass reading.
-     * @return Compass error.
-     */
     virtual Error getMeasurement(Measurement& measurement);
     
 protected:
@@ -145,4 +132,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // COMPASS_H
+#endif // PLAT4M_COMPASS_H

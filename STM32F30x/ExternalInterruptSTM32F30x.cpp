@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ExternalInterruptSTM32F30x.h>
-#include <CallbackMethod.h>
-#include <CallbackFunction.h>
+#include <Plat4m_Core/STM32F30x/ExternalInterruptSTM32F30x.h>
+#include <Plat4m_Core/CallbackMethod.h>
+#include <Plat4m_Core/CallbackFunction.h>
 
 using Plat4m::ExternalInterruptSTM32F30x;
 using Plat4m::ExternalInterrupt;

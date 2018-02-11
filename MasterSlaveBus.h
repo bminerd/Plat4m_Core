@@ -39,20 +39,20 @@
 /// @brief MasterSlaveBus class header file.
 ///
 
-#ifndef MASTER_SLAVE_BUS_H
-#define MASTER_SLAVE_BUS_H
+#ifndef PLAT4M_MASTER_SLAVE_BUS_H
+#define PLAT4M_MASTER_SLAVE_BUS_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <ByteArray.h>
-#include <Buffer.h>
-#include <Callback.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Buffer.h>
+#include <Plat4m_Core/Callback.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -73,9 +73,6 @@ public:
     // Public types
     //--------------------------------------------------------------------------
 
-    /**
-     * @brief Enumeration of I2C errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -110,9 +107,6 @@ public:
         MailboxFullCallback* mailboxFullCallback;
     };
 
-    /**
-	 * @brief I2C transfer structure.
-	 */
 	struct Transfer
 	{
 		TransferMode transferMode;
@@ -161,4 +155,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // MASTER_SLAVE_BUS_H
+#endif // PLAT4M_MASTER_SLAVE_BUS_H

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file Imu.cpp
 /// @author Ben Minerd
-/// @date 3/30/16
+/// @date 3/30/2016
 /// @brief Imu class source file.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Imu.h>
+#include <Plat4m_Core/Imu.h>
 
 using Plat4m::Imu;
 
@@ -136,10 +136,10 @@ Imu::Config Imu::getConfig() const
 }
 
 //------------------------------------------------------------------------------
-Imu::Error Imu::setAccelMeasurementRange(const float range)
+Imu::Error Imu::setAccelMeasurementRange(const AccelerationG range)
 {
     Config config = myConfig;
-    config.accelMeasurementRange = range;
+    config.accelMeasurementRangeAccelerationG = range;
 
     return setConfig(config);
 }
@@ -154,10 +154,10 @@ Imu::Error Imu::setAccelMeasurementRateHz(const uint32_t rateHz)
 }
 
 //------------------------------------------------------------------------------
-Imu::Error Imu::setGyroMeasurementRange(const float range)
+Imu::Error Imu::setGyroMeasurementRange(const AngularVelocityDps range)
 {
     Config config = myConfig;
-    config.gyroMeasurementRange = range;
+    config.gyroMeasurementRangeAngularVelocityDps = range;
 
     return setConfig(config);
 }
@@ -440,13 +440,7 @@ bool Imu::isOffsetCalibrationComplete() const
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Imu::Imu(const uint32_t accelDof,
-         const uint32_t gyroDof,
-         const uint32_t magDof) :
-	Module(),
-	myAccelDof(accelDof),
-	myGyroDof(gyroDof),
-	myMagDof(magDof),
+Imu::Imu() :
 	myConfig(),
 	myTempSensitivity(0.0),
 	myTempOffset(0.0),

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2015 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,16 +35,16 @@
 ///
 /// @file ExternalInterrupt.cpp
 /// @author Ben Minerd
-/// @date 9/25/15
-/// @brief ExternalInterrupt class.
+/// @date 9/25/2015
+/// @brief ExternalInterrupt class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ExternalInterrupt.h>
-#include <System.h>
+#include <Plat4m_Core/ExternalInterrupt.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::ExternalInterrupt;
 using Plat4m::GpioPin;
@@ -54,9 +54,6 @@ using Plat4m::Module;
 // Local variables
 //------------------------------------------------------------------------------
 
-/**
- * @brief Trigger mode map.
- */
 static const ExternalInterrupt::Trigger triggerMap[] =
 {
     ExternalInterrupt::TRIGGER_FALLING, /// GpioPin::LEVEL_LOW

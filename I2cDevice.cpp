@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,15 +35,15 @@
 ///
 /// @file I2cDevice.cpp
 /// @author Ben Minerd
-/// @date 3/26/13
-/// @brief I2cDevice class.
+/// @date 3/26/2013
+/// @brief I2cDevice class source files.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <I2cDevice.h>
+#include <Plat4m_Core/I2cDevice.h>
 
 using Plat4m::I2cDevice;
 using Plat4m::SlaveDevice;

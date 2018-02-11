@@ -35,7 +35,7 @@
 ///
 /// @file ComLinkTemplate.h
 /// @author Ben Minerd
-/// @date 4/12/17
+/// @date 4/12/2017
 /// @brief ComLinkTemplate class header file.
 ///
 
@@ -46,9 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ComLink.h>
-#include <ComInterfaceDeviceTemplate.h>
-#include <ByteArrayN.h>
+#include <Plat4m_Core/ComLink.h>
+#include <Plat4m_Core/ComInterfaceDeviceTemplate.h>
+#include <Plat4m_Core/ByteArrayN.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

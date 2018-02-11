@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <QueueDriver.h>
+#include <Plat4m_Core/QueueDriver.h>
 
 using Plat4m::QueueDriver;
 

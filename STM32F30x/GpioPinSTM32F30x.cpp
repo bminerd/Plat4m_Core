@@ -35,7 +35,7 @@
 ///
 /// @file GpioPinSTM32F30x.cpp
 /// @author Ben Minerd
-/// @date 2/4/16
+/// @date 2/4/2016
 /// @brief GpioPinSTM32F30x class source file.
 ///
 
@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <GpioPinSTM32F30x.h>
+#include <Plat4m_Core/STM32F30x/GpioPinSTM32F30x.h>
 
 using Plat4m::GpioPinSTM32F30x;
 using Plat4m::GpioPortSTM32F30x;

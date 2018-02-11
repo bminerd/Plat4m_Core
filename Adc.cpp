@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,15 +35,15 @@
 ///
 /// @file Adc.cpp
 /// @author Ben Minerd
-/// @date 4/10/13
-/// @brief Adc class.
+/// @date 4/10/2013
+/// @brief Adc class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Adc.h>
+#include <Plat4m_Core/Adc.h>
 
 using Plat4m::Adc;
 

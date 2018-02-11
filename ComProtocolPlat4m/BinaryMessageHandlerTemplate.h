@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,13 +46,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <ByteArray.h>
-#include <Callback.h>
-#include <CallbackMethodParameter.h>
-#include <CallbackMethod2Parameters.h>
-#include <BinaryMessage.h>
-#include <ComProtocol.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/CallbackMethodParameter.h>
+#include <Plat4m_Core/CallbackMethod2Parameters.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessage.h>
+#include <Plat4m_Core/ComProtocol.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

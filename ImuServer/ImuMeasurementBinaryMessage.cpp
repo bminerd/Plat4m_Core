@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ImuMeasurementBinaryMessage.h>
-#include <ImuServerBinaryMessages.h>
-#include <ByteArrayParser.h>
+#include <Plat4m_Core/ImuServer/ImuMeasurementBinaryMessage.h>
+#include <Plat4m_Core/ImuServer/ImuServerBinaryMessages.h>
+#include <Plat4m_Core/ByteArrayParser.h>
 
 using Plat4m::ImuMeasurementBinaryMessage;
 using namespace Plat4m::ImuServerBinaryMessages;

@@ -36,20 +36,20 @@
 /// @file EncryptedMemory.h
 /// @author Ben Minerd
 /// @date 3/18/2016
-/// @brief EncryptedMemory class.
+/// @brief EncryptedMemory class header file.
 ///
 
-#ifndef ENCRYPTED_MEMORY_H
-#define ENCRYPTED_MEMORY_H
+#ifndef PLAT4M_ENCRYPTED_MEMORY_H
+#define PLAT4M_ENCRYPTED_MEMORY_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Memory.h>
-#include <ErrorTemplate.h>
-#include <Array.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Memory.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Array.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -71,9 +71,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of memory errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -89,10 +86,6 @@ public:
 
     using typename Memory<TAddress>::Config;
 
-    //--------------------------------------------------------------------------
-    // Public structures
-    //--------------------------------------------------------------------------
-    
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
@@ -202,4 +195,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // ENCRYPTED_MEMORY_H
+#endif // PLAT4M_ENCRYPTED_MEMORY_H
