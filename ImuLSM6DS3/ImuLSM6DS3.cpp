@@ -565,6 +565,26 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
         return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
     }
 
+    if (isValidPointer(myInt1ExternalInterrupt))
+    {
+        error = writeRegister(REGISTER_INT1_CTRL, 0x01);
+
+        if (error.getCode() != ERROR_CODE_NONE)
+        {
+            return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+        }
+    }
+
+    if (isValidPointer(myInt2ExternalInterrupt))
+	{
+    	error = writeRegister(REGISTER_INT2_CTRL, 0x02);
+
+        if (error.getCode() != ERROR_CODE_NONE)
+        {
+            return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+        }
+	}
+
     return Imu::Error(Imu::ERROR_CODE_NONE);
 }
 
@@ -652,30 +672,54 @@ Imu::Error ImuLSM6DS3::driverGetRawGyroMeasurement(
 //------------------------------------------------------------------------------
 Imu::Error ImuLSM6DS3::driverGetRawMeasurement(RawMeasurement& measurement)
 {
-    ByteArrayN<12> values;
-
-    Error error;
-
-    values.setValue(0);
-    error = readRegisters(REGISTER_OUTX_L_G, values);
-
-    if (error.getCode() != ERROR_CODE_NONE)
+    if (myConfig.readMode == READ_MODE_BLOCKING)
     {
-        return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
-    }
+		ByteArrayN<12> values;
 
-    measurement.accelX =
-           (int16_t) ((((uint16_t) values[7])  << 8) | ((uint16_t) values[6]));
-    measurement.accelY =
-           (int16_t) ((((uint16_t) values[9])  << 8) | ((uint16_t) values[8]));
-    measurement.accelZ =
-           (int16_t) ((((uint16_t) values[11]) << 8) | ((uint16_t) values[10]));
-    measurement.gyroX =
-           (int16_t) ((((uint16_t) values[1])  << 8) | ((uint16_t) values[0]));
-    measurement.gyroY =
-           (int16_t) ((((uint16_t) values[3])  << 8) | ((uint16_t) values[2]));
-    measurement.gyroZ =
-           (int16_t) ((((uint16_t) values[5])  << 8) | ((uint16_t) values[4]));
+		Error error;
+
+		values.setValue(0);
+		error = readRegisters(REGISTER_OUTX_L_G, values);
+
+		if (error.getCode() != ERROR_CODE_NONE)
+		{
+			return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+		}
+
+		measurement.accelX = (int16_t) ((((uint16_t) values[7]) << 8) |
+									     ((uint16_t) values[6]));
+		measurement.accelY = (int16_t) ((((uint16_t) values[9]) << 8) |
+					   	   	   	   	   	 ((uint16_t) values[8]));
+		measurement.accelZ = (int16_t) ((((uint16_t) values[11])<< 8) |
+										 ((uint16_t) values[10]));
+		measurement.gyroX  = (int16_t) ((((uint16_t) values[1]) << 8) |
+					   	   	   	   	   	 ((uint16_t) values[0]));
+		measurement.gyroY =  (int16_t) ((((uint16_t) values[3]) << 8) |
+					   	   	   	   	     ((uint16_t) values[2]));
+		measurement.gyroZ =  (int16_t) ((((uint16_t) values[5]) << 8) |
+					   	   	   	   	   	 ((uint16_t) values[4]));
+    }
+    else if (myConfig.readMode == READ_MODE_MAILBOX)
+    {
+		measurement.accelX =
+						 (int16_t) ((((uint16_t) myReceiveByteArray1[1]) << 8) |
+					 				 ((uint16_t) myReceiveByteArray1[0]));
+		measurement.accelY =
+						 (int16_t) ((((uint16_t) myReceiveByteArray1[3]) << 8) |
+									 ((uint16_t) myReceiveByteArray1[2]));
+		measurement.accelZ =
+					     (int16_t) ((((uint16_t) myReceiveByteArray1[5]) << 8) |
+						   		     ((uint16_t) myReceiveByteArray1[4]));
+		measurement.gyroX =
+						 (int16_t) ((((uint16_t) myReceiveByteArray2[3]) << 8) |
+									 ((uint16_t) myReceiveByteArray2[2]));
+		measurement.gyroY =
+						 (int16_t) ((((uint16_t) myReceiveByteArray2[5]) << 8) |
+									 ((uint16_t) myReceiveByteArray2[4]));
+		measurement.gyroZ =
+				  	     (int16_t) ((((uint16_t) myReceiveByteArray2[7]) << 8) |
+									 ((uint16_t) myReceiveByteArray2[6]));
+    }
 
     return Imu::Error(Imu::ERROR_CODE_NONE);
 }

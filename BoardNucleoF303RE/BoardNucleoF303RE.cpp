@@ -107,7 +107,7 @@ const GpioPin::Id BoardNucleoF303RE::myGpioPinIdMap[] =
     {GpioPortSTM32F30x::ID_A, GpioPinSTM32F30x::ID_5},
     /// GPIO_PIN_ID_ARDUINO_D14, GPIO_PIN_ID_I2C_SDA
     {GpioPortSTM32F30x::ID_B, GpioPinSTM32F30x::ID_9},
-    /// GPIO_PIN_ID_ARDUINO_D15
+    /// GPIO_PIN_ID_ARDUINO_D15, GPIO_PIN_ID_I2C_SCL
     {GpioPortSTM32F30x::ID_B, GpioPinSTM32F30x::ID_8},
     /// GPIO_PIN_ID_USER_BUTTON
     {GpioPortSTM32F30x::ID_C, GpioPinSTM32F30x::ID_13},

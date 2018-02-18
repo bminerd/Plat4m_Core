@@ -677,9 +677,12 @@ Imu::Error Imu::driverGetAccelMeasurement(AccelMeasurement& measurement)
 
     if (error.getCode() == ERROR_CODE_NONE)
     {
-        measurement.x = ((float) rawMeasurement.x) * myAccelSensitivity;
-        measurement.y = ((float) rawMeasurement.y) * myAccelSensitivity;
-        measurement.z = ((float) rawMeasurement.z) * myAccelSensitivity;
+        measurement.xAccelerationG =
+        				((AccelerationG) rawMeasurement.x) * myAccelSensitivity;
+        measurement.yAccelerationG =
+        				((AccelerationG) rawMeasurement.y) * myAccelSensitivity;
+        measurement.zAccelerationG =
+        				((AccelerationG) rawMeasurement.z) * myAccelSensitivity;
     }
 
     return error;
@@ -695,9 +698,12 @@ Imu::Error Imu::driverGetGyroMeasurement(GyroMeasurement& measurement)
 
     if (error.getCode() == ERROR_CODE_NONE)
     {
-        measurement.x = ((float) rawMeasurement.x) * myGyroSensitivity;
-        measurement.y = ((float) rawMeasurement.y) * myGyroSensitivity;
-        measurement.z = ((float) rawMeasurement.z) * myGyroSensitivity;
+        measurement.xAngularVelocityDps =
+        			((AngularVelocityDps) rawMeasurement.x) * myGyroSensitivity;
+        measurement.yAngularVelocityDps =
+        			((AngularVelocityDps) rawMeasurement.y) * myGyroSensitivity;
+        measurement.zAngularVelocityDps =
+        			((AngularVelocityDps) rawMeasurement.z) * myGyroSensitivity;
     }
 
     return error;

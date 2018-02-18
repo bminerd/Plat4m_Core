@@ -126,9 +126,9 @@ public:
 
     struct AccelMeasurement
     {
-    	AccelerationG x;
-    	AccelerationG y;
-    	AccelerationG z;
+    	AccelerationG xAccelerationG;
+    	AccelerationG yAccelerationG;
+    	AccelerationG zAccelerationG;
     };
 
     struct RawAccelMeasurement
@@ -140,9 +140,9 @@ public:
 
     struct GyroMeasurement
     {
-    	AngularVelocityDps x;
-    	AngularVelocityDps y;
-    	AngularVelocityDps z;
+    	AngularVelocityDps xAngularVelocityDps;
+    	AngularVelocityDps yAngularVelocityDps;
+    	AngularVelocityDps zAngularVelocityDps;
     };
 
     struct RawGyroMeasurement

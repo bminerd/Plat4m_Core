@@ -52,6 +52,7 @@
 #include <Plat4m_Core/Imu.h>
 #include <Plat4m_Math/Matrix.h>
 #include <Plat4m_Math/Quaternion.h>
+#include <Plat4m_Math/RotationMatrix.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -97,31 +98,19 @@ public:
 
     void imuMeasurementReadyCallback();
 
+    void accelMeasurementReadyCallback();
+
+    void gyroMeasurementReadyCallback();
+
 private:
-
-    //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-
-    static const RealNumber myXRotationAngle;
-    static const RealNumber myYRotationAngle;
-    static const RealNumber myZRotationAngle;
-
-    static const RealNumber myXRotationMatrixValues[3][3];
-    static const RealNumber myYRotationMatrixValues[3][3];
-    static const RealNumber myZRotationMatrixValues[3][3];
-    
-    static const Math::Matrix<RealNumber, 3, 3> myXRotationMatrix;
-    static const Math::Matrix<RealNumber, 3, 3> myYRotationMatrix;
-    static const Math::Matrix<RealNumber, 3, 3> myZRotationMatrix;
-
-    static const Math::Matrix<RealNumber, 3, 3> myRotationMatrix;
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
     Imu& myImu;
+
+    Math::RotationMatrix<RealNumber> myRotationMatrix;
 
     AngleDegrees myIntegratedYawAngleDegrees;
     AngleDegrees myIntegratedPitchAngleDegrees;
@@ -138,6 +127,9 @@ private:
     Math::Vector<RealNumber, 3> myEulerAnglesVector;
 
     Math::Quaternion<RealNumber> myQuaternion;
+
+    Imu::AccelMeasurement myImuAccelMeasurement;
+    Imu::GyroMeasurement myImuGyroMeasurement;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Ins
