@@ -366,26 +366,24 @@ private:
     ArrayN<MasterSlaveBus::Mailbox, 2> myMailboxArray;
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Module
+    // Private methods implemented from Module
     //--------------------------------------------------------------------------
 
-    virtual Module::Error driverSetEnabled(const bool enabled);
+    Module::Error driverSetEnabled(const bool enabled);
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Imu
+    // Private methods implemented from Imu
     //--------------------------------------------------------------------------
     
-    virtual Imu::Error driverSetConfig(const Imu::Config& config);
+    Imu::Error driverSetConfig(const Imu::Config& config);
 
-    virtual Imu::Error driverGetRawTempMeasurement(int32_t& temp);
+    Imu::Error driverGetRawTempMeasurement(int32_t& temp);
 
-    virtual Imu::Error driverGetRawAccelMeasurement(
-                                              RawAccelMeasurement& measurement);
+    Imu::Error driverGetRawAccelMeasurement(RawAccelMeasurement& measurement);
 
-    virtual Imu::Error driverGetRawGyroMeasurement(
-                                               RawGyroMeasurement& measurement);
+    Imu::Error driverGetRawGyroMeasurement(RawGyroMeasurement& measurement);
 
-    virtual Imu::Error driverGetRawMeasurement(RawMeasurement& measurement);
+    Imu::Error driverGetRawMeasurement(RawMeasurement& measurement);
 
     //--------------------------------------------------------------------------
     // Private methods

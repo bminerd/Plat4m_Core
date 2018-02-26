@@ -53,6 +53,7 @@
 #include <Plat4m_Math/Matrix.h>
 #include <Plat4m_Math/Quaternion.h>
 #include <Plat4m_Math/RotationMatrix.h>
+#include <Plat4m_Controls/KalmanFilter.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -102,6 +103,8 @@ public:
 
     void gyroMeasurementReadyCallback();
 
+    KalmanFilter& getKalmanFilter();
+
 private:
 
     //--------------------------------------------------------------------------
@@ -130,6 +133,11 @@ private:
 
     Imu::AccelMeasurement myImuAccelMeasurement;
     Imu::GyroMeasurement myImuGyroMeasurement;
+
+    /// 8 states (Rx, Ry, Rz, Wx, Wy, Wz, Bgx, Bgy)
+    /// 6 observables (computed biases Bgx and Bgy are not observed)
+    /// 3 control inputs (gyro x,y,z)
+    Controls::KalmanFilter<RealNumber, 8, 6, 3> myKalmanFilter;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Ins
