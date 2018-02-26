@@ -410,32 +410,30 @@ ComInterface::Error UartSTM32F30x::driverGetReceivedBytes(ByteArray& byteArray,
                                                           const uint32_t nBytes)
 {
     uint8_t byte;
+    uint32_t nBytesToRead;
 
     if (nBytes == 0)
     {
-        while (getReceiveBuffer()->read(byte))
-        {
-        	byteArray.append(byte);
-        }
+        nBytesToRead = driverGetReceivedBytesCount();
     }
     else
     {
-        uint32_t nBytesToRead = nBytes;
-
-        while (nBytesToRead--)
-        {
-            setInterruptEventEnabled(INTERRUPT_EVENT_RECEIVE_BUFFER_NOT_EMPTY,
-                                     false);
-
-            if (getReceiveBuffer()->read(byte))
-            {
-                byteArray.append(byte);
-            }
-
-            setInterruptEventEnabled(INTERRUPT_EVENT_RECEIVE_BUFFER_NOT_EMPTY,
-                                     true);
-        }
+        nBytesToRead = nBytes;
     }
+
+	while (nBytesToRead--)
+	{
+		setInterruptEventEnabled(INTERRUPT_EVENT_RECEIVE_BUFFER_NOT_EMPTY,
+								 false);
+
+		if (getReceiveBuffer()->read(byte))
+		{
+			byteArray.append(byte);
+		}
+
+		setInterruptEventEnabled(INTERRUPT_EVENT_RECEIVE_BUFFER_NOT_EMPTY,
+								 true);
+	}
 
     return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
 }

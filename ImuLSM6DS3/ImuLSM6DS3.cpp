@@ -448,7 +448,7 @@ ImuLSM6DS3::Error ImuLSM6DS3::writeRegister(const Register reg,
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from Module
+// Private methods implemented from Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -470,7 +470,7 @@ Module::Error ImuLSM6DS3::driverSetEnabled(const bool enabled)
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from Imu
+// Private methods implemented from Imu
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
