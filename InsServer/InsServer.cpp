@@ -134,7 +134,8 @@ void InsServer::measurementReadyCallback()
 
 		if (myUpdateCount == myConfig.outputRateDivisionFactor)
 		{
-			myWaitCondition.notifyFast();
+//			myWaitCondition.notifyFast();
+		    myWaitCondition.notify();
 
 			myUpdateCount = 0;
 		}
@@ -185,7 +186,7 @@ void InsServer::outputThreadCallback()
     	Ins* ins = iterator.current();
 
     	Ins::Measurement measurement;
-    	Ins::Error error = ins->getMeasurement(measurement);
+    	Ins::Error error = ins->getLastMeasurement(measurement);
 
 		InsMeasurementMessage message;
 		message.index    	  = i;

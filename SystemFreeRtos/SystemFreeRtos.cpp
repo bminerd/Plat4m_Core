@@ -125,13 +125,13 @@ Thread& SystemFreeRtos::driverCreateThread(Thread::RunCallback& callback,
 }
 
 //------------------------------------------------------------------------------
-Mutex& SystemFreeRtos::driverCreateMutex()
+Mutex& SystemFreeRtos::driverCreateMutex(Thread& thread)
 {
     return *(new MutexFreeRtos);
 }
 
 //------------------------------------------------------------------------------
-WaitCondition& SystemFreeRtos::driverCreateWaitCondition()
+WaitCondition& SystemFreeRtos::driverCreateWaitCondition(Thread& thread)
 {
     return *(new WaitConditionFreeRtos);
 }
@@ -139,7 +139,8 @@ WaitCondition& SystemFreeRtos::driverCreateWaitCondition()
 //------------------------------------------------------------------------------
 QueueDriver& SystemFreeRtos::driverCreateQueueDriver(
 												  const uint32_t nValues,
-												  const uint32_t valueSizeBytes)
+												  const uint32_t valueSizeBytes,
+												  Thread& thread)
 {
 	return *(new QueueDriverFreeRtos<0>(nValues, valueSizeBytes));
 }

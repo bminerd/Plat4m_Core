@@ -134,6 +134,8 @@ public:
                                 AngleDegrees& pitchAngleDegrees,
                                 AngleDegrees& rollAngleDegrees);
 
+    Error getLastMeasurement(Measurement& measurement);
+
 protected:
     
     //--------------------------------------------------------------------------
@@ -163,6 +165,8 @@ private:
     Config myConfig;
 
     Callback<>* myMeasurementCallback;
+
+    Measurement myLastMeasurement;
 
     //--------------------------------------------------------------------------
     // Private pure virtual methods

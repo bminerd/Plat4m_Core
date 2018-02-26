@@ -89,13 +89,11 @@ Ins::Error Ins::getMeasurement(Measurement& measurement)
         return Error(ERROR_CODE_NOT_ENABLED);
     }
 
-    Measurement tempMeasurement;
-
-    Error error = driverGetMeasurement(tempMeasurement);
+    Error error = driverGetMeasurement(measurement);
 
     if (error.getCode() == ERROR_CODE_NONE)
     {
-    	measurement = tempMeasurement;
+        myLastMeasurement = measurement;
     }
 
     return error;
@@ -130,6 +128,13 @@ Ins::Error Ins::getEulerAnglesDegrees(AngleDegrees& yawAngleDegrees,
 }
 
 //------------------------------------------------------------------------------
+Ins::Error Ins::getLastMeasurement(Measurement& measurement)
+{
+    measurement = myLastMeasurement;
+
+    return Error(ERROR_CODE_NONE);
+}
+//------------------------------------------------------------------------------
 // Protected constructors
 //------------------------------------------------------------------------------
 
@@ -137,7 +142,8 @@ Ins::Error Ins::getEulerAnglesDegrees(AngleDegrees& yawAngleDegrees,
 Ins::Ins() :
 	Module(),
 	myConfig(),
-    myMeasurementCallback(0)
+    myMeasurementCallback(0),
+    myLastMeasurement()
 {
 }
 

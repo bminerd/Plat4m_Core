@@ -141,7 +141,8 @@ void ImuServer::measurementReadyCallback()
 
 		if (myUpdateCount == myConfig.outputRateDivisionFactor)
 		{
-			myWaitCondition.notifyFast();
+//			myWaitCondition.notifyFast();
+		    myWaitCondition.notify();
 
 			myUpdateCount = 0;
 		}
@@ -223,7 +224,7 @@ void ImuServer::outputThreadCallback()
     	Imu* imu = iterator.current();
 
     	Imu::Measurement measurement;
-    	Imu::Error error = imu->getMeasurement(measurement);
+    	Imu::Error error = imu->getLastMeasurement(measurement);
 
         ImuMeasurementMessage message;
         message.index  = i;

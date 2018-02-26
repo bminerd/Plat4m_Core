@@ -96,12 +96,13 @@ private:
     Thread& driverCreateThread(Thread::RunCallback& callback,
                                const TimeMs periodMs);
 
-    Mutex& driverCreateMutex();
+    Mutex& driverCreateMutex(Thread& thread);
 
-    WaitCondition& driverCreateWaitCondition();
+    WaitCondition& driverCreateWaitCondition(Thread& thread);
 
     QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									 const uint32_t valueSizeBytes);
+    									 const uint32_t valueSizeBytes,
+    									 Thread& thread);
 
     void driverRun();
 
