@@ -70,15 +70,15 @@ Thread& System::createThread(Thread::RunCallback& callback,
 }
 
 //------------------------------------------------------------------------------
-Mutex& System::createMutex()
+Mutex& System::createMutex(Thread& thread)
 {
-    return (myDriver->driverCreateMutex());
+    return (myDriver->driverCreateMutex(thread));
 }
 
 //------------------------------------------------------------------------------
-WaitCondition& System::createWaitCondition()
+WaitCondition& System::createWaitCondition(Thread& thread)
 {
-    return (myDriver->driverCreateWaitCondition());
+    return (myDriver->driverCreateWaitCondition(thread));
 }
 
 //------------------------------------------------------------------------------

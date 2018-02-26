@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,119 +33,124 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file AllocationMemory.cpp
+/// @file ThreadWindows.cpp
 /// @author Ben Minerd
-/// @date 4/8/2014
-/// @brief AllocationMemory class source file.
+/// @date 12/23/2017
+/// @brief ThreadWindows class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/AllocationMemory.h>
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/SystemWindows/ThreadWindows.h>
+#include <Plat4m_Core/System.h>
 
-using Plat4m::AllocationMemory;
-
-//------------------------------------------------------------------------------
-// Private static data members
-//------------------------------------------------------------------------------
-
-AllocationMemory* AllocationMemory::myDriver = 0;
+using Plat4m::ThreadWindows;
+using Plat4m::Module;
 
 //------------------------------------------------------------------------------
-extern "C" void* allocationMemoryAllocate(size_t count)
+// Public constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+ThreadWindows::ThreadWindows(RunCallback& callback, const TimeMs periodMs) :
+    Thread(callback, periodMs),
+	myThreadHandle(0),
+	myThreadId(0)
 {
-	return AllocationMemory::allocate(count);
-}
+    myThreadHandle = CreateThread(0,
+                                  0,
+                                  &ThreadWindows::threadCallback,
+                                  (LPVOID) this,
+                                  0,
+                                  &myThreadId);
 
-//------------------------------------------------------------------------------
-extern "C" void allocationMemoryDeallocate(void* pointer)
-{
-	AllocationMemory::deallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-// Public static methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void* AllocationMemory::allocate(size_t count)
-{
-    return myDriver->driverAllocate(count);
-}
-
-//------------------------------------------------------------------------------
-void* AllocationMemory::allocateArray(size_t count)
-{
-    return myDriver->driverAllocateArray(count);
-}
-
-//------------------------------------------------------------------------------
-void AllocationMemory::deallocate(void* pointer)
-{
-    myDriver->driverDeallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-void AllocationMemory::deallocateArray(void* pointer)
-{
-    myDriver->driverDeallocateArray(pointer);
-}
-
-//------------------------------------------------------------------------------
-size_t AllocationMemory::getFreeMemorySize()
-{
-    return myDriver->driverGetFreeMemorySize();
-}
-
-//------------------------------------------------------------------------------
-// Protected constructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-AllocationMemory::AllocationMemory()
-{
-    if (isNullPointer(myDriver))
+    if (isNullPointer(myThreadHandle))
     {
-        myDriver = this;
+        while (true)
+        {
+            // Lock up, unable to create thread
+        }
     }
+
+    SuspendThread(myThreadHandle);
 }
 
 //------------------------------------------------------------------------------
-// Protected virtual destructors
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-AllocationMemory::~AllocationMemory()
+ThreadWindows::~ThreadWindows()
 {
 }
 
 //------------------------------------------------------------------------------
-// Global functions
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void* operator new(size_t count)
+DWORD ThreadWindows::getThreadId() const
 {
-    return AllocationMemory::allocate(count);
+    return myThreadId;
 }
 
 //------------------------------------------------------------------------------
-void* operator new[](size_t count)
+// Private static methods implemented from Thread
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+DWORD WINAPI ThreadWindows::threadCallback(LPVOID lpParameter)
 {
-    return AllocationMemory::allocateArray(count);
+	ThreadWindows* thread = static_cast<ThreadWindows*>(lpParameter);
+
+	while (true) // Loop forever
+	{
+		if (thread->getPeriodMs() != 0)
+		{
+		    Sleep(thread->getPeriodMs());
+		}
+
+		thread->run();
+	}
+
+	return 0;
 }
 
 //------------------------------------------------------------------------------
-void operator delete(void* pointer)
+// Private methods implemented from Module
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Module::Error ThreadWindows::driverSetEnabled(const bool enabled)
 {
-    return AllocationMemory::deallocate(pointer);
+	if (enabled)
+	{
+		ResumeThread(myThreadHandle);
+	}
+	else
+	{
+		SuspendThread(myThreadHandle);
+	}
+
+	return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-void operator delete[](void* pointer)
+// Private methods implemented from Thread
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void ThreadWindows::driverSetPeriodMs(const TimeMs periodMs)
 {
-    return AllocationMemory::deallocateArray(pointer);
+    // Do nothing
+}
+
+//------------------------------------------------------------------------------
+uint32_t ThreadWindows::driverSetPriority(const uint32_t priority)
+{
+//	vTaskPrioritySet(myTaskHandle, priority);
+
+	return 0;
 }

@@ -52,6 +52,7 @@ using Plat4m::Processor;
 //------------------------------------------------------------------------------
 
 Processor* Processor::myDriver               = 0;
+Plat4m::Endian Processor::myEndian           = Plat4m::ENDIAN_BIG;
 Plat4m::VoltageV Processor::myCoreVoltageV   = 0.0;
 uint32_t Processor::myClockSourceFrequencyHz = 0;
 Processor::Config Processor::myConfig;
@@ -109,15 +110,23 @@ uint32_t Processor::getCoreClockFrequencyHz()
 }
 
 //------------------------------------------------------------------------------
+Plat4m::Endian Processor::getEndian()
+{
+    return myEndian;
+}
+
+//------------------------------------------------------------------------------
 // Protected constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Processor::Processor(const VoltageV coreVoltageV,
+Processor::Processor(const Endian endian,
+                     const VoltageV coreVoltageV,
 					 const uint32_t clockSourceFrequencyHz)
 {
     if (isNullPointer(myDriver))
     {
+        myEndian                 = endian;
         myCoreVoltageV           = coreVoltageV;
         myClockSourceFrequencyHz = clockSourceFrequencyHz;
         myDriver                 = this;

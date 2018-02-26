@@ -78,7 +78,8 @@ public:
         ERROR_CODE_PARAMETER_INVALID,
         ERROR_CODE_NOT_ENABLED,
         ERROR_CODE_TRANSMIT_BUFFER_FULL,
-        ERROR_CODE_TRANSMIT_FAILED
+        ERROR_CODE_TRANSMIT_FAILED,
+        ERROR_CODE_RECEIVE_FAILED
     };
 
     //--------------------------------------------------------------------------

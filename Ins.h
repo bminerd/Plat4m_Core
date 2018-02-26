@@ -105,13 +105,7 @@ public:
 
     struct Config
     {
-        MeasurementMode measurementMode;
-        float accelMeasurementRange;
-        uint32_t accelMeasurementRateHz;
-        float gyroMeasurementRange;
-        uint32_t gyroMeasurementRateHz;
-        float magMeasurementRange;
-        uint32_t magMeasurementRateHz;
+        int a; // Placeholder
     };
 
     struct Measurement

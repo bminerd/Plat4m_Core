@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file System.h
+/// @file QueueDriverWindows.h
 /// @author Ben Minerd
-/// @date 6/4/2013
-/// @brief System class header file.
+/// @date 2/19/2018
+/// @brief QueueDriverWindows class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_H
-#define PLAT4M_SYSTEM_H
+#ifndef PLAT4M_QUEUE_DRIVER_WINDOWS_H
+#define PLAT4M_QUEUE_DRIVER_WINDOWS_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,12 +48,10 @@
 
 #include <stdint.h>
 
-#include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/ErrorTemplate.h>
+#include <Windows.h>
+
+#include <Plat4m_Core/QueueDriver.h>
 #include <Plat4m_Core/Thread.h>
-#include <Plat4m_Core/Mutex.h>
-#include <Plat4m_Core/WaitCondition.h>
-#include <Plat4m_Core/Queue.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -66,109 +64,49 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class System
+class QueueDriverWindows : public QueueDriver
 {
 public:
 
     //--------------------------------------------------------------------------
-    // Public enumerations
+    // Public constructors
     //--------------------------------------------------------------------------
 
-    enum ErrorCode
-    {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID,
-        ERROR_CODE_MODE_INVALID,
-        ERROR_CODE_NOT_ENABLED
-    };
+    QueueDriverWindows(Thread& thread);
 
     //--------------------------------------------------------------------------
-    // Public typedefs
+    // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    typedef ErrorTemplate<ErrorCode> Error;
-    
-    //--------------------------------------------------------------------------
-    // Public static methods
-    //--------------------------------------------------------------------------
-
-    static Thread& createThread(Thread::RunCallback& callback,
-                                const TimeMs periodMs = 0);
-
-    static Mutex& createMutex(Thread& thread);
-
-    static WaitCondition& createWaitCondition(Thread& thread);
+    virtual ~QueueDriverWindows();
 
     //--------------------------------------------------------------------------
-    template <typename T>
-    static Queue<T>& createQueue(const uint32_t nValues,
-                                 Thread& thread)
-	{
-    	return *(new Queue<T>(myDriver->driverCreateQueueDriver(nValues,
-    														    sizeof(T),
-    														    thread)));
-	}
-
-    static void run();
-    
-    static bool isRunning();
-
-    static TimeMs getTimeMs();
-
-    static TimeUs getTimeUs();
-
-    static void delayTimeMs(const TimeMs timeMs);
-
-    static bool checkTimeMs(const TimeMs timeMs);
-    
-protected:
-    
-    //--------------------------------------------------------------------------
-    // Protected constructors
+    // Public methods implemented from QueueDriver
     //--------------------------------------------------------------------------
 
-    System();
+	uint32_t driverGetSize();
 
-    //--------------------------------------------------------------------------
-    // Protected virtual destructors
-    //--------------------------------------------------------------------------
+	uint32_t driverGetSizeFast();
 
-    virtual ~System();
+	bool driverEnqueue(const void* value);
+
+	bool driverEnqueueFast(const void* value);
+
+	bool driverDequeue(void* value);
+
+	bool driverDequeueFast(void* value);
+
+	void driverClear();
 
 private:
-    
+
     //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-    
-    static System* myDriver;
-    
-    static bool myIsRunning;
-    
-    //--------------------------------------------------------------------------
-    // Private pure virtual methods
+    // Private data members
     //--------------------------------------------------------------------------
 
-    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs) = 0;
-
-    virtual Mutex& driverCreateMutex(Thread& thread) = 0;
-
-    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) = 0;
-
-    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									         const uint32_t valueSizeBytes,
-    									         Thread& thread) = 0;
-
-    virtual void driverRun() = 0;
-
-    virtual TimeMs driverGetTimeMs() = 0;
-
-    virtual TimeUs driverGetTimeUs() = 0;
-
-    virtual void driverDelayTimeMs(const TimeMs timeMs) = 0;
+	DWORD myThreadId;
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_SYSTEM_H
+#endif // PLAT4M_QUEUE_DRIVER_WINDOWS_H

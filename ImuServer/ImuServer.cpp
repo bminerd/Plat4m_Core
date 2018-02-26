@@ -79,7 +79,7 @@ ImuServer::ImuServer(ComProtocolPlat4mBinary& comProtocolPlat4mBinary,
 	myTempC(0.0),
 	myAccelMeasurement(),
 	myGyroMeasurement(),
-	myWaitCondition(System::createWaitCondition()),
+	myWaitCondition(System::createWaitCondition(myOutputThread)),
 	myUpdateCount(0)
 {
     initialize();
@@ -149,7 +149,7 @@ void ImuServer::measurementReadyCallback()
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from Module
+// Private methods implemented from Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

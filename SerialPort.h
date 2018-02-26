@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file System.h
+/// @file SerialPort.h
 /// @author Ben Minerd
-/// @date 6/4/2013
-/// @brief System class header file.
+/// @date 2/19/2018
+/// @brief SerialPort class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_H
-#define PLAT4M_SYSTEM_H
+#ifndef PLAT4M_SERIAL_PORT_H
+#define PLAT4M_SERIAL_PORT_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,12 +48,8 @@
 
 #include <stdint.h>
 
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ComInterface.h>
 #include <Plat4m_Core/ErrorTemplate.h>
-#include <Plat4m_Core/Thread.h>
-#include <Plat4m_Core/Mutex.h>
-#include <Plat4m_Core/WaitCondition.h>
-#include <Plat4m_Core/Queue.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -66,109 +62,126 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class System
+class SerialPort : public ComInterface
 {
 public:
-
+    
     //--------------------------------------------------------------------------
-    // Public enumerations
+    // Public types
     //--------------------------------------------------------------------------
-
+    
     enum ErrorCode
     {
         ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID,
-        ERROR_CODE_MODE_INVALID,
-        ERROR_CODE_NOT_ENABLED
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_ENABLE_FAILED,
+        ERROR_CODE_SET_CONFIG_FAILED,
+        ERROR_CODE_TRANSMIT_BUFFER_FULL,
+        ERROR_CODE_RECEIVE_FAILED
+    };
+    
+    enum WordBits
+    {
+        WORD_BITS_8 = 0,
+        WORD_BITS_9
     };
 
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
+    enum StopBits
+    {
+        STOP_BITS_1 = 0,
+        STOP_BITS_2
+    };
+
+    enum ParityBit
+    {
+        PARITY_BIT_NONE = 0,
+        PARITY_BIT_EVEN,
+        PARITY_BIT_ODD
+    };
+
+    enum HardwareFlowControl
+    {
+        HARDWARE_FLOW_CONTROL_NONE = 0
+    };
 
     typedef ErrorTemplate<ErrorCode> Error;
     
     //--------------------------------------------------------------------------
-    // Public static methods
+    // Public structures
     //--------------------------------------------------------------------------
-
-    static Thread& createThread(Thread::RunCallback& callback,
-                                const TimeMs periodMs = 0);
-
-    static Mutex& createMutex(Thread& thread);
-
-    static WaitCondition& createWaitCondition(Thread& thread);
-
+    
+    struct Config
+    {
+        uint32_t baudRate;
+        WordBits wordBits;
+        StopBits stopBits;
+        ParityBit parityBit;
+        HardwareFlowControl hardwareFlowControl;
+    };
+    
     //--------------------------------------------------------------------------
-    template <typename T>
-    static Queue<T>& createQueue(const uint32_t nValues,
-                                 Thread& thread)
-	{
-    	return *(new Queue<T>(myDriver->driverCreateQueueDriver(nValues,
-    														    sizeof(T),
-    														    thread)));
-	}
-
-    static void run();
+    // Public methods implemented from ComInterface
+    //--------------------------------------------------------------------------
     
-    static bool isRunning();
-
-    static TimeMs getTimeMs();
-
-    static TimeUs getTimeUs();
-
-    static void delayTimeMs(const TimeMs timeMs);
-
-    static bool checkTimeMs(const TimeMs timeMs);
+    ComInterface::Error transmitBytes(const ByteArray& byteArray,
+                                      const bool waitUntilDone = false);
     
+    uint32_t getReceivedBytesCount();
+    
+    ComInterface::Error getReceivedBytes(ByteArray& byteArray,
+                                         const uint32_t nBytes = 0);
+    
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+    
+    Config getConfig() const;
+
+    Error setConfig(const Config& config);
+    
+    const char* getName() const;
+
 protected:
     
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-
-    System();
-
+    
+    SerialPort(const char* name);
+    
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
 
-    virtual ~System();
+    virtual ~SerialPort();
 
 private:
-    
+
     //--------------------------------------------------------------------------
-    // Private static data members
+    // Private data members
     //--------------------------------------------------------------------------
-    
-    static System* myDriver;
-    
-    static bool myIsRunning;
+
+    const char* myName;
+
+    Config myConfig;
     
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
+    
+    virtual Error driverSetConfig(const Config& config) = 0;
+    
+    virtual ComInterface::Error driverTransmitBytes(
+                                                  const ByteArray& byteArray,
+                                                  const bool waitUntilDone) = 0;
 
-    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs) = 0;
+    virtual uint32_t driverGetReceivedBytesCount() = 0;
 
-    virtual Mutex& driverCreateMutex(Thread& thread) = 0;
-
-    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) = 0;
-
-    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									         const uint32_t valueSizeBytes,
-    									         Thread& thread) = 0;
-
-    virtual void driverRun() = 0;
-
-    virtual TimeMs driverGetTimeMs() = 0;
-
-    virtual TimeUs driverGetTimeUs() = 0;
-
-    virtual void driverDelayTimeMs(const TimeMs timeMs) = 0;
+    virtual ComInterface::Error driverGetReceivedBytes(
+                                                     ByteArray& byteArray,
+                                                     const uint32_t nBytes) = 0;
 };
 
-}; // namespace Plat4m
+}; // namespace plat4m
 
-#endif // PLAT4M_SYSTEM_H
+#endif // PLAT4M_SERIAL_PORT_H

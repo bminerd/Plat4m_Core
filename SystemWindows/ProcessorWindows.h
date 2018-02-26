@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file System.h
+/// @file ProcessorWindows.h
 /// @author Ben Minerd
-/// @date 6/4/2013
-/// @brief System class header file.
+/// @date 2/23/2018
+/// @brief ProcessorWindows class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_H
-#define PLAT4M_SYSTEM_H
+#ifndef PLAT4M_PROCESSOR_WINDOWS_H
+#define PLAT4M_PROCESSOR_WINDOWS_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,12 +48,7 @@
 
 #include <stdint.h>
 
-#include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/ErrorTemplate.h>
-#include <Plat4m_Core/Thread.h>
-#include <Plat4m_Core/Mutex.h>
-#include <Plat4m_Core/WaitCondition.h>
-#include <Plat4m_Core/Queue.h>
+#include <Plat4m_Core/Processor.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -66,109 +61,52 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class System
+class ProcessorWindows : public Processor
 {
 public:
-
+    
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-
-    enum ErrorCode
+    
+    enum Error
     {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID,
-        ERROR_CODE_MODE_INVALID,
-        ERROR_CODE_NOT_ENABLED
+        ERROR_NONE
     };
 
     //--------------------------------------------------------------------------
-    // Public typedefs
+    // Public structures
     //--------------------------------------------------------------------------
-
-    typedef ErrorTemplate<ErrorCode> Error;
     
     //--------------------------------------------------------------------------
-    // Public static methods
+    // Public constructors
     //--------------------------------------------------------------------------
 
-    static Thread& createThread(Thread::RunCallback& callback,
-                                const TimeMs periodMs = 0);
-
-    static Mutex& createMutex(Thread& thread);
-
-    static WaitCondition& createWaitCondition(Thread& thread);
+    ProcessorWindows();
 
     //--------------------------------------------------------------------------
-    template <typename T>
-    static Queue<T>& createQueue(const uint32_t nValues,
-                                 Thread& thread)
-	{
-    	return *(new Queue<T>(myDriver->driverCreateQueueDriver(nValues,
-    														    sizeof(T),
-    														    thread)));
-	}
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
 
-    static void run();
+    virtual ~ProcessorWindows();
     
-    static bool isRunning();
-
-    static TimeMs getTimeMs();
-
-    static TimeUs getTimeUs();
-
-    static void delayTimeMs(const TimeMs timeMs);
-
-    static bool checkTimeMs(const TimeMs timeMs);
-    
-protected:
-    
-    //--------------------------------------------------------------------------
-    // Protected constructors
-    //--------------------------------------------------------------------------
-
-    System();
-
-    //--------------------------------------------------------------------------
-    // Protected virtual destructors
-    //--------------------------------------------------------------------------
-
-    virtual ~System();
-
 private:
-    
+
     //--------------------------------------------------------------------------
-    // Private static data members
+    // Private virtual methods implemented from Processor
     //--------------------------------------------------------------------------
     
-    static System* myDriver;
+    Processor::Error driverReset();
     
-    static bool myIsRunning;
+    Processor::Error driverConfigure(const Processor::Config& config);
     
-    //--------------------------------------------------------------------------
-    // Private pure virtual methods
-    //--------------------------------------------------------------------------
+    Processor::Error driverSetPowerMode(const Processor::PowerMode powerMode);
 
-    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs) = 0;
+    uint32_t driverGetCoreClockFrequencyHz();
 
-    virtual Mutex& driverCreateMutex(Thread& thread) = 0;
-
-    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) = 0;
-
-    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									         const uint32_t valueSizeBytes,
-    									         Thread& thread) = 0;
-
-    virtual void driverRun() = 0;
-
-    virtual TimeMs driverGetTimeMs() = 0;
-
-    virtual TimeUs driverGetTimeUs() = 0;
-
-    virtual void driverDelayTimeMs(const TimeMs timeMs) = 0;
+    Processor::Error driverJumpToAddress(const intptr_t address);
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_SYSTEM_H
+#endif // PLAT4M_PROCESSOR_WINDOWS_H

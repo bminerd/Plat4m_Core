@@ -110,13 +110,16 @@ public:
     
     static uint32_t getCoreClockFrequencyHz();
 
+    static Endian getEndian();
+
 protected:
     
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
     
-    Processor(const VoltageV coreVoltageV,
+    Processor(const Endian endian,
+              const VoltageV coreVoltageV,
               const uint32_t clockSourceFrequencyHz);
     
     //--------------------------------------------------------------------------
@@ -130,15 +133,17 @@ private:
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
-    
+
     static Processor* myDriver;
+    
+    static Endian myEndian;
     
     static VoltageV myCoreVoltageV;
     
     static uint32_t myClockSourceFrequencyHz;
     
     static Config myConfig;
-    
+
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------

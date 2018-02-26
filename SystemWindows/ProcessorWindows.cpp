@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,87 +33,71 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file AllocationMemory.h
+/// @file ProcessorWindows.cpp
 /// @author Ben Minerd
-/// @date 4/8/2014
-/// @brief AllocationMemory class header file.
+/// @date 2/23/2018
+/// @brief ProcessorWindows class source file.
 ///
-
-#ifndef PLAT4M_ALLOCATION_MEMORY_H
-#define PLAT4M_ALLOCATION_MEMORY_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stddef.h>
+#include <Plat4m_Core/SystemWindows/ProcessorWindows.h>
+
+using Plat4m::ProcessorWindows;
+using Plat4m::Processor;
 
 //------------------------------------------------------------------------------
-// Namespaces
+// Public constructors
 //------------------------------------------------------------------------------
 
-namespace Plat4m
+//------------------------------------------------------------------------------
+ProcessorWindows::ProcessorWindows() :
+    Processor(ENDIAN_BIG, 0.0, 0)
 {
+}
 
 //------------------------------------------------------------------------------
-// Classes
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
-class AllocationMemory
+//------------------------------------------------------------------------------
+ProcessorWindows::~ProcessorWindows()
 {
-public:
+}
 
-    //--------------------------------------------------------------------------
-    // Public static methods
-    //--------------------------------------------------------------------------
-    
-    static void* allocate(size_t count);
-    
-    static void* allocateArray(size_t count);
-    
-    static void deallocate(void* pointer);
-    
-    static void deallocateArray(void* pointer);
+//------------------------------------------------------------------------------
+// Private methods implemented from Processor
+//------------------------------------------------------------------------------
 
-    static size_t getFreeMemorySize();
+//------------------------------------------------------------------------------
+Processor::Error ProcessorWindows::driverReset()
+{
+    return Processor::Error(Processor::ERROR_CODE_NONE);
+}
 
-protected:
+//------------------------------------------------------------------------------
+Processor::Error ProcessorWindows::driverConfigure(const Processor::Config& config)
+{
+    return Processor::Error(Processor::ERROR_CODE_NONE);
+}
 
-    //--------------------------------------------------------------------------
-    // Protected constructors
-    //--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+Processor::Error ProcessorWindows::driverSetPowerMode(
+                                               const Processor::PowerMode powerMode)
+{
+    return Processor::Error(Processor::ERROR_CODE_NONE);
+}
 
-    AllocationMemory();
+//------------------------------------------------------------------------------
+uint32_t ProcessorWindows::driverGetCoreClockFrequencyHz()
+{
+    return 0;
+}
 
-    //--------------------------------------------------------------------------
-    // Protected virtual destructors
-    //--------------------------------------------------------------------------
-
-    virtual ~AllocationMemory();
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-
-    static AllocationMemory* myDriver;
-
-    //--------------------------------------------------------------------------
-    // Private pure virtual methods
-    //--------------------------------------------------------------------------
-
-    virtual void* driverAllocate(size_t count) = 0;
-
-    virtual void* driverAllocateArray(size_t count) = 0;
-
-    virtual void driverDeallocate(void* pointer) = 0;
-
-    virtual void driverDeallocateArray(void* pointer) = 0;
-
-    virtual size_t driverGetFreeMemorySize() = 0;
-};
-
-}; // namespace Plat4m
-
-#endif // PLAT4M_ALLOCATION_MEMORY_H
+//------------------------------------------------------------------------------
+Processor::Error ProcessorWindows::driverJumpToAddress(const intptr_t address)
+{
+    return Processor::Error(Processor::ERROR_CODE_NONE);
+}

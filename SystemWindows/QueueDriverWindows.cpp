@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,119 +33,97 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file AllocationMemory.cpp
+/// @file QueueDriverWindows.cpp
 /// @author Ben Minerd
-/// @date 4/8/2014
-/// @brief AllocationMemory class source file.
+/// @date 2/23/2018
+/// @brief QueueDriverWindows class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/AllocationMemory.h>
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/SystemWindows/QueueDriverWindows.h>
+#include <Plat4m_Core/SystemWindows/ThreadWindows.h>
 
-using Plat4m::AllocationMemory;
-
-//------------------------------------------------------------------------------
-// Private static data members
-//------------------------------------------------------------------------------
-
-AllocationMemory* AllocationMemory::myDriver = 0;
+using Plat4m::QueueDriverWindows;
 
 //------------------------------------------------------------------------------
-extern "C" void* allocationMemoryAllocate(size_t count)
+// Public constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+QueueDriverWindows::QueueDriverWindows(Thread& thread) :
+    QueueDriver(),
+    myThreadId(0)
 {
-	return AllocationMemory::allocate(count);
+    ThreadWindows& threadWindows = static_cast<ThreadWindows&>(thread);
+    myThreadId = threadWindows.getThreadId();
 }
 
 //------------------------------------------------------------------------------
-extern "C" void allocationMemoryDeallocate(void* pointer)
-{
-	AllocationMemory::deallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-// Public static methods
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void* AllocationMemory::allocate(size_t count)
-{
-    return myDriver->driverAllocate(count);
-}
-
-//------------------------------------------------------------------------------
-void* AllocationMemory::allocateArray(size_t count)
-{
-    return myDriver->driverAllocateArray(count);
-}
-
-//------------------------------------------------------------------------------
-void AllocationMemory::deallocate(void* pointer)
-{
-    myDriver->driverDeallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-void AllocationMemory::deallocateArray(void* pointer)
-{
-    myDriver->driverDeallocateArray(pointer);
-}
-
-//------------------------------------------------------------------------------
-size_t AllocationMemory::getFreeMemorySize()
-{
-    return myDriver->driverGetFreeMemorySize();
-}
-
-//------------------------------------------------------------------------------
-// Protected constructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-AllocationMemory::AllocationMemory()
-{
-    if (isNullPointer(myDriver))
-    {
-        myDriver = this;
-    }
-}
-
-//------------------------------------------------------------------------------
-// Protected virtual destructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-AllocationMemory::~AllocationMemory()
+QueueDriverWindows::~QueueDriverWindows()
 {
 }
 
 //------------------------------------------------------------------------------
-// Global functions
+// Public methods implemented from QueueDriver
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void* operator new(size_t count)
+uint32_t QueueDriverWindows::driverGetSize()
 {
-    return AllocationMemory::allocate(count);
+//      return ((uint32_t) uxQueueMessagesWaiting(myQueueHandle));
+    return 0;
 }
 
 //------------------------------------------------------------------------------
-void* operator new[](size_t count)
+uint32_t QueueDriverWindows::driverGetSizeFast()
 {
-    return AllocationMemory::allocateArray(count);
+//      return ((uint32_t) uxQueueMessagesWaitingFromISR(myQueueHandle));
+    return 0;
 }
 
 //------------------------------------------------------------------------------
-void operator delete(void* pointer)
+bool QueueDriverWindows::driverEnqueue(const void* value)
 {
-    return AllocationMemory::deallocate(pointer);
+    uint8_t convertedValue = *(static_cast<const uint8_t*>(value));
+
+    return (PostThreadMessage(myThreadId,
+                              0x400,
+                              *(static_cast<const uint8_t*>(value)),
+                              0));
 }
 
 //------------------------------------------------------------------------------
-void operator delete[](void* pointer)
+bool QueueDriverWindows::driverEnqueueFast(const void* value)
 {
-    return AllocationMemory::deallocateArray(pointer);
+    return (driverEnqueue(value));
+}
+
+//--------------------------------------------------------------------------
+bool QueueDriverWindows::driverDequeue(void* value)
+{
+    MSG message;
+    bool returnValue = GetMessage(&message, NULL, 0, 0);
+
+    *(static_cast<uint8_t*>(value)) = message.wParam;
+
+    return returnValue;
+}
+
+//--------------------------------------------------------------------------
+bool QueueDriverWindows::driverDequeueFast(void* value)
+{
+    return (driverDequeue(value));
+}
+
+//--------------------------------------------------------------------------
+void QueueDriverWindows::driverClear()
+{
+//      xQueueReset(myQueueHandle);
 }

@@ -43,6 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <math.h>
+
 #include <Plat4m_Core/InsServer/InsServer.h>
 #include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageHandlerTemplate.h>
 #include <Plat4m_Core/InsServer/InsServerBinaryMessages.h>
@@ -53,18 +55,9 @@
 #include <Plat4m_Core/InsServer/InsServerGetConfigResponseBinaryMessage.h>
 #include <Plat4m_Core/ByteArrayN.h>
 
-#include <math.h>
-
 using Plat4m::InsServer;
 using namespace Plat4m::InsServerBinaryMessages;
 using Plat4m::Module;
-
-//------------------------------------------------------------------------------
-// Private static data members
-//------------------------------------------------------------------------------
-
-const Plat4m::TimeMs InsServer::myOutputThreadPeriodMs = 0;
-
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
@@ -78,9 +71,8 @@ InsServer::InsServer(ComProtocolPlat4mBinary& comProtocolPlat4mBinary,
     myConfig(),
 	myInsList(),
     myOutputThread(System::createThread(
-                         createCallback(this, &InsServer::outputThreadCallback),
-                         myOutputThreadPeriodMs)),
-	myWaitCondition(System::createWaitCondition()),
+                       createCallback(this, &InsServer::outputThreadCallback))),
+	myWaitCondition(System::createWaitCondition(myOutputThread)),
 	myUpdateCount(0)
 {
 	initialize();
@@ -150,7 +142,7 @@ void InsServer::measurementReadyCallback()
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from Module
+// Private methods implemented from Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

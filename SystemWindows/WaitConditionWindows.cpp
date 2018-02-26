@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,87 +33,72 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file AllocationMemory.h
+/// @file WaitConditionWindows.cpp
 /// @author Ben Minerd
-/// @date 4/8/2014
-/// @brief AllocationMemory class header file.
+/// @date 2/19/2018
+/// @brief WaitConditionWindows class source file.
 ///
-
-#ifndef PLAT4M_ALLOCATION_MEMORY_H
-#define PLAT4M_ALLOCATION_MEMORY_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stddef.h>
+#include <Plat4m_Core/SystemWindows/WaitConditionWindows.h>
+
+using Plat4m::WaitConditionWindows;
+using Plat4m::WaitCondition;
 
 //------------------------------------------------------------------------------
-// Namespaces
+// Public constructors
 //------------------------------------------------------------------------------
 
-namespace Plat4m
+//------------------------------------------------------------------------------
+WaitConditionWindows::WaitConditionWindows() :
+    WaitCondition(),
+	myThreadHandle(0)
 {
+}
 
 //------------------------------------------------------------------------------
-// Classes
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
-class AllocationMemory
+//------------------------------------------------------------------------------
+WaitConditionWindows::~WaitConditionWindows()
 {
-public:
+}
 
-    //--------------------------------------------------------------------------
-    // Public static methods
-    //--------------------------------------------------------------------------
-    
-    static void* allocate(size_t count);
-    
-    static void* allocateArray(size_t count);
-    
-    static void deallocate(void* pointer);
-    
-    static void deallocateArray(void* pointer);
+//------------------------------------------------------------------------------
+// Public methods
+//------------------------------------------------------------------------------
 
-    static size_t getFreeMemorySize();
+//------------------------------------------------------------------------------
+void WaitConditionWindows::notifyFast()
+{
+//	BaseType_t higherPriorityTaskWasWoken = pdFALSE;
+//	vTaskNotifyGiveFromISR(myTaskHandle, &higherPriorityTaskWasWoken);
+}
 
-protected:
+//------------------------------------------------------------------------------
+// Private methods implemented from WaitCondition
+//------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // Protected constructors
-    //--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+WaitCondition::Error WaitConditionWindows::driverWait(const TimeMs waitTimeMs)
+{
+//	myTaskHandle = xTaskGetCurrentTaskHandle();
+//
+//	ulTaskNotifyTake(pdFALSE, (TickType_t) waitTimeMs);
 
-    AllocationMemory();
+    return Error(ERROR_CODE_NONE);
+}
 
-    //--------------------------------------------------------------------------
-    // Protected virtual destructors
-    //--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+WaitCondition::Error WaitConditionWindows::driverNotify()
+{
+//	xTaskNotifyGive(myTaskHandle);
+//
+//	myTaskHandle = 0;
 
-    virtual ~AllocationMemory();
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-
-    static AllocationMemory* myDriver;
-
-    //--------------------------------------------------------------------------
-    // Private pure virtual methods
-    //--------------------------------------------------------------------------
-
-    virtual void* driverAllocate(size_t count) = 0;
-
-    virtual void* driverAllocateArray(size_t count) = 0;
-
-    virtual void driverDeallocate(void* pointer) = 0;
-
-    virtual void driverDeallocateArray(void* pointer) = 0;
-
-    virtual size_t driverGetFreeMemorySize() = 0;
-};
-
-}; // namespace Plat4m
-
-#endif // PLAT4M_ALLOCATION_MEMORY_H
+    return Error(ERROR_CODE_NONE);
+}

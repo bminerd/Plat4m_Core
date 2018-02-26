@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,119 +33,111 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file AllocationMemory.cpp
+/// @file ImuClient.cpp
 /// @author Ben Minerd
-/// @date 4/8/2014
-/// @brief AllocationMemory class source file.
+/// @date 2/23/2018
+/// @brief ImuClient class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/AllocationMemory.h>
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ImuServer/ImuClient.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageHandlerTemplate.h>
+#include <Plat4m_Core/ImuServer/ImuServerBinaryMessages.h>
+#include <Plat4m_Core/ImuServer/ImuMeasurementBinaryMessage.h>
+#include <Plat4m_Core/ByteArrayN.h>
 
-using Plat4m::AllocationMemory;
+using Plat4m::ImuClient;
+using Plat4m::Imu;
+using namespace Plat4m::ImuServerBinaryMessages;
+using Plat4m::Module;
 
 //------------------------------------------------------------------------------
-// Private static data members
+// Public constructors
 //------------------------------------------------------------------------------
 
-AllocationMemory* AllocationMemory::myDriver = 0;
-
 //------------------------------------------------------------------------------
-extern "C" void* allocationMemoryAllocate(size_t count)
+ImuClient::ImuClient(ComProtocolPlat4mBinary& comProtocolPlat4mBinary,
+                     BinaryMessageFrameHandler& binaryMessageFrameHandler) :
+    Imu(),
+    myComProtocolPlat4mBinary(comProtocolPlat4mBinary),
+    myBinaryMessageFrameHandler(binaryMessageFrameHandler),
+    myBinaryMessageHandlerGroup(groupId),
+    myMeasurement()
 {
-	return AllocationMemory::allocate(count);
+    initialize();
+
+    myBinaryMessageFrameHandler.addMessageHandlerGroup(
+                                                   myBinaryMessageHandlerGroup);
 }
 
 //------------------------------------------------------------------------------
-extern "C" void allocationMemoryDeallocate(void* pointer)
-{
-	AllocationMemory::deallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-// Public static methods
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void* AllocationMemory::allocate(size_t count)
-{
-    return myDriver->driverAllocate(count);
-}
-
-//------------------------------------------------------------------------------
-void* AllocationMemory::allocateArray(size_t count)
-{
-    return myDriver->driverAllocateArray(count);
-}
-
-//------------------------------------------------------------------------------
-void AllocationMemory::deallocate(void* pointer)
-{
-    myDriver->driverDeallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-void AllocationMemory::deallocateArray(void* pointer)
-{
-    myDriver->driverDeallocateArray(pointer);
-}
-
-//------------------------------------------------------------------------------
-size_t AllocationMemory::getFreeMemorySize()
-{
-    return myDriver->driverGetFreeMemorySize();
-}
-
-//------------------------------------------------------------------------------
-// Protected constructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-AllocationMemory::AllocationMemory()
-{
-    if (isNullPointer(myDriver))
-    {
-        myDriver = this;
-    }
-}
-
-//------------------------------------------------------------------------------
-// Protected virtual destructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-AllocationMemory::~AllocationMemory()
+ImuClient::~ImuClient()
 {
 }
 
 //------------------------------------------------------------------------------
-// Global functions
+// Private methods implemented from Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void* operator new(size_t count)
+Module::Error ImuClient::driverSetEnabled(const bool enabled)
 {
-    return AllocationMemory::allocate(count);
+    return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-void* operator new[](size_t count)
+// Private methods implemented from Imu
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Imu::Error ImuClient::driverSetConfig(const Imu::Config& config)
 {
-    return AllocationMemory::allocateArray(count);
+    // TODO: Put config message here
+    return Imu::Error(Imu::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-void operator delete(void* pointer)
+Imu::Error ImuClient::driverGetMeasurement(Measurement& measurement)
 {
-    return AllocationMemory::deallocate(pointer);
+    measurement = myMeasurement;
+
+    return Imu::Error(Imu::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-void operator delete[](void* pointer)
+// Private methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void ImuClient::initialize()
 {
-    return AllocationMemory::deallocateArray(pointer);
+    myBinaryMessageHandlerGroup.addMessageHandler(
+    createMessageHandler<ImuClient,
+                         ImuMeasurementMessage,
+                         ImuMeasurementBinaryMessage>(
+                              this, &ImuClient::imuMeasurementMessageCallback));
+}
+
+//------------------------------------------------------------------------------
+void ImuClient::imuMeasurementMessageCallback(
+                                           const ImuMeasurementMessage& message)
+{
+    myMeasurement.xAccelerationG      = message.accelX;
+    myMeasurement.yAccelerationG      = message.accelY;
+    myMeasurement.zAccelerationG      = message.accelZ;
+    myMeasurement.xAngularVelocityDps = message.gyroX;
+    myMeasurement.yAngularVelocityDps = message.gyroY;
+    myMeasurement.zAngularVelocityDps = message.gyroZ;
+    myMeasurement.magX                = 0.0;
+    myMeasurement.magY                = 0.0;
+    myMeasurement.magZ                = 0.0;
+
+    measurementReady();
 }

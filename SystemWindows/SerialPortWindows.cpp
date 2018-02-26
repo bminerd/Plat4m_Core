@@ -1,69 +1,75 @@
-/*------------------------------------------------------------------------------
- *       _______    __                           ___
- *      ||  ___ \  || |             __          //  |
- *      || |  || | || |   _______  || |__      //   |    _____  ___
- *      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
- *      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
- *      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
- *      || |       || |  \\____  | || |__  //_____   _| || | || | || |
- *      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
- *
- *
- * The MIT License (MIT)
- *
- * Copyright (c) 2013 Benjamin Minerd
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2015 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
-/**
- * @file SerialPortWindows.cpp
- * @author Ben Minerd
- * @date 5/14/13
- * @brief SerialPortWindows class.
- */
+///
+/// @file SerialPortWindows.cpp
+/// @author Ben Minerd
+/// @date 6/3/2015
+/// @brief SerialPortWindows class source file.
+///
 
-/*------------------------------------------------------------------------------
- * Include files
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
 
-#include <SerialPortWindows.h>
+#include <Plat4m_Core/SystemWindows/SerialPortWindows.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/CallbackMethod.h>
+#include <Plat4m_Core/MutexLock.h>
 
-using namespace Plat4m;
+using Plat4m::SerialPortWindows;
+using Plat4m::SerialPort;
+using Plat4m::Module;
+using Plat4m::ComInterface;
 
 /*------------------------------------------------------------------------------
  * Local variables
  *----------------------------------------------------------------------------*/
 
-static uint8_t wordBitsMap[] =
+const uint8_t SerialPortWindows::myWordBitsMap[] =
 {
 	8, /// SerialPort::WORD_BITS_8
 	9  /// SerialPort::WORD_BITS_9
 };
 
-static uint8_t stopBitsMap[] =
+const uint8_t SerialPortWindows::myStopBitsMap[] =
 {
 	1, /// SerialPort::STOP_BITS_1
 	2  /// SerialPort::STOP_BITS_2
 };
 
-static uint8_t parityMap[] =
+const uint8_t SerialPortWindows::myParityMap[] =
 {
 	0, /// SerialPort::PARITY_NONE
 	2, /// SerialPort::PARITY_EVEN
@@ -72,50 +78,41 @@ static uint8_t parityMap[] =
 	4, /// SerialPort::PARITY_SPACE
 };
 
-static SerialPortWindows* objectMap[1]; // TODO Update
-
-/*------------------------------------------------------------------------------
- * Public static methods
- *----------------------------------------------------------------------------*/
-
 //------------------------------------------------------------------------------
-SerialPortWindows& SerialPortWindows::get(const char* comPort)
-{
-    if (IS_NULL_POINTER(objectMap[0]))
-    {
-        objectMap[0] = new SerialPortWindows(comPort);
-    }
-    else
-    {
-        // Error?
-    }
-    
-    return *(objectMap[0]);
-}
-
-/*------------------------------------------------------------------------------
- * Private constructors and destructors
- *----------------------------------------------------------------------------*/
+// Public constructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 SerialPortWindows::SerialPortWindows(const char* comPort) :
     SerialPort(comPort),
-	mySerialHandle(NULL_POINTER)
+	mySerialHandle(0),
+	myReceiveThread(System::createThread(
+	          createCallback(this, &SerialPortWindows::receiveThreadCallback))),
+	myMutex(System::createMutex(myReceiveThread))
 {
 }
 
-/*------------------------------------------------------------------------------
- * Private implemented methods from Module
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Public virtual destructors
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Module::Error SerialPortWindows::driverEnable(const bool enable)
+SerialPortWindows::~SerialPortWindows()
 {
-	if (enable)
+}
+
+//------------------------------------------------------------------------------
+// Private methods implemented from Module
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Module::Error SerialPortWindows::driverSetEnabled(const bool enabled)
+{
+	if (enabled)
 	{
 		if (isNullPointer(mySerialHandle))
 		{
-			mySerialHandle = CreateFile(getComPort(),
+			mySerialHandle = CreateFile(getName(),
 										GENERIC_READ | GENERIC_WRITE,
 										0,
 										0,
@@ -127,7 +124,7 @@ Module::Error SerialPortWindows::driverEnable(const bool enable)
 			{
 				if (GetLastError() == ERROR_FILE_NOT_FOUND)
 				{
-					return Module::Error(ERROR_CODE_ENABLE);
+					return Module::Error(Module::ERROR_CODE_ENABLE_FAILED);
 				}
 			}
 		}
@@ -138,17 +135,19 @@ Module::Error SerialPortWindows::driverEnable(const bool enable)
 		{
 			CloseHandle(mySerialHandle);
 		}
+
+		myReceiveThread.setEnabled(false);
 	}
 
 	return Module::Error(Module::ERROR_CODE_NONE);
 }
 
-/*------------------------------------------------------------------------------
- * Private implemented methods from SerialPort
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Private methods implemented from SerialPort
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-SerialPort::Error SerialPortWindows::driverConfigure(const Config& config)
+SerialPort::Error SerialPortWindows::driverSetConfig(const Config& config)
 {
 	DCB serialParametersDcb;
 
@@ -160,13 +159,13 @@ SerialPort::Error SerialPortWindows::driverConfigure(const Config& config)
 	}
 
 	serialParametersDcb.BaudRate = config.baudRate;
-	serialParametersDcb.ByteSize = wordBitsMap[config.wordBits];
-	serialParametersDcb.StopBits = stopBitsMap[config.stopBits];
-	serialParametersDcb.Parity   = parityMap[config.parity];
+	serialParametersDcb.ByteSize = myWordBitsMap[config.wordBits];
+	serialParametersDcb.StopBits = myStopBitsMap[config.stopBits];
+	serialParametersDcb.Parity   = myParityMap[config.parityBit];
 
 	if (!SetCommState(mySerialHandle, &serialParametersDcb))
 	{
-		return Error(ERROR_CODE_CONFIGURE_FAILED);
+		return Error(ERROR_CODE_SET_CONFIG_FAILED);
 	}
 
 	// TODO Make this part of Config?
@@ -179,86 +178,107 @@ SerialPort::Error SerialPortWindows::driverConfigure(const Config& config)
 
 	if (!SetCommTimeouts(mySerialHandle, &timeouts))
 	{
-		return Error(ERROR_CODE_CONFIGURE_FAILED);
+		return Error(ERROR_CODE_SET_CONFIG_FAILED);
 	}
+
+	myReceiveThread.setEnabled(true);
 
 	return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-SerialPort::Error SerialPortWindows::driverTx(const ByteArray& byteArray)
+ComInterface::Error SerialPortWindows::driverTransmitBytes(
+                                                     const ByteArray& byteArray,
+                                                     const bool waitUntilDone)
 {
 	DWORD bytesWritten = 0;
 
 	if (!WriteFile(mySerialHandle,
-				   byteArray.getDataConst(),
+				   byteArray.getItems(),
 				   byteArray.getSize(),
 				   &bytesWritten,
 				   NULL))
 	{
-		return Error(ERROR_CODE_TX_FAILED);
+		return ComInterface::Error(
+		                         ComInterface::ERROR_CODE_TRANSMIT_BUFFER_FULL);
 	}
 
-	return Error(ERROR_CODE_NONE);
+	return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-unsigned int SerialPortWindows::driverRxBytesAvailable()
+uint32_t SerialPortWindows::driverGetReceivedBytesCount()
 {
-	DWORD dwErrors;
-	COMSTAT comStat;
+    MutexLock mutexLock(myMutex);
 
-	unsigned int nBytes = ClearCommError(mySerialHandle, &dwErrors, &comStat);
-
-	return nBytes;
+    return (getReceiveBuffer()->count());
 }
 
 //------------------------------------------------------------------------------
-SerialPort::Error SerialPortWindows::driverGetRxBytes(ByteArray& byteArray,
-													  const unsigned int nBytes)
+ComInterface::Error SerialPortWindows::driverGetReceivedBytes(
+                                                          ByteArray& byteArray,
+                                                          const uint32_t nBytes)
 {
-	DWORD bytesReceived = 0;
+    uint8_t byte;
+    uint32_t nBytesToRead;
 
-	// TODO Fix this so it's non-blocking (overlapped I/O?)...
+    if (nBytes == 0)
+    {
+        nBytesToRead = driverGetReceivedBytesCount();
+    }
+    else
+    {
+        nBytesToRead = nBytes;
+    }
 
-	if (!SetCommMask(mySerialHandle, EV_RXCHAR))
-	{
-	    // Error?
-	}
+    while (nBytesToRead--)
+    {
+        MutexLock mutexLock(myMutex);
 
-//	DWORD dwCommEvent;
-//
-//	if (!WaitCommEvent(mySerialHandle, &dwCommEvent, NULL))
-//	{
-//	    return Error(ERROR_CODE_RX_FAILED);
-//	}
+        if (getReceiveBuffer()->read(byte))
+        {
+            byteArray.append(byte);
+        }
+    }
 
-	if (nBytes == 0)
-	{
-//	    byteArray.setSize(driverRxBytesAvailable());
+	return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
+}
 
-		if (!ReadFile(mySerialHandle,
-					  byteArray.getData(),
-					  byteArray.getSize(),
-					  &bytesReceived,
-					  NULL))
-		{
-			return Error(ERROR_CODE_RX_FAILED);
-		}
-	}
-	else
-	{
-		if (!ReadFile(mySerialHandle,
-					  byteArray.getData(),
-					  nBytes,
-					  &bytesReceived,
-					  NULL))
-		{
-			return Error(ERROR_CODE_RX_FAILED);
-		}
-	}
+//------------------------------------------------------------------------------
+// Private methods
+//------------------------------------------------------------------------------
 
-	byteArray.setSize(bytesReceived);
+//------------------------------------------------------------------------------
+void SerialPortWindows::receiveThreadCallback()
+{
+    DWORD dwErrors;
+    COMSTAT comStat;
 
-	return Error(ERROR_CODE_NONE);
+    unsigned int nBytes = ClearCommError(mySerialHandle, &dwErrors, &comStat);
+
+    while (nBytes--)
+    {
+        uint8_t byte;
+        DWORD bytesReceived;
+
+        if (!ReadFile(mySerialHandle,
+                      &byte,
+                      1,
+                      &bytesReceived,
+                      NULL))
+        {
+
+        }
+
+        MutexLock mutexLock(myMutex);
+
+        if (!(getReceiveBuffer()->write(byte)))
+        {
+            // Buffer overflow
+        }
+
+        mutexLock.setLocked(false);
+
+        byteReceived(byte);
+    }
 }

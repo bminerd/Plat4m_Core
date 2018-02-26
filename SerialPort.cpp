@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,71 +33,83 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file AllocationMemory.cpp
+/// @file SerialPort.cpp
 /// @author Ben Minerd
-/// @date 4/8/2014
-/// @brief AllocationMemory class source file.
+/// @date 3/22/2013
+/// @brief SerialPort class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/AllocationMemory.h>
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/SerialPort.h>
+#include <Plat4m_Core/System.h>
 
-using Plat4m::AllocationMemory;
-
-//------------------------------------------------------------------------------
-// Private static data members
-//------------------------------------------------------------------------------
-
-AllocationMemory* AllocationMemory::myDriver = 0;
+using Plat4m::SerialPort;
+using Plat4m::ComInterface;
 
 //------------------------------------------------------------------------------
-extern "C" void* allocationMemoryAllocate(size_t count)
+// Public methods implemented from ComInterface
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+ComInterface::Error SerialPort::transmitBytes(const ByteArray& byteArray,
+                                              const bool waitUntilDone)
 {
-	return AllocationMemory::allocate(count);
+    if (!isEnabled())
+    {
+        return ComInterface::Error(ComInterface::ERROR_CODE_NOT_ENABLED);
+    }
+
+    return driverTransmitBytes(byteArray, waitUntilDone);
 }
 
 //------------------------------------------------------------------------------
-extern "C" void allocationMemoryDeallocate(void* pointer)
+uint32_t SerialPort::getReceivedBytesCount()
 {
-	AllocationMemory::deallocate(pointer);
+    return driverGetReceivedBytesCount();
 }
 
 //------------------------------------------------------------------------------
-// Public static methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void* AllocationMemory::allocate(size_t count)
+ComInterface::Error SerialPort::getReceivedBytes(ByteArray& byteArray,
+                                                 const uint32_t nBytes)
 {
-    return myDriver->driverAllocate(count);
+    return driverGetReceivedBytes(byteArray, nBytes);
 }
 
 //------------------------------------------------------------------------------
-void* AllocationMemory::allocateArray(size_t count)
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+const char* SerialPort::getName() const
 {
-    return myDriver->driverAllocateArray(count);
+    return myName;
 }
 
 //------------------------------------------------------------------------------
-void AllocationMemory::deallocate(void* pointer)
+SerialPort::Config SerialPort::getConfig() const
 {
-    myDriver->driverDeallocate(pointer);
+    return myConfig;
 }
 
 //------------------------------------------------------------------------------
-void AllocationMemory::deallocateArray(void* pointer)
+SerialPort::Error SerialPort::setConfig(const Config& config)
 {
-    myDriver->driverDeallocateArray(pointer);
-}
+    if (!isEnabled())
+    {
+        return Error(ERROR_CODE_NOT_ENABLED);
+    }
 
-//------------------------------------------------------------------------------
-size_t AllocationMemory::getFreeMemorySize()
-{
-    return myDriver->driverGetFreeMemorySize();
+    Error error = driverSetConfig(config);
+
+    if (error == ERROR_CODE_NONE)
+    {
+        myConfig = config;
+    }
+
+    return error;
 }
 
 //------------------------------------------------------------------------------
@@ -105,12 +117,11 @@ size_t AllocationMemory::getFreeMemorySize()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-AllocationMemory::AllocationMemory()
+SerialPort::SerialPort(const char* name) :
+    ComInterface(),
+    myName(name),
+    myConfig()
 {
-    if (isNullPointer(myDriver))
-    {
-        myDriver = this;
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -118,34 +129,6 @@ AllocationMemory::AllocationMemory()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-AllocationMemory::~AllocationMemory()
+SerialPort::~SerialPort()
 {
-}
-
-//------------------------------------------------------------------------------
-// Global functions
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void* operator new(size_t count)
-{
-    return AllocationMemory::allocate(count);
-}
-
-//------------------------------------------------------------------------------
-void* operator new[](size_t count)
-{
-    return AllocationMemory::allocateArray(count);
-}
-
-//------------------------------------------------------------------------------
-void operator delete(void* pointer)
-{
-    return AllocationMemory::deallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-void operator delete[](void* pointer)
-{
-    return AllocationMemory::deallocateArray(pointer);
 }

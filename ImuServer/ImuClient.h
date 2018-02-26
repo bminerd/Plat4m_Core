@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,27 +33,27 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file System.h
+/// @file ImuClient.h
 /// @author Ben Minerd
-/// @date 6/4/2013
-/// @brief System class header file.
+/// @date 2/23/2018
+/// @brief ImuClient class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_H
-#define PLAT4M_SYSTEM_H
+#ifndef PLAT4M_IMU_CLIENT_H
+#define PLAT4M_IMU_CLIENT_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
-
+// Plat4m includes
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/ErrorTemplate.h>
-#include <Plat4m_Core/Thread.h>
-#include <Plat4m_Core/Mutex.h>
-#include <Plat4m_Core/WaitCondition.h>
-#include <Plat4m_Core/Queue.h>
+#include <Plat4m_Core/Imu.h>
+#include <Plat4m_Core/ComProtocolPlat4m/ComProtocolPlat4mBinary.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageFrameHandler.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageHandlerGroup.h>
+#include <Plat4m_Core/ImuServer/ImuMeasurementMessage.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -66,109 +66,72 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class System
+class ImuClient : public Imu
 {
 public:
 
     //--------------------------------------------------------------------------
-    // Public enumerations
+    // Public types
     //--------------------------------------------------------------------------
 
     enum ErrorCode
     {
         ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID,
-        ERROR_CODE_MODE_INVALID,
         ERROR_CODE_NOT_ENABLED
     };
 
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
-
     typedef ErrorTemplate<ErrorCode> Error;
-    
-    //--------------------------------------------------------------------------
-    // Public static methods
-    //--------------------------------------------------------------------------
-
-    static Thread& createThread(Thread::RunCallback& callback,
-                                const TimeMs periodMs = 0);
-
-    static Mutex& createMutex(Thread& thread);
-
-    static WaitCondition& createWaitCondition(Thread& thread);
 
     //--------------------------------------------------------------------------
-    template <typename T>
-    static Queue<T>& createQueue(const uint32_t nValues,
-                                 Thread& thread)
-	{
-    	return *(new Queue<T>(myDriver->driverCreateQueueDriver(nValues,
-    														    sizeof(T),
-    														    thread)));
-	}
-
-    static void run();
-    
-    static bool isRunning();
-
-    static TimeMs getTimeMs();
-
-    static TimeUs getTimeUs();
-
-    static void delayTimeMs(const TimeMs timeMs);
-
-    static bool checkTimeMs(const TimeMs timeMs);
-    
-protected:
-    
-    //--------------------------------------------------------------------------
-    // Protected constructors
+    // Public constructors
     //--------------------------------------------------------------------------
 
-    System();
+    ImuClient(ComProtocolPlat4mBinary& comProtocolPlat4mBinary,
+              BinaryMessageFrameHandler& binaryMessageFrameHandler);
 
     //--------------------------------------------------------------------------
-    // Protected virtual destructors
+    // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    virtual ~System();
+    virtual ~ImuClient();
 
 private:
-    
+
     //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-    
-    static System* myDriver;
-    
-    static bool myIsRunning;
-    
-    //--------------------------------------------------------------------------
-    // Private pure virtual methods
+    // Private data members
     //--------------------------------------------------------------------------
 
-    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs) = 0;
+    ComProtocolPlat4mBinary& myComProtocolPlat4mBinary;
 
-    virtual Mutex& driverCreateMutex(Thread& thread) = 0;
+    BinaryMessageFrameHandler& myBinaryMessageFrameHandler;
 
-    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) = 0;
+    BinaryMessageHandlerGroup myBinaryMessageHandlerGroup;
 
-    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									         const uint32_t valueSizeBytes,
-    									         Thread& thread) = 0;
+    Imu::Measurement myMeasurement;
 
-    virtual void driverRun() = 0;
+    //--------------------------------------------------------------------------
+    // Private methods implemented from Module
+    //--------------------------------------------------------------------------
 
-    virtual TimeMs driverGetTimeMs() = 0;
+    Module::Error driverSetEnabled(const bool enabled);
 
-    virtual TimeUs driverGetTimeUs() = 0;
+    //--------------------------------------------------------------------------
+    // Private methods implemented from Imu
+    //--------------------------------------------------------------------------
 
-    virtual void driverDelayTimeMs(const TimeMs timeMs) = 0;
+    Imu::Error driverSetConfig(const Imu::Config& config);
+
+    Imu::Error driverGetMeasurement(Measurement& measurement);
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    void initialize();
+
+    void imuMeasurementMessageCallback(const ImuMeasurementMessage& message);
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_SYSTEM_H
+#endif // PLAT4M_IMU_CLIENT_H

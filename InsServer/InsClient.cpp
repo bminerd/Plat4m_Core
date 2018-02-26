@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Benjamin Minerd
+// Copyright (c) 2018 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,119 +33,121 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file AllocationMemory.cpp
+/// @file InsClient.cpp
 /// @author Ben Minerd
-/// @date 4/8/2014
-/// @brief AllocationMemory class source file.
+/// @date 4/20/2017
+/// @brief InsClient class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/AllocationMemory.h>
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/InsServer/InsClient.h>
+#include <Plat4m_Core/ComProtocolPlat4m/BinaryMessageHandlerTemplate.h>
+#include <Plat4m_Core/InsServer/InsServerBinaryMessages.h>
+#include <Plat4m_Core/InsServer/InsMeasurementBinaryMessage.h>
+#include <Plat4m_Core/ByteArrayN.h>
 
-using Plat4m::AllocationMemory;
+using Plat4m::InsClient;
+using Plat4m::Ins;
+using namespace Plat4m::InsServerBinaryMessages;
+using Plat4m::Module;
 
 //------------------------------------------------------------------------------
-// Private static data members
+// Public constructors
 //------------------------------------------------------------------------------
 
-AllocationMemory* AllocationMemory::myDriver = 0;
-
 //------------------------------------------------------------------------------
-extern "C" void* allocationMemoryAllocate(size_t count)
+InsClient::InsClient(ComProtocolPlat4mBinary& comProtocolPlat4mBinary,
+					 BinaryMessageFrameHandler& binaryMessageFrameHandler) :
+    Ins(),
+    myComProtocolPlat4mBinary(comProtocolPlat4mBinary),
+    myBinaryMessageFrameHandler(binaryMessageFrameHandler),
+    myBinaryMessageHandlerGroup(groupId),
+    myMeasurement()
 {
-	return AllocationMemory::allocate(count);
+	initialize();
+
+	binaryMessageFrameHandler.addMessageHandlerGroup(
+	                                               myBinaryMessageHandlerGroup);
 }
 
 //------------------------------------------------------------------------------
-extern "C" void allocationMemoryDeallocate(void* pointer)
-{
-	AllocationMemory::deallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-// Public static methods
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void* AllocationMemory::allocate(size_t count)
-{
-    return myDriver->driverAllocate(count);
-}
-
-//------------------------------------------------------------------------------
-void* AllocationMemory::allocateArray(size_t count)
-{
-    return myDriver->driverAllocateArray(count);
-}
-
-//------------------------------------------------------------------------------
-void AllocationMemory::deallocate(void* pointer)
-{
-    myDriver->driverDeallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-void AllocationMemory::deallocateArray(void* pointer)
-{
-    myDriver->driverDeallocateArray(pointer);
-}
-
-//------------------------------------------------------------------------------
-size_t AllocationMemory::getFreeMemorySize()
-{
-    return myDriver->driverGetFreeMemorySize();
-}
-
-//------------------------------------------------------------------------------
-// Protected constructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-AllocationMemory::AllocationMemory()
-{
-    if (isNullPointer(myDriver))
-    {
-        myDriver = this;
-    }
-}
-
-//------------------------------------------------------------------------------
-// Protected virtual destructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-AllocationMemory::~AllocationMemory()
+InsClient::~InsClient()
 {
 }
 
 //------------------------------------------------------------------------------
-// Global functions
+// Private methods implemented from Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void* operator new(size_t count)
+Module::Error InsClient::driverSetEnabled(const bool enabled)
 {
-    return AllocationMemory::allocate(count);
+    return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-void* operator new[](size_t count)
+// Private methods implemented from Ins
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Ins::Error InsClient::driverSetConfig(const Config& config)
 {
-    return AllocationMemory::allocateArray(count);
+    return Ins::Error(Ins::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-void operator delete(void* pointer)
+Ins::Error InsClient::driverGetMeasurement(Measurement& measurement)
 {
-    return AllocationMemory::deallocate(pointer);
+    measurement = myMeasurement;
+
+    return Ins::Error(Ins::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-void operator delete[](void* pointer)
+Ins::Error InsClient::driverGetEulerAnglesDegrees(
+                                                AngleDegrees& yawAngleDegrees,
+                                                AngleDegrees& pitchAngleDegrees,
+                                                AngleDegrees& rollAngleDegrees)
 {
-    return AllocationMemory::deallocateArray(pointer);
+    yawAngleDegrees   = myMeasurement.rotationZAngleDegrees;
+    pitchAngleDegrees = myMeasurement.rotationYAngleDegrees;
+    rollAngleDegrees  = myMeasurement.rotationXAngleDegrees;
+
+    return Ins::Error(Ins::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+// Private methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void InsClient::initialize()
+{
+    myBinaryMessageHandlerGroup.addMessageHandler(
+		  createMessageHandler<
+			  InsClient,
+			  InsMeasurementMessage,
+			  InsMeasurementBinaryMessage>(
+				  this, &InsClient::insMeasurementMessageCallback));
+}
+
+//------------------------------------------------------------------------------
+void InsClient::insMeasurementMessageCallback(
+                                           const InsMeasurementMessage& message)
+{
+    myMeasurement.rotationXAngleDegrees = message.rotationX;
+    myMeasurement.rotationYAngleDegrees = message.rotationY;
+    myMeasurement.rotationZAngleDegrees = message.rotationZ;
+    myMeasurement.rotationRateXAngularVelocityDps = message.rotationRateX;
+    myMeasurement.rotationRateYAngularVelocityDps = message.rotationRateY;
+    myMeasurement.rotationRateZAngularVelocityDps = message.rotationRateZ;
+
+    measurementReady();
 }

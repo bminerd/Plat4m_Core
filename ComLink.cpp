@@ -70,9 +70,9 @@ ComLink::ComLink(ByteArray& transmitByteArray,
     myDataParsingThread(System::createThread(
                           createCallback(this,
                                          &ComLink::dataParsingThreadCallback))),
-    myWaitCondition(System::createWaitCondition()),
-    myMutex(System::createMutex()),
-	myReceiveByteQueue(System::createQueue<uint8_t>(128))
+    myWaitCondition(System::createWaitCondition(myDataParsingThread)),
+    myMutex(System::createMutex(myDataParsingThread)),
+	myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread))
 {
     myDataParsingThread.setPriority(3);
 }
@@ -91,9 +91,9 @@ ComLink::ComLink(ByteArray& transmitByteArray,
     myDataParsingThread(System::createThread(
                           createCallback(this,
                                          &ComLink::dataParsingThreadCallback))),
-    myWaitCondition(System::createWaitCondition()),
-    myMutex(System::createMutex()),
-	myReceiveByteQueue(System::createQueue<uint8_t>(128))
+    myWaitCondition(System::createWaitCondition(myDataParsingThread)),
+    myMutex(System::createMutex(myDataParsingThread)),
+	myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread))
 {
     myDataParsingThread.setPriority(3);
 

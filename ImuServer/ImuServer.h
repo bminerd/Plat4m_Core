@@ -148,10 +148,10 @@ private:
     uint32_t myUpdateCount;
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Module
+    // Private methods implemented from Module
     //--------------------------------------------------------------------------
 
-    virtual Module::Error driverSetEnabled(const bool enabled);
+    Module::Error driverSetEnabled(const bool enabled);
 
     //--------------------------------------------------------------------------
     // Private methods
