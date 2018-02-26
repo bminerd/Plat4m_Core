@@ -46,6 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+
+
 #include <Plat4m_Core/Ins.h>
 #include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/Callback.h>
@@ -103,7 +105,7 @@ public:
 
     void gyroMeasurementReadyCallback();
 
-    KalmanFilter& getKalmanFilter();
+    Controls::KalmanFilter<RealNumber, 5, 3, 3>& getKalmanFilter();
 
 private:
 
@@ -134,10 +136,10 @@ private:
     Imu::AccelMeasurement myImuAccelMeasurement;
     Imu::GyroMeasurement myImuGyroMeasurement;
 
-    /// 8 states (Rx, Ry, Rz, Wx, Wy, Wz, Bgx, Bgy)
+    /// 5 states (Rx, Ry, Rz, Bgx, Bgy)
     /// 6 observables (computed biases Bgx and Bgy are not observed)
     /// 3 control inputs (gyro x,y,z)
-    Controls::KalmanFilter<RealNumber, 8, 6, 3> myKalmanFilter;
+    Controls::KalmanFilter<RealNumber, 5, 3, 3> myKalmanFilter;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Ins

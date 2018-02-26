@@ -228,7 +228,7 @@ ProcessorSTM32F30x::Apb2ClockPrescaler ProcessorSTM32F30x::myApb2ClockPrescaler;
 ProcessorSTM32F30x::ProcessorSTM32F30x(
                                       const float coreVoltage,
                                       const uint32_t externalClockFrequencyHz) :
-    Processor(coreVoltage, externalClockFrequencyHz)
+    Processor(ENDIAN_BIG, coreVoltage, externalClockFrequencyHz)
 {
 }
 

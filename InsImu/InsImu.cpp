@@ -43,11 +43,16 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <Eigen/Dense>
+#include <Eigen/SVD>
+
 #include <Plat4m_Core/InsImu/InsImu.h>
 #include <Plat4m_Core/CallbackMethod.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::InsImu;
 using Plat4m::Ins;
+using Plat4m::Controls::KalmanFilter;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -73,76 +78,58 @@ InsImu::InsImu(Imu& imu) :
 	myImuGyroMeasurement(),
 	myKalmanFilter()
 {
-	myImu.setAccelMeasurementReadyCallback(
-				  createCallback(this, &InsImu::accelMeasurementReadyCallback));
-	myImu.setGyroMeasurementReadyCallback(
-				   createCallback(this, &InsImu::gyroMeasurementReadyCallback));
+//	myImu.setAccelMeasurementReadyCallback(
+//				  createCallback(this, &InsImu::accelMeasurementReadyCallback));
+//	myImu.setGyroMeasurementReadyCallback(
+//				   createCallback(this, &InsImu::gyroMeasurementReadyCallback));
 
 	RealNumber dt = 1.0/104.0;
 
 	myKalmanFilter.getFMatrix() <<
-        1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -dt, 0.0,
-        0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -dt,
-        0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0;
+        1.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 1.0;
 
 	myKalmanFilter.getBMatrix() <<
          dt, 0.0, 0.0,
         0.0,  dt, 0.0,
         0.0, 0.0,  dt,
         0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
         0.0, 0.0, 0.0;
 
 	myKalmanFilter.getHMatrix() <<
-        1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0;
 
 	RealNumber p = 1.0;
 
 	myKalmanFilter.getPMatrix() <<
-          p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0,   p, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0,   p, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,   p, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0,   p, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0,   p, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0,   p, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,   p;
+          p, 0.0, 0.0, 0.0, 0.0,
+        0.0,   p, 0.0, 0.0, 0.0,
+        0.0, 0.0,   p, 0.0, 0.0,
+        0.0, 0.0, 0.0,   p, 0.0,
+        0.0, 0.0, 0.0, 0.0,   p;
 
 	RealNumber q = 0.05;
 
     myKalmanFilter.getQMatrix() <<
-          q, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0,   q, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0,   q, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,   q, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0,   q, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0,   q, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0,   q, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,   q;
+          q, 0.0, 0.0, 0.0, 0.0,
+        0.0,   q, 0.0, 0.0, 0.0,
+        0.0, 0.0,   q, 0.0, 0.0,
+        0.0, 0.0, 0.0,   q, 0.0,
+        0.0, 0.0, 0.0, 0.0,   q;
 
     RealNumber r = 0.6;
 
     myKalmanFilter.getRMatrix() <<
-          r, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0,   r, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0,   r, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,   r, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0,   r, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0,   r;
+          r, 0.0, 0.0,
+        0.0,   r, 0.0,
+        0.0, 0.0,   r;
 }
 
 //------------------------------------------------------------------------------
@@ -268,7 +255,11 @@ void InsImu::accelMeasurementReadyCallback()
 	    measurementVector(2) = yawAngleDegrees;
 	}
 
+	TimeMs startTimeMs = System::getTimeMs();
+
 	myKalmanFilter.update(measurementVector);
+
+	TimeMs deltaTimeMs = System::getTimeMs() - startTimeMs;
 
 	measurementReady();
 }
@@ -282,6 +273,8 @@ void InsImu::gyroMeasurementReadyCallback()
 	uVector(0) = myImuGyroMeasurement.xAngularVelocityDps;
 	uVector(1) = myImuGyroMeasurement.yAngularVelocityDps;
 	uVector(2) = myImuGyroMeasurement.zAngularVelocityDps;
+
+	TimeMs startTimeMs = System::getTimeMs();
 
 	myKalmanFilter.predict(uVector);
 
@@ -351,6 +344,12 @@ void InsImu::gyroMeasurementReadyCallback()
 //    }
 //
 //    measurementReady();
+}
+
+//------------------------------------------------------------------------------
+Plat4m::Controls::KalmanFilter<Plat4m::RealNumber, 5, 3, 3>& InsImu::getKalmanFilter()
+{
+    return myKalmanFilter;
 }
 
 //------------------------------------------------------------------------------

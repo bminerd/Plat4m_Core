@@ -380,12 +380,11 @@ Imu::Error Imu::getMeasurement(Measurement& measurement)
         return Error(ERROR_CODE_NOT_ENABLED);
     }
 
-    Measurement tempMeasurement;
-    Error error = driverGetMeasurement(tempMeasurement);
+    Error error = driverGetMeasurement(measurement);
 
     if (error.getCode() == ERROR_CODE_NONE)
     {
-        measurement = tempMeasurement;
+        myLastMeasurement = measurement;
     }
 
     return error;
@@ -433,6 +432,14 @@ Imu::Error Imu::startOffsetCalibration(const uint32_t nSamples)
 bool Imu::isOffsetCalibrationComplete() const
 {
     return (!myIsOffsetCalibrationRunning);
+}
+
+//------------------------------------------------------------------------------
+Imu::Error Imu::getLastMeasurement(Measurement& measurement)
+{
+    measurement = myLastMeasurement;
+
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------

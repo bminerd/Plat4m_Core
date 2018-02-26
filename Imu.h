@@ -278,6 +278,8 @@ public:
 
     bool isOffsetCalibrationComplete() const;
 
+    Error getLastMeasurement(Measurement& measurement);
+
 protected:
     
     //--------------------------------------------------------------------------
@@ -369,6 +371,8 @@ private:
     AngularVelocityDps myXOffsetAngularVelocityDps;
     AngularVelocityDps myYOffsetAngularVelocityDps;
     AngularVelocityDps myZOffsetAngularVelocityDps;
+
+    Measurement myLastMeasurement;
 
     //--------------------------------------------------------------------------
     // Private pure virtual methods
