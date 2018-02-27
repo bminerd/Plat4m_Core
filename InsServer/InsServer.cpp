@@ -186,7 +186,7 @@ void InsServer::outputThreadCallback()
     	Ins* ins = iterator.current();
 
     	Ins::Measurement measurement;
-    	Ins::Error error = ins->getLastMeasurement(measurement);
+    	Ins::Error error = ins->getMeasurement(measurement);
 
 		InsMeasurementMessage message;
 		message.index    	  = i;

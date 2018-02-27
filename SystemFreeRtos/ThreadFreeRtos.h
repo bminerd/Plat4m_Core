@@ -71,13 +71,21 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-	ThreadFreeRtos(RunCallback& callback, const TimeMs periodMs = 0);
+	ThreadFreeRtos(RunCallback& callback,
+	               const TimeMs periodMs = 0,
+	               const uint32_t nStackBytes = 0);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
 
     virtual ~ThreadFreeRtos();
+
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    TaskHandle_t getTaskHandle() const;
 
 private:
 

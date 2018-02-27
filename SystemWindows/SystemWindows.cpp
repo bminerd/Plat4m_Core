@@ -90,7 +90,8 @@ Plat4m::TimeUs SystemWindows::driverGetTimeUs()
 
 //------------------------------------------------------------------------------
 Thread& SystemWindows::driverCreateThread(Thread::RunCallback& callback,
-                                          const TimeMs periodMs)
+                                          const TimeMs periodMs,
+                                          const uint32_t nStackBytes)
 {
     return *(new ThreadWindows(callback, periodMs));
 }

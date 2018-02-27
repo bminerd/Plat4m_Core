@@ -89,7 +89,8 @@ private:
     //--------------------------------------------------------------------------
 
     Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs);
+                               const TimeMs periodMs,
+                               const uint32_t nStackBytes);
 
     Mutex& driverCreateMutex(Thread& thread);
 

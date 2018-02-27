@@ -222,7 +222,7 @@ I2c::Error I2cSTM32F30x::driverSetConfig(const Config& config)
     I2C_Init(myI2c, &i2cInit);
 
     Plat4m::Interrupt::Config interruptConfig;
-    interruptConfig.priority = 7;
+    interruptConfig.priority = 6;
     myEventInterrupt.configure(interruptConfig);
     myErrorInterrupt.configure(interruptConfig);
 

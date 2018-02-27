@@ -119,9 +119,10 @@ Plat4m::TimeUs SystemFreeRtos::driverGetTimeUs()
 
 //------------------------------------------------------------------------------
 Thread& SystemFreeRtos::driverCreateThread(Thread::RunCallback& callback,
-                                       	   const TimeMs periodMs)
+                                       	   const TimeMs periodMs,
+                                       	   const uint32_t nStackBytes)
 {
-    return *(new ThreadFreeRtos(callback, periodMs));
+    return *(new ThreadFreeRtos(callback, periodMs, nStackBytes));
 }
 
 //------------------------------------------------------------------------------
@@ -133,7 +134,7 @@ Mutex& SystemFreeRtos::driverCreateMutex(Thread& thread)
 //------------------------------------------------------------------------------
 WaitCondition& SystemFreeRtos::driverCreateWaitCondition(Thread& thread)
 {
-    return *(new WaitConditionFreeRtos);
+    return *(new WaitConditionFreeRtos(thread));
 }
 
 //------------------------------------------------------------------------------

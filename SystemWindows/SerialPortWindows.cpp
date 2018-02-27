@@ -112,7 +112,7 @@ Module::Error SerialPortWindows::driverSetEnabled(const bool enabled)
 	{
 		if (isNullPointer(mySerialHandle))
 		{
-			mySerialHandle = CreateFile(getName(),
+            mySerialHandle = CreateFileA(getName(),
 										GENERIC_READ | GENERIC_WRITE,
 										0,
 										0,

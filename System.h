@@ -93,7 +93,8 @@ public:
     //--------------------------------------------------------------------------
 
     static Thread& createThread(Thread::RunCallback& callback,
-                                const TimeMs periodMs = 0);
+                                const TimeMs periodMs = 0,
+                                const uint32_t nStackBytes = 0);
 
     static Mutex& createMutex(Thread& thread);
 
@@ -150,7 +151,8 @@ private:
     //--------------------------------------------------------------------------
 
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs) = 0;
+                                       const TimeMs periodMs,
+                                       const uint32_t nStackBytes) = 0;
 
     virtual Mutex& driverCreateMutex(Thread& thread) = 0;
 

@@ -64,9 +64,10 @@ bool System::myIsRunning = false;
 
 //------------------------------------------------------------------------------
 Thread& System::createThread(Thread::RunCallback& callback,
-                             const TimeMs periodMs)
+                             const TimeMs periodMs,
+                             const uint32_t nStackBytes)
 {
-    return (myDriver->driverCreateThread(callback, periodMs));
+    return (myDriver->driverCreateThread(callback, periodMs, nStackBytes));
 }
 
 //------------------------------------------------------------------------------

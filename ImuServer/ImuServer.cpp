@@ -224,7 +224,7 @@ void ImuServer::outputThreadCallback()
     	Imu* imu = iterator.current();
 
     	Imu::Measurement measurement;
-    	Imu::Error error = imu->getLastMeasurement(measurement);
+    	Imu::Error error = imu->getMeasurement(measurement);
 
         ImuMeasurementMessage message;
         message.index  = i;

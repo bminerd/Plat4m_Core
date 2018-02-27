@@ -44,6 +44,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/SystemFreeRtos/WaitConditionFreeRtos.h>
+#include <Plat4m_Core/SystemFreeRtos/ThreadFreeRtos.h>
 
 using Plat4m::WaitConditionFreeRtos;
 using Plat4m::WaitCondition;
@@ -53,10 +54,12 @@ using Plat4m::WaitCondition;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-WaitConditionFreeRtos::WaitConditionFreeRtos() :
+WaitConditionFreeRtos::WaitConditionFreeRtos(Thread& thread) :
     WaitCondition(),
 	myTaskHandle(0)
 {
+    ThreadFreeRtos& threadFreeRtos = static_cast<ThreadFreeRtos&>(thread);
+    myTaskHandle = threadFreeRtos.getTaskHandle();
 }
 
 //------------------------------------------------------------------------------
@@ -77,6 +80,8 @@ void WaitConditionFreeRtos::notifyFast()
 {
 	BaseType_t higherPriorityTaskWasWoken = pdFALSE;
 	vTaskNotifyGiveFromISR(myTaskHandle, &higherPriorityTaskWasWoken);
+
+	portYIELD_FROM_ISR(higherPriorityTaskWasWoken);
 }
 
 //------------------------------------------------------------------------------
@@ -86,9 +91,7 @@ void WaitConditionFreeRtos::notifyFast()
 //------------------------------------------------------------------------------
 WaitCondition::Error WaitConditionFreeRtos::driverWait(const TimeMs waitTimeMs)
 {
-	myTaskHandle = xTaskGetCurrentTaskHandle();
-
-	ulTaskNotifyTake(pdFALSE, (TickType_t) waitTimeMs);
+    ulTaskNotifyTake(pdFALSE, (TickType_t) waitTimeMs);
 
     return Error(ERROR_CODE_NONE);
 }
@@ -97,8 +100,6 @@ WaitCondition::Error WaitConditionFreeRtos::driverWait(const TimeMs waitTimeMs)
 WaitCondition::Error WaitConditionFreeRtos::driverNotify()
 {
 	xTaskNotifyGive(myTaskHandle);
-
-	myTaskHandle = 0;
 
     return Error(ERROR_CODE_NONE);
 }

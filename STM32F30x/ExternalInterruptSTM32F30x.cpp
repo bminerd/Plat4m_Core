@@ -162,6 +162,12 @@ void ExternalInterruptSTM32F30x::clear(const Id id)
 }
 
 //------------------------------------------------------------------------------
+InterruptSTM32F30x& ExternalInterruptSTM32F30x::getInterrupt()
+{
+    return myInterrupt;
+}
+
+//------------------------------------------------------------------------------
 // Private methods implemented from Module
 //------------------------------------------------------------------------------
 

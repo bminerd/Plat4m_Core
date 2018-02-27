@@ -54,13 +54,26 @@ using Plat4m::Module;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadFreeRtos::ThreadFreeRtos(RunCallback& callback, const TimeMs periodMs) :
+ThreadFreeRtos::ThreadFreeRtos(RunCallback& callback,
+                               const TimeMs periodMs,
+                               const uint32_t nStackBytes) :
     Thread(callback, periodMs),
 	myTaskHandle(0)
 {
+    uint32_t nTotalStackBytes;
+
+    if (nStackBytes == 0)
+    {
+        nTotalStackBytes = 256;
+    }
+    else
+    {
+        nTotalStackBytes = nStackBytes;
+    }
+
 	BaseType_t returnValue = xTaskCreate(&ThreadFreeRtos::taskCallback,
 										 "",
-										 256,
+										 nTotalStackBytes,
 										 (void*) this,
 										 tskIDLE_PRIORITY,
 										 &myTaskHandle);
@@ -83,6 +96,16 @@ ThreadFreeRtos::ThreadFreeRtos(RunCallback& callback, const TimeMs periodMs) :
 //------------------------------------------------------------------------------
 ThreadFreeRtos::~ThreadFreeRtos()
 {
+}
+
+//------------------------------------------------------------------------------
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+TaskHandle_t ThreadFreeRtos::getTaskHandle() const
+{
+    return myTaskHandle;
 }
 
 //------------------------------------------------------------------------------

@@ -105,7 +105,11 @@ public:
 
     void gyroMeasurementReadyCallback();
 
-    Controls::KalmanFilter<RealNumber, 5, 3, 3>& getKalmanFilter();
+    void setRotationAngles(const AngleRadians xRotationAngleRadians,
+                           const AngleRadians yRotationAngleRadians,
+                           const AngleRadians zRotationAngleRadians);
+
+    Controls::KalmanFilter<RealNumber, 3, 3, 3>& getKalmanFilter();
 
 private:
 
@@ -136,10 +140,10 @@ private:
     Imu::AccelMeasurement myImuAccelMeasurement;
     Imu::GyroMeasurement myImuGyroMeasurement;
 
-    /// 5 states (Rx, Ry, Rz, Bgx, Bgy)
-    /// 6 observables (computed biases Bgx and Bgy are not observed)
+    /// 3 states (Rx, Ry, Rz)
+    /// 3 observables (computed biases Bgx and Bgy are not observed)
     /// 3 control inputs (gyro x,y,z)
-    Controls::KalmanFilter<RealNumber, 5, 3, 3> myKalmanFilter;
+    Controls::KalmanFilter<RealNumber, 3, 3, 3> myKalmanFilter;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Ins

@@ -78,51 +78,36 @@ InsImu::InsImu(Imu& imu) :
 	myImuGyroMeasurement(),
 	myKalmanFilter()
 {
-//	myImu.setAccelMeasurementReadyCallback(
-//				  createCallback(this, &InsImu::accelMeasurementReadyCallback));
-//	myImu.setGyroMeasurementReadyCallback(
-//				   createCallback(this, &InsImu::gyroMeasurementReadyCallback));
-
 	RealNumber dt = 1.0/104.0;
 
 	myKalmanFilter.getFMatrix() <<
-        1.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 1.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 1.0;
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0;
 
 	myKalmanFilter.getBMatrix() <<
          dt, 0.0, 0.0,
         0.0,  dt, 0.0,
-        0.0, 0.0,  dt,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0;
+        0.0, 0.0,  dt;
 
 	myKalmanFilter.getHMatrix() <<
         1.0, 0.0, 0.0,
         0.0, 1.0, 0.0,
-        0.0, 0.0, 1.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0;
+        0.0, 0.0, 1.0;
 
 	RealNumber p = 1.0;
 
 	myKalmanFilter.getPMatrix() <<
-          p, 0.0, 0.0, 0.0, 0.0,
-        0.0,   p, 0.0, 0.0, 0.0,
-        0.0, 0.0,   p, 0.0, 0.0,
-        0.0, 0.0, 0.0,   p, 0.0,
-        0.0, 0.0, 0.0, 0.0,   p;
+          p, 0.0, 0.0,
+        0.0,   p, 0.0,
+        0.0, 0.0,   p;
 
 	RealNumber q = 0.05;
 
     myKalmanFilter.getQMatrix() <<
-          q, 0.0, 0.0, 0.0, 0.0,
-        0.0,   q, 0.0, 0.0, 0.0,
-        0.0, 0.0,   q, 0.0, 0.0,
-        0.0, 0.0, 0.0,   q, 0.0,
-        0.0, 0.0, 0.0, 0.0,   q;
+          q, 0.0, 0.0,
+        0.0,   q, 0.0,
+        0.0, 0.0,   q;
 
     RealNumber r = 0.6;
 
@@ -223,16 +208,22 @@ void InsImu::accelMeasurementReadyCallback()
 {
 	myImu.getAccelMeasurement(myImuAccelMeasurement);
 
-    AngleRadians pitchAngleRadians =
-                                    atan2(myImuAccelMeasurement.xAccelerationG,
-                                          myImuAccelMeasurement.zAccelerationG);
+	Math::Vector<RealNumber, 3> accelerationGVector;
+    accelerationGVector(0) = myImuAccelMeasurement.xAccelerationG;
+    accelerationGVector(1) = myImuAccelMeasurement.yAccelerationG;
+    accelerationGVector(2) = myImuAccelMeasurement.zAccelerationG;
+
+    // Rotate the accelerations into the orientation of the IMU
+    Math::Vector<RealNumber, 3> rotatedAcclerationGVector;
+    rotatedAcclerationGVector = myRotationMatrix * accelerationGVector;
+
+    AngleRadians pitchAngleRadians = atan2(rotatedAcclerationGVector(0),
+                                           -rotatedAcclerationGVector(2));
     AngleDegrees pitchAngleDegrees = radiansToDegrees(pitchAngleRadians);
 
-    AngleRadians rollAngleRadians = atan2(myImuAccelMeasurement.yAccelerationG,
-                                          myImuAccelMeasurement.zAccelerationG);
+    AngleRadians rollAngleRadians = atan2(-rotatedAcclerationGVector(1),
+                                          -rotatedAcclerationGVector(2));
     AngleDegrees rollAngleDegrees = radiansToDegrees(rollAngleRadians);
-
-    AngleDegrees yawAngleDegrees = 0.0;
 
 	Eigen::Matrix<RealNumber, 3, 1> measurementVector;
 
@@ -246,20 +237,17 @@ void InsImu::accelMeasurementReadyCallback()
 	{
 	    measurementVector(0) = myKalmanFilter.getXVector()(0);
 	    measurementVector(1) = myKalmanFilter.getXVector()(1);
-	    measurementVector(2) = myKalmanFilter.getXVector()(2);
 	}
 	else
 	{
-	    measurementVector(0) = pitchAngleDegrees;
-	    measurementVector(1) = rollAngleDegrees;
-	    measurementVector(2) = yawAngleDegrees;
+	    measurementVector(0) = rollAngleDegrees;
+	    measurementVector(1) = pitchAngleDegrees;
 	}
 
-	TimeMs startTimeMs = System::getTimeMs();
+	// Propagate the gyro yaw angle integration, we have no "truth" sensor
+	measurementVector(2) = myKalmanFilter.getXVector()(2);
 
 	myKalmanFilter.update(measurementVector);
-
-	TimeMs deltaTimeMs = System::getTimeMs() - startTimeMs;
 
 	measurementReady();
 }
@@ -269,85 +257,58 @@ void InsImu::gyroMeasurementReadyCallback()
 {
 	myImu.getGyroMeasurement(myImuGyroMeasurement);
 
-	Eigen::Matrix<RealNumber, 3, 1> uVector;
-	uVector(0) = myImuGyroMeasurement.xAngularVelocityDps;
-	uVector(1) = myImuGyroMeasurement.yAngularVelocityDps;
-	uVector(2) = myImuGyroMeasurement.zAngularVelocityDps;
+    Math::Vector<RealNumber, 3> angularVelocityDpsVector;
+    angularVelocityDpsVector(0) = myImuGyroMeasurement.xAngularVelocityDps;
+    angularVelocityDpsVector(1) = myImuGyroMeasurement.yAngularVelocityDps;
+    angularVelocityDpsVector(2) = myImuGyroMeasurement.zAngularVelocityDps;
 
-	TimeMs startTimeMs = System::getTimeMs();
+    Math::Vector<RealNumber, 3> rotatedAngularVelocityDpsVector;
+    rotatedAngularVelocityDpsVector = myRotationMatrix *
+                                          angularVelocityDpsVector;
+
+	Eigen::Matrix<RealNumber, 3, 1> uVector;
+	uVector(0) = rotatedAngularVelocityDpsVector(0);
+	uVector(1) = rotatedAngularVelocityDpsVector(1);
+	uVector(2) = rotatedAngularVelocityDpsVector(2);
 
 	myKalmanFilter.predict(uVector);
-
-//    Math::Vector<RealNumber, 3> accelerationGVector;
-//    accelerationGVector(0) = myImuAccelMeasurement.xAccelerationG;
-//    accelerationGVector(1) = myImuAccelMeasurement.yAccelerationG;
-//    accelerationGVector(2) = myImuAccelMeasurement.zAccelerationG;
-//
-//    Math::Vector<RealNumber, 3> rotatedAcclerationGVector;
-//    rotatedAcclerationGVector = myRotationMatrix * accelerationGVector;
-//
-//    Math::Vector<RealNumber, 3> angularVelocityDpsVector;
-//    angularVelocityDpsVector(0) = myImuGyroMeasurement.xAngularVelocityDps;
-//    angularVelocityDpsVector(1) = myImuGyroMeasurement.yAngularVelocityDps;
-//    angularVelocityDpsVector(2) = myImuGyroMeasurement.zAngularVelocityDps;
-//
-//    Math::Vector<RealNumber, 3> rotatedAngularVelocityDpsVector;
-//    rotatedAngularVelocityDpsVector = myRotationMatrix *
-//    								  	  angularVelocityDpsVector;
-//
-//    myYawAngularVelocityDps   = rotatedAngularVelocityDpsVector(2);
-//    myPitchAngularVelocityDps = rotatedAngularVelocityDpsVector(1);
-//    myRollAngularVelocityDps  = rotatedAngularVelocityDpsVector(0);
-//
-//    RealNumber gyroDt = 1.0 / (myImu.getConfig().gyroMeasurementRateHz);
-//
-//    myIntegratedYawAngleDegrees   += myYawAngularVelocityDps   * gyroDt;
-//    myIntegratedPitchAngleDegrees += myPitchAngularVelocityDps * gyroDt;
-//    myIntegratedRollAngleDegrees  += myRollAngularVelocityDps  * gyroDt;
-//
-//    AngleRadians pitchAngleRadians = atan2(rotatedAcclerationGVector(0),
-//                                      	   rotatedAcclerationGVector(2));
-//    AngleDegrees pitchAngleDegrees = radiansToDegrees(pitchAngleRadians);
-//
-//    AngleRadians rollAngleRadians = atan2(rotatedAcclerationGVector(1),
-//                                     	  rotatedAcclerationGVector(2));
-//    AngleDegrees rollAngleDegrees = radiansToDegrees(rollAngleRadians);
-//
-//    AngleDegrees lastPitchAngleDegrees = myPitchAngleDegrees;
-//    AngleDegrees lastRollAngleDegrees  = myRollAngleDegrees;
-//
-//    if (myImu.isOffsetCalibrationComplete())
-//    {
-//        myYawAngleDegrees = myIntegratedYawAngleDegrees;
-//
-//        myPitchAngleDegrees =
-//               0.8*pitchAngleDegrees +
-//               0.2*(lastPitchAngleDegrees + myPitchAngularVelocityDps * gyroDt);
-//        myRollAngleDegrees =
-//                 0.8*rollAngleDegrees +
-//                 0.2*(lastRollAngleDegrees + myRollAngularVelocityDps * gyroDt);
-//    }
-//    else
-//    {
-//        myYawAngleDegrees   = myIntegratedYawAngleDegrees;
-//        myPitchAngleDegrees = pitchAngleDegrees;
-//        myRollAngleDegrees  = rollAngleDegrees;
-//    }
-//
-//    if (myYawAngleDegrees > 180.0)
-//    {
-//    	myYawAngleDegrees -= 360.0;
-//    }
-//    else if (myYawAngleDegrees < -180.0)
-//    {
-//    	myYawAngleDegrees += 360.0;
-//    }
-//
-//    measurementReady();
 }
 
 //------------------------------------------------------------------------------
-Plat4m::Controls::KalmanFilter<Plat4m::RealNumber, 5, 3, 3>& InsImu::getKalmanFilter()
+void InsImu::setRotationAngles(const AngleRadians xRotationAngleRadians,
+                               const AngleRadians yRotationAngleRadians,
+                               const AngleRadians zRotationAngleRadians)
+{
+    RealNumber xRotationMatrixValues[3][3] =
+    {
+        {1.0,                         0.0,                         0.0},
+        {0.0,  cos(xRotationAngleRadians), -sin(xRotationAngleRadians)},
+        {0.0,  sin(xRotationAngleRadians),  cos(xRotationAngleRadians)}
+    };
+    Math::RotationMatrix<RealNumber> xRotationMatrix(xRotationMatrixValues);
+
+    RealNumber yRotationMatrixValues[3][3] =
+    {
+        { cos(yRotationAngleRadians), 0.0,  sin(yRotationAngleRadians)},
+        {                        0.0, 1.0,                         0.0},
+        {-sin(yRotationAngleRadians), 0.0,  cos(yRotationAngleRadians)}
+    };
+    Math::RotationMatrix<RealNumber> yRotationMatrix(yRotationMatrixValues);
+
+    RealNumber zRotationMatrixValues[3][3] =
+    {
+        { cos(zRotationAngleRadians), -sin(zRotationAngleRadians), 0.0},
+        { sin(zRotationAngleRadians),  cos(zRotationAngleRadians), 0.0},
+        {                        0.0,                         0.0, 1.0}
+    };
+    Math::RotationMatrix<RealNumber> zRotationMatrix(zRotationMatrixValues);
+
+    myRotationMatrix = xRotationMatrix * yRotationMatrix * zRotationMatrix;
+}
+
+//------------------------------------------------------------------------------
+Plat4m::Controls::KalmanFilter<Plat4m::RealNumber, 3, 3, 3>&
+                                                       InsImu::getKalmanFilter()
 {
     return myKalmanFilter;
 }
@@ -369,11 +330,11 @@ Ins::Error InsImu::driverGetMeasurement(Measurement& measurement)
 	measurement.rotationYAngleDegrees = myKalmanFilter.getXVector()(1);
 	measurement.rotationZAngleDegrees = myKalmanFilter.getXVector()(2);
 	measurement.rotationRateXAngularVelocityDps =
-	                                             myKalmanFilter.getXVector()(3);
+	                                             myKalmanFilter.getUVector()(0);
 	measurement.rotationRateYAngularVelocityDps =
-	                                             myKalmanFilter.getXVector()(4);
+	                                             myKalmanFilter.getUVector()(1);
 	measurement.rotationRateZAngularVelocityDps =
-	                                             myKalmanFilter.getXVector()(5);
+	                                             myKalmanFilter.getUVector()(2);
 
     return Ins::Error(Ins::ERROR_CODE_NONE);
 }

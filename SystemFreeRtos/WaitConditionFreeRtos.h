@@ -51,6 +51,7 @@
 
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/Thread.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -71,7 +72,7 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
     
-    WaitConditionFreeRtos();
+    WaitConditionFreeRtos(Thread& thread);
     
     //--------------------------------------------------------------------------
     // Public virtual destructors
