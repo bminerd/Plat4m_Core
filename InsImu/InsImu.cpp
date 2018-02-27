@@ -208,48 +208,7 @@ void InsImu::accelMeasurementReadyCallback()
 {
 	myImu.getAccelMeasurement(myImuAccelMeasurement);
 
-	Math::Vector<RealNumber, 3> accelerationGVector;
-    accelerationGVector(0) = myImuAccelMeasurement.xAccelerationG;
-    accelerationGVector(1) = myImuAccelMeasurement.yAccelerationG;
-    accelerationGVector(2) = myImuAccelMeasurement.zAccelerationG;
-
-    // Rotate the accelerations into the orientation of the IMU
-    Math::Vector<RealNumber, 3> rotatedAcclerationGVector;
-    rotatedAcclerationGVector = myRotationMatrix * accelerationGVector;
-
-    AngleRadians pitchAngleRadians = atan2(rotatedAcclerationGVector(0),
-                                           -rotatedAcclerationGVector(2));
-    AngleDegrees pitchAngleDegrees = radiansToDegrees(pitchAngleRadians);
-
-    AngleRadians rollAngleRadians = atan2(-rotatedAcclerationGVector(1),
-                                          -rotatedAcclerationGVector(2));
-    AngleDegrees rollAngleDegrees = radiansToDegrees(rollAngleRadians);
-
-	Eigen::Matrix<RealNumber, 3, 1> measurementVector;
-
-	RealNumber maxAccelAngle = 85.0;
-
-	// If either the pitch or roll angle is beyond the max accel angle, the
-	// calculated angle is unreliable due to being in the near-infinite portion
-	// of arctan. Use the predicted angles as the update instead.
-	if ((abs(pitchAngleDegrees) > maxAccelAngle) &&
-	    (abs(rollAngleDegrees)  > maxAccelAngle))
-	{
-	    measurementVector(0) = myKalmanFilter.getXVector()(0);
-	    measurementVector(1) = myKalmanFilter.getXVector()(1);
-	}
-	else
-	{
-	    measurementVector(0) = rollAngleDegrees;
-	    measurementVector(1) = pitchAngleDegrees;
-	}
-
-	// Propagate the gyro yaw angle integration, we have no "truth" sensor
-	measurementVector(2) = myKalmanFilter.getXVector()(2);
-
-	myKalmanFilter.update(measurementVector);
-
-	measurementReady();
+    setImuAccelMeasurement(myImuAccelMeasurement);
 }
 
 //------------------------------------------------------------------------------
@@ -257,21 +216,7 @@ void InsImu::gyroMeasurementReadyCallback()
 {
 	myImu.getGyroMeasurement(myImuGyroMeasurement);
 
-    Math::Vector<RealNumber, 3> angularVelocityDpsVector;
-    angularVelocityDpsVector(0) = myImuGyroMeasurement.xAngularVelocityDps;
-    angularVelocityDpsVector(1) = myImuGyroMeasurement.yAngularVelocityDps;
-    angularVelocityDpsVector(2) = myImuGyroMeasurement.zAngularVelocityDps;
-
-    Math::Vector<RealNumber, 3> rotatedAngularVelocityDpsVector;
-    rotatedAngularVelocityDpsVector = myRotationMatrix *
-                                          angularVelocityDpsVector;
-
-	Eigen::Matrix<RealNumber, 3, 1> uVector;
-	uVector(0) = rotatedAngularVelocityDpsVector(0);
-	uVector(1) = rotatedAngularVelocityDpsVector(1);
-	uVector(2) = rotatedAngularVelocityDpsVector(2);
-
-	myKalmanFilter.predict(uVector);
+    setImuGyroMeasurement(myImuGyroMeasurement);
 }
 
 //------------------------------------------------------------------------------
@@ -311,6 +256,79 @@ Plat4m::Controls::KalmanFilter<Plat4m::RealNumber, 3, 3, 3>&
                                                        InsImu::getKalmanFilter()
 {
     return myKalmanFilter;
+}
+
+//------------------------------------------------------------------------------
+void InsImu::setImuGyroMeasurement(
+                                 const Imu::GyroMeasurement& imuGyroMeasurement)
+{
+    myImuGyroMeasurement = imuGyroMeasurement;
+
+    Math::Vector<RealNumber, 3> angularVelocityDpsVector;
+    angularVelocityDpsVector(0) = myImuGyroMeasurement.xAngularVelocityDps;
+    angularVelocityDpsVector(1) = myImuGyroMeasurement.yAngularVelocityDps;
+    angularVelocityDpsVector(2) = myImuGyroMeasurement.zAngularVelocityDps;
+
+    Math::Vector<RealNumber, 3> rotatedAngularVelocityDpsVector;
+    rotatedAngularVelocityDpsVector = myRotationMatrix *
+                                          angularVelocityDpsVector;
+
+    Eigen::Matrix<RealNumber, 3, 1> uVector;
+    uVector(0) = rotatedAngularVelocityDpsVector(0);
+    uVector(1) = rotatedAngularVelocityDpsVector(1);
+    uVector(2) = rotatedAngularVelocityDpsVector(2);
+
+    myKalmanFilter.predict(uVector);
+}
+
+//------------------------------------------------------------------------------
+void InsImu::setImuAccelMeasurement(
+                               const Imu::AccelMeasurement& imuAccelMeasurement)
+{
+    myImuAccelMeasurement = imuAccelMeasurement;
+
+    Math::Vector<RealNumber, 3> accelerationGVector;
+    accelerationGVector(0) = myImuAccelMeasurement.xAccelerationG;
+    accelerationGVector(1) = myImuAccelMeasurement.yAccelerationG;
+    accelerationGVector(2) = myImuAccelMeasurement.zAccelerationG;
+
+    // Rotate the accelerations into the orientation of the IMU
+    Math::Vector<RealNumber, 3> rotatedAcclerationGVector;
+    rotatedAcclerationGVector = myRotationMatrix * accelerationGVector;
+
+    AngleRadians pitchAngleRadians = atan2(rotatedAcclerationGVector(0),
+                                           -rotatedAcclerationGVector(2));
+    AngleDegrees pitchAngleDegrees = radiansToDegrees(pitchAngleRadians);
+
+    AngleRadians rollAngleRadians = atan2(-rotatedAcclerationGVector(1),
+                                          -rotatedAcclerationGVector(2));
+    AngleDegrees rollAngleDegrees = radiansToDegrees(rollAngleRadians);
+
+    Eigen::Matrix<RealNumber, 3, 1> measurementVector;
+
+    RealNumber maxAccelAngle = 85.0;
+
+    // If either the pitch or roll angle is beyond the max accel angle, the
+    // calculated angle is unreliable due to being in the near-infinite portion
+    // of arctan. Use the predicted angles as the update instead.
+    if ((abs(pitchAngleDegrees) > maxAccelAngle) &&
+        (abs(rollAngleDegrees)  > maxAccelAngle))
+    {
+        measurementVector(0) = myKalmanFilter.getXVector()(0);
+        measurementVector(1) = myKalmanFilter.getXVector()(1);
+    }
+    else
+    {
+        measurementVector(0) = rollAngleDegrees;
+        measurementVector(1) = pitchAngleDegrees;
+    }
+
+    // Propagate the gyro yaw angle integration, we have no "truth" sensor
+    measurementVector(2) = myKalmanFilter.getXVector()(2);
+
+    myKalmanFilter.update(measurementVector);
+
+    measurementReady();
 }
 
 //------------------------------------------------------------------------------

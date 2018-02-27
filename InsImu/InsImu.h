@@ -111,6 +111,11 @@ public:
 
     Controls::KalmanFilter<RealNumber, 3, 3, 3>& getKalmanFilter();
 
+    void setImuGyroMeasurement(const Imu::GyroMeasurement& imuGyroMeasurement);
+
+    void setImuAccelMeasurement(
+                              const Imu::AccelMeasurement& imuAccelMeasurement);
+
 private:
 
     //--------------------------------------------------------------------------
