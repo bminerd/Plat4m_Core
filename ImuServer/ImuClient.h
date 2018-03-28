@@ -121,7 +121,13 @@ private:
 
     Imu::Error driverSetConfig(const Imu::Config& config);
 
+    Imu::Error driverGetRawMeasurement(RawMeasurement& rawMeasurement);
+
     Imu::Error driverGetMeasurement(Measurement& measurement);
+
+    Imu::Error driverGetAccelMeasurement(AccelMeasurement& measurement);
+
+    Imu::Error driverGetGyroMeasurement(GyroMeasurement& measurement);
 
     //--------------------------------------------------------------------------
     // Private methods

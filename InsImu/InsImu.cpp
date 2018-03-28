@@ -134,74 +134,8 @@ InsImu::~InsImu()
 //------------------------------------------------------------------------------
 void InsImu::imuMeasurementReadyCallback()
 {
-//    Imu::Measurement measurement;
-//
-//    Imu::Error error = myImu.getMeasurement(measurement);
-//
-//    Math::Vector<RealNumber, 3> accelerationGVector;
-//    accelerationGVector(0) = measurement.xAccelerationG;
-//    accelerationGVector(1) = measurement.yAccelerationG;
-//    accelerationGVector(2) = measurement.zAccelerationG;
-//
-//    Math::Vector<RealNumber, 3> rotatedAcclerationGVector;
-//    rotatedAcclerationGVector = myRotationMatrix* accelerationGVector;
-//
-//    Math::Vector<RealNumber, 3> angularVelocityDpsVector;
-//    angularVelocityDpsVector(0) = measurement.xAngularVelocityDps;
-//    angularVelocityDpsVector(1) = measurement.yAngularVelocityDps;
-//    angularVelocityDpsVector(2) = measurement.zAngularVelocityDps;
-//
-//    Math::Vector<RealNumber, 3> rotatedAngularVelocityDpsVector;
-//    rotatedAngularVelocityDpsVector = myRotationMatrix *
-//    								  	  angularVelocityDpsVector;
-//
-//    myYawAngularVelocityDps   = rotatedAngularVelocityDpsVector(2);
-//    myPitchAngularVelocityDps = rotatedAngularVelocityDpsVector(1);
-//    myRollAngularVelocityDps  = rotatedAngularVelocityDpsVector(0);
-//
-//    RealNumber gyroDt = 1.0 / (myImu.getConfig().gyroMeasurementRateHz);
-//
-//    myIntegratedYawAngleDegrees   += myYawAngularVelocityDps   * gyroDt;
-//    myIntegratedPitchAngleDegrees += myPitchAngularVelocityDps * gyroDt;
-//    myIntegratedRollAngleDegrees  += myRollAngularVelocityDps  * gyroDt;
-//
-//    AngleRadians pitchAngleRadians = atan2(rotatedAcclerationGVector(0),
-//                                      	   -rotatedAcclerationGVector(2));
-//    AngleDegrees pitchAngleDegrees = radiansToDegrees(pitchAngleRadians);
-//
-//    AngleRadians rollAngleRadians = atan2(-rotatedAcclerationGVector(1),
-//                                     	  -rotatedAcclerationGVector(2));
-//    AngleDegrees rollAngleDegrees = radiansToDegrees(rollAngleRadians);
-//
-//    AngleDegrees lastPitchAngleDegrees = myPitchAngleDegrees;
-//    AngleDegrees lastRollAngleDegrees  = myRollAngleDegrees;
-//
-//    if (myImu.isOffsetCalibrationComplete())
-//    {
-//        myYawAngleDegrees = myIntegratedYawAngleDegrees;
-//
-//        myPitchAngleDegrees =
-//               0.8*pitchAngleDegrees +
-//               0.2*(lastPitchAngleDegrees + myPitchAngularVelocityDps * gyroDt);
-//        myRollAngleDegrees =
-//                 0.8*rollAngleDegrees +
-//                 0.2*(lastRollAngleDegrees + myRollAngularVelocityDps * gyroDt);
-//    }
-//    else
-//    {
-//        myYawAngleDegrees   = myIntegratedYawAngleDegrees;
-//        myPitchAngleDegrees = pitchAngleDegrees;
-//        myRollAngleDegrees  = rollAngleDegrees;
-//    }
-//
-//    if (myYawAngleDegrees > 180.0)
-//    {
-//    	myYawAngleDegrees -= 360.0;
-//    }
-//    else if (myYawAngleDegrees < -180.0)
-//    {
-//    	myYawAngleDegrees += 360.0;
-//    }
+    gyroMeasurementReadyCallback();
+    accelMeasurementReadyCallback();
 }
 
 //------------------------------------------------------------------------------

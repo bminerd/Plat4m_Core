@@ -104,9 +104,35 @@ Imu::Error ImuClient::driverSetConfig(const Imu::Config& config)
 }
 
 //------------------------------------------------------------------------------
+Imu::Error ImuClient::driverGetRawMeasurement(RawMeasurement& rawMeasurement)
+{
+    return Imu::Error(Imu::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
 Imu::Error ImuClient::driverGetMeasurement(Measurement& measurement)
 {
     measurement = myMeasurement;
+
+    return Imu::Error(Imu::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+Imu::Error ImuClient::driverGetAccelMeasurement(AccelMeasurement& measurement)
+{
+    measurement.xAccelerationG = myMeasurement.xAccelerationG;
+    measurement.yAccelerationG = myMeasurement.yAccelerationG;
+    measurement.zAccelerationG = myMeasurement.zAccelerationG;
+
+    return Imu::Error(Imu::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+Imu::Error ImuClient::driverGetGyroMeasurement(GyroMeasurement& measurement)
+{
+    measurement.xAngularVelocityDps = myMeasurement.xAngularVelocityDps;
+    measurement.yAngularVelocityDps = myMeasurement.yAngularVelocityDps;
+    measurement.zAngularVelocityDps = myMeasurement.zAngularVelocityDps;
 
     return Imu::Error(Imu::ERROR_CODE_NONE);
 }
