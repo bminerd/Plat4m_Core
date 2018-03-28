@@ -189,14 +189,12 @@ void InsServer::outputThreadCallback()
     	Ins::Error error = ins->getMeasurement(measurement);
 
 		InsMeasurementMessage message;
-		message.index    	  = i;
-        message.timeUs   	  = System::getTimeUs();
-		message.rotationX 	  = measurement.rotationXAngleDegrees;
-		message.rotationY 	  = measurement.rotationYAngleDegrees;
-		message.rotationZ 	  = measurement.rotationZAngleDegrees;
-		message.rotationRateX = measurement.rotationRateXAngularVelocityDps;
-		message.rotationRateY = measurement.rotationRateYAngularVelocityDps;
-		message.rotationRateZ = measurement.rotationRateZAngularVelocityDps;
+		message.index    	= i;
+        message.timeUs   	= System::getTimeUs();
+		message.quaternionX = measurement.quaternion.x();
+		message.quaternionY = measurement.quaternion.y();
+		message.quaternionZ = measurement.quaternion.z();
+		message.quaternionW = measurement.quaternion.w();
 
         InsMeasurementBinaryMessage binaryMessage(message);
         transmitMessage(binaryMessage);

@@ -78,7 +78,7 @@ InsMeasurementBinaryMessage::~InsMeasurementBinaryMessage()
 //------------------------------------------------------------------------------
 bool InsMeasurementBinaryMessage::parseMessageData(const ByteArray& data)
 {
-    if (data.getSize() < 29)
+    if (data.getSize() < 21)
     {
         return false;
     }
@@ -87,14 +87,12 @@ bool InsMeasurementBinaryMessage::parseMessageData(const ByteArray& data)
                                     ENDIAN_BIG,
                                     ByteArrayParser::PARSE_DIRECTION_FORWARD);
 
-    return (byteArrayParser.parse(myMessage.index)         &&
-            byteArrayParser.parse(myMessage.timeUs)        &&
-			byteArrayParser.parse(myMessage.rotationX)     &&
-			byteArrayParser.parse(myMessage.rotationY)     &&
-			byteArrayParser.parse(myMessage.rotationZ) 	   &&
-			byteArrayParser.parse(myMessage.rotationRateX) &&
-			byteArrayParser.parse(myMessage.rotationRateY) &&
-			byteArrayParser.parse(myMessage.rotationRateZ));
+    return (byteArrayParser.parse(myMessage.index)       &&
+            byteArrayParser.parse(myMessage.timeUs)      &&
+			byteArrayParser.parse(myMessage.quaternionX) &&
+			byteArrayParser.parse(myMessage.quaternionY) &&
+			byteArrayParser.parse(myMessage.quaternionZ) &&
+			byteArrayParser.parse(myMessage.quaternionW));
 }
 
 //------------------------------------------------------------------------------
@@ -105,12 +103,10 @@ bool InsMeasurementBinaryMessage::parseMessageData(const ByteArray& data)
 bool InsMeasurementBinaryMessage::binaryMessageToByteArray(
                                                      ByteArray& byteArray) const
 {
-    return (byteArray.append(myMessage.index,     	  ENDIAN_BIG) &&
-            byteArray.append(myMessage.timeUs,    	  ENDIAN_BIG) &&
-            byteArray.append(myMessage.rotationX, 	  ENDIAN_BIG) &&
-            byteArray.append(myMessage.rotationY, 	  ENDIAN_BIG) &&
-            byteArray.append(myMessage.rotationZ, 	  ENDIAN_BIG) &&
-            byteArray.append(myMessage.rotationRateX, ENDIAN_BIG) &&
-            byteArray.append(myMessage.rotationRateY, ENDIAN_BIG) &&
-            byteArray.append(myMessage.rotationRateZ, ENDIAN_BIG));
+    return (byteArray.append(myMessage.index,     	ENDIAN_BIG) &&
+            byteArray.append(myMessage.timeUs,    	ENDIAN_BIG) &&
+            byteArray.append(myMessage.quaternionX, ENDIAN_BIG) &&
+            byteArray.append(myMessage.quaternionY, ENDIAN_BIG) &&
+            byteArray.append(myMessage.quaternionZ, ENDIAN_BIG) &&
+            byteArray.append(myMessage.quaternionW, ENDIAN_BIG));
 }

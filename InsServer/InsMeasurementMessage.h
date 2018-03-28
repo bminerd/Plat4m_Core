@@ -71,12 +71,10 @@ public:
     {
         PARAMETER_INDEX,
         PARAMETER_TIME_US,
-        PARAMETER_ROTATION_X,
-		PARAMETER_ROTATION_Y,
-		PARAMETER_ROTATION_Z,
-        PARAMETER_ROTATION_RATE_X,
-		PARAMETER_ROTATION_RATE_Y,
-		PARAMETER_ROTATION_RATE_Z,
+        PARAMETER_QUATERNION_X,
+        PARAMETER_QUATERNION_Y,
+        PARAMETER_QUATERNION_Z,
+        PARAMETER_QUATERNION_W,
 
         // Don't add values below
         NUMBER_OF_PARAMETERS
@@ -88,12 +86,10 @@ public:
 
     uint8_t index;
     uint32_t timeUs;
-    float rotationX;
-    float rotationY;
-    float rotationZ;
-    float rotationRateX;
-    float rotationRateY;
-    float rotationRateZ;
+    float quaternionX;
+    float quaternionY;
+    float quaternionZ;
+    float quaternionW;
 };
 
 }; // namespace Plat4m

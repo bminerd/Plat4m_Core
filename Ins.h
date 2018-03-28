@@ -51,6 +51,7 @@
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Math/Matrix.h>
 #include <Plat4m_Math/Vector.h>
+#include <Plat4m_Math/Quaternion.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -110,12 +111,7 @@ public:
 
     struct Measurement
     {
-        AngleDegrees rotationXAngleDegrees;
-        AngleDegrees rotationYAngleDegrees;
-        AngleDegrees rotationZAngleDegrees;
-        AngularVelocityDps rotationRateXAngularVelocityDps;
-        AngularVelocityDps rotationRateYAngularVelocityDps;
-        AngularVelocityDps rotationRateZAngularVelocityDps;
+        Math::Quaternion<RealNumber> quaternion;
     };
 
     //--------------------------------------------------------------------------

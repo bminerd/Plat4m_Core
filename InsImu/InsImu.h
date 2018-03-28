@@ -46,8 +46,6 @@
 // Include files
 //------------------------------------------------------------------------------
 
-
-
 #include <Plat4m_Core/Ins.h>
 #include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/Callback.h>
@@ -109,7 +107,7 @@ public:
                            const AngleRadians yRotationAngleRadians,
                            const AngleRadians zRotationAngleRadians);
 
-    Controls::KalmanFilter<RealNumber, 3, 3, 3>& getKalmanFilter();
+    Controls::KalmanFilter<RealNumber, 4, 4, 4>& getKalmanFilter();
 
     void setImuGyroMeasurement(const Imu::GyroMeasurement& imuGyroMeasurement);
 
@@ -138,17 +136,15 @@ private:
     AngularVelocityDps myPitchAngularVelocityDps;
     AngularVelocityDps myRollAngularVelocityDps;
 
-    Math::Vector<RealNumber, 3> myEulerAnglesVector;
-
     Math::Quaternion<RealNumber> myQuaternion;
 
     Imu::AccelMeasurement myImuAccelMeasurement;
     Imu::GyroMeasurement myImuGyroMeasurement;
 
-    /// 3 states (Rx, Ry, Rz)
-    /// 3 observables (computed biases Bgx and Bgy are not observed)
-    /// 3 control inputs (gyro x,y,z)
-    Controls::KalmanFilter<RealNumber, 3, 3, 3> myKalmanFilter;
+    /// 4 states (Qx, Qy, Qz, Qw)
+    /// 4 observables
+    /// 4 control inputs (gyro Qx, Qy, Qz, Qw)
+    Controls::KalmanFilter<RealNumber, 4, 4, 4> myKalmanFilter;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Ins
