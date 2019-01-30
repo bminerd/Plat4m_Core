@@ -48,8 +48,8 @@
 
 #include <stm32f4xx.h>
 
-#include <Plat4m.h>
-#include <Interrupt.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Interrupt.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

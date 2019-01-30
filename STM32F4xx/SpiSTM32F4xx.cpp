@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <SpiSTM32F4xx.h>
-#include <ProcessorSTM32F4xx.h>
-#include <CallbackMethod.h>
+#include <Plat4m_Core/STM32F4xx/SpiSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 using Plat4m::SpiSTM32F4xx;
 using Plat4m::Spi;

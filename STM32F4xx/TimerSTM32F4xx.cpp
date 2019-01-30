@@ -43,10 +43,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <TimerSTM32F4xx.h>
-#include <CallbackMethod.h>
+#include <stm32f4xx_tim.h>
 
-#include <STM32F4xx_tim.h>
+#include <Plat4m_Core/STM32F4xx/TimerSTM32F4xx.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 using Plat4m::TimerSTM32F4xx;
 using Plat4m::Module;

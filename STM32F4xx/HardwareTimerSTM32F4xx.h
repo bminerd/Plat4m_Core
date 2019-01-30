@@ -48,9 +48,9 @@
 
 #include <stdint.h>
 
-#include <HardwareTimer.h>
-#include <TimerSTM32F4xx.h>
-#include <InterruptSTM32F4xx.h>
+#include <Plat4m_Core/HardwareTimer.h>
+#include <Plat4m_Core/STM32F4xx/TimerSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/InterruptSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

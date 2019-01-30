@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <GpioPortSTM32F4xx.h>
-#include <Module.h>
+#include <Plat4m_Core/STM32F4xx/GpioPortSTM32F4xx.h>
+#include <Plat4m_Core/Module.h>
 
 using Plat4m::GpioPortSTM32F4xx;
 using Plat4m::GpioPort;

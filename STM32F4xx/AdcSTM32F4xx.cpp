@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AdcSTM32F4xx.h>
-#include <Processor.h>
-#include <CallbackMethod.h>
+#include <Plat4m_Core/STM32F4xx/AdcSTM32F4xx.h>
+#include <Plat4m_Core/Processor.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 using Plat4m::AdcSTM32F4xx;
 using Plat4m::Module;

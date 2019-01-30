@@ -48,7 +48,7 @@
 
 #include <stdint.h>
 
-#include <Processor.h>
+#include <Plat4m_Core/Processor.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

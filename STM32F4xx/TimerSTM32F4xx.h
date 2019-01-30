@@ -50,12 +50,12 @@
 
 #include <stm32f4xx.h>
 
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <Callback.h>
-#include <GpioPinSTM32F4xx.h>
-#include <InterruptSTM32F4xx.h>
-#include <ProcessorSTM32F4xx.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/InterruptSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

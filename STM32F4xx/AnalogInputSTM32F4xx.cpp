@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <AnalogInputSTM32F4xx.h>
-#include <Processor.h>
+#include <Plat4m_Core/STM32F4xx/AnalogInputSTM32F4xx.h>
+#include <Plat4m_Core/Processor.h>
 
 using Plat4m::AnalogInputSTM32F4xx;
 using Plat4m::AnalogInput;

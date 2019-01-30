@@ -46,15 +46,15 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <DmaSTM32F4xx.h>
-#include <InterruptSTM32F4xx.h>
-#include <Callback.h>
+#include <stdint.h>
 
 #include <stm32f4xx.h>
 
-#include <stdint.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/STM32F4xx/DmaSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/InterruptSTM32F4xx.h>
+#include <Plat4m_Core/Callback.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

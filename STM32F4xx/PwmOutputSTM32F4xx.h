@@ -48,9 +48,9 @@
 
 #include <stdint.h>
 
-#include <PwmOutput.h>
-#include <TimerSTM32F4xx.h>
-#include <GpioPinSTM32F4xx.h>
+#include <Plat4m_Core/PwmOutput.h>
+#include <Plat4m_Core/STM32F4xx/TimerSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

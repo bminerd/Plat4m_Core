@@ -49,9 +49,9 @@
 #include <stm32f4xx.h>
 #include <stm32f4xx_gpio.h>
 
-#include <Plat4m.h>
-#include <GpioPin.h>
-#include <GpioPortSTM32F4xx.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/GpioPin.h>
+#include <Plat4m_Core/STM32F4xx/GpioPortSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

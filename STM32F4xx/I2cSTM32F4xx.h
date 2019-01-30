@@ -49,11 +49,11 @@
 #include <stm32f4xx.h>
 #include <stm32f4xx_i2c.h>
 
-#include <I2c.h>
-#include <GpioPinSTM32F4xx.h>
-#include <Module.h>
-#include <InterruptSTM32F4xx.h>
-#include <ProcessorSTM32F4xx.h>
+#include <Plat4m_Core/I2c.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/InterruptSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

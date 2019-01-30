@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <DmaStreamSTM32F4xx.h>
-#include <CallbackMethod.h>
+#include <Plat4m_Core/STM32F4xx/DmaStreamSTM32F4xx.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 using Plat4m::DmaStreamSTM32F4xx;
 using Plat4m::Module;
