@@ -43,11 +43,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <SystemLite.h>
-#include <MutexLite.h>
-#include <WaitConditionLite.h>
-#include <QueueDriverLite.h>
-#include <Processor.h>
+#include <Plat4m_Core/SystemLite/SystemLite.h>
+#include <Plat4m_Core/SystemLite/MutexLite.h>
+#include <Plat4m_Core/SystemLite/WaitConditionLite.h>
+#include <Plat4m_Core/SystemLite/QueueDriverLite.h>
+#include <Plat4m_Core/Processor.h>
 
 using Plat4m::SystemLite;
 using Plat4m::Processor;
@@ -99,7 +99,8 @@ void SystemLite::enableSystemClock(const uint32_t coreClockFrequencyHz)
 
 //------------------------------------------------------------------------------
 Thread& SystemLite::driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs)
+                                       const TimeMs periodMs,
+                                       const uint32_t nStackBytes)
 {
     ThreadLite* thread = new ThreadLite(callback, periodMs);
 
@@ -109,20 +110,21 @@ Thread& SystemLite::driverCreateThread(Thread::RunCallback& callback,
 }
 
 //------------------------------------------------------------------------------
-Mutex& SystemLite::driverCreateMutex()
+Mutex& SystemLite::driverCreateMutex(Thread& thread)
 {
     return *(new MutexLite);
 }
 
 //------------------------------------------------------------------------------
-WaitCondition& SystemLite::driverCreateWaitCondition()
+WaitCondition& SystemLite::driverCreateWaitCondition(Thread& thread)
 {
     return *(new WaitConditionLite);
 }
 
 //------------------------------------------------------------------------------
 QueueDriver& SystemLite::driverCreateQueueDriver(const uint32_t nValues,
-												 const uint32_t valueSizeBytes)
+												 const uint32_t valueSizeBytes,
+												 Thread& thread)
 {
 	return *(new QueueDriverLite<0>);
 }

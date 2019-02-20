@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <MutexLite.h>
+#include <Plat4m_Core/SystemLite/MutexLite.h>
 
 using Plat4m::MutexLite;
 using Plat4m::Mutex;

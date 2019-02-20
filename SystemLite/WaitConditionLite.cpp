@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <WaitConditionLite.h>
+#include <Plat4m_Core/SystemLite/WaitConditionLite.h>
 
 using Plat4m::WaitConditionLite;
 using Plat4m::WaitCondition;

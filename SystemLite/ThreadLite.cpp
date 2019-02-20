@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ThreadLite.h>
-#include <System.h>
+#include <Plat4m_Core/SystemLite/ThreadLite.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::ThreadLite;
 

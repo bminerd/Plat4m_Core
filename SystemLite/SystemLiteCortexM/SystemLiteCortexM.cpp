@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <SystemLiteCortexM.h>
+#include <Plat4m_Core/SystemLite/SystemLiteCortexM/SystemLiteCortexM.h>
 
 // TODO: For now
 #include <stm32f30x.h>
