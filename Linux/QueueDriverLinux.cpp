@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,73 +33,85 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLite.h
+/// @file QueueDriverLinux.cpp
 /// @author Ben Minerd
-/// @date 12/21/2016
-/// @brief WaitConditionLite class header file.
+/// @date 5/28/2019
+/// @brief QueueDriverLinux class source file.
 ///
-
-#ifndef PLAT4M_WAIT_CONDITION_LITE_H
-#define PLAT4M_WAIT_CONDITION_LITE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/Linux/QueueDriverLinux.h>
+#include <Plat4m_Core/Linux/ThreadLinux.h>
+
+using Plat4m::QueueDriverLinux;
 
 //------------------------------------------------------------------------------
-// Namespaces
+// Public constructors
 //------------------------------------------------------------------------------
 
-namespace Plat4m
+//------------------------------------------------------------------------------
+QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
+    QueueDriver(),
+    myValueSizeBytes(valueSizeBytes);
+    myKey(ftok("progfile", 65))
+    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
 {
+}
 
 //------------------------------------------------------------------------------
-// Classes
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
-class WaitConditionLite : public WaitCondition
+//------------------------------------------------------------------------------
+QueueDriverLinux::~QueueDriverLinux()
 {
-public:
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-    
-    WaitConditionLite();
-    
-    //--------------------------------------------------------------------------
-    // Public virtual destructors
-    //--------------------------------------------------------------------------
-    
-    virtual ~WaitConditionLite();
-    
-    //--------------------------------------------------------------------------
-    // Public methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
+}
 
-    void waitFast();
+//------------------------------------------------------------------------------
+// Public methods implemented from QueueDriver
+//------------------------------------------------------------------------------
 
-    void notifyFast();
+//------------------------------------------------------------------------------
+uint32_t QueueDriverLinux::driverGetSize()
+{
+    return 0;
+}
 
-private:
-    
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-    
-    bool myCondition;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
-    
-    Error driverWait(const TimeMs waitTimeMs);
+//------------------------------------------------------------------------------
+uint32_t QueueDriverLinux::driverGetSizeFast()
+{
+    return 0;
+}
 
-    Error driverNotify();
-};
+//------------------------------------------------------------------------------
+bool QueueDriverLinux::driverEnqueue(const void* value)
+{
+    return msgsnd(msgid, value, myValueSizeBytes, 0);
+}
 
-}; // namespace Plat4m
+//------------------------------------------------------------------------------
+bool QueueDriverLinux::driverEnqueueFast(const void* value)
+{
+    return (driverEnqueue(value));
+}
 
-#endif // PLAT4M_WAIT_CONDITION_H
+//--------------------------------------------------------------------------
+bool QueueDriverLinux::driverDequeue(void* value)
+{
+    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0)
+}
+
+//--------------------------------------------------------------------------
+bool QueueDriverLinux::driverDequeueFast(void* value)
+{
+    return (driverDequeue(value));
+}
+
+//--------------------------------------------------------------------------
+void QueueDriverLinux::driverClear()
+{
+    // Read out all messages and dump
+}

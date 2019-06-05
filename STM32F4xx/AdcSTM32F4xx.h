@@ -48,11 +48,11 @@
 
 #include <stm32f4xx.h>
 
-#include <Plat4m.h>
-#include <ErrorTemplate.h>
-#include <Array.h>
-#include <InterruptSTM32F4xx.h>
-#include <DmaStreamSTM32F4xx.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Array.h>
+#include <Plat4m_Core/STM32F4xx/InterruptSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/DmaStreamSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

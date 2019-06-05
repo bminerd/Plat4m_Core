@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <DacSTM32F4xx.h>
-#include <Processor.h>
+#include <Plat4m_Core/STM32F4xx/DacSTM32F4xx.h>
+#include <Plat4m_Core/Processor.h>
 
 using Plat4m::DacSTM32F4xx;
 using Plat4m::Dac;

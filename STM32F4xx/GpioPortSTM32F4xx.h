@@ -50,8 +50,8 @@
 
 #include <stm32f4xx.h>
 
-#include <GpioPort.h>
-#include <ProcessorSTM32F4xx.h>
+#include <Plat4m_Core/GpioPort.h>
+#include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

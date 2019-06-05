@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <I2cSTM32F4xx.h>
-#include <System.h>
-#include <CallbackMethod.h>
+#include <Plat4m_Core/STM32F4xx/I2cSTM32F4xx.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 using Plat4m::I2cSTM32F4xx;
 using Plat4m::I2c;

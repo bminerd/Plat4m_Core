@@ -49,11 +49,12 @@
 #include <stdint.h>
 
 #include <stm32f4xx.h>
+#include <stm32f4xx_spi.h>
 
-#include <Spi.h>
-#include <GpioPinSTM32F4xx.h>
-#include <Module.h>
-#include <InterruptSTM32F4xx.h>
+#include <Plat4m_Core/Spi.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/InterruptSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

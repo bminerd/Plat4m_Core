@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,73 +33,71 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLite.h
+/// @file ProcessorLinux.cpp
 /// @author Ben Minerd
-/// @date 12/21/2016
-/// @brief WaitConditionLite class header file.
+/// @date 5/3/2019
+/// @brief ProcessorLinux class source file.
 ///
-
-#ifndef PLAT4M_WAIT_CONDITION_LITE_H
-#define PLAT4M_WAIT_CONDITION_LITE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/SystemLinux/ProcessorLinux.h>
+
+using Plat4m::ProcessorLinux;
+using Plat4m::Processor;
 
 //------------------------------------------------------------------------------
-// Namespaces
+// Public constructors
 //------------------------------------------------------------------------------
 
-namespace Plat4m
+//------------------------------------------------------------------------------
+ProcessorLinux::ProcessorLinux() :
+    Processor(ENDIAN_BIG, 0.0, 0)
 {
+}
 
 //------------------------------------------------------------------------------
-// Classes
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
-class WaitConditionLite : public WaitCondition
+//------------------------------------------------------------------------------
+ProcessorLinux::~ProcessorLinux()
 {
-public:
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-    
-    WaitConditionLite();
-    
-    //--------------------------------------------------------------------------
-    // Public virtual destructors
-    //--------------------------------------------------------------------------
-    
-    virtual ~WaitConditionLite();
-    
-    //--------------------------------------------------------------------------
-    // Public methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
+}
 
-    void waitFast();
+//------------------------------------------------------------------------------
+// Private methods implemented from Processor
+//------------------------------------------------------------------------------
 
-    void notifyFast();
+//------------------------------------------------------------------------------
+Processor::Error ProcessorLinux::driverReset()
+{
+    return Processor::Error(Processor::ERROR_CODE_NONE);
+}
 
-private:
-    
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-    
-    bool myCondition;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
-    
-    Error driverWait(const TimeMs waitTimeMs);
+//------------------------------------------------------------------------------
+Processor::Error ProcessorLinux::driverConfigure(const Processor::Config& config)
+{
+    return Processor::Error(Processor::ERROR_CODE_NONE);
+}
 
-    Error driverNotify();
-};
+//------------------------------------------------------------------------------
+Processor::Error ProcessorLinux::driverSetPowerMode(
+                                               const Processor::PowerMode powerMode)
+{
+    return Processor::Error(Processor::ERROR_CODE_NONE);
+}
 
-}; // namespace Plat4m
+//------------------------------------------------------------------------------
+uint32_t ProcessorLinux::driverGetCoreClockFrequencyHz()
+{
+    return 0;
+}
 
-#endif // PLAT4M_WAIT_CONDITION_H
+//------------------------------------------------------------------------------
+Processor::Error ProcessorLinux::driverJumpToAddress(const intptr_t address)
+{
+    return Processor::Error(Processor::ERROR_CODE_NONE);
+}

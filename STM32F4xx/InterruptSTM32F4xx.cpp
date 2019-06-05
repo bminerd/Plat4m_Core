@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <InterruptSTM32F4xx.h>
-
 #include <misc.h>
+
+#include <Plat4m_Core/STM32F4xx/InterruptSTM32F4xx.h>
 
 using Plat4m::InterruptSTM32F4xx;
 using Plat4m::Interrupt;

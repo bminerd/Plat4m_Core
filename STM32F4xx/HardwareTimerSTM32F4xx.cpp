@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <HardwareTimerSTM32F4xx.h>
-#include <ProcessorSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/HardwareTimerSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
 
 using Plat4m::HardwareTimerSTM32F4xx;
 using Plat4m::HardwareTimer;

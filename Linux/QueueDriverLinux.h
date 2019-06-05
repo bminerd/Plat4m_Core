@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,20 +33,25 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLite.h
+/// @file QueueDriverLinux.h
 /// @author Ben Minerd
-/// @date 12/21/2016
-/// @brief WaitConditionLite class header file.
+/// @date 5/28/2019
+/// @brief QueueDriverLinux class header file.
 ///
 
-#ifndef PLAT4M_WAIT_CONDITION_LITE_H
-#define PLAT4M_WAIT_CONDITION_LITE_H
+#ifndef PLAT4M_QUEUE_DRIVER_LINUX_H
+#define PLAT4M_QUEUE_DRIVER_LINUX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/WaitCondition.h>
+#include <stdint.h>
+
+#include <pthread.h>
+
+#include <Plat4m_Core/QueueDriver.h>
+#include <Plat4m_Core/Thread.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -59,47 +64,53 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class WaitConditionLite : public WaitCondition
+class QueueDriverLinux : public QueueDriver
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
-    WaitConditionLite();
-    
+
+    QueueDriverLinux(const uint32_t valueSizeBytes);
+
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
-    
-    virtual ~WaitConditionLite();
-    
+
+    virtual ~QueueDriverLinux();
+
     //--------------------------------------------------------------------------
-    // Public methods implemented from WaitCondition
+    // Public methods implemented from QueueDriver
     //--------------------------------------------------------------------------
 
-    void waitFast();
+	uint32_t driverGetSize();
 
-    void notifyFast();
+	uint32_t driverGetSizeFast();
+
+	bool driverEnqueue(const void* value);
+
+	bool driverEnqueueFast(const void* value);
+
+	bool driverDequeue(void* value);
+
+	bool driverDequeueFast(void* value);
+
+	void driverClear();
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
-    bool myCondition;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
-    
-    Error driverWait(const TimeMs waitTimeMs);
 
-    Error driverNotify();
+    const myValueSizeBytes;
+
+    key_t myKey;
+
+	int myMessageQueueId;
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_WAIT_CONDITION_H
+#endif // PLAT4M_QUEUE_DRIVER_LINUX_H

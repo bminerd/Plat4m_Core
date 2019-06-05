@@ -46,13 +46,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Dac.h>
-#include <Module.h>
-#include <GpioPinSTM32F4xx.h>
-
 #include <stm32f4xx.h>
 #include <stm32f4xx_dac.h>
 #include <stm32f4xx_rcc.h>
+
+#include <Plat4m_Core/Dac.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

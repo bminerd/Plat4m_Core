@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,19 +33,22 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLite.h
+/// @file WaitConditionLinux.h
 /// @author Ben Minerd
-/// @date 12/21/2016
-/// @brief WaitConditionLite class header file.
+/// @date 5/26/2019
+/// @brief WaitConditionLinux class header file.
 ///
 
-#ifndef PLAT4M_WAIT_CONDITION_LITE_H
-#define PLAT4M_WAIT_CONDITION_LITE_H
+#ifndef PLAT4M_WAIT_CONDITION_LINUX_H
+#define PLAT4M_WAIT_CONDITION_LINUX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
+#include <pthread.h>
+
+#include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/WaitCondition.h>
 
 //------------------------------------------------------------------------------
@@ -59,7 +62,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class WaitConditionLite : public WaitCondition
+class WaitConditionLinux : public WaitCondition
 {
 public:
     
@@ -67,13 +70,13 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
     
-    WaitConditionLite();
+    WaitConditionLinux();
     
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
     
-    virtual ~WaitConditionLite();
+    virtual ~WaitConditionLinux();
     
     //--------------------------------------------------------------------------
     // Public methods implemented from WaitCondition
@@ -89,7 +92,11 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
     
-    bool myCondition;
+    pthread_cond_t myConditionHandle;
+
+    pthread_mutex_t myMutexHandle;
+
+    pthread_t myThreadHandle;
     
     //--------------------------------------------------------------------------
     // Private methods implemented from WaitCondition
@@ -102,4 +109,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_WAIT_CONDITION_H
+#endif // PLAT4M_WAIT_CONDITION_LINUX_H

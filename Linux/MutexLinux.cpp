@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,73 +33,64 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLite.h
+/// @file MutexLinux.cpp
 /// @author Ben Minerd
-/// @date 12/21/2016
-/// @brief WaitConditionLite class header file.
+/// @date 5/28/2019
+/// @brief MutexLinux class source file.
 ///
-
-#ifndef PLAT4M_WAIT_CONDITION_LITE_H
-#define PLAT4M_WAIT_CONDITION_LITE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/Linux/MutexLinux.h>
+#include <Plat4m_Core/Plat4m.h>
+
+using Plat4m::MutexLinux;
+using Plat4m::Mutex;
 
 //------------------------------------------------------------------------------
-// Namespaces
+// Public constructors
 //------------------------------------------------------------------------------
 
-namespace Plat4m
+//------------------------------------------------------------------------------
+MutexLinux::MutexLinux() :
+    Mutex(),
+    myMutexHandle(PTHREAD_MUTEX_INITIALIZER)
 {
+    if (isNullPointer(myMutexHandle))
+    {
+        while (true)
+        {
+            // Lock up, unable to create mutex
+        }
+    }
+}
 
 //------------------------------------------------------------------------------
-// Classes
+// Public destructors
 //------------------------------------------------------------------------------
 
-class WaitConditionLite : public WaitCondition
+//------------------------------------------------------------------------------
+MutexLinux::~MutexLinux()
 {
-public:
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-    
-    WaitConditionLite();
-    
-    //--------------------------------------------------------------------------
-    // Public virtual destructors
-    //--------------------------------------------------------------------------
-    
-    virtual ~WaitConditionLite();
-    
-    //--------------------------------------------------------------------------
-    // Public methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
+}
 
-    void waitFast();
+//------------------------------------------------------------------------------
+// Private methods implemented from Mutex
+//------------------------------------------------------------------------------
 
-    void notifyFast();
+//------------------------------------------------------------------------------
+Mutex::Error MutexLinux::driverSetLocked(const bool locked)
+{
+	if (locked)
+	{
+		pthread_mutex_lock(&myMutexHandle);
+	}
+	else
+	{
+		pthread_mutex_unlock(&myMutexHandle);
+	}
 
-private:
-    
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-    
-    bool myCondition;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
-    
-    Error driverWait(const TimeMs waitTimeMs);
-
-    Error driverNotify();
-};
-
-}; // namespace Plat4m
-
-#endif // PLAT4M_WAIT_CONDITION_H
+    return ERROR_NONE;
+}

@@ -46,13 +46,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <System.h>
-#include <List.h>
-#include <ThreadLite.h>
-#include <Mutex.h>
-#include <WaitCondition.h>
-#include <QueueDriver.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/SystemLite/ThreadLite.h>
+#include <Plat4m_Core/Mutex.h>
+#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/QueueDriver.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -126,14 +126,16 @@ private:
     //--------------------------------------------------------------------------
 
     Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs);
+                               const TimeMs periodMs,
+                               const uint32_t nStackBytes);
 
-    Mutex& driverCreateMutex();
+    Mutex& driverCreateMutex(Thread& thread);
 
-    WaitCondition& driverCreateWaitCondition();
+    WaitCondition& driverCreateWaitCondition(Thread& thread);
 
     QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									 const uint32_t valueSizeBytes);
+    									 const uint32_t valueSizeBytes,
+    									 Thread& thread);
 
     void driverRun();
 

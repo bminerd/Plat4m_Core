@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,29 +33,53 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLite.cpp
+/// @file ThreadLinux.cpp
 /// @author Ben Minerd
-/// @date 12/21/2016
-/// @brief WaitConditionLite class.
+/// @date 5/26/2019
+/// @brief ThreadLinux class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/SystemLite/WaitConditionLite.h>
+#include <unistd.h>
 
-using Plat4m::WaitConditionLite;
-using Plat4m::WaitCondition;
+#include <Plat4m_Core/Linux/ThreadLinux.h>
+
+using Plat4m::ThreadLinux;
+using Plat4m::Module;
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-WaitConditionLite::WaitConditionLite() :
-    WaitCondition(),
-    myCondition(false)
+ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
+    Thread(callback, periodMs),
+	myThreadHandle(0),
+	myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
+	myConditionHandle(PTHREAD_COND_INITIALIZER)
+{
+    myThreadHandle = CreateThread(&myThreadHandle, NULL, &threadCallback, this);
+
+    if (isNullPointer(myThreadHandle))
+    {
+        while (true)
+        {
+            // Lock up, unable to create thread
+        }
+    }
+
+    driverSetEnabled(false);
+}
+
+//------------------------------------------------------------------------------
+// Public virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+ThreadLinux::~ThreadLinux()
 {
 }
 
@@ -64,38 +88,70 @@ WaitConditionLite::WaitConditionLite() :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-WaitConditionLite::~WaitConditionLite()
+DWORD ThreadLinux::getThreadId() const
 {
+    return myThreadId;
 }
 
 //------------------------------------------------------------------------------
-// Public methods
+// Private static methods implemented from Thread
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void WaitConditionLite::waitFast()
+void* ThreadLinux::threadCallback(void* arg)
 {
+	ThreadLinux* thread = static_cast<ThreadLinux*>(arg);
 
+	while (true) // Loop forever
+	{
+		TimeMs periodMs = thread->getPeriodMs();
+
+		if (periodMs != 0)
+		{
+			struct timespec timeSpec;
+			timeSpec.tv_sec = periodMs / 1000;
+			timeSpec.tv_nsec = (periodMs % 1000) * 1000000;
+			nanosleep(&timeSpec, NULL);
+		}
+
+		thread->run();
+	}
+
+	return 0;
 }
 
 //------------------------------------------------------------------------------
-void WaitConditionLite::notifyFast()
-{
+// Private methods implemented from Module
+//------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+Module::Error ThreadLinux::driverSetEnabled(const bool enabled)
+{
+	if (enabled)
+	{
+		pthread_cond_signal(&myConditionHandle);
+	}
+	else
+	{
+		pthread_mutex_lock(&myMutexHandle);
+		pthread_cond_wait(&myConditionHandle, &myMutexHandle);
+	}
+
+	return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from WaitCondition
+// Private methods implemented from Thread
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-WaitCondition::Error WaitConditionLite::driverWait(const TimeMs waitTimeMs)
+void ThreadLinux::driverSetPeriodMs(const TimeMs periodMs)
 {
-    return Error(ERROR_CODE_NONE);
+    // Do nothing
 }
 
 //------------------------------------------------------------------------------
-WaitCondition::Error WaitConditionLite::driverNotify()
+uint32_t ThreadLinux::driverSetPriority(const uint32_t priority)
 {
-    return Error(ERROR_CODE_NONE);
+	return 0;
 }

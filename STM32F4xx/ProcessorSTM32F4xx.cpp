@@ -43,11 +43,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ProcessorSTM32F4xx.h>
-#include <System.h>
-#include <Application.h>
-
 #include <stm32f4xx.h>
+
+#include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/Application.h>
 
 using Plat4m::ProcessorSTM32F4xx;
 using Plat4m::Processor;
@@ -179,7 +179,7 @@ ProcessorSTM32F4xx::Apb2ClockPrescaler ProcessorSTM32F4xx::myApb2ClockPrescaler;
 ProcessorSTM32F4xx::ProcessorSTM32F4xx(
                                       const float coreVoltage,
                                       const uint32_t externalClockFrequencyHz) :
-    Processor(coreVoltage, externalClockFrequencyHz)
+    Processor(ENDIAN_BIG, coreVoltage, externalClockFrequencyHz)
 {
 }
 

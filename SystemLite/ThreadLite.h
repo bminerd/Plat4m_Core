@@ -39,15 +39,15 @@
 /// @brief ThreadLite class header file.
 ///
 
-#ifndef THREAD_LITE_H
-#define THREAD_LITE_H
+#ifndef PLAT4M_THREAD_LITE_H
+#define PLAT4M_THREAD_LITE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Thread.h>
-#include <Plat4m.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/Plat4m.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -123,4 +123,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // THREAD_LITE_H
+#endif // PLAT4M_THREAD_LITE_H

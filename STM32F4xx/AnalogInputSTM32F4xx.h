@@ -46,10 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <AnalogInput.h>
-#include <AdcSTM32F4xx.h>
-#include <GpioPinSTM32F4xx.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/AnalogInput.h>
+#include <Plat4m_Core/STM32F4xx/AdcSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

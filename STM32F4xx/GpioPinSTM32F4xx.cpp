@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <GpioPinSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
 
 using Plat4m::GpioPinSTM32F4xx;
 using Plat4m::GpioPin;

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,69 +33,125 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLite.cpp
+/// @file SystemLinux.cpp
 /// @author Ben Minerd
-/// @date 12/21/2016
-/// @brief WaitConditionLite class.
+/// @date 5/3/2019
+/// @brief SystemLinux class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/SystemLite/WaitConditionLite.h>
+#include <ctime>
+#include <time.h>
+#include <unistd.h>
 
-using Plat4m::WaitConditionLite;
+#include <Plat4m_Core/Linux/SystemLinux.h>
+#include <Plat4m_Core/Linux/ThreadLinux.h>
+#include <Plat4m_Core/Linux/MutexLinux.h>
+#include <Plat4m_Core/Linux/WaitConditionLinux.h>
+#include <Plat4m_Core/Linux/QueueDriverLinux.h>
+
+using Plat4m::SystemLinux;
+using Plat4m::Thread;
+using Plat4m::Mutex;
 using Plat4m::WaitCondition;
+using Plat4m::QueueDriver;
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-WaitConditionLite::WaitConditionLite() :
-    WaitCondition(),
-    myCondition(false)
+SystemLinux::SystemLinux() :
+    System(),
+    myFirstTimeVal()
+{
+    gettimeofday(&myFirstTimeVal, NULL);
+}
+
+//------------------------------------------------------------------------------
+// Public constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+SystemLinux::~SystemLinux()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public virtual destructors
+// Private methods implemented from System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-WaitConditionLite::~WaitConditionLite()
+Plat4m::TimeUs SystemLinux::driverGetTimeUs()
 {
+    struct timeval timeVal;
+    gettimeofday(&timeVal, NULL);
+
+    Plat4m::TimeUs timeUs = (timeVal.tv_sec * 1000000 + timeVal.tv_usec) -
+                            (myFirstTimeVal.tv_sec * 1000000 + timeVal.tv_usec);
+
+    return timeUs;
 }
 
 //------------------------------------------------------------------------------
-// Public methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void WaitConditionLite::waitFast()
+Thread& SystemLinux::driverCreateThread(Thread::RunCallback& callback,
+                                        const TimeMs periodMs,
+                                        const uint32_t nStackBytes)
 {
-
+    return *(new ThreadLinux(callback, periodMs));
 }
 
 //------------------------------------------------------------------------------
-void WaitConditionLite::notifyFast()
+Mutex& SystemLinux::driverCreateMutex(Thread& thread)
 {
-
+    return *(new MutexLinux);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from WaitCondition
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-WaitCondition::Error WaitConditionLite::driverWait(const TimeMs waitTimeMs)
+WaitCondition& SystemLinux::driverCreateWaitCondition(Thread& thread)
 {
-    return Error(ERROR_CODE_NONE);
+    return *(new WaitConditionLinux);
 }
 
 //------------------------------------------------------------------------------
-WaitCondition::Error WaitConditionLite::driverNotify()
+QueueDriver& SystemLinux::driverCreateQueueDriver(
+                                                  const uint32_t nValues,
+                                                  const uint32_t valueSizeBytes,
+                                                  Thread& thread)
 {
-    return Error(ERROR_CODE_NONE);
+    return *(new QueueDriverLinux(thread));
+}
+
+//------------------------------------------------------------------------------
+void SystemLinux::driverRun()
+{
+    while (true)
+    {
+        // Do nothing
+    }
+}
+
+//------------------------------------------------------------------------------
+Plat4m::TimeMs SystemLinux::driverGetTimeMs()
+{
+    struct timeval timeVal;
+    gettimeofday(&timeVal, NULL);
+
+    Plat4m::TimeMs timeMs = 
+                        (timeVal.tv_sec * 1000 + timeVal.tv_usec / 1000) -
+                        (myFirstTimeVal.tv_sec * 1000 + timeVal.tv_usec / 1000);
+
+    return timeMs;
+}
+
+//------------------------------------------------------------------------------
+void SystemLinux::driverDelayTimeMs(const TimeMs timeMs)
+{
+    struct timespec timeSpec;
+    timeSpec.tv_sec = timeMs / 1000;
+    timeSpec.tv_nsec = (timeMs % 1000) * 1000000;
+    nanosleep(&timeSpec, NULL);
 }

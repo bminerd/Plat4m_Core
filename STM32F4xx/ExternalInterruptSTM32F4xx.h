@@ -50,10 +50,10 @@
 
 #include <stm32f4xx.h>
 
-#include <ExternalInterrupt.h>
-#include <GpioPortSTM32F4xx.h>
-#include <GpioPinSTM32F4xx.h>
-#include <InterruptSTM32F4xx.h>
+#include <Plat4m_Core/ExternalInterrupt.h>
+#include <Plat4m_Core/STM32F4xx/GpioPortSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/InterruptSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

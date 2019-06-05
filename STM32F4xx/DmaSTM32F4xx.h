@@ -46,13 +46,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Module.h>
-#include <ErrorTemplate.h>
-#include <ProcessorSTM32F4xx.h>
+#include <stdint.h>
 
 #include <stm32f4xx.h>
 
-#include <stdint.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

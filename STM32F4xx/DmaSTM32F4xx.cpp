@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <DmaSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/DmaSTM32F4xx.h>
 
 using Plat4m::DmaSTM32F4xx;
 using Plat4m::Module;

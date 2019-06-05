@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,20 +33,23 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLite.h
+/// @file ThreadLinux.h
 /// @author Ben Minerd
-/// @date 12/21/2016
-/// @brief WaitConditionLite class header file.
+/// @date 5/26/2019
+/// @brief ThreadLinux class header file.
 ///
 
-#ifndef PLAT4M_WAIT_CONDITION_LITE_H
-#define PLAT4M_WAIT_CONDITION_LITE_H
+#ifndef PLAT4M_THREAD_LINUX_H
+#define PLAT4M_THREAD_LINUX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/WaitCondition.h>
+#include <pthread.h>
+
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/Plat4m.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -59,47 +62,59 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class WaitConditionLite : public WaitCondition
+class ThreadLinux : public Thread
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
-    WaitConditionLite();
-    
+
+	ThreadLinux(RunCallback& callback, const TimeMs periodMs = 0);
+
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
-    
-    virtual ~WaitConditionLite();
-    
+
+    virtual ~ThreadLinux();
+
     //--------------------------------------------------------------------------
-    // Public methods implemented from WaitCondition
+    // Public methods
     //--------------------------------------------------------------------------
 
-    void waitFast();
-
-    void notifyFast();
+    DWORD getThreadId() const;
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
-    bool myCondition;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
-    
-    Error driverWait(const TimeMs waitTimeMs);
 
-    Error driverNotify();
+    pthread_t myThreadHandle;
+    pthread_mutex_t myMutexHandle;
+    pthread_cond_t myConditionHandle;
+
+    //--------------------------------------------------------------------------
+    // Private static methods
+    //--------------------------------------------------------------------------
+
+    static void* threadCallback(void* arg);
+
+    //--------------------------------------------------------------------------
+    // Private methods implemented from Module
+    //--------------------------------------------------------------------------
+
+    Module::Error driverSetEnabled(const bool enabled);
+
+    //--------------------------------------------------------------------------
+    // Private methods implemented from Thread
+    //--------------------------------------------------------------------------
+
+    void driverSetPeriodMs(const TimeMs periodMs);
+
+    uint32_t driverSetPriority(const uint32_t priority);
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_WAIT_CONDITION_H
+#endif // PLAT4M_THREAD_LINUX_H

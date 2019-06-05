@@ -48,6 +48,7 @@
 
 #include <stdint.h>
 
+#include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------

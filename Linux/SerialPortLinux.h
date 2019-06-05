@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,20 +33,26 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLite.h
+/// @file SerialPortLinux.h
 /// @author Ben Minerd
-/// @date 12/21/2016
-/// @brief WaitConditionLite class header file.
+/// @date 5/26/2019
+/// @brief SerialPortLinux class header file.
 ///
 
-#ifndef PLAT4M_WAIT_CONDITION_LITE_H
-#define PLAT4M_WAIT_CONDITION_LITE_H
+#ifndef PLAT4M_SERIAL_PORT_LINUX_H
+#define PLAT4M_SERIAL_PORT_LINUX_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/WaitCondition.h>
+#include <Linux.h>
+
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/SerialPort.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/Mutex.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -59,47 +65,71 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class WaitConditionLite : public WaitCondition
+class SerialPortLinux : public SerialPort
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
-    WaitConditionLite();
+
+    SerialPortLinux(const char* comPort);
     
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
+
+    virtual ~SerialPortLinux();
     
-    virtual ~WaitConditionLite();
-    
-    //--------------------------------------------------------------------------
-    // Public methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
-
-    void waitFast();
-
-    void notifyFast();
-
 private:
+
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    static const uint8_t myWordBitsMap[];
+
+    static const uint8_t myStopBitsMap[];
+
+    static const uint8_t myParityMap[];
     
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
-    bool myCondition;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
-    
-    Error driverWait(const TimeMs waitTimeMs);
 
-    Error driverNotify();
+    HANDLE mySerialHandle;
+
+    Thread& myReceiveThread;
+
+    Mutex& myMutex;
+
+    //--------------------------------------------------------------------------
+    // Private methods implemented from Module
+    //--------------------------------------------------------------------------
+
+	Module::Error driverSetEnabled(const bool enabled);
+
+    //--------------------------------------------------------------------------
+    // Private methods implemented from SerialPort
+    //--------------------------------------------------------------------------
+    
+    SerialPort::Error driverSetConfig(const Config& config);
+    
+    ComInterface::Error driverTransmitBytes(const ByteArray& byteArray,
+                                            const bool waitUntilDone);
+    
+    uint32_t driverGetReceivedBytesCount();
+
+    ComInterface::Error driverGetReceivedBytes(ByteArray& byteArray,
+                                               const uint32_t nBytes);
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    void receiveThreadCallback();
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_WAIT_CONDITION_H
+#endif // PLAT4M_SERIAL_PORT_LINUX_H

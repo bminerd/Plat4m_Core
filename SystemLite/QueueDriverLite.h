@@ -39,17 +39,17 @@
 /// @brief QueueDriverLite class header file.
 ///
 
-#ifndef QUEUE_DRIVER_LITE_H
-#define QUEUE_DRIVER_LITE_H
+#ifndef PLAT4M_QUEUE_DRIVER_LITE_H
+#define PLAT4M_QUEUE_DRIVER_LITE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <QueueDriver.h>
-#include <ArrayN.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/QueueDriver.h>
+#include <Plat4m_Core/ArrayN.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -144,4 +144,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // QUEUE_DRIVER_LITE_H
+#endif // PLAT4M_QUEUE_DRIVER_LITE_H
