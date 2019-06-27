@@ -39,15 +39,15 @@
 /// @brief ArrayNUnitTest class header file.
 ///
 
-#ifndef ARRAY_N_UNIT_TEST_H
-#define ARRAY_N_UNIT_TEST_H
+#ifndef PLAT4M_ARRAY_N_UNIT_TEST_H
+#define PLAT4M_ARRAY_N_UNIT_TEST_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ArrayN.h>
-#include <UnitTest.h>
+#include <Plat4m_Core/ArrayN.h>
+#include <Plat4m_Core/UnitTest/UnitTest.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -96,4 +96,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // ARRAY_N_UNIT_TEST_H
+#endif // PLAT4M_ARRAY_N_UNIT_TEST_H

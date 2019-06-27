@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,29 +33,27 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file UnitTestRunner.h
+/// @file ApplicationUnitTestLinuxApp.h
 /// @author Ben Minerd
-/// @date 4/15/2016
-/// @brief UnitTestRunner class header file.
+/// @date 6/4/2019
+/// @brief ApplicationUnitTestLinuxApp class header file.
 ///
 
-#ifndef UNIT_TEST_RUNNER_H
-#define UNIT_TEST_RUNNER_H
+#ifndef PLAT4M_APPLICATION_UNIT_TEST_LINUX_APP_H
+#define PLAT4M_APPLICATION_UNIT_TEST_LINUX_APP_H
 
 //------------------------------------------------------------------------------
-// Include files
+// Includes
 //------------------------------------------------------------------------------
 
-// Plat4m includes
-#include <Plat4m.h>
-#include <Application.h>
-#include <List.h>
-#include <UnitTest.h>
-#include <AllocationMemoryLite.h>
-#include <SystemLite.h>
-#include <Thread.h>
-#include <ComLink.h>
-#include <ComProtocolPlat4mAscii.h>
+#include <Plat4m_Core/UnitTest/ApplicationUnitTestApp.h>
+#include <Plat4m_Core/Linux/SystemLinux.h>
+#include <Plat4m_Core/Linux/ProcessorLinux.h>
+#include <Plat4m_Core/UnitTest/ArrayUnitTest.h>
+#include <Plat4m_Core/UnitTest/ArrayNUnitTest.h>
+#include <Plat4m_Core/UnitTest/BufferUnitTest.h>
+#include <Plat4m_Core/UnitTest/ByteArrayUnitTest.h>
+#include <Plat4m_Core/UnitTest/ModuleUnitTest.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -68,46 +66,21 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-///
-/// @brief
-///
-class UnitTestRunner : public Application
+class ApplicationUnitTestLinuxApp : public ApplicationUnitTestApp
 {
 public:
 
-protected:
-
     //--------------------------------------------------------------------------
-    // Protected constructors
+    // Public constructors
     //--------------------------------------------------------------------------
 
-    ///
-    /// @brief Constructor for UnitTestRunner class.
-    ///
-    UnitTestRunner(const char* name,
-                   const char* productName,
-                   const char* version);
+    ApplicationUnitTestLinuxApp();
 
     //--------------------------------------------------------------------------
-    // Protected virtual destructors
+    // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    ///
-    /// @brief Virtual destructor for UnitTestRunner class.
-    ///
-    virtual ~UnitTestRunner();
-
-    //--------------------------------------------------------------------------
-    // Protected methods
-    //--------------------------------------------------------------------------
-
-    void addUnitTest(UnitTest& unitTest);
-
-    void runParentApplication();
-
-    UnitTest::Error runTest(const uint32_t moduleIndex,
-                            const uint32_t testIndex,
-                            bool& passed);
+    virtual ~ApplicationUnitTestLinuxApp();
 
 private:
 
@@ -115,33 +88,35 @@ private:
     // Private static data members
     //--------------------------------------------------------------------------
 
-    static const char* myName;
-
-    static const char* myProductName;
-
-    static const char* myVersion;
-
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    AllocationMemoryLite<1024> myAllocationMemory;
+    SystemLinux mySystem;
 
-    SystemLite mySystem;
+    ProcessorLinux myProcessor;
 
-    Thread& myTestThread;
+    ArrayUnitTest myArrayUnitTest;
+    ArrayNUnitTest myArrayNUnitTest;
+    BufferUnitTest myBufferUnitTest;
+    ByteArrayUnitTest myByteArrayUnitTest;
+    ModuleUnitTest myModuleUnitTest;
 
-    List<UnitTest*> myUnitTestList;
+    //--------------------------------------------------------------------------
+    // Private methods implemented from Application
+    //--------------------------------------------------------------------------
+
+    void driverRun();
 
     //--------------------------------------------------------------------------
     // Private methods
     //--------------------------------------------------------------------------
 
-	void initializeSystem();
+    void initializeProcessor();
 
-	void testThreadCallback();
+    void initializeSystem();
 };
 
 }; // namespace Plat4m
 
-#endif // UNIT_TEST_RUNNER_H
+#endif // PLAT4M_APPLICATION_UNIT_TEST_LINUX_APP_H

@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ByteArrayUnitTest.h>
-
 #include <string.h>
+
+#include <Plat4m_Core/UnitTest/ByteArrayUnitTest.h>
 
 using Plat4m::ByteArrayUnitTest;
 using Plat4m::UnitTest;
@@ -201,22 +201,22 @@ bool ByteArrayUnitTest::constructor3Test1()
 
     return UNIT_TEST_REPORT(
                  UNIT_TEST_CASE_EQUAL(byteArray.getItems(), (uint8_t*) string) &
-                 UNIT_TEST_CASE_EQUAL(byteArray.getMaxSize(), strlen(string))  &
-                 UNIT_TEST_CASE_EQUAL(byteArray.getSize(), strlen(string)));
+                 UNIT_TEST_CASE_EQUAL(byteArray.getMaxSize(), (uint32_t) 6)  &
+                 UNIT_TEST_CASE_EQUAL(byteArray.getSize(), (uint32_t) 6));
 }
 
 //------------------------------------------------------------------------------
 bool ByteArrayUnitTest::constructor4Test1()
 {
     //
-    // Procedure: Instantiate an ByteArray object with a 10 item array
+    // Procedure: Instantiate an ByteArray object with a 4 item Array
     //
     // Test: Verify array.getItems() returns a pointer to items array
     //
 
     uint32_t items[4];
 
-    Array<uint32_t> array(items, ARRAY_SIZE(items));
+    Array<uint32_t> array(items, arraySize(items));
 
     // Setup/operation
 
@@ -226,8 +226,8 @@ bool ByteArrayUnitTest::constructor4Test1()
 
     return UNIT_TEST_REPORT(
                   UNIT_TEST_CASE_EQUAL(byteArray.getItems(), (uint8_t*) items) &
-                  UNIT_TEST_CASE_EQUAL(byteArray.getMaxSize(), sizeof(items))  &
-                  UNIT_TEST_CASE_EQUAL(byteArray.getSize(), sizeof(items)));
+                  UNIT_TEST_CASE_EQUAL(byteArray.getMaxSize(), (uint32_t) 16)  &
+                  UNIT_TEST_CASE_EQUAL(byteArray.getSize(), (uint32_t) 16));
 }
 
 //------------------------------------------------------------------------------

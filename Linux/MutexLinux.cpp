@@ -56,9 +56,11 @@ using Plat4m::Mutex;
 //------------------------------------------------------------------------------
 MutexLinux::MutexLinux() :
     Mutex(),
-    myMutexHandle(PTHREAD_MUTEX_INITIALIZER)
+    myMutexHandle()
 {
-    if (isNullPointer(myMutexHandle))
+    int returnValue = pthread_mutex_init(&myMutexHandle, NULL);
+
+    if (returnValue != 0)
     {
         while (true)
         {

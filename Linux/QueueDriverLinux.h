@@ -47,8 +47,8 @@
 //------------------------------------------------------------------------------
 
 #include <stdint.h>
-
 #include <pthread.h>
+#include <sys/types.h>
 
 #include <Plat4m_Core/QueueDriver.h>
 #include <Plat4m_Core/Thread.h>
@@ -104,7 +104,7 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    const myValueSizeBytes;
+    const uint32_t myValueSizeBytes;
 
     key_t myKey;
 

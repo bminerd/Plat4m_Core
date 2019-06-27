@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/SystemLinux/ProcessorLinux.h>
+#include <Plat4m_Core/Linux/ProcessorLinux.h>
 
 using Plat4m::ProcessorLinux;
 using Plat4m::Processor;

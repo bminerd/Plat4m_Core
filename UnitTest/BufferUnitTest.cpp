@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BufferUnitTest.h>
-
 #include <string.h>
+
+#include <Plat4m_Core/UnitTest/BufferUnitTest.h>
 
 using Plat4m::BufferUnitTest;
 using Plat4m::UnitTest;

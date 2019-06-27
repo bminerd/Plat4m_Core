@@ -33,95 +33,94 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file BufferUnitTest.h
+/// @file UnitTest.cpp
 /// @author Ben Minerd
-/// @date 5/16/16
-/// @brief BufferUnitTest class header file.
+/// @date 4/19/2016
+/// @brief UnitTest class source file.
 ///
-
-#ifndef BUFFER_UNIT_TEST_H
-#define BUFFER_UNIT_TEST_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Buffer.h>
-#include <UnitTest.h>
+#include <Plat4m_Core/UnitTest/UnitTest.h>
+
+using Plat4m::UnitTest;
 
 //------------------------------------------------------------------------------
-// Namespaces
+// Public methods
 //------------------------------------------------------------------------------
 
-namespace Plat4m
+//------------------------------------------------------------------------------
+const char* UnitTest::getName() const
 {
+    return myName;
+}
 
 //------------------------------------------------------------------------------
-// Classes
-//------------------------------------------------------------------------------
-
-class BufferUnitTest : public UnitTest
+uint32_t UnitTest::getTestCount() const
 {
-public:
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
+    return (myTestCallbackFunctionArray.getSize());
+}
 
-    BufferUnitTest();
+//------------------------------------------------------------------------------
+uint32_t UnitTest::runTests()
+{
+    uint32_t nTests = myTestCallbackFunctionArray.getSize();
+    uint32_t nPassedTests = 0;
 
-    //--------------------------------------------------------------------------
-    // Public virtual destructors
-    //--------------------------------------------------------------------------
+    printf("%s\n", myName);
+    printf("------------------------------\n");
 
-    virtual ~BufferUnitTest();
+    for (int i = 0; i < nTests; i++)
+    {
+        printf("Test %d/%d: ", (i + 1), nTests);
 
-    //--------------------------------------------------------------------------
-    // Public static methods
-    //--------------------------------------------------------------------------
+        bool passed = (*(myTestCallbackFunctionArray[i]))();
 
-    static bool constructor1Test1();
+        if (passed)
+        {
+            nPassedTests++;
+        }
+    }
 
+    printf("------------------------------\n");
+    printf("%d/%d tests passed\n\n", nPassedTests, nTests);
 
-    static bool copyConstructorTest1();
+    return nPassedTests;
+}
 
+//------------------------------------------------------------------------------
+UnitTest::Error UnitTest::runTest(const uint32_t index, bool& passed)
+{
+    if (index >= myTestCallbackFunctionArray.getSize())
+    {
+        return Error(ERROR_CODE_INVALID_TEST_INDEX);
+    }
 
-    static bool write1Test1();
+    passed = (*(myTestCallbackFunctionArray[index]))();
 
-    static bool write1Test2();
+    return Error(ERROR_CODE_NONE);
+}
 
-    static bool write1Test3();
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+UnitTest::UnitTest(const char* name,
+                   const TestCallbackFunction testCallbackFunctions[],
+                   const unsigned int nTestCallbackFunctions) :
+    myName(name),
+    myTestCallbackFunctionArray(testCallbackFunctions, nTestCallbackFunctions)
+{
+}
 
-    static bool write2Test1();
+//------------------------------------------------------------------------------
+// Protected virtual destructors
+//------------------------------------------------------------------------------
 
-    static bool write2Test2();
-
-
-    static bool read1Test1();
-
-    static bool read1Test2();
-
-    static bool read1Test3();
-
-    static bool read1Test4();
-
-
-    static bool read2Test1();
-
-    static bool read2Test2();
-
-    static bool read2Test3();
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-
-    static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
-};
-
-}; // namespace Plat4m
-
-#endif // BUFFER_UNIT_TEST_H
+//------------------------------------------------------------------------------
+UnitTest::~UnitTest()
+{
+}

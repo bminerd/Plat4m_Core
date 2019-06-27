@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,67 +35,18 @@
 ///
 /// @file main.cpp
 /// @author Ben Minerd
-/// @date 11/13/2017
-/// @brief Main source file for Blinky_STM32F4xx_App.
+/// @date 6/4/2019
+/// @brief Main source file for Unit_Test_Linux_App.
 ///
 
-#include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
-#include <Plat4m_Core/STM32F4xx/GpioPortSTM32F4xx.h>
-#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
+#include <ApplicationUnitTestLinuxApp.h>
 
-using namespace Plat4m;
-
-static ProcessorSTM32F4xx processor(3.3, 8000000);
-
-static const ProcessorSTM32F4xx::Config processorConfig =
-{
-	ProcessorSTM32F4xx::CLOCK_SOURCE_EXTERNAL, // .clockSource
-	72000000, 								   // .coreClockFrequencyHz, 72 MHz
-	72000000, 								   // .ahbClockFrequencyHz,  72 MHz
-	36000000, 								   // .apb1ClockFrequencyHz, 36 MHz
-	72000000, 								   // .apb2ClockFrequencyHz, 72 MHz
-	false,									   // .isUsbOtgFs
-	false,									   // .isSdio
-	false,									   // .isRng
-	false,									   // .isEthernet
-	FLASH_BASE								   // .vectorTableAddress
-};
-
-static GpioPortSTM32F4xx ledGpioPort(GpioPortSTM32F4xx::ID_A);
-
-static GpioPinSTM32F4xx ledGpioPin(ledGpioPort, GpioPinSTM32F4xx::ID_5);
+static Plat4m::ApplicationUnitTestLinuxApp applicationUnitTestLinuxApp;
 
 //------------------------------------------------------------------------------
 int main()
 {
-	// Configure Processor
-
-	processor.reset();
-	processor.setConfig(processorConfig);
-
-	// Configure LED GpioPin
-
-	GpioPin::Config gpioConfig;
-	gpioConfig.mode     = GpioPin::MODE_DIGITAL_OUTPUT_PUSH_PULL;
-	gpioConfig.resistor = GpioPin::RESISTOR_PULL_DOWN;
-
-	ledGpioPin.enable(true);
-	ledGpioPin.configure(gpioConfig);
-
-	// Toggle the LED
-
-	while (true)
-	{
-		ledGpioPin.toggleLevel();
-
-		int32_t blinkLoopCount = 5000000;
-
-		while (blinkLoopCount > 0)
-		{
-			blinkLoopCount--;
-		}
-	}
+    applicationUnitTestLinuxApp.run();
 
     return 0;
 }

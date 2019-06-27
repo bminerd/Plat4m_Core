@@ -39,21 +39,20 @@
 /// @brief UnitTest class header file.
 ///
 
-#ifndef UNIT_TEST_H
-#define UNIT_TEST_H
+#ifndef PLAT4M_UNIT_TEST_H
+#define PLAT4M_UNIT_TEST_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-// Plat4m includes
-#include <Array.h>
-#include <Callback.h>
-#include <ErrorTemplate.h>
-
 #include <stdio.h>
 #include <float.h>
 #include <math.h>
+
+#include <Plat4m_Core/Array.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Defines
@@ -302,4 +301,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // UNIT_TEST_H
+#endif // PLAT4M_UNIT_TEST_H

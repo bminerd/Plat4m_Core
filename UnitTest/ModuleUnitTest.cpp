@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ModuleUnitTest.h>
-#include <CallbackMethodParameter.h>
+#include <Plat4m_Core/UnitTest/ModuleUnitTest.h>
+#include <Plat4m_Core/CallbackMethodParameter.h>
 
 using Plat4m::ModuleUnitTest;
 using Plat4m::Module;

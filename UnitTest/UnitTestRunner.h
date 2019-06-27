@@ -33,21 +33,29 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ByteArrayUnitTest.h
+/// @file UnitTestRunner.h
 /// @author Ben Minerd
-/// @date 6/3/16
-/// @brief ByteArrayUnitTest class header file.
+/// @date 4/15/2016
+/// @brief UnitTestRunner class header file.
 ///
 
-#ifndef BYTE_ARRAY_UNIT_TEST_H
-#define BYTE_ARRAY_UNIT_TEST_H
+#ifndef PLAT4M_UNIT_TEST_RUNNER_H
+#define PLAT4M_UNIT_TEST_RUNNER_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ByteArray.h>
+// Plat4m includes
+#include <Plat4m.h>
+#include <Application.h>
+#include <List.h>
 #include <UnitTest.h>
+#include <AllocationMemoryLite.h>
+#include <SystemLite.h>
+#include <Thread.h>
+#include <ComLink.h>
+#include <ComProtocolPlat4mAscii.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -60,71 +68,46 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class ByteArrayUnitTest : public UnitTest
+///
+/// @brief
+///
+class UnitTestRunner : public Application
 {
 public:
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
 
-    ByteArrayUnitTest();
+protected:
 
     //--------------------------------------------------------------------------
-    // Public virtual destructors
+    // Protected constructors
     //--------------------------------------------------------------------------
 
-    virtual ~ByteArrayUnitTest();
+    ///
+    /// @brief Constructor for UnitTestRunner class.
+    ///
+    UnitTestRunner(const char* name,
+                   const char* productName,
+                   const char* version);
 
     //--------------------------------------------------------------------------
-    // Public static methods
+    // Protected virtual destructors
     //--------------------------------------------------------------------------
 
-    static bool constructor1Test1();
+    ///
+    /// @brief Virtual destructor for UnitTestRunner class.
+    ///
+    virtual ~UnitTestRunner();
 
+    //--------------------------------------------------------------------------
+    // Protected methods
+    //--------------------------------------------------------------------------
 
-    static bool constructor2Test1();
+    void addUnitTest(UnitTest& unitTest);
 
-    static bool constructor2Test2();
+    void runParentApplication();
 
-
-    static bool constructor3Test1();
-
-
-    static bool constructor4Test1();
-
-
-    static bool append1Test1();
-
-    static bool append1Test2();
-
-    static bool append1Test3();
-
-
-    static bool append2Test1();
-
-    static bool append2Test2();
-
-    static bool append2Test3();
-
-    static bool append2Test4();
-
-
-    static bool prependTest1();
-
-    static bool prependTest2();
-
-    static bool prependTest3();
-
-
-    static bool insertTest1();
-
-    static bool insertTest2();
-
-    static bool insertTest3();
-
-
-    static bool setValueTest1();
+    UnitTest::Error runTest(const uint32_t moduleIndex,
+                            const uint32_t testIndex,
+                            bool& passed);
 
 private:
 
@@ -132,9 +115,33 @@ private:
     // Private static data members
     //--------------------------------------------------------------------------
 
-    static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
+    static const char* myName;
+
+    static const char* myProductName;
+
+    static const char* myVersion;
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    AllocationMemoryLite<1024> myAllocationMemory;
+
+    SystemLite mySystem;
+
+    Thread& myTestThread;
+
+    List<UnitTest*> myUnitTestList;
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+	void initializeSystem();
+
+	void testThreadCallback();
 };
 
 }; // namespace Plat4m
 
-#endif // BYTE_ARRAY_UNIT_TEST_H
+#endif // PLAT4M_UNIT_TEST_RUNNER_H

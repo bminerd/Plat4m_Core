@@ -33,34 +33,40 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file ApplicationUnitTestApp.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 6/4/2019
+/// @brief ApplicationUnitTestApp class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <Plat4m_Core/UnitTest/ApplicationUnitTestApp.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
+using Plat4m::ApplicationUnitTestApp;
 
-using Plat4m::QueueDriverLinux;
+using namespace Plat4m;
+
+//------------------------------------------------------------------------------
+// Private static data members
+//------------------------------------------------------------------------------
+
+
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+ApplicationUnitTestApp::ApplicationUnitTestApp(const char* name,
+                                               const char* productName,
+                                               const char* version) :
+    Application("UNIT_TEST_APP", "UNIT_TEST", "0.0.1"),
+    myAllocationMemory(),
+    myUnitTestList()
 {
 }
 
@@ -69,52 +75,72 @@ QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+ApplicationUnitTestApp::~ApplicationUnitTestApp()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
+// Protected methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
+void ApplicationUnitTestApp::addUnitTest(UnitTest& unitTest)
 {
-    return 0;
+    UnitTest* pointer = &unitTest;
+
+    myUnitTestList.append(pointer);
 }
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
+void ApplicationUnitTestApp::runParentApplication()
 {
-    return 0;
+    runTests();
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
+void ApplicationUnitTestApp::runTests()
 {
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
+    uint32_t nTotalTests = 0;
+    uint32_t nTotalPassedTests = 0;
+
+    List<UnitTest*>::Iterator iterator = myUnitTestList.iterator();
+
+    while (iterator.hasCurrent())
+    {
+        UnitTest* unitTest = iterator.current();
+        nTotalTests += unitTest->getTestCount();
+
+        nTotalPassedTests += unitTest->runTests();
+
+        iterator.next();
+    }
+
+    printf("\nTotal results\n");
+    printf("------------------------------\n");
+    printf("%d/%d tests passed\n", nTotalPassedTests, nTotalTests);
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
+UnitTest::Error ApplicationUnitTestApp::runTest(const uint32_t moduleIndex,
+                                                const uint32_t testIndex,
+                                                bool& passed)
 {
-    return (driverEnqueue(value));
-}
+    if (moduleIndex >= myUnitTestList.size())
+    {
+        return (UnitTest::Error(UnitTest::ERROR_CODE_INVALID_TEST_INDEX));
+    }
 
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
-}
+    uint32_t currentIndex = 0;
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
-{
-    return (driverDequeue(value));
-}
+    List<UnitTest*>::Iterator iterator = myUnitTestList.iterator();
 
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
+    while (iterator.hasCurrent() && (currentIndex != moduleIndex))
+    {
+        iterator.next();
+        currentIndex++;
+    }
+
+    UnitTest* unitTest = iterator.current();
+
+    return (unitTest->runTest(testIndex, passed));
 }

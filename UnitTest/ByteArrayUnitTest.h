@@ -33,22 +33,21 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ModuleUnitTest.h
+/// @file ByteArrayUnitTest.h
 /// @author Ben Minerd
-/// @date 4/21/16
-/// @brief ModuleUnitTest class header file.
+/// @date 6/3/16
+/// @brief ByteArrayUnitTest class header file.
 ///
 
-#ifndef MODULE_UNIT_TEST_H
-#define MODULE_UNIT_TEST_H
+#ifndef PLAT4M_BYTE_ARRAY_UNIT_TEST_H
+#define PLAT4M_BYTE_ARRAY_UNIT_TEST_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <Module.h>
-#include <UnitTest.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/UnitTest/UnitTest.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -61,7 +60,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class ModuleUnitTest : public Module, public UnitTest
+class ByteArrayUnitTest : public UnitTest
 {
 public:
     
@@ -69,53 +68,63 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-    ModuleUnitTest();
+    ByteArrayUnitTest();
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    virtual ~ModuleUnitTest();
+    virtual ~ByteArrayUnitTest();
 
     //--------------------------------------------------------------------------
     // Public static methods
     //--------------------------------------------------------------------------
 
-    static bool enableTest1();
+    static bool constructor1Test1();
 
-    static bool enableTest2();
 
-    static bool enableTest3();
+    static bool constructor2Test1();
 
-    static bool enableTest4();
+    static bool constructor2Test2();
 
-    static bool enableTest5();
 
-    static bool enableTest6();
+    static bool constructor3Test1();
 
-    static bool enableTest7();
 
-    static bool enableTest8();
+    static bool constructor4Test1();
 
-    static bool enableTest9();
 
-    static bool enableTest10();
+    static bool append1Test1();
 
-    static bool enableTest11();
+    static bool append1Test2();
 
-    static bool enableTest12();
+    static bool append1Test3();
 
-    static bool enableTest13();
 
-    static bool enableTest14();
+    static bool append2Test1();
 
-    static bool enableTest15();
+    static bool append2Test2();
 
-    static bool enableTest16();
+    static bool append2Test3();
 
-    static bool enableTest17();
+    static bool append2Test4();
 
-    static bool enableTest18();
+
+    static bool prependTest1();
+
+    static bool prependTest2();
+
+    static bool prependTest3();
+
+
+    static bool insertTest1();
+
+    static bool insertTest2();
+
+    static bool insertTest3();
+
+
+    static bool setValueTest1();
 
 private:
 
@@ -124,38 +133,8 @@ private:
     //--------------------------------------------------------------------------
 
     static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    bool myWasInterfaceEnableCalled;
-
-    bool myWasDriverEnableCalled;
-
-    bool myWasEnableCallbackCalled;
-
-    Module::Error myInterfaceEnableError;
-
-    Module::Error myDriverEnableError;
-
-    Module::Error myEnableCallbackError;
-
-    //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Module
-    //--------------------------------------------------------------------------
-    
-    virtual Module::Error interfaceEnable(const bool enable);
-
-    virtual Module::Error driverEnable(const bool enable);
-
-    //--------------------------------------------------------------------------
-    // Private methods
-    //--------------------------------------------------------------------------
-
-    Module::Error enableCallback(const bool enable);
 };
 
 }; // namespace Plat4m
 
-#endif // MODULE_UNIT_TEST_H
+#endif // PLAT4M_BYTE_ARRAY_UNIT_TEST_H

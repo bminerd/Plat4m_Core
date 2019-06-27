@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ArrayUnitTest.h>
-
 #include <string.h>
+
+#include <Plat4m_Core/UnitTest/ArrayUnitTest.h>
 
 using Plat4m::ArrayUnitTest;
 using Plat4m::UnitTest;
@@ -105,7 +105,7 @@ const UnitTest::TestCallbackFunction ArrayUnitTest::myTestCallbackFunctions[] =
 ArrayUnitTest::ArrayUnitTest() :
     UnitTest("ArrayUnitTest",
              myTestCallbackFunctions,
-             ARRAY_SIZE(myTestCallbackFunctions))
+             arraySize(myTestCallbackFunctions))
 {
 }
 
@@ -158,7 +158,7 @@ bool ArrayUnitTest::constructor2Test1()
 
     // Operation
 
-    Array<uint8_t> array(items, ARRAY_SIZE(items));
+    Array<uint8_t> array(items, arraySize(items));
 
     // Test
 
@@ -184,7 +184,7 @@ bool ArrayUnitTest::constructor2Test2()
 
     // Operation
 
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 4);
+    Array<uint8_t> array(items, arraySize(items), 4);
 
     // Test
 
@@ -207,7 +207,7 @@ bool ArrayUnitTest::copyConstructorTest1()
     // Setup
 
     uint8_t items[10];
-    Array<uint8_t> array1(items, ARRAY_SIZE(items));
+    Array<uint8_t> array1(items, arraySize(items));
 
     // Operation
 
@@ -239,7 +239,7 @@ bool ArrayUnitTest::setItemsTest1()
 
     // Operation
 
-    array.setItems(items, ARRAY_SIZE(items));
+    array.setItems(items, arraySize(items));
 
     // Test
 
@@ -267,7 +267,7 @@ bool ArrayUnitTest::setItemsTest2()
 
     // Operation
 
-    array.setItems(items, ARRAY_SIZE(items), 4);
+    array.setItems(items, arraySize(items), 4);
 
     // Test
 
@@ -290,7 +290,7 @@ bool ArrayUnitTest::setSizeTest1()
     // Setup
 
     uint8_t items[10];
-    Array<uint8_t> array(items, ARRAY_SIZE(items));
+    Array<uint8_t> array(items, arraySize(items));
 
     // Operation
 
@@ -316,7 +316,7 @@ bool ArrayUnitTest::setSizeTest2()
     // Setup
 
     uint8_t items[10];
-    Array<uint8_t> array(items, ARRAY_SIZE(items));
+    Array<uint8_t> array(items, arraySize(items));
 
     // Operation
 
@@ -343,7 +343,7 @@ bool ArrayUnitTest::append1Test1()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     // Operation
 
@@ -365,7 +365,7 @@ bool ArrayUnitTest::append1Test1()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, true)             &
@@ -387,7 +387,7 @@ bool ArrayUnitTest::append1Test2()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), ARRAY_SIZE(items));
+    Array<uint8_t> array(items, arraySize(items), arraySize(items));
 
     // Operation
 
@@ -409,7 +409,7 @@ bool ArrayUnitTest::append1Test2()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, false)             &
@@ -431,13 +431,13 @@ bool ArrayUnitTest::append2Test1()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t appendItems[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
 
     // Operation
 
-    bool returnValue = array.append(appendItems, ARRAY_SIZE(appendItems));
+    bool returnValue = array.append(appendItems, arraySize(appendItems));
 
     // Test
 
@@ -455,7 +455,7 @@ bool ArrayUnitTest::append2Test1()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, true)             &
@@ -477,13 +477,13 @@ bool ArrayUnitTest::append2Test2()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 6);
+    Array<uint8_t> array(items, arraySize(items), 6);
 
     uint8_t appendItems[4] = {0x01, 0x02, 0x03, 0x04};
 
     // Operation
 
-    bool returnValue = array.append(appendItems, ARRAY_SIZE(appendItems));
+    bool returnValue = array.append(appendItems, arraySize(appendItems));
 
     // Test
 
@@ -501,7 +501,7 @@ bool ArrayUnitTest::append2Test2()
         0x04
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, true)              &
@@ -523,7 +523,7 @@ bool ArrayUnitTest::append2Test3()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t appendItems[11] =
     {
@@ -542,7 +542,7 @@ bool ArrayUnitTest::append2Test3()
 
     // Operation
 
-    bool returnValue = array.append(appendItems, ARRAY_SIZE(appendItems));
+    bool returnValue = array.append(appendItems, arraySize(appendItems));
 
     // Test
 
@@ -560,7 +560,7 @@ bool ArrayUnitTest::append2Test3()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, false)            &
@@ -582,7 +582,7 @@ bool ArrayUnitTest::append2Test4()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t appendItems[11] =
     {
@@ -601,7 +601,7 @@ bool ArrayUnitTest::append2Test4()
 
     // Operation
 
-    bool returnValue = array.append(appendItems, ARRAY_SIZE(appendItems), true);
+    bool returnValue = array.append(appendItems, arraySize(appendItems), true);
 
     // Test
 
@@ -619,7 +619,7 @@ bool ArrayUnitTest::append2Test4()
         0x0A
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, false)             &
@@ -641,10 +641,10 @@ bool ArrayUnitTest::append3Test1()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t appendItems[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
-    Array<uint8_t> appendArray(appendItems, ARRAY_SIZE(appendItems));
+    Array<uint8_t> appendArray(appendItems, arraySize(appendItems));
 
     // Operation
 
@@ -666,7 +666,7 @@ bool ArrayUnitTest::append3Test1()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, true)             &
@@ -688,10 +688,10 @@ bool ArrayUnitTest::append3Test2()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 6);
+    Array<uint8_t> array(items, arraySize(items), 6);
 
     uint8_t appendItems[4] = {0x01, 0x02, 0x03, 0x04};
-    Array<uint8_t> appendArray(appendItems, ARRAY_SIZE(appendItems));
+    Array<uint8_t> appendArray(appendItems, arraySize(appendItems));
 
     // Operation
 
@@ -713,7 +713,7 @@ bool ArrayUnitTest::append3Test2()
         0x04
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, true)              &
@@ -735,7 +735,7 @@ bool ArrayUnitTest::append3Test3()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t appendItems[11] =
     {
@@ -752,7 +752,7 @@ bool ArrayUnitTest::append3Test3()
         0x0B
     };
 
-    Array<uint8_t> appendArray(appendItems, ARRAY_SIZE(appendItems));
+    Array<uint8_t> appendArray(appendItems, arraySize(appendItems));
 
     // Operation
 
@@ -774,7 +774,7 @@ bool ArrayUnitTest::append3Test3()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, false)            &
@@ -796,7 +796,7 @@ bool ArrayUnitTest::append3Test4()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t appendItems[11] =
     {
@@ -813,7 +813,7 @@ bool ArrayUnitTest::append3Test4()
         0x0B
     };
 
-    Array<uint8_t> appendArray(appendItems, ARRAY_SIZE(appendItems));
+    Array<uint8_t> appendArray(appendItems, arraySize(appendItems));
 
     // Operation
 
@@ -835,7 +835,7 @@ bool ArrayUnitTest::append3Test4()
         0x0A
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, false)             &
@@ -857,7 +857,7 @@ bool ArrayUnitTest::prepend1Test1()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     // Operation
 
@@ -879,7 +879,7 @@ bool ArrayUnitTest::prepend1Test1()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, true)             &
@@ -902,7 +902,7 @@ bool ArrayUnitTest::prepend1Test2()
     uint8_t items[10];
     memset(items, 0, sizeof(items));
     items[0] = 0x02;
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 1);
+    Array<uint8_t> array(items, arraySize(items), 1);
 
     // Operation
 
@@ -924,7 +924,7 @@ bool ArrayUnitTest::prepend1Test2()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, true)             &
@@ -946,7 +946,7 @@ bool ArrayUnitTest::prepend1Test3()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), ARRAY_SIZE(items));
+    Array<uint8_t> array(items, arraySize(items), arraySize(items));
 
     // Operation
 
@@ -968,7 +968,7 @@ bool ArrayUnitTest::prepend1Test3()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, false)             &
@@ -990,13 +990,13 @@ bool ArrayUnitTest::prepend2Test1()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t prependItems[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
 
     // Operation
 
-    bool returnValue = array.prepend(prependItems, ARRAY_SIZE(prependItems));
+    bool returnValue = array.prepend(prependItems, arraySize(prependItems));
 
     // Test
 
@@ -1014,7 +1014,7 @@ bool ArrayUnitTest::prepend2Test1()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, true)             &
@@ -1042,13 +1042,13 @@ bool ArrayUnitTest::prepend2Test2()
     items[3] = 0x08;
     items[4] = 0x09;
     items[5] = 0x0A;
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 6);
+    Array<uint8_t> array(items, arraySize(items), 6);
 
     uint8_t prependItems[4] = {0x01, 0x02, 0x03, 0x04};
 
     // Operation
 
-    bool returnValue = array.prepend(prependItems, ARRAY_SIZE(prependItems));
+    bool returnValue = array.prepend(prependItems, arraySize(prependItems));
 
     // Test
 
@@ -1066,7 +1066,7 @@ bool ArrayUnitTest::prepend2Test2()
         0x0A
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, true)              &
@@ -1088,13 +1088,13 @@ bool ArrayUnitTest::prepend2Test3()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t prependItems[11];
 
     // Operation
 
-    bool returnValue = array.prepend(prependItems, ARRAY_SIZE(prependItems));
+    bool returnValue = array.prepend(prependItems, arraySize(prependItems));
 
     // Test
 
@@ -1112,7 +1112,7 @@ bool ArrayUnitTest::prepend2Test3()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, false)            &
@@ -1134,7 +1134,7 @@ bool ArrayUnitTest::prepend2Test4()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t prependItems[11] =
     {
@@ -1154,7 +1154,7 @@ bool ArrayUnitTest::prepend2Test4()
     // Operation
 
     bool returnValue = array.prepend(prependItems,
-                                     ARRAY_SIZE(prependItems),
+                                     arraySize(prependItems),
                                      true);
 
     // Test
@@ -1173,7 +1173,7 @@ bool ArrayUnitTest::prepend2Test4()
         0x0A
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, false)             &
@@ -1195,10 +1195,10 @@ bool ArrayUnitTest::prepend3Test1()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t prependItems[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
-    Array<uint8_t> prependArray(prependItems, ARRAY_SIZE(prependItems));
+    Array<uint8_t> prependArray(prependItems, arraySize(prependItems));
 
     // Operation
 
@@ -1220,7 +1220,7 @@ bool ArrayUnitTest::prepend3Test1()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, true)             &
@@ -1248,10 +1248,10 @@ bool ArrayUnitTest::prepend3Test2()
     items[3] = 0x08;
     items[4] = 0x09;
     items[5] = 0x0A;
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 6);
+    Array<uint8_t> array(items, arraySize(items), 6);
 
     uint8_t prependItems[4] = {0x01, 0x02, 0x03, 0x04};
-    Array<uint8_t> prependArray(prependItems, ARRAY_SIZE(prependItems));
+    Array<uint8_t> prependArray(prependItems, arraySize(prependItems));
 
     // Operation
 
@@ -1273,7 +1273,7 @@ bool ArrayUnitTest::prepend3Test2()
         0x0A
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, true)              &
@@ -1295,7 +1295,7 @@ bool ArrayUnitTest::prepend3Test3()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t prependItems[11] =
     {
@@ -1312,7 +1312,7 @@ bool ArrayUnitTest::prepend3Test3()
         0x0B
     };
 
-    Array<uint8_t> prependArray(prependItems, ARRAY_SIZE(prependItems));
+    Array<uint8_t> prependArray(prependItems, arraySize(prependItems));
 
     // Operation
 
@@ -1334,7 +1334,7 @@ bool ArrayUnitTest::prepend3Test3()
         0x00
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                            UNIT_TEST_CASE_EQUAL(returnValue, false)            &
@@ -1357,7 +1357,7 @@ bool ArrayUnitTest::prepend3Test4()
 
     uint8_t items[10];
     memset(items, 0, sizeof(items));
-    Array<uint8_t> array(items, ARRAY_SIZE(items), 0);
+    Array<uint8_t> array(items, arraySize(items), 0);
 
     uint8_t prependItems[11] =
     {
@@ -1374,7 +1374,7 @@ bool ArrayUnitTest::prepend3Test4()
         0x0B
     };
 
-    Array<uint8_t> prependArray(prependItems, ARRAY_SIZE(prependItems));
+    Array<uint8_t> prependArray(prependItems, arraySize(prependItems));
 
     // Operation
 
@@ -1396,7 +1396,7 @@ bool ArrayUnitTest::prepend3Test4()
         0x0A
     };
 
-    int memoryCompareResult = memcmp(items, testItems, ARRAY_SIZE(items));
+    int memoryCompareResult = memcmp(items, testItems, arraySize(items));
 
     return UNIT_TEST_REPORT(
                           UNIT_TEST_CASE_EQUAL(returnValue, false)             &

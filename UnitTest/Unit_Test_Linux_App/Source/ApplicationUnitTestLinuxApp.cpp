@@ -11,9 +11,9 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2019 Benjamin Minerd
 //
-// Permission is hereby granted, free of uint8_tge, to any person obtaining a copy
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,41 +33,40 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ArrayNUnitTest.cpp
+/// @file ApplicationUnitTestLinuxApp.cpp
 /// @author Ben Minerd
-/// @date 5/13/16
-/// @brief ArrayNUnitTest class source file.
+/// @date 6/4/2019
+/// @brief ApplicationUnitTestLinuxApp class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ArrayNUnitTest.h>
+#include <ApplicationUnitTestLinuxApp.h>
 
-using Plat4m::ArrayNUnitTest;
-using Plat4m::UnitTest;
+using Plat4m::ApplicationUnitTestLinuxApp;
+
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Private static data members
 //------------------------------------------------------------------------------
-
-const UnitTest::TestCallbackFunction ArrayNUnitTest::myTestCallbackFunctions[] =
-{
-    &ArrayNUnitTest::constructorTest1,
-
-    &ArrayNUnitTest::copyConstructorTest1
-};
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ArrayNUnitTest::ArrayNUnitTest() :
-    UnitTest("ArrayNUnitTest",
-             myTestCallbackFunctions,
-             ARRAY_SIZE(myTestCallbackFunctions))
+ApplicationUnitTestLinuxApp::ApplicationUnitTestLinuxApp() :
+    ApplicationUnitTestApp("UNIT_TEST_LINUX_APP", "UNIT_TEST_LINUX", "0.0.1"),
+    mySystem(),
+    myProcessor(),
+    myArrayUnitTest(),
+    myArrayNUnitTest(),
+    myBufferUnitTest(),
+    myByteArrayUnitTest(),
+    myModuleUnitTest()
 {
 }
 
@@ -76,74 +75,39 @@ ArrayNUnitTest::ArrayNUnitTest() :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ArrayNUnitTest::~ArrayNUnitTest()
+ApplicationUnitTestLinuxApp::~ApplicationUnitTestLinuxApp()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public static methods
+// Private methods implemented from Application
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-bool ArrayNUnitTest::constructorTest1()
+void ApplicationUnitTestLinuxApp::driverRun()
 {
-    //
-    // Procedure: Instantiate an ArrayN<uint8_t, 10> object without parameters
-    //
-    // Test: Verify array.getSize() returns 0
-    //
+    initializeProcessor();
+    initializeSystem();
 
-    // Setup / Operation
-
-    ArrayN<uint8_t, 10> array;
-
-    // Test
-
-    return UNIT_TEST_REPORT(
-                   UNIT_TEST_CASE_EQUAL(array.getMaxSize(), (unsigned int) 10) &
-                   UNIT_TEST_CASE_EQUAL(array.getSize(), (unsigned int) 0));
+    runParentApplication();
 }
 
 //------------------------------------------------------------------------------
-bool ArrayNUnitTest::copyConstructorTest1()
+// Private methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void ApplicationUnitTestLinuxApp::initializeProcessor()
 {
-    //
-    // Procedure: Instantiate an ArrayN<uint8_t, 10> object as a copy of a 10
-    // item ArrayN object
-    //
-    // Test: Verify array.getItems() returns a pointer to items array
-    //
+    myProcessor.reset();
+}
 
-    // Setup
-
-    ArrayN<uint8_t, 10> array1;
-    array1.append(0x01);
-
-    // Operation
-
-    ArrayN<uint8_t, 10> array(array1);
-
-    // Test
-
-    const uint8_t testItems[] =
-    {
-        0x01,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-        0x00
-    };
-
-    int memoryCompareResult = memcmp(array.getItems(),
-                                     testItems,
-                                     ARRAY_SIZE(testItems));
-
-    return UNIT_TEST_REPORT(
-                       UNIT_TEST_CASE_EQUAL(array.getSize(), (unsigned int) 1) &
-                       UNIT_TEST_CASE_EQUAL(memoryCompareResult, 0));
+//------------------------------------------------------------------------------
+void ApplicationUnitTestLinuxApp::initializeSystem()
+{
+    addUnitTest(myArrayUnitTest);
+    addUnitTest(myArrayNUnitTest);
+    addUnitTest(myBufferUnitTest);
+    addUnitTest(myByteArrayUnitTest);
+    addUnitTest(myModuleUnitTest);
 }
