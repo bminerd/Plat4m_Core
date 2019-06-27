@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,88 +33,67 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file ArrayNUnitTest.h
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 5/13/16
+/// @brief ArrayNUnitTest class header file.
 ///
+
+#ifndef PLAT4M_ARRAY_N_UNIT_TEST_H
+#define PLAT4M_ARRAY_N_UNIT_TEST_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
-
-using Plat4m::QueueDriverLinux;
+#include <Plat4m_Core/ArrayN.h>
+#include <Plat4m_Core/UnitTest/UnitTest.h>
 
 //------------------------------------------------------------------------------
-// Public constructors
+// Namespaces
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+namespace Plat4m
 {
-}
 
 //------------------------------------------------------------------------------
-// Public virtual destructors
+// Classes
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+class ArrayNUnitTest : public UnitTest
 {
-}
+public:
+    
+    //--------------------------------------------------------------------------
+    // Public constructors
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
-//------------------------------------------------------------------------------
+    ArrayNUnitTest();
 
-//------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
-{
-    return 0;
-}
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
-{
-    return 0;
-}
+    virtual ~ArrayNUnitTest();
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
-{
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
-}
+    //--------------------------------------------------------------------------
+    // Public static methods
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
-{
-    return (driverEnqueue(value));
-}
+    static bool constructorTest1();
 
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
-}
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
-{
-    return (driverDequeue(value));
-}
+    static bool copyConstructorTest1();
 
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
-}
+private:
+
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
+};
+
+}; // namespace Plat4m
+
+#endif // PLAT4M_ARRAY_N_UNIT_TEST_H

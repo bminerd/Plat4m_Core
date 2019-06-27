@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,34 +33,48 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file UnitTestRunResultAsciiMessage.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 5/4/16
+/// @brief UnitTestRunResultAsciiMessage class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <UnitTestRunResultAsciiMessage.h>
 
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
+#include <string.h>
 
-using Plat4m::QueueDriverLinux;
+using Plat4m::UnitTestRunResultAsciiMessage;
+using Plat4m::ByteArray;
+using Plat4m::Array;
+
+//------------------------------------------------------------------------------
+// Private static data members
+//------------------------------------------------------------------------------
+
+const char* UnitTestRunResultAsciiMessage::myName = "UNIT_TEST_RUN_RESULT";
+
+ByteArray UnitTestRunResultAsciiMessage::myParameterNameStrings[] =
+{
+    ByteArray("PASSED")
+};
+
+const Array<ByteArray> UnitTestRunResultAsciiMessage::myParameterNames(
+                                            myParameterNameStrings,
+                                            ARRAY_SIZE(myParameterNameStrings));
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+UnitTestRunResultAsciiMessage::UnitTestRunResultAsciiMessage(
+                                            UnitTestRunResultMessage& message) :
+    AsciiMessage(myName, &myParameterNames),
+    myMessage(message)
 {
 }
 
@@ -69,52 +83,57 @@ QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+UnitTestRunResultAsciiMessage::~UnitTestRunResultAsciiMessage()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
+// Public virtual methods implemented from AsciiMessage
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
+void UnitTestRunResultAsciiMessage::stringParametersUpdated()
 {
-    return 0;
+    const Array<ByteArray>* parameterValues = getParameterValues();
+    const char* string = 0;
+
+    // Passed
+    string = (const char*) parameterValues->getItem(0).getItems();
+    bool passed;
+
+    if (strcmp(string, "TRUE") == 0)
+    {
+        passed = true;
+    }
+    else if (strcmp(string, "FALSE") == 0)
+    {
+        passed = false;
+    }
+
+    myMessage.setPassed(passed);
 }
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
+void UnitTestRunResultAsciiMessage::messageParametersUpdated()
 {
-    return 0;
-}
+    Array<ByteArray>* parameterValues = getParameterValues();
+    parameterValues->clear();
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
-{
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
-}
+    char string[20];
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
-{
-    return (driverEnqueue(value));
-}
+    // Output
+    parameterValues->getItem(0).clear();
 
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
-}
+    if (myMessage.getPassed())
+    {
+        strcpy(string, "TRUE");
+        parameterValues->getItem(0).append((const char*) string);
+    }
+    else
+    {
+        strcpy(string, "FALSE");
+        parameterValues->getItem(0).append((const char*) string);
+    }
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
-{
-    return (driverDequeue(value));
-}
-
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
+    parameterValues->setSize(1);
 }

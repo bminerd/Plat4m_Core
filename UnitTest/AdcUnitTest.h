@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,88 +33,96 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file AdcUnitTest.h
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 4/22/16
+/// @brief AdcUnitTest class header file.
 ///
+
+#ifndef ADC_UNIT_TEST_H
+#define ADC_UNIT_TEST_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
-
-using Plat4m::QueueDriverLinux;
+#include <Plat4m.h>
+#include <Adc.h>
+#include <UnitTest.h>
 
 //------------------------------------------------------------------------------
-// Public constructors
+// Namespaces
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+namespace Plat4m
 {
-}
 
 //------------------------------------------------------------------------------
-// Public virtual destructors
+// Classes
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+class AdcUnitTest : public Adc, public UnitTest
 {
-}
+public:
+    
+    //--------------------------------------------------------------------------
+    // Public constructors
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
-//------------------------------------------------------------------------------
+    AdcUnitTest();
 
-//------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
-{
-    return 0;
-}
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
-{
-    return 0;
-}
+    virtual ~AdcUnitTest();
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
-{
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
-}
+    //--------------------------------------------------------------------------
+    // Public static methods
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
-{
-    return (driverEnqueue(value));
-}
+    static bool configureTest1();
 
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
-}
+    static bool configureTest2();
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
-{
-    return (driverDequeue(value));
-}
+    static bool configureTest3();
 
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
-}
+
+    static bool readVoltageTest1();
+
+    static bool readVoltageTest2();
+
+    static bool readVoltageTest3();
+
+private:
+
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    bool myWasDriverConfigureCalled;
+
+    Adc::Error myDriverConfigureError;
+
+    Adc::Error myDriverReadVoltageError;
+
+    float myVoltage;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods implemented from Adc
+    //--------------------------------------------------------------------------
+    
+    virtual Adc::Error driverConfigure(const Config& config);
+
+    virtual Adc::Error driverReadVoltage(float& voltage);
+};
+
+}; // namespace Plat4m
+
+#endif // ADC_UNIT_TEST_H

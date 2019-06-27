@@ -33,24 +33,23 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file SystemLinux.h
+/// @file ApplicationUnitTestApp.h
 /// @author Ben Minerd
-/// @date 5/3/2019
-/// @brief SystemLinux class.
+/// @date 6/4/2019
+/// @brief ApplicationUnitTestApp class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_LINUX_H
-#define PLAT4M_SYSTEM_LINUX_H
+#ifndef PLAT4M_APPLICATION_UNIT_TEST_APP_H
+#define PLAT4M_APPLICATION_UNIT_TEST_APP_H
 
 //------------------------------------------------------------------------------
-// Include files
+// Includes
 //------------------------------------------------------------------------------
 
-#include <ctime>
-#include <time.h>
-
-#include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/Application.h>
+#include <Plat4m_Core/UnitTest/UnitTest.h>
+#include <Plat4m_Core/AllocationMemoryLite/AllocationMemoryLite.h>
+#include <Plat4m_Core/List.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,7 +62,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class SystemLinux : public System
+class ApplicationUnitTestApp : public Application
 {
 public:
 
@@ -71,47 +70,61 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-    SystemLinux();
+    ApplicationUnitTestApp(const char* name,
+                           const char* productName,
+                           const char* version);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    virtual ~SystemLinux();
+    virtual ~ApplicationUnitTestApp();
+
+protected:
+
+    //--------------------------------------------------------------------------
+    // Protected methods
+    //--------------------------------------------------------------------------
+
+    void addUnitTest(UnitTest& unitTest);
+
+    void runParentApplication();
+
+    void runTests();
+
+    UnitTest::Error runTest(const uint32_t moduleIndex,
+                            const uint32_t testIndex,
+                            bool& passed);
 
 private:
+
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    // Constants
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    timeval myFirstTimeVal;
+    AllocationMemoryLite<4096> myAllocationMemory;
+
+    List<UnitTest*> myUnitTestList;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from System
+    // Private methods implemented from Application
     //--------------------------------------------------------------------------
 
-    TimeUs driverGetTimeUs();
+    // virtual void driverRun();
 
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes);
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
 
-    Mutex& driverCreateMutex(Thread& thread);
-
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
-
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-                                         const uint32_t valueSizeBytes,
-                                         Thread& thread);
-
-    void driverRun();
-
-    TimeMs driverGetTimeMs();
-
-    void driverDelayTimeMs(const TimeMs timeMs);
+    void initializeSystem();
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_SYSTEM_LINUX_H
+#endif // PLAT4M_APPLICATION_UNIT_TEST_APP_H

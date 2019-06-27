@@ -33,66 +33,20 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file MutexLinux.cpp
+/// @file main.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief MutexLinux class source file.
+/// @date 6/4/2019
+/// @brief Main source file for Unit_Test_Linux_App.
 ///
 
-//------------------------------------------------------------------------------
-// Include files
-//------------------------------------------------------------------------------
+#include <ApplicationUnitTestLinuxApp.h>
 
-#include <Plat4m_Core/Linux/MutexLinux.h>
-#include <Plat4m_Core/Plat4m.h>
-
-using Plat4m::MutexLinux;
-using Plat4m::Mutex;
+static Plat4m::ApplicationUnitTestLinuxApp applicationUnitTestLinuxApp;
 
 //------------------------------------------------------------------------------
-// Public constructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-MutexLinux::MutexLinux() :
-    Mutex(),
-    myMutexHandle()
+int main()
 {
-    int returnValue = pthread_mutex_init(&myMutexHandle, NULL);
+    applicationUnitTestLinuxApp.run();
 
-    if (returnValue != 0)
-    {
-        while (true)
-        {
-            // Lock up, unable to create mutex
-        }
-    }
-}
-
-//------------------------------------------------------------------------------
-// Public destructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-MutexLinux::~MutexLinux()
-{
-}
-
-//------------------------------------------------------------------------------
-// Private methods implemented from Mutex
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-Mutex::Error MutexLinux::driverSetLocked(const bool locked)
-{
-	if (locked)
-	{
-		pthread_mutex_lock(&myMutexHandle);
-	}
-	else
-	{
-		pthread_mutex_unlock(&myMutexHandle);
-	}
-
-    return ERROR_NONE;
+    return 0;
 }

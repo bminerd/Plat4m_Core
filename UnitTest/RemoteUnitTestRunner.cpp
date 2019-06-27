@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,88 +33,98 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file RemoteUnitTestRunner.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 5/4/2016
+/// @brief RemoteUnitTestRunner class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <RemoteUnitTestRunner.h>
+#include <AsciiMessageHandlerTemplate.h>
+#include <UnitTestRunAsciiMessage.h>
+#include <UnitTestRunResultAsciiMessage.h>
 
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
-
-using Plat4m::QueueDriverLinux;
-
-//------------------------------------------------------------------------------
-// Public constructors
-//------------------------------------------------------------------------------
+using Plat4m::RemoteUnitTestRunner;
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+// Private static data members
+//------------------------------------------------------------------------------
+
+const char* RemoteUnitTestRunner::myName        = "REMOTE_UNIT_TEST_RUNNER";
+const char* RemoteUnitTestRunner::myProductName = "PLAT4M";
+const char* RemoteUnitTestRunner::myVersion     = "0.0.1";
+
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+RemoteUnitTestRunner::RemoteUnitTestRunner(const char* name,
+                                                     const char* productName,
+                                                     const char* version) :
+        UnitTestRunner(name, productName, version),
+    myComLink(),
+    myComProtocolPlat4mAscii()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public virtual destructors
+// Protected virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+RemoteUnitTestRunner::~RemoteUnitTestRunner()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
+// Protected methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
+void RemoteUnitTestRunner::runParentApplication(ComInterface& comInterface)
 {
-    return 0;
+    myComLink.setComInterface(comInterface);
+
+	initializeSystem();
+
+	UnitTestRunner::runParentApplication();
 }
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
+// Private methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void RemoteUnitTestRunner::initializeSystem()
 {
-    return 0;
+    myComProtocolPlat4mAscii.addMessageHandler(
+        createMessageHandler<RemoteUnitTestRunner,
+                             UnitTestRunMessage,
+                             UnitTestRunResultMessage,
+                             UnitTestRunAsciiMessage,
+                             UnitTestRunResultAsciiMessage>(
+                       this, &RemoteUnitTestRunner::unitTestRunMessageHandler));
+
+    myComLink.addComProtocol(myComProtocolPlat4mAscii);
+
+    myComLink.enable(true);
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
+void RemoteUnitTestRunner::unitTestRunMessageHandler(
+                                             const UnitTestRunMessage& request,
+                                             UnitTestRunResultMessage& response)
 {
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
-}
+    bool passed;
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
-{
-    return (driverEnqueue(value));
-}
+    UnitTest::Error error = runTest(request.getModuleIndex(),
+                                    request.getTestIndex(),
+                                    passed);
 
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
-}
-
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
-{
-    return (driverDequeue(value));
-}
-
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
+    response.setPassed(passed);
 }

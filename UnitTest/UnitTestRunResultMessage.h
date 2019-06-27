@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,88 +33,66 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file UnitTestRunResultMessage.h
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 5/4/16
+/// @brief UnitTestRunResultMessage class header file.
 ///
+
+#ifndef UNIT_TEST_RUN_RESULT_MESSAGE_H
+#define UNIT_TEST_RUN_RESULT_MESSAGE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
-
-using Plat4m::QueueDriverLinux;
+#include <Plat4m.h>
+#include <Message.h>
 
 //------------------------------------------------------------------------------
-// Public constructors
+// Namespaces
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+namespace Plat4m
 {
-}
 
 //------------------------------------------------------------------------------
-// Public virtual destructors
+// Classes
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+class UnitTestRunResultMessage : public Message
 {
-}
+public:
 
-//------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
-//------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // Public constructors
+    //--------------------------------------------------------------------------
+    
+    UnitTestRunResultMessage();
 
-//------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
-{
-    return 0;
-}
+    //--------------------------------------------------------------------------
+    // Public destructors
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
-{
-    return 0;
-}
+    virtual ~UnitTestRunResultMessage();
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
-{
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
-}
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
-{
-    return (driverEnqueue(value));
-}
+    bool getPassed() const;
 
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
-}
+    void setPassed(const bool passed);
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
-{
-    return (driverDequeue(value));
-}
+private:
+    
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
-}
+    bool myPassed;
+};
+
+}; // namespace Plat4m
+
+#endif // UNIT_TEST_RUN_RESULT_MESSAGE_H

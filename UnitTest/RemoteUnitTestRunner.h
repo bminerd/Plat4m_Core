@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,24 +33,27 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file SystemLinux.h
+/// @file RemoteUnitTestRunner.h
 /// @author Ben Minerd
-/// @date 5/3/2019
-/// @brief SystemLinux class.
+/// @date 5/4/2016
+/// @brief RemoteUnitTestRunner class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_LINUX_H
-#define PLAT4M_SYSTEM_LINUX_H
+#ifndef REMOTE_UNIT_TEST_RUNNER_H
+#define REMOTE_UNIT_TEST_RUNNER_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ctime>
-#include <time.h>
-
-#include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/System.h>
+// Plat4m includes
+#include <Plat4m.h>
+#include <UnitTestRunner.h>
+#include <List.h>
+#include <ComLink.h>
+#include <ComInterface.h>
+#include <UnitTestRunMessage.h>
+#include <UnitTestRunResultMessage.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,55 +66,73 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class SystemLinux : public System
+///
+/// @brief
+///
+class RemoteUnitTestRunner : public UnitTestRunner
 {
 public:
 
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    SystemLinux();
+protected:
 
     //--------------------------------------------------------------------------
-    // Public virtual destructors
+    // Protected constructors
     //--------------------------------------------------------------------------
 
-    virtual ~SystemLinux();
+    ///
+    /// @brief Constructor for RemoteUnitTestRunner class.
+    ///
+    RemoteUnitTestRunner(const char* name,
+                         const char* productName,
+                         const char* version);
+
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
+
+    ///
+    /// @brief Virtual destructor for RemoteUnitTestRunner class.
+    ///
+    virtual ~RemoteUnitTestRunner();
+
+    //--------------------------------------------------------------------------
+    // Protected methods
+    //--------------------------------------------------------------------------
+
+    void runParentApplication(ComInterface& comInterface);
 
 private:
+
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    static const char* myName;
+
+    static const char* myProductName;
+
+    static const char* myVersion;
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    timeval myFirstTimeVal;
+    ComLink<64, 64> myComLink;
+
+    ComProtocolPlat4mAscii myComProtocolPlat4mAscii;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from System
+    // Private methods
     //--------------------------------------------------------------------------
 
-    TimeUs driverGetTimeUs();
+	void initializeSystem();
 
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes);
+	void testThreadCallback();
 
-    Mutex& driverCreateMutex(Thread& thread);
-
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
-
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-                                         const uint32_t valueSizeBytes,
-                                         Thread& thread);
-
-    void driverRun();
-
-    TimeMs driverGetTimeMs();
-
-    void driverDelayTimeMs(const TimeMs timeMs);
+	void unitTestRunMessageHandler(const UnitTestRunMessage& request,
+	                               UnitTestRunResultMessage& response);
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_SYSTEM_LINUX_H
+#endif // REMOTE_UNIT_TEST_RUNNER_H

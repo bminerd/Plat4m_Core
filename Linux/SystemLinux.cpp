@@ -43,9 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ctime>
-#include <time.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #include <Plat4m_Core/Linux/SystemLinux.h>
 #include <Plat4m_Core/Linux/ThreadLinux.h>
@@ -122,7 +121,7 @@ QueueDriver& SystemLinux::driverCreateQueueDriver(
                                                   const uint32_t valueSizeBytes,
                                                   Thread& thread)
 {
-    return *(new QueueDriverLinux(thread));
+    return *(new QueueDriverLinux(valueSizeBytes));
 }
 
 //------------------------------------------------------------------------------

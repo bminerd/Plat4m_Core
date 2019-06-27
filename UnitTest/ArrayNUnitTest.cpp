@@ -11,9 +11,9 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
+// Permission is hereby granted, free of uint8_tge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -33,34 +33,41 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file ArrayNUnitTest.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 5/13/16
+/// @brief ArrayNUnitTest class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <Plat4m_Core/UnitTest/ArrayNUnitTest.h>
 
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
+using Plat4m::ArrayNUnitTest;
+using Plat4m::UnitTest;
 
-using Plat4m::QueueDriverLinux;
+//------------------------------------------------------------------------------
+// Private static data members
+//------------------------------------------------------------------------------
+
+const UnitTest::TestCallbackFunction ArrayNUnitTest::myTestCallbackFunctions[] =
+{
+    &ArrayNUnitTest::constructorTest1,
+
+    &ArrayNUnitTest::copyConstructorTest1
+};
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+ArrayNUnitTest::ArrayNUnitTest() :
+    UnitTest("ArrayNUnitTest",
+             myTestCallbackFunctions,
+             ARRAY_SIZE(myTestCallbackFunctions))
 {
 }
 
@@ -69,52 +76,74 @@ QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+ArrayNUnitTest::~ArrayNUnitTest()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
+// Public static methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
+bool ArrayNUnitTest::constructorTest1()
 {
-    return 0;
+    //
+    // Procedure: Instantiate an ArrayN<uint8_t, 10> object without parameters
+    //
+    // Test: Verify array.getSize() returns 0
+    //
+
+    // Setup / Operation
+
+    ArrayN<uint8_t, 10> array;
+
+    // Test
+
+    return UNIT_TEST_REPORT(
+                   UNIT_TEST_CASE_EQUAL(array.getMaxSize(), (unsigned int) 10) &
+                   UNIT_TEST_CASE_EQUAL(array.getSize(), (unsigned int) 0));
 }
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
+bool ArrayNUnitTest::copyConstructorTest1()
 {
-    return 0;
-}
+    //
+    // Procedure: Instantiate an ArrayN<uint8_t, 10> object as a copy of a 10
+    // item ArrayN object
+    //
+    // Test: Verify array.getItems() returns a pointer to items array
+    //
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
-{
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
-}
+    // Setup
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
-{
-    return (driverEnqueue(value));
-}
+    ArrayN<uint8_t, 10> array1;
+    array1.append(0x01);
 
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
-}
+    // Operation
 
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
-{
-    return (driverDequeue(value));
-}
+    ArrayN<uint8_t, 10> array(array1);
 
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
+    // Test
+
+    const uint8_t testItems[] =
+    {
+        0x01,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00
+    };
+
+    int memoryCompareResult = memcmp(array.getItems(),
+                                     testItems,
+                                     ARRAY_SIZE(testItems));
+
+    return UNIT_TEST_REPORT(
+                       UNIT_TEST_CASE_EQUAL(array.getSize(), (unsigned int) 1) &
+                       UNIT_TEST_CASE_EQUAL(memoryCompareResult, 0));
 }

@@ -33,34 +33,40 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file ApplicationUnitTestLinuxApp.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 6/4/2019
+/// @brief ApplicationUnitTestLinuxApp class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <ApplicationUnitTestLinuxApp.h>
 
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
+using Plat4m::ApplicationUnitTestLinuxApp;
 
-using Plat4m::QueueDriverLinux;
+using namespace Plat4m;
+
+//------------------------------------------------------------------------------
+// Private static data members
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+ApplicationUnitTestLinuxApp::ApplicationUnitTestLinuxApp() :
+    ApplicationUnitTestApp("UNIT_TEST_LINUX_APP", "UNIT_TEST_LINUX", "0.0.1"),
+    mySystem(),
+    myProcessor(),
+    myArrayUnitTest(),
+    myArrayNUnitTest(),
+    myBufferUnitTest(),
+    myByteArrayUnitTest(),
+    myModuleUnitTest()
 {
 }
 
@@ -69,52 +75,39 @@ QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+ApplicationUnitTestLinuxApp::~ApplicationUnitTestLinuxApp()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
+// Private methods implemented from Application
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
+void ApplicationUnitTestLinuxApp::driverRun()
 {
-    return 0;
+    initializeProcessor();
+    initializeSystem();
+
+    runParentApplication();
 }
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
+// Private methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void ApplicationUnitTestLinuxApp::initializeProcessor()
 {
-    return 0;
+    myProcessor.reset();
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
+void ApplicationUnitTestLinuxApp::initializeSystem()
 {
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
-}
-
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
-{
-    return (driverEnqueue(value));
-}
-
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
-}
-
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
-{
-    return (driverDequeue(value));
-}
-
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
+    addUnitTest(myArrayUnitTest);
+    addUnitTest(myArrayNUnitTest);
+    addUnitTest(myBufferUnitTest);
+    addUnitTest(myByteArrayUnitTest);
+    addUnitTest(myModuleUnitTest);
 }

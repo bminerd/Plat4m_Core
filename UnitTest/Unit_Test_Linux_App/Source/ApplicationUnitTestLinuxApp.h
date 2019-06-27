@@ -33,71 +33,90 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ProcessorLinux.cpp
+/// @file ApplicationUnitTestLinuxApp.h
 /// @author Ben Minerd
-/// @date 5/3/2019
-/// @brief ProcessorLinux class source file.
+/// @date 6/4/2019
+/// @brief ApplicationUnitTestLinuxApp class header file.
 ///
 
+#ifndef PLAT4M_APPLICATION_UNIT_TEST_LINUX_APP_H
+#define PLAT4M_APPLICATION_UNIT_TEST_LINUX_APP_H
+
 //------------------------------------------------------------------------------
-// Include files
+// Includes
 //------------------------------------------------------------------------------
 
+#include <Plat4m_Core/UnitTest/ApplicationUnitTestApp.h>
+#include <Plat4m_Core/Linux/SystemLinux.h>
 #include <Plat4m_Core/Linux/ProcessorLinux.h>
-
-using Plat4m::ProcessorLinux;
-using Plat4m::Processor;
-
-//------------------------------------------------------------------------------
-// Public constructors
-//------------------------------------------------------------------------------
+#include <Plat4m_Core/UnitTest/ArrayUnitTest.h>
+#include <Plat4m_Core/UnitTest/ArrayNUnitTest.h>
+#include <Plat4m_Core/UnitTest/BufferUnitTest.h>
+#include <Plat4m_Core/UnitTest/ByteArrayUnitTest.h>
+#include <Plat4m_Core/UnitTest/ModuleUnitTest.h>
 
 //------------------------------------------------------------------------------
-ProcessorLinux::ProcessorLinux() :
-    Processor(ENDIAN_BIG, 0.0, 0)
+// Namespaces
+//------------------------------------------------------------------------------
+
+namespace Plat4m
 {
-}
 
 //------------------------------------------------------------------------------
-// Public virtual destructors
+// Classes
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-ProcessorLinux::~ProcessorLinux()
+class ApplicationUnitTestLinuxApp : public ApplicationUnitTestApp
 {
-}
+public:
 
-//------------------------------------------------------------------------------
-// Private methods implemented from Processor
-//------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // Public constructors
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-Processor::Error ProcessorLinux::driverReset()
-{
-    return Processor::Error(Processor::ERROR_CODE_NONE);
-}
+    ApplicationUnitTestLinuxApp();
 
-//------------------------------------------------------------------------------
-Processor::Error ProcessorLinux::driverConfigure(const Processor::Config& config)
-{
-    return Processor::Error(Processor::ERROR_CODE_NONE);
-}
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-Processor::Error ProcessorLinux::driverSetPowerMode(
-                                               const Processor::PowerMode powerMode)
-{
-    return Processor::Error(Processor::ERROR_CODE_NONE);
-}
+    virtual ~ApplicationUnitTestLinuxApp();
 
-//------------------------------------------------------------------------------
-uint32_t ProcessorLinux::driverGetCoreClockFrequencyHz()
-{
-    return 0;
-}
+private:
 
-//------------------------------------------------------------------------------
-Processor::Error ProcessorLinux::driverJumpToAddress(const intptr_t address)
-{
-    return Processor::Error(Processor::ERROR_CODE_NONE);
-}
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    SystemLinux mySystem;
+
+    ProcessorLinux myProcessor;
+
+    ArrayUnitTest myArrayUnitTest;
+    ArrayNUnitTest myArrayNUnitTest;
+    BufferUnitTest myBufferUnitTest;
+    ByteArrayUnitTest myByteArrayUnitTest;
+    ModuleUnitTest myModuleUnitTest;
+
+    //--------------------------------------------------------------------------
+    // Private methods implemented from Application
+    //--------------------------------------------------------------------------
+
+    void driverRun();
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    void initializeProcessor();
+
+    void initializeSystem();
+};
+
+}; // namespace Plat4m
+
+#endif // PLAT4M_APPLICATION_UNIT_TEST_LINUX_APP_H

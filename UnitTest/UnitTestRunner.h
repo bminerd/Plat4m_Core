@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,24 +33,29 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file SystemLinux.h
+/// @file UnitTestRunner.h
 /// @author Ben Minerd
-/// @date 5/3/2019
-/// @brief SystemLinux class.
+/// @date 4/15/2016
+/// @brief UnitTestRunner class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_LINUX_H
-#define PLAT4M_SYSTEM_LINUX_H
+#ifndef PLAT4M_UNIT_TEST_RUNNER_H
+#define PLAT4M_UNIT_TEST_RUNNER_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ctime>
-#include <time.h>
-
-#include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/System.h>
+// Plat4m includes
+#include <Plat4m.h>
+#include <Application.h>
+#include <List.h>
+#include <UnitTest.h>
+#include <AllocationMemoryLite.h>
+#include <SystemLite.h>
+#include <Thread.h>
+#include <ComLink.h>
+#include <ComProtocolPlat4mAscii.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,55 +68,80 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class SystemLinux : public System
+///
+/// @brief
+///
+class UnitTestRunner : public Application
 {
 public:
 
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    SystemLinux();
+protected:
 
     //--------------------------------------------------------------------------
-    // Public virtual destructors
+    // Protected constructors
     //--------------------------------------------------------------------------
 
-    virtual ~SystemLinux();
+    ///
+    /// @brief Constructor for UnitTestRunner class.
+    ///
+    UnitTestRunner(const char* name,
+                   const char* productName,
+                   const char* version);
+
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
+
+    ///
+    /// @brief Virtual destructor for UnitTestRunner class.
+    ///
+    virtual ~UnitTestRunner();
+
+    //--------------------------------------------------------------------------
+    // Protected methods
+    //--------------------------------------------------------------------------
+
+    void addUnitTest(UnitTest& unitTest);
+
+    void runParentApplication();
+
+    UnitTest::Error runTest(const uint32_t moduleIndex,
+                            const uint32_t testIndex,
+                            bool& passed);
 
 private:
+
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    static const char* myName;
+
+    static const char* myProductName;
+
+    static const char* myVersion;
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    timeval myFirstTimeVal;
+    AllocationMemoryLite<1024> myAllocationMemory;
+
+    SystemLite mySystem;
+
+    Thread& myTestThread;
+
+    List<UnitTest*> myUnitTestList;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from System
+    // Private methods
     //--------------------------------------------------------------------------
 
-    TimeUs driverGetTimeUs();
+	void initializeSystem();
 
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes);
-
-    Mutex& driverCreateMutex(Thread& thread);
-
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
-
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-                                         const uint32_t valueSizeBytes,
-                                         Thread& thread);
-
-    void driverRun();
-
-    TimeMs driverGetTimeMs();
-
-    void driverDelayTimeMs(const TimeMs timeMs);
+	void testThreadCallback();
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_SYSTEM_LINUX_H
+#endif // PLAT4M_UNIT_TEST_RUNNER_H

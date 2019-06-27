@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,24 +33,23 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file SystemLinux.h
+/// @file GpioPinUnitTest.h
 /// @author Ben Minerd
-/// @date 5/3/2019
-/// @brief SystemLinux class.
+/// @date 4/14/16
+/// @brief GpioPinUnitTest class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_LINUX_H
-#define PLAT4M_SYSTEM_LINUX_H
+#ifndef GPIO_PIN_UNIT_TEST_H
+#define GPIO_PIN_UNIT_TEST_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ctime>
-#include <time.h>
-
-#include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/System.h>
+#include <Plat4m.h>
+#include <GpioPin.h>
+#include <UnitTest.h>
+#include <ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,55 +62,129 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class SystemLinux : public System
+class GpioPinUnitTest : public GpioPin, public UnitTest
 {
 public:
-
+    
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
-    SystemLinux();
+    GpioPinUnitTest();
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    virtual ~SystemLinux();
+    virtual ~GpioPinUnitTest();
+
+    //--------------------------------------------------------------------------
+    // Public virtual methods implemented from GpioPin
+    //--------------------------------------------------------------------------
+
+    virtual void setLevelFast(const Level level);
+
+    virtual Level getLevelFast();
+
+    virtual Level readLevelFast();
+
+    virtual void toggleLevelFast();
+
+    //--------------------------------------------------------------------------
+    // Public static methods
+    //--------------------------------------------------------------------------
+
+    static bool configureTest1();
+
+    static bool configureTest2();
+
+    static bool configureTest3();
+
+    static bool setLevelTest1();
+
+    static bool setLevelTest2();
+
+    static bool setLevelTest3();
+
+    static bool setLevelTest4();
+
+    static bool setLevelTest5();
+
+    static bool getLevelTest1();
+
+    static bool getLevelTest2();
+
+    static bool getLevelTest3();
+
+    static bool getLevelTest4();
+
+    static bool getLevelTest5();
+
+    static bool getLevelTest6();
+
+    static bool readLevelTest1();
+
+    static bool readLevelTest2();
+
+    static bool readLevelTest3();
+
+    static bool readLevelTest4();
+
+    static bool readLevelTest5();
+
+    static bool readLevelTest6();
+
+    static bool toggleLevelTest1();
+
+    static bool toggleLevelTest2();
+
+    static bool toggleLevelTest3();
+
+    static bool toggleLevelTest4();
+
+    static bool toggleLevelTest5();
 
 private:
+
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    timeval myFirstTimeVal;
+    bool myWasDriverConfigureCalled;
+
+    GpioPin::Error myDriverConfigureError;
+
+    GpioPin::Error myDriverSetLevelError;
+
+    GpioPin::Error myDriverGetLevelError;
+
+    GpioPin::Error myDriverReadLevelError;
+
+    GpioPin::Error myDriverToggleLevelError;
+
+    Level myLevel;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from System
+    // Private virtual methods implemented from GpioPin
     //--------------------------------------------------------------------------
+    
+    virtual GpioPin::Error driverConfigure(const Config& config);
 
-    TimeUs driverGetTimeUs();
+    virtual GpioPin::Error driverSetLevel(const Level level);
 
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes);
+    virtual GpioPin::Error driverGetLevel(Level& level);
 
-    Mutex& driverCreateMutex(Thread& thread);
+    virtual GpioPin::Error driverReadLevel(Level& level);
 
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
-
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-                                         const uint32_t valueSizeBytes,
-                                         Thread& thread);
-
-    void driverRun();
-
-    TimeMs driverGetTimeMs();
-
-    void driverDelayTimeMs(const TimeMs timeMs);
+    virtual GpioPin::Error driverToggleLevel();
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_SYSTEM_LINUX_H
+#endif // GPIO_PIN_UNIT_TEST_H

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,88 +33,132 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file UnitTestRunner.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 4/12/2016
+/// @brief UnitTestRunner class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <UnitTestRunner.h>
+#include <ByteArrayN.h>
+#include <System.h>
 
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
-
-using Plat4m::QueueDriverLinux;
-
-//------------------------------------------------------------------------------
-// Public constructors
-//------------------------------------------------------------------------------
+using Plat4m::UnitTestRunner;
+using Plat4m::UnitTest;
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+// Private static data members
+//------------------------------------------------------------------------------
+
+const char* UnitTestRunner::myName        = "UNIT_TEST_RUNNER";
+const char* UnitTestRunner::myProductName = "PLAT4M";
+const char* UnitTestRunner::myVersion     = "0.0.1";
+
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+UnitTestRunner::UnitTestRunner(const char* name,
+                                   const char* productName,
+                                   const char* version) :
+    Application(name, productName, version),
+    myAllocationMemory(),
+    mySystem(),
+    myTestThread(System::createThread(
+                    createCallback(this, &UnitTestRunner::testThreadCallback))),
+    myUnitTestList()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public virtual destructors
+// Protected virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+UnitTestRunner::~UnitTestRunner()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
+// Protected methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
+void UnitTestRunner::addUnitTest(UnitTest& unitTest)
 {
-    return 0;
+    UnitTest* pointer = &unitTest;
+
+    myUnitTestList.append(pointer);
 }
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
+void UnitTestRunner::runParentApplication()
 {
-    return 0;
+	initializeSystem();
+
+	mySystem.run();
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
+UnitTest::Error UnitTestRunner::runTest(const uint32_t moduleIndex,
+                                        const uint32_t testIndex,
+                                        bool& passed)
 {
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
+    if (moduleIndex >= myUnitTestList.size())
+    {
+        return UnitTest::ERROR_CODE_INVALID_TEST_INDEX;
+    }
+
+    uint32_t currentIndex = 0;
+
+    List<UnitTest*>::Iterator iterator = myUnitTestList.iterator();
+
+    while (iterator.hasCurrent() && (currentIndex != moduleIndex))
+    {
+        iterator.next();
+        currentIndex++;
+    }
+
+    UnitTest* unitTest = iterator.current();
+    return unitTest->runTest(testIndex, passed);
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
-{
-    return (driverEnqueue(value));
-}
+// Private methods
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
+//------------------------------------------------------------------------------
+void UnitTestRunner::initializeSystem()
 {
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
+    myTestThread.enable(true);
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
+void UnitTestRunner::testThreadCallback()
 {
-    return (driverDequeue(value));
-}
+    uint32_t nTotalTests = 0;
+    uint32_t nTotalPassedTests = 0;
 
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
+    List<UnitTest*>::Iterator iterator = myUnitTestList.iterator();
+
+    while (iterator.hasCurrent())
+    {
+        UnitTest* unitTest = iterator.current();
+        nTotalTests += unitTest->getTestCount();
+
+        nTotalPassedTests += unitTest->runTests();
+
+        iterator.next();
+    }
+
+    printf("\nTotal results\n");
+    printf("------------------------------\n");
+    printf("%d/%d tests passed\n", nTotalPassedTests, nTotalTests);
+
+    myTestThread.enable(false);
 }

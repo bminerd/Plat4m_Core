@@ -61,9 +61,12 @@ ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
 	myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
 	myConditionHandle(PTHREAD_COND_INITIALIZER)
 {
-    myThreadHandle = CreateThread(&myThreadHandle, NULL, &threadCallback, this);
+    int returnValue = pthread_create(&myThreadHandle,
+					 				 NULL,
+									 &threadCallback,
+									 this);
 
-    if (isNullPointer(myThreadHandle))
+    if (returnValue != 0)
     {
         while (true)
         {
@@ -81,16 +84,6 @@ ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
 //------------------------------------------------------------------------------
 ThreadLinux::~ThreadLinux()
 {
-}
-
-//------------------------------------------------------------------------------
-// Public virtual destructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-DWORD ThreadLinux::getThreadId() const
-{
-    return myThreadId;
 }
 
 //------------------------------------------------------------------------------

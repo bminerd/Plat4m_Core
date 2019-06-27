@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,24 +33,22 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file SystemLinux.h
+/// @file ModuleUnitTest.h
 /// @author Ben Minerd
-/// @date 5/3/2019
-/// @brief SystemLinux class.
+/// @date 4/21/16
+/// @brief ModuleUnitTest class header file.
 ///
 
-#ifndef PLAT4M_SYSTEM_LINUX_H
-#define PLAT4M_SYSTEM_LINUX_H
+#ifndef PLAT4M_MODULE_UNIT_TEST_H
+#define PLAT4M_MODULE_UNIT_TEST_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <ctime>
-#include <time.h>
-
 #include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/UnitTest/UnitTest.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,55 +61,101 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class SystemLinux : public System
+class ModuleUnitTest : public Module, public UnitTest
 {
 public:
-
+    
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
-    SystemLinux();
+    ModuleUnitTest();
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    virtual ~SystemLinux();
+    virtual ~ModuleUnitTest();
+
+    //--------------------------------------------------------------------------
+    // Public static methods
+    //--------------------------------------------------------------------------
+
+    static bool enableTest1();
+
+    static bool enableTest2();
+
+    static bool enableTest3();
+
+    static bool enableTest4();
+
+    static bool enableTest5();
+
+    static bool enableTest6();
+
+    static bool enableTest7();
+
+    static bool enableTest8();
+
+    static bool enableTest9();
+
+    static bool enableTest10();
+
+    static bool enableTest11();
+
+    static bool enableTest12();
+
+    static bool enableTest13();
+
+    static bool enableTest14();
+
+    static bool enableTest15();
+
+    static bool enableTest16();
+
+    static bool enableTest17();
+
+    static bool enableTest18();
 
 private:
+
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    timeval myFirstTimeVal;
+    bool myWasInterfaceEnableCalled;
+
+    bool myWasDriverEnableCalled;
+
+    bool myWasEnableCallbackCalled;
+
+    Module::Error myInterfaceEnableError;
+
+    Module::Error myDriverEnableError;
+
+    Module::Error myEnableCallbackError;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from System
+    // Private virtual methods implemented from Module
+    //--------------------------------------------------------------------------
+    
+    virtual Module::Error interfaceEnable(const bool enable);
+
+    virtual Module::Error driverEnable(const bool enable);
+
+    //--------------------------------------------------------------------------
+    // Private methods
     //--------------------------------------------------------------------------
 
-    TimeUs driverGetTimeUs();
-
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes);
-
-    Mutex& driverCreateMutex(Thread& thread);
-
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
-
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-                                         const uint32_t valueSizeBytes,
-                                         Thread& thread);
-
-    void driverRun();
-
-    TimeMs driverGetTimeMs();
-
-    void driverDelayTimeMs(const TimeMs timeMs);
+    Module::Error enableCallback(const bool enable);
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_SYSTEM_LINUX_H
+#endif // PLAT4M_MODULE_UNIT_TEST_H

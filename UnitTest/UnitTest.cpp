@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,88 +33,94 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file UnitTest.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 4/19/2016
+/// @brief UnitTest class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <Plat4m_Core/UnitTest/UnitTest.h>
 
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
-
-using Plat4m::QueueDriverLinux;
+using Plat4m::UnitTest;
 
 //------------------------------------------------------------------------------
-// Public constructors
+// Public methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+const char* UnitTest::getName() const
+{
+    return myName;
+}
+
+//------------------------------------------------------------------------------
+uint32_t UnitTest::getTestCount() const
+{
+    return (myTestCallbackFunctionArray.getSize());
+}
+
+//------------------------------------------------------------------------------
+uint32_t UnitTest::runTests()
+{
+    uint32_t nTests = myTestCallbackFunctionArray.getSize();
+    uint32_t nPassedTests = 0;
+
+    printf("%s\n", myName);
+    printf("------------------------------\n");
+
+    for (int i = 0; i < nTests; i++)
+    {
+        printf("Test %d/%d: ", (i + 1), nTests);
+
+        bool passed = (*(myTestCallbackFunctionArray[i]))();
+
+        if (passed)
+        {
+            nPassedTests++;
+        }
+    }
+
+    printf("------------------------------\n");
+    printf("%d/%d tests passed\n\n", nPassedTests, nTests);
+
+    return nPassedTests;
+}
+
+//------------------------------------------------------------------------------
+UnitTest::Error UnitTest::runTest(const uint32_t index, bool& passed)
+{
+    if (index >= myTestCallbackFunctionArray.getSize())
+    {
+        return Error(ERROR_CODE_INVALID_TEST_INDEX);
+    }
+
+    passed = (*(myTestCallbackFunctionArray[index]))();
+
+    return Error(ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+UnitTest::UnitTest(const char* name,
+                   const TestCallbackFunction testCallbackFunctions[],
+                   const unsigned int nTestCallbackFunctions) :
+    myName(name),
+    myTestCallbackFunctionArray(testCallbackFunctions, nTestCallbackFunctions)
 {
 }
 
 //------------------------------------------------------------------------------
-// Public virtual destructors
+// Protected virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+UnitTest::~UnitTest()
 {
-}
-
-//------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
-{
-    return 0;
-}
-
-//------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
-{
-    return 0;
-}
-
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
-{
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
-}
-
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
-{
-    return (driverEnqueue(value));
-}
-
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
-}
-
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
-{
-    return (driverDequeue(value));
-}
-
-//------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    // Read out all messages and dump
 }

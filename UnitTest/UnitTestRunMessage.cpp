@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2016 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,34 +33,32 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file UnitTestRunMessage.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 4/25/16
+/// @brief UnitTestRunMessage class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
+#include <UnitTestRunMessage.h>
 
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
-
-using Plat4m::QueueDriverLinux;
+using Plat4m::UnitTestRunMessage;
+using Plat4m::Array;
+using Plat4m::ByteArray;
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+UnitTestRunMessage::UnitTestRunMessage() :
+    Message(),
+    myModuleIndex(0),
+    myTestIndex(0),
+    myOutput(false)
 {
 }
 
@@ -69,52 +67,46 @@ QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+UnitTestRunMessage::~UnitTestRunMessage()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
+// Public methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
+uint32_t UnitTestRunMessage::getModuleIndex() const
 {
-    return 0;
+    return myModuleIndex;
 }
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
+void UnitTestRunMessage::setModuleIndex(const uint32_t moduleIndex)
 {
-    return 0;
+    myModuleIndex = moduleIndex;
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
+uint32_t UnitTestRunMessage::getTestIndex() const
 {
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
+    return myTestIndex;
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
+void UnitTestRunMessage::setTestIndex(const uint32_t testIndex)
 {
-    return (driverEnqueue(value));
-}
-
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
+    myTestIndex = testIndex;
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
+bool UnitTestRunMessage::getOutput() const
 {
-    return (driverDequeue(value));
+    return myOutput;
 }
 
 //------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
+void UnitTestRunMessage::setOutput(const bool output)
 {
-    // Read out all messages and dump
+    myOutput = output;
 }
