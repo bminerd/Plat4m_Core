@@ -1,8 +1,4 @@
-dist: trusty
-sudo: false
 language: cpp
-compiler: gcc
-install: arm-none-eabi-gcc
-before_script:
-  - git clone https://github.com/bminerd/Plat4m_Examples.git
-script: 
+before_install:
+install:
+script: ./run_ci.sh
