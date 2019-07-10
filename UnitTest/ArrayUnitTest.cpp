@@ -164,7 +164,7 @@ bool ArrayUnitTest::constructor2Test1()
 
     return UNIT_TEST_REPORT(
                       UNIT_TEST_CASE_EQUAL(array.getItems(), (uint8_t*) items) &
-                      UNIT_TEST_CASE_EQUAL(array.getMaxSize(), (uint32_t) 10)  &
+                      UNIT_TEST_CASE_EQUAL(array.getMaxSize(), (uint32_t) 11)  &
                       UNIT_TEST_CASE_EQUAL(array.getSize(), (uint32_t) 10));
 }
 
