@@ -63,6 +63,7 @@ namespace Plat4m
 template<typename SampleType>
 class Topic
 {
+public:
 
     //--------------------------------------------------------------------------
     // Public types
@@ -76,6 +77,35 @@ class Topic
     typedef Callback<void, SampleType> SampleCallback;
 
     //--------------------------------------------------------------------------
+    // Public static methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    static void subscribe(const uint32_t& id,
+                          const SampleCallback& sampleCallback)
+    {
+        List< Topic<SampleType>* >::Iterator iterator = myTopicList.iterator();
+
+        while (iterator.hasCurrent())
+        {
+            Topic<SampleType>* topic = iterator.current();
+            
+            if (topic.getId() == id)
+            {
+                topic->subscribe(sampleCallback);
+
+                break;
+            }
+
+            iterator.next();
+        }
+
+        SampleCallback* pointer = &sampleCallback;
+
+        mySampleCallbackList.append(pointer);
+    }
+
+    //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
@@ -84,6 +114,7 @@ class Topic
         myId(id),
         mySampleCallbackList()
     {
+        myTopicList.append(this);
     }
 
     //--------------------------------------------------------------------------
@@ -98,6 +129,12 @@ class Topic
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    uint32_t getId() const
+    {
+        return myId;
+    }
 
     //--------------------------------------------------------------------------
     void subscribe(const SampleCallback& sampleCallback)
@@ -123,6 +160,12 @@ class Topic
     }
 
 private:
+
+    //--------------------------------------------------------------------------
+    // Private static data members
+    //--------------------------------------------------------------------------
+
+    static List< Topic<SampleType>* > myTopicList;
 
     //--------------------------------------------------------------------------
     // Private data members
