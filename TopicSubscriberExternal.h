@@ -33,21 +33,23 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file Topic.h
+/// @file TopicSubscriberExternal.h
 /// @author Ben Minerd
-/// @date 11/23/2019
-/// @brief Topic class header file.
+/// @date 12/20/2019
+/// @brief TopicSubscriberExternal class header file.
 ///
 
-#ifndef PLAT4M_TOPIC_H
-#define PLAT4M_TOPIC_H
+#ifndef PLAT4M_TOPIC_SUBSCRIBER_EXTERNAL_H
+#define PLAT4M_TOPIC_SUBSCRIBER_EXTERNAL_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/TopicSubscriber.h>
 #include <Plat4m_Core/Callback.h>
-#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/ComProtocol.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -60,8 +62,8 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template<typename SampleType>
-class Topic
+template<typename SampleType, typename SampleMessage>
+class TopicSubscriberExternal : public TopicSubscriber<SampleType>
 {
 public:
 
@@ -74,43 +76,18 @@ public:
         ERROR_CODE_NONE
     };
 
-    typedef Callback<void, SampleType> SampleCallback;
-
-    //--------------------------------------------------------------------------
-    // Public static methods
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    static void subscribe(const uint32_t& id,
-                          const SampleCallback& sampleCallback)
-    {
-        List< Topic<SampleType>* >::Iterator iterator = myTopicList.iterator();
-
-        while (iterator.hasCurrent())
-        {
-            Topic<SampleType>* topic = iterator.current();
-            
-            if (topic.getId() == id)
-            {
-                topic->subscribe(sampleCallback);
-
-                break;
-            }
-
-            iterator.next();
-        }
-    }
-
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    Topic(const uint32_t id) :
-        myId(id),
-        mySampleCallbackList()
+    TopicSubscriberExternal(const uint32_t id, ComProtocol& comProtocol) :
+        TopicSubscriber<SampleType>(
+                    id,
+                    Plat4m::createCallback(this,
+                         &TopicSubscriberExternal<SampleType>::sampleCallback)),
+        myComProtocol(comProtocol)
     {
-        myTopicList.append(this);
     }
 
     //--------------------------------------------------------------------------
@@ -118,7 +95,7 @@ public:
     //--------------------------------------------------------------------------
     
     //--------------------------------------------------------------------------
-    virtual ~Topic()
+    virtual ~TopicSubscriberExternal()
     {
     }
 
@@ -126,52 +103,27 @@ public:
     // Public methods
     //--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    uint32_t getId() const
-    {
-        return myId;
-    }
-
-    //--------------------------------------------------------------------------
-    void subscribe(const SampleCallback& sampleCallback)
-    {
-        SampleCallback* pointer = &sampleCallback;
-
-        mySampleCallbackList.append(pointer);
-    }
-
-    //--------------------------------------------------------------------------
-    void publish(const SampleType& sample)
-    {
-        List<SampleCallback*>::Iterator iterator =
-                                                mySampleCallbackList.iterator();
-
-        while (iterator.hasCurrent())
-        {
-            SampleCallback* sampleCallback = iterator.current();
-            sampleCallback->call(sample);
-
-            iterator.next();
-        }
-    }
-
 private:
-
-    //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-
-    static List< Topic<SampleType>* > myTopicList;
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    const uint32_t myId;
+    ComProtocol& myComProtocol;
 
-    List<SampleCallback*> mySampleCallbackList;
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    void sampleCallback(SampleType sample)
+    {
+        SampleMessage message(sample);
+
+        myComProtocol.transmitFrame(message);
+    }
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_TOPIC_H
+#endif // PLAT4M_TOPIC_SUBSCRIBER_EXTERNAL_H
