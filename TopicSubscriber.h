@@ -81,7 +81,7 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    static void subscribe(const uint32_t& id,
+    static void subscribe(const uint32_t id,
                           const SampleCallback& sampleCallback)
     {
         List< Topic<SampleType>* >::Iterator iterator = myTopicList.iterator();
