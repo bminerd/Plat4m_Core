@@ -230,12 +230,12 @@ const GpioPin::Id BoardPixhawkFmuV4::myGpioPinIdMap[] =
 //------------------------------------------------------------------------------
 BoardPixhawkFmuV4::BoardPixhawkFmuV4() :
     Board(),
-    myUserButton(0),
-	myUserButtonEnableLine(0),
-	myGpioPins(),
-	myI2c(0),
-	myProcessor(0),
-	myUart(0)
+    myGpioPins(),
+    myI2c(0),
+    myProcessor(0),
+    myPwmOutputs(),
+    mySpis(),
+    myUarts()
 {
 }
 
@@ -314,6 +314,51 @@ I2cSTM32F4xx& BoardPixhawkFmuV4::getI2c()
     }
 
     return (*myI2c);
+}
+
+//------------------------------------------------------------------------------
+SpiSTM32F4xx& BoardPixhawkFmuV4::getSpi(const SpiId spiId)
+{
+	if (isNullPointer(mySpis[spiId]))
+	{
+		switch (spiId)
+		{
+			case SPI_ID_1:
+			{
+				GpioPinSTM32F4xx& spi1Sck = getGpioPin(GPIO_PIN_ID_MPU9250_SCK);
+				GpioPinSTM32F4xx& spi1Miso =
+											getGpioPin(GPIO_PIN_ID_MPU9250_MISO);
+				GpioPinSTM32F4xx& spi1Mosi =
+											getGpioPin(GPIO_PIN_ID_MPU9250_MOSI);
+
+				mySpis[spiId] = new SpiSTM32F4xx(SpiSTM32F4xx::ID_1,
+													spi1Sck,
+													spi1Miso,
+													spi1Mosi);
+
+				break;
+			}
+			case SPI_ID_2:
+			{
+				GpioPinSTM32F4xx& spi2Sck = getGpioPin(GPIO_PIN_ID_FRAM_SCK);
+				GpioPinSTM32F4xx& spi2Miso = getGpioPin(GPIO_PIN_ID_FRAM_MISO);
+				GpioPinSTM32F4xx& spi2Mosi = getGpioPin(GPIO_PIN_ID_FRAM_MOSI);
+
+				mySpis[spiId] = new SpiSTM32F4xx(SpiSTM32F4xx::ID_2,
+													spi2Sck,
+													spi2Miso,
+													spi2Mosi);
+
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}
+	}
+
+	return (*mySpis[spiId]);
 }
 
 //------------------------------------------------------------------------------
