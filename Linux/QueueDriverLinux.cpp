@@ -54,7 +54,7 @@ using Plat4m::QueueDriverLinux;
 struct Message
 {
     long mtype;     /* Message type. */
-    ptr_t value;  /* Message text. */
+    uint8_t value;  /* Message text. */
 };
 
 //------------------------------------------------------------------------------
