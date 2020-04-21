@@ -43,9 +43,11 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <iostream>
 #include <unistd.h>
 
 #include <Plat4m_Core/Linux/ThreadLinux.h>
+#include <Plat4m_Core/System.h>
 
 using Plat4m::ThreadLinux;
 using Plat4m::Module;
@@ -59,7 +61,8 @@ ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
     Thread(callback, periodMs),
 	myThreadHandle(0),
 	myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
-	myConditionHandle(PTHREAD_COND_INITIALIZER)
+	myConditionHandle(PTHREAD_COND_INITIALIZER),
+	myNextCallTimeMs(0)
 {
     int returnValue = pthread_create(&myThreadHandle,
 					 				 NULL,
@@ -73,8 +76,6 @@ ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
             // Lock up, unable to create thread
         }
     }
-
-    driverSetEnabled(false);
 }
 
 //------------------------------------------------------------------------------
@@ -94,20 +95,26 @@ ThreadLinux::~ThreadLinux()
 void* ThreadLinux::threadCallback(void* arg)
 {
 	ThreadLinux* thread = static_cast<ThreadLinux*>(arg);
+	thread->myNextCallTimeMs = thread->getPeriodMs();
 
 	while (true) // Loop forever
 	{
 		TimeMs periodMs = thread->getPeriodMs();
+		thread->myNextCallTimeMs;
 
 		if (periodMs != 0)
 		{
+			TimeMs sleepTimeMs = thread->myNextCallTimeMs - System::getTimeMs();
+
 			struct timespec timeSpec;
-			timeSpec.tv_sec = periodMs / 1000;
-			timeSpec.tv_nsec = (periodMs % 1000) * 1000000;
+			timeSpec.tv_sec = sleepTimeMs / 1000;
+			timeSpec.tv_nsec = (sleepTimeMs % 1000) * 1000000;
 			nanosleep(&timeSpec, NULL);
 		}
 
 		thread->run();
+
+		thread->myNextCallTimeMs += periodMs;
 	}
 
 	return 0;

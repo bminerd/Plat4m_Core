@@ -51,6 +51,12 @@
 
 using Plat4m::QueueDriverLinux;
 
+struct Message
+{
+    long mtype;     /* Message type. */
+    ptr_t value;  /* Message text. */
+};
+
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
@@ -92,7 +98,11 @@ uint32_t QueueDriverLinux::driverGetSizeFast()
 //------------------------------------------------------------------------------
 bool QueueDriverLinux::driverEnqueue(const void* value)
 {
-    return msgsnd(myMessageQueueId, value, myValueSizeBytes, 0);
+    Message message;
+    message.mtype = 1;
+    message.value = *(uint8_t*) value;
+
+    return msgsnd(myMessageQueueId, &message, sizeof(message), 1);
 }
 
 //------------------------------------------------------------------------------
@@ -104,7 +114,13 @@ bool QueueDriverLinux::driverEnqueueFast(const void* value)
 //-----------------------------------------------------------------------------
 bool QueueDriverLinux::driverDequeue(void* value)
 {
-    return msgrcv(myMessageQueueId, value, myValueSizeBytes, 1, 0);
+    Message message;
+
+    msgrcv(myMessageQueueId, &message, sizeof(message), 1, 0);
+
+    *(uint8_t*) value = message.value;
+
+    return true;
 }
 
 //------------------------------------------------------------------------------

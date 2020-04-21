@@ -87,6 +87,7 @@ private:
     pthread_t myThreadHandle;
     pthread_mutex_t myMutexHandle;
     pthread_cond_t myConditionHandle;
+    TimeMs myNextCallTimeMs;
 
     //--------------------------------------------------------------------------
     // Private static methods

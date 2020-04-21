@@ -79,13 +79,25 @@ public:
 
     virtual ~SystemLinux();
 
+    //--------------------------------------------------------------------------
+    // Private inline methods
+    //--------------------------------------------------------------------------
+
+    static inline TimeMs getCurrentLinuxTimeMs();
+
+    static inline TimeUs getCurrentLinuxTimeUs();
+
 private:
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    timeval myFirstTimeVal;
+    timespec myFirstTimeSpec;
+
+    TimeMs myFirstTimeMs;
+
+    TimeUs myFirstTimeUs;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from System

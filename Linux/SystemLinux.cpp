@@ -65,9 +65,15 @@ using Plat4m::QueueDriver;
 //------------------------------------------------------------------------------
 SystemLinux::SystemLinux() :
     System(),
-    myFirstTimeVal()
+    myFirstTimeSpec()
 {
-    gettimeofday(&myFirstTimeVal, NULL);
+    clock_gettime(CLOCK_REALTIME, &myFirstTimeSpec);
+
+    myFirstTimeMs =
+            (myFirstTimeSpec.tv_sec * 1000 + myFirstTimeSpec.tv_nsec / 1000000);
+
+    myFirstTimeUs =
+            (myFirstTimeSpec.tv_sec * 1000000 + myFirstTimeSpec.tv_nsec / 1000);
 }
 
 //------------------------------------------------------------------------------
@@ -80,17 +86,35 @@ SystemLinux::~SystemLinux()
 }
 
 //------------------------------------------------------------------------------
+// Public static inline methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+inline Plat4m::TimeMs SystemLinux::getCurrentLinuxTimeMs()
+{
+    struct timespec timeSpec;
+    clock_gettime(CLOCK_REALTIME, &timeSpec);
+
+    return (timeSpec.tv_sec * 1000 + timeSpec.tv_nsec / 1000000);
+}
+
+//------------------------------------------------------------------------------
+inline Plat4m::TimeUs SystemLinux::getCurrentLinuxTimeUs()
+{
+    struct timespec timeSpec;
+    clock_gettime(CLOCK_REALTIME, &timeSpec);
+
+    return (timeSpec.tv_sec * 1000000 + timeSpec.tv_nsec / 1000);
+}
+
+//------------------------------------------------------------------------------
 // Private methods implemented from System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Plat4m::TimeUs SystemLinux::driverGetTimeUs()
 {
-    struct timeval timeVal;
-    gettimeofday(&timeVal, NULL);
-
-    Plat4m::TimeUs timeUs = (timeVal.tv_sec * 1000000 + timeVal.tv_usec) -
-                            (myFirstTimeVal.tv_sec * 1000000 + timeVal.tv_usec);
+    Plat4m::TimeUs timeUs = getCurrentLinuxTimeUs() - myFirstTimeUs;
 
     return timeUs;
 }
@@ -136,12 +160,7 @@ void SystemLinux::driverRun()
 //------------------------------------------------------------------------------
 Plat4m::TimeMs SystemLinux::driverGetTimeMs()
 {
-    struct timeval timeVal;
-    gettimeofday(&timeVal, NULL);
-
-    Plat4m::TimeMs timeMs = 
-                        (timeVal.tv_sec * 1000 + timeVal.tv_usec / 1000) -
-                        (myFirstTimeVal.tv_sec * 1000 + timeVal.tv_usec / 1000);
+    TimeMs timeMs = getCurrentLinuxTimeMs() - myFirstTimeMs;
 
     return timeMs;
 }
