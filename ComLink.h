@@ -148,13 +148,13 @@ private:
 
     uint32_t myCurrentComProtocolTimeoutTimeMs;
 
-    Thread& myDataParsingThread;
-
     WaitCondition& myWaitCondition;
 
     Mutex& myMutex;
 
     Queue<uint8_t>& myReceiveByteQueue;
+
+    Thread& myDataParsingThread;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Module
