@@ -43,6 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <iostream>
+
 #include <Plat4m_Core/ComLink.h>
 #include <Plat4m_Core/ComProtocol.h>
 #include <Plat4m_Core/System.h>
@@ -88,12 +90,12 @@ ComLink::ComLink(ByteArray& transmitByteArray,
     myComProtocolList(),
     myCurrentComProtocol(0),
     myCurrentComProtocolTimeoutTimeMs(0),
-    myDataParsingThread(System::createThread(
-                          createCallback(this,
-                                         &ComLink::dataParsingThreadCallback))),
     myWaitCondition(System::createWaitCondition(myDataParsingThread)),
     myMutex(System::createMutex(myDataParsingThread)),
-	myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread))
+	myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread)),
+    myDataParsingThread(System::createThread(
+                           createCallback(this,
+                                          &ComLink::dataParsingThreadCallback)))
 {
     myDataParsingThread.setPriority(3);
 
