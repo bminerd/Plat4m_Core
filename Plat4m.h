@@ -286,6 +286,13 @@ namespace Plat4m
     }
 
     //--------------------------------------------------------------------------
+    template <typename TValue, typename TMask>
+    inline TValue maskBits(const TValue& value, const TMask& bitMask)
+    {
+        return (value & bitMask);
+    }
+
+    //--------------------------------------------------------------------------
     template <typename TValue>
     inline bool equals(const TValue value1, const TValue value2)
     {
