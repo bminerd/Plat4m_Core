@@ -19,3 +19,4 @@ Released: XXXX-XX-XX
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 - `[CRITICAL BUG FIX]` Fixed ComLink initialization order to prevent segfault on Linux. [Resolves 13]. [Merge !15].
 - `[NEW FEATURE]` Added maskBits() inline function to Plat4m.h. [Resolves 17]. [Merge !18].
+- `[BUG FIX]` Made all FreeRTOS paths relative. [Resolves 19]. [Merge !20].
