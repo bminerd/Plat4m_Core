@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <MutexFreeRtos.h>
+#include <Plat4m_Core/SystemFreeRtos/MutexFreeRtos.h>
 
 using Plat4m::MutexFreeRtos;
 using Plat4m::Mutex;
