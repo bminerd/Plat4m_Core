@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <FreeRTOS.h>
-#include <semphr.h>
+#include <FreeRTOS/Source/Include/FreeRTOS.h>
+#include <FreeRTOS/Source/Include/semphr.h>
 
 #include <Plat4m_Core/Mutex.h>
 
