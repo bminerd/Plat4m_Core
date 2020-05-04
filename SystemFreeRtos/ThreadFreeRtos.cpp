@@ -43,7 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/SystemFreeRTOS/ThreadFreeRTOS.h>
+#include <Plat4m_Core/SystemFreeRtos/ThreadFreeRtos.h>
 #include <Plat4m_Core/System.h>
 
 using Plat4m::ThreadFreeRtos;
