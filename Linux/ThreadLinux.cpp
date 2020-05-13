@@ -108,7 +108,6 @@ void* ThreadLinux::threadCallback(void* arg)
 		}
 
 		TimeMs periodMs = thread->getPeriodMs();
-		thread->myNextCallTimeMs;
 
 		if (periodMs != 0)
 		{
