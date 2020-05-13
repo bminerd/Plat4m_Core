@@ -99,6 +99,14 @@ void* ThreadLinux::threadCallback(void* arg)
 
 	while (true) // Loop forever
 	{
+		if (!(thread->isEnabled()))
+		{
+			pthread_mutex_lock(&(thread->myMutexHandle));
+			pthread_cond_wait(&(thread->myConditionHandle),
+								&(thread->myMutexHandle));
+			pthread_mutex_unlock(&(thread->myMutexHandle));
+		}
+
 		TimeMs periodMs = thread->getPeriodMs();
 		thread->myNextCallTimeMs;
 
@@ -130,11 +138,6 @@ Module::Error ThreadLinux::driverSetEnabled(const bool enabled)
 	if (enabled)
 	{
 		pthread_cond_signal(&myConditionHandle);
-	}
-	else
-	{
-		pthread_mutex_lock(&myMutexHandle);
-		pthread_cond_wait(&myConditionHandle, &myMutexHandle);
 	}
 
 	return Module::Error(Module::ERROR_CODE_NONE);
