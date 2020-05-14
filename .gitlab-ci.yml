@@ -1,0 +1,29 @@
+# /.gitlab-ci.yml
+
+image: docker:19.03.1
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+  GIT_SUBMODULE_STRATEGY: recursive
+
+services:
+  - name: docker:19.03.1-dind
+
+stages:
+  - build
+  - test
+
+build:Test_Apps:
+  stage: build
+  script:
+  - sh docker_build_all.sh
+  artifacts:
+    paths:
+      - UnitTest/Unit_Test_Linux_App/Build/
+  
+test:Test_Apps:
+  stage: test
+  script:
+  - sh docker_test_all.sh
+  dependencies:
+    - build:Test_Apps
