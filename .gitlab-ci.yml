@@ -16,7 +16,7 @@ stages:
 build:Test_Apps:
   stage: build
   script:
-  - sh build_all.sh
+  - sh docker_build_all.sh
   artifacts:
     paths:
       - UnitTest/Unit_Test_Linux_App/Build/
@@ -24,6 +24,6 @@ build:Test_Apps:
 test:Test_Apps:
   stage: test
   script:
-  - sh test_all.sh
+  - sh docker_test_all.sh
   dependencies:
     - build:Test_Apps
