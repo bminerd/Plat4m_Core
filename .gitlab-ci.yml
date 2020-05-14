@@ -16,8 +16,8 @@ stages:
 
 build:Test_Apps:
   stage: build
-  tags:
-    - docker
+  # tags:
+  #   - docker
   script:
   - sh build_all.sh
   artifacts:
@@ -26,8 +26,8 @@ build:Test_Apps:
   
 test:Test_Apps:
   stage: test
-  tags:
-    - docker
+  # tags:
+  #   - docker
   script:
   - sh test_all.sh
   dependencies:
