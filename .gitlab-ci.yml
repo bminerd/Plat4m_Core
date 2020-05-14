@@ -3,8 +3,7 @@
 image: docker:19.03.1
 
 variables:
-  DOCKER_HOST: tcp://localhost:2375
-  DOCKER_TLS_CERTDIR: ""
+  DOCKER_TLS_CERTDIR: "/certs"
   GIT_SUBMODULE_STRATEGY: recursive
 
 services:
@@ -16,8 +15,6 @@ stages:
 
 build:Test_Apps:
   stage: build
-  # tags:
-  #   - docker
   script:
   - sh build_all.sh
   artifacts:
@@ -26,8 +23,6 @@ build:Test_Apps:
   
 test:Test_Apps:
   stage: test
-  # tags:
-  #   - docker
   script:
   - sh test_all.sh
   dependencies:
