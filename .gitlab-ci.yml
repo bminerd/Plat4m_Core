@@ -1,0 +1,34 @@
+# /.gitlab-ci.yml
+
+image: docker:19.03.1
+
+variables:
+  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_TLS_CERTDIR: ""
+  GIT_SUBMODULE_STRATEGY: recursive
+
+services:
+  - name: docker:19.03.1-dind
+
+stages:
+  - build
+  - test
+
+build:Test_Apps:
+  stage: build
+  tags:
+    - docker
+  script:
+  - sh build_all.sh
+  artifacts:
+    paths:
+      - UnitTest/Unit_Test_Linux_App/Build/
+  
+test:Test_Apps:
+  stage: test
+  tags:
+    - docker
+  script:
+  - sh test_all.sh
+  dependencies:
+    - build:Test_Apps

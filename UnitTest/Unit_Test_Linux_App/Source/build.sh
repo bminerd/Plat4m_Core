@@ -8,8 +8,6 @@ fi
 
 cd Build
 
-cmake ../Source/ -G"Eclipse CDT4 - Unix Makefiles"
+cmake ../Source/
 
 make
-
-ctest ../Source/ --verbose
