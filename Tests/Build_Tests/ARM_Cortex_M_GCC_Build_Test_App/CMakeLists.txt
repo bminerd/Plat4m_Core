@@ -29,7 +29,7 @@ include_directories(${PLAT4M_CMAKE_DIR}/../)
 
 find_source_files(${PROJECT_SOURCE_DIR})
 find_source_files(${PLAT4M_CORE_DIR})
-#find_source_files(${PLAT4M_CORE_DIR}/AccelAdis16209)
+find_source_files(${PLAT4M_CORE_DIR}/AccelAdis16209)
 find_source_files(${PLAT4M_CORE_DIR}/AllocationMemoryLite)
 find_source_files(${PLAT4M_CORE_DIR}/BoardStevalMKI160V1)
 find_source_files(${PLAT4M_CORE_DIR}/BoardXNucleoIKS01A1)
