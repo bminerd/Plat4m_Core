@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 bash ./git_clone_dependencies.sh
 
 pushd .
