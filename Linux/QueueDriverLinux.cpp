@@ -65,9 +65,15 @@ struct Message
 QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
     QueueDriver(),
     myValueSizeBytes(valueSizeBytes),
-    myKey(ftok("progfile", 65)),
-    myMessageQueueId(msgget(myKey, 0666 | IPC_CREAT))
+    myMessageQueueId(msgget(IPC_PRIVATE, 0666 | IPC_CREAT | IPC_EXCL))
 {
+    if (myMessageQueueId < 0)
+    {
+        while (true)
+        {
+            // Lock up
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -86,13 +92,17 @@ QueueDriverLinux::~QueueDriverLinux()
 //------------------------------------------------------------------------------
 uint32_t QueueDriverLinux::driverGetSize()
 {
-    return 0;
+    struct msqid_ds messageQueueInfo;
+
+    int returnValue = msgctl(myMessageQueueId, IPC_STAT, &messageQueueInfo);
+
+    return (messageQueueInfo.msg_qnum);
 }
 
 //------------------------------------------------------------------------------
 uint32_t QueueDriverLinux::driverGetSizeFast()
 {
-    return 0;
+    return driverGetSize();
 }
 
 //------------------------------------------------------------------------------
