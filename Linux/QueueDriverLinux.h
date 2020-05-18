@@ -105,9 +105,7 @@ private:
     //--------------------------------------------------------------------------
 
     const uint32_t myValueSizeBytes;
-
-    key_t myKey;
-
+    
 	int myMessageQueueId;
 };
 

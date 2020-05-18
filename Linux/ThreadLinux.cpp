@@ -111,7 +111,7 @@ void* ThreadLinux::threadCallback(void* arg)
 
 		if (periodMs != 0)
 		{
-			TimeMs sleepTimeMs = thread->myNextCallTimeMs - System::getTimeMs();
+			TimeMs sleepTimeMs = thread->getPeriodMs();
 
 			struct timespec timeSpec;
 			timeSpec.tv_sec = sleepTimeMs / 1000;
