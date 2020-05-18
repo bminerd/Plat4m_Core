@@ -46,6 +46,8 @@
 #include <unistd.h>
 #include <sys/time.h>
 
+#include <pthread.h>
+
 #include <Plat4m_Core/Linux/SystemLinux.h>
 #include <Plat4m_Core/Linux/ThreadLinux.h>
 #include <Plat4m_Core/Linux/MutexLinux.h>
@@ -153,7 +155,7 @@ void SystemLinux::driverRun()
 {
     while (true)
     {
-        // Do nothing
+        driverDelayTimeMs(100);
     }
 }
 
