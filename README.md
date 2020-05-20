@@ -38,4 +38,7 @@ Plat4m ("platform") is a cross-platform C++ application framework designed for r
 
 ## Design Documents
 
-- [Detailed Design](Documentation/Detailed_Design.md)
+- [High-Level Design](Documentation/High_Level_Design.md)
+- [System Module Design](Documentation/System_Module_Design.md)
+- [Thread Module Design](Documentation/Thread_Module_Design.md)
+- [ComInterface Module Design](Documentation/ComInterface_Module_Design.md)
