@@ -41,7 +41,7 @@
 
 // Include all system-agnostic interfaces and drivers
 
-#include <Plat4m_Core/Tests/Build_Tests/interfaceIncludes.h>
+#include <Test/Build_Tests/interfaceIncludes.h>
 
 // Include all Linux interfaces and drivers
 

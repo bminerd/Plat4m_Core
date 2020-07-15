@@ -1,6 +1,9 @@
 #! /bin/bash
 
-cd ..
+pushd .
+
+# Switch current/working directory to here
+cd "${0%/*}"
 
 if [ ! -d "Build" ]; then
     mkdir Build
@@ -8,6 +11,8 @@ fi
 
 cd Build
 
-cmake ../Source/
+cmake ..
 
-make
+make -j8
+
+popd

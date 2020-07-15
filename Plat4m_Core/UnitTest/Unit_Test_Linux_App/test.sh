@@ -1,5 +1,12 @@
 #! /bin/bash
 
-cd ../Build
+pushd .
 
-ctest ../Source/ --verbose
+# Switch current/working directory to here
+cd "${0%/*}"
+
+cd Build
+
+ctest .. --verbose
+
+popd
