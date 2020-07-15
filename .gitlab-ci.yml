@@ -13,17 +13,27 @@ stages:
   - build
   - test
 
-build:Test_Apps:
+build:Linux_GCC_Build_Test_App:
   stage: build
   script:
-  - sh docker_build_all.sh
+  - sh docker_bash.sh Test/Build_Tests/Linux_GCC_Build_Test_App/build.sh
+
+build:ARM_Cortex_M_GCC_Build_Test_App:
+  stage: build
+  script:
+  - sh docker_bash.sh Test/Build_Tests/ARM_Cortex_M_GCC_Build_Test_App/build.sh
+
+build:Unit_Test_Linux_App:
+  stage: build
+  script:
+  - sh docker_bash.sh Plat4m_Core/UnitTest/Unit_Test_Linux_App/build.sh
   artifacts:
     paths:
-      - UnitTest/Unit_Test_Linux_App/Build/
+      - Plat4m_Core/UnitTest/Unit_Test_Linux_App/Build/
   
 test:Test_Apps:
   stage: test
   script:
-  - sh docker_test_all.sh
+  - sh docker_bash.sh Plat4m_Core/UnitTest/Unit_Test_Linux_App/test.sh
   dependencies:
-    - build:Test_Apps
+    - build:Unit_Test_Linux_App
