@@ -169,22 +169,30 @@ public:
     template <typename TData>
     Error read(Array<TData>& dataArray, const uint32_t offset = 0)
     {
-        Memory<TAddress>::Error error = myMemory->read(myAddress, dataArray);
+        typename Memory<TAddress>::Error error =
+                                           myMemory->read(myAddress, dataArray);
+
+        return Error(ERROR_CODE_NONE);
     }
 
     //--------------------------------------------------------------------------
     template <typename TData>
     Error read(TData& data, const uint32_t offset = 0)
     {
-    	Memory<TAddress>::Error error = myMemory->read(myAddress, data);
-    }
+    	typename Memory<TAddress>::Error error =
+                                                myMemory->read(myAddress, data);
 
+        return Error(ERROR_CODE_NONE);
+    }
 
     //--------------------------------------------------------------------------
     template <typename TData>
     Error write(const TData& data, const uint32_t offset = 0)
     {
-    	Memory<TAddress>::Error error = myMemory->write(myAddress, data);
+    	typename Memory<TAddress>::Error error =
+                                               myMemory->write(myAddress, data);
+
+        return Error(ERROR_CODE_NONE);
     }
     
 private:

@@ -27,3 +27,4 @@ Released: XXXX-XX-XX
 - `[BUG FIX]` Fixed QueueDriverLinux message queue keys to be unique. Added delay to SystemLinux idle thread. [Resolves 30]. [Merge !31].
 - `[REMOVED]` Removed legacy files that are no longer maintained. [Resolves #34]. [Merge !35].
 - `[BUG FIX]` Fixed inclue paths in AsciiMessageHandlerTemplate. [Resolves 36]. [Merge !37].
+- `[BUG FIX]` Fixed template instantiation syntax in MemoryRegion. [Resolves 38]. [Merge !39].
