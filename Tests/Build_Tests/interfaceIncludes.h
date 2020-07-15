@@ -103,7 +103,6 @@
 #include <Plat4m_Core/Mutex.h>
 #include <Plat4m_Core/MutexLock.h>
 #include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/Point.h>
 #include <Plat4m_Core/PowerSupply.h>
 #include <Plat4m_Core/Processor.h>
 #include <Plat4m_Core/PwmOutput.h>
@@ -129,12 +128,9 @@
 
 // Include all platform-agnostic drivers
 
-#include <Plat4m_Core/AccelAdis16209/AccelAdis16209.h>
 #include <Plat4m_Core/AllocationMemoryLite/AllocationMemoryLite.h>
 #include <Plat4m_Core/BoardStevalMKI160V1/BoardStevalMKI160V1.h>
 #include <Plat4m_Core/BoardXNucleoIKS01A1/BoardXNucleoIKS01A1.h>
-#include <Plat4m_Core/CompassHmc6343/CompassHmc6343.h>
-#include <Plat4m_Core/ComProtocolNmea/ComProtocolNmea.h>
 #include <Plat4m_Core/ComProtocolPlat4m/AsciiMessage.h>
 #include <Plat4m_Core/ComProtocolPlat4m/AsciiMessageHandler.h>
 #include <Plat4m_Core/ComProtocolPlat4m/AsciiMessageHandlerTemplate.h>
@@ -151,13 +147,6 @@
 #include <Plat4m_Core/ComProtocolPlat4m/Message.h>
 #include <Plat4m_Core/ComProtocolPlat4m/Packet.h>
 #include <Plat4m_Core/ComProtocolPlat4m/PacketFrameHandler.h>
-#include <Plat4m_Core/CurrentSensorAnalogInput/CurrentSensorAnalogInput.h>
-#include <Plat4m_Core/DacIcLtc2637/DacIcLtc2637.h>
-#include <Plat4m_Core/DacIcLtc2637/DacLtc2637.h>
-#include <Plat4m_Core/DigitalFilter/DigitalFilterFir.h>
-#include <Plat4m_Core/DisplayOsd9616/DisplayOsd9616.h>
-#include <Plat4m_Core/DisplaySTLCD/DisplaySTLCD.h>
-#include <Plat4m_Core/DisplayUsmpP23302/DisplayUsmpP23302.h>
 #include <Plat4m_Core/ImuLSM6DS0/ImuLSM6DS0.h>
 #include <Plat4m_Core/ImuLSM6DS3/ImuLSM6DS3.h>
 #include <Plat4m_Core/ImuServer/ImuClient.h>
@@ -195,54 +184,20 @@
 #include <Plat4m_Core/ImuServer/ImuSetConfigResponseAsciiMessage.h>
 #include <Plat4m_Core/ImuServer/ImuSetConfigResponseBinaryMessage.h>
 #include <Plat4m_Core/ImuServer/ImuSetConfigResponseMessage.h>
-#include <Plat4m_Core/ImuServer/LowPassFilter_IRR.h>
-#include <Plat4m_Core/InsImu/InsImu.h>
-#include <Plat4m_Core/InsServer/InsClient.h>
-#include <Plat4m_Core/InsServer/InsMeasurementBinaryMessage.h>
-#include <Plat4m_Core/InsServer/InsMeasurementMessage.h>
-#include <Plat4m_Core/InsServer/InsServer.h>
-#include <Plat4m_Core/InsServer/InsServerBinaryMessages.h>
-#include <Plat4m_Core/InsServer/InsServerGetConfigBinaryMessage.h>
-#include <Plat4m_Core/InsServer/InsServerGetConfigMessage.h>
-#include <Plat4m_Core/InsServer/InsServerGetConfigResponseBinaryMessage.h>
-#include <Plat4m_Core/InsServer/InsServerGetConfigResponseMessage.h>
-#include <Plat4m_Core/InsServer/InsServerSetConfigBinaryMessage.h>
-#include <Plat4m_Core/InsServer/InsServerSetConfigMessage.h>
-#include <Plat4m_Core/InsServer/InsServerSetConfigResponseBinaryMessage.h>
-#include <Plat4m_Core/InsServer/InsServerSetConfigResponseMessage.h>
-#include <Plat4m_Core/IoExpanderMcp23008/IoExpanderMcp23008.h>
-#include <Plat4m_Core/IoExpanderMcp23008/GpioPinIoExpanderMcp23008.h>
 // Don't include Linux/*
-#include <Plat4m_Core/RotaryEncoderDigitalHall/RotaryEncoderDigitalHall.h>
 #include <Plat4m_Core/SpiDeviceSt/SpiDeviceSt.h>
-#include <Plat4m_Core/Ssd1307/Spi4WireDevice.h>
-#include <Plat4m_Core/Ssd1307/Ssd1307.h>
-#include <Plat4m_Core/Ssd1307/Ssd1307I2c.h>
-#include <Plat4m_Core/Ssd1307/Ssd1307Spi4Wire.h>
 // Don't include STM32F4xx/*
-// Don't include STM32F10x/*
 // Don't include STM32F30x/*
 // Don't include SystemFreeRtos/*
 // Don't include SystemLite/*
 // Don't include SystemWindows/*
 // Don't include UnitTest/Unit_Test_Linux_App/*
-#include <Plat4m_Core/UnitTest/AccelUnitTest.h>
-#include <Plat4m_Core/UnitTest/AdcUnitTest.h>
 #include <Plat4m_Core/UnitTest/ApplicationUnitTestApp.h>
 #include <Plat4m_Core/UnitTest/ArrayNUnitTest.h>
 #include <Plat4m_Core/UnitTest/ArrayUnitTest.h>
 #include <Plat4m_Core/UnitTest/BufferUnitTest.h>
 #include <Plat4m_Core/UnitTest/ByteArrayUnitTest.h>
-#include <Plat4m_Core/UnitTest/ExternalInterruptTest.h>
-#include <Plat4m_Core/UnitTest/GpioPinTest.h>
-#include <Plat4m_Core/UnitTest/GpioPinUnitTest.h>
 #include <Plat4m_Core/UnitTest/ModuleUnitTest.h>
-#include <Plat4m_Core/UnitTest/RemoteUnitTestRunner.h>
 #include <Plat4m_Core/UnitTest/UnitTest.h>
-#include <Plat4m_Core/UnitTest/UnitTestRunAsciiMessage.h>
-#include <Plat4m_Core/UnitTest/UnitTestRunMessage.h>
-#include <Plat4m_Core/UnitTest/UnitTestRunner.h>
-#include <Plat4m_Core/UnitTest/UnitTestRunResultAsciiMessage.h>
-#include <Plat4m_Core/UnitTest/UnitTestRunResultMessage.h>
 
 #endif // PLAT4M_INTERFACE_INCLUDES_H

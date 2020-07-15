@@ -49,7 +49,6 @@
 #include <Plat4m_Core/Linux/ProcessorLinux.h>
 #include <Plat4m_Core/Linux/MutexLinux.h>
 #include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/SerialPortLinux.h>
 #include <Plat4m_Core/Linux/ThreadLinux.h>
 #include <Plat4m_Core/Linux/WaitConditionLinux.h>
 

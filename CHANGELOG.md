@@ -28,3 +28,4 @@ Released: XXXX-XX-XX
 - `[REMOVED]` Removed legacy files that are no longer maintained. [Resolves #34]. [Merge !35].
 - `[BUG FIX]` Fixed inclue paths in AsciiMessageHandlerTemplate. [Resolves 36]. [Merge !37].
 - `[BUG FIX]` Fixed template instantiation syntax in MemoryRegion. [Resolves 38]. [Merge !39].
+- `[IMPROVEMENT]` Updated build tests to not include removed legacy code. [Resolves 40]. [Merge !41].
