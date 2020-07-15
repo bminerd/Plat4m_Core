@@ -46,12 +46,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m.h>
-#include <ByteArray.h>
-#include <Callback.h>
-#include <AsciiMessage.h>
-#include <AsciiMessageHandler.h>
-#include <CallbackMethod2Parameters.h>
+#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/ComProtocolPlat4m/AsciiMessage.h>
+#include <Plat4m_Core/ComProtocolPlat4m/AsciiMessageHandler.h>
+#include <Plat4m_Core/CallbackMethod2Parameters.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
