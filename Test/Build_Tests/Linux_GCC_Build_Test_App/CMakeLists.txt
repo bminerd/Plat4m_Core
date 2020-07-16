@@ -1,0 +1,40 @@
+cmake_minimum_required (VERSION 2.6)
+project (Linux_GCC_Build_Test_App C CXX ASM)
+
+set(PLAT4M_CORE_DIR ${PROJECT_SOURCE_DIR}/../../../Plat4m_Core)
+set(PLAT4M_MATH_DIR ${PROJECT_SOURCE_DIR}/../../../Dependencies/Plat4m_Math)
+set(PLAT4M_CONTROLS_DIR ${PROJECT_SOURCE_DIR}/../../../Dependencies/Plat4m_Controls)
+set(PLAT4M_CMAKE_DIR ${PROJECT_SOURCE_DIR}/../../../Dependencies/Plat4m_CMake)
+set(EIGEN_DIR ${PROJECT_SOURCE_DIR}/../../../Dependencies/Eigen)
+
+include(${PLAT4M_CMAKE_DIR}/Plat4mMacros.cmake)
+
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -pthread -g3")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -pthread -g3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -g3")
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread -g3")
+
+include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${PLAT4M_CORE_DIR})
+include_directories(${PLAT4M_CORE_DIR}/../)
+include_directories(${PLAT4M_MATH_DIR}/../)
+include_directories(${PLAT4M_CONTROLS_DIR}/../)
+include_directories(${PLAT4M_CMAKE_DIR}/../)
+include_directories(${EIGEN_DIR})
+
+find_source_files(${PROJECT_SOURCE_DIR})
+find_source_files(${PLAT4M_CORE_DIR})
+find_source_files(${PLAT4M_CORE_DIR}/AllocationMemoryLite)
+find_source_files(${PLAT4M_CORE_DIR}/BoardStevalMKI160V1)
+find_source_files(${PLAT4M_CORE_DIR}/BoardXNucleoIKS01A1)
+find_source_files(${PLAT4M_CORE_DIR}/ComProtocolPlat4m)
+find_source_files(${PLAT4M_CORE_DIR}/ImuLSM6DS0)
+find_source_files(${PLAT4M_CORE_DIR}/ImuLSM6DS3)
+find_source_files(${PLAT4M_CORE_DIR}/ImuServer)
+find_source_files(${PLAT4M_CORE_DIR}/InsImu)
+find_source_files(${PLAT4M_CORE_DIR}/Linux)
+find_source_files(${PLAT4M_CORE_DIR}/SpiDeviceSt)
+combine_all_files()
+
+add_executable(Linux_GCC_Build_Test_App ${files})
