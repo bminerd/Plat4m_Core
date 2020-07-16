@@ -30,3 +30,4 @@ Released: XXXX-XX-XX
 - `[BUG FIX]` Fixed template instantiation syntax in MemoryRegion. [Resolves 38]. [Merge !39].
 - `[IMPROVEMENT]` Updated build tests to not include removed legacy code. [Resolves 40]. [Merge !41].
 - `[IMPROVEMENT]` Updated folder structure to improve readability and organization. Split out CI builds. [Resolves 42]. [Merge !43].
+- `[IMPROVEMENT]` Removed unused CI and build scripts. [Resolves 45]. [Merge !46].
