@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (Unit_Test_Linux_App C CXX ASM)
 
-set(PLAT4M_CORE_DIR ${PROJECT_SOURCE_DIR}/../../../)
+set(PLAT4M_CORE_DIR ${PROJECT_SOURCE_DIR}/../../../Plat4m_Core)
 
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -pthread")
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -pthread")
