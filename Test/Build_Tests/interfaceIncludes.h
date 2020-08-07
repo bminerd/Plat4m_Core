@@ -118,6 +118,9 @@
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/Thread.h>
 #include <Plat4m_Core/Timer.h>
+#include <Plat4m_Core/Topic.h>
+#include <Plat4m_Core/TopicSubscriber.h>
+#include <Plat4m_Core/TopicSubscriberThread.h>
 #include <Plat4m_Core/Uart.h>
 #include <Plat4m_Core/Ui.h>
 #include <Plat4m_Core/UiAction.h>
