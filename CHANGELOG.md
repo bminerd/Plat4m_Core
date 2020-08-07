@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
+- `[IMPROVEMENT]` Updated QueueDriverLinux implementation to handle any data type. [Resolves 54]. [Merge !59].
 
 ### 2.0.0
 
