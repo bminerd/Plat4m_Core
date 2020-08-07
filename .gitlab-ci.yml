@@ -15,16 +15,22 @@ stages:
 
 build:Linux_GCC_Build_Test_App:
   stage: build
+  tags:
+    - docker
   script:
   - sh docker_bash.sh "./git_clone_dependencies.sh && Test/Build_Tests/Linux_GCC_Build_Test_App/build.sh"
 
 build:ARM_Cortex_M_GCC_Build_Test_App:
   stage: build
+  tags:
+    - docker
   script:
   - sh docker_bash.sh "./git_clone_dependencies.sh && Test/Build_Tests/ARM_Cortex_M_GCC_Build_Test_App/build.sh"
 
 build:Unit_Test_Linux_App:
   stage: build
+  tags:
+    - docker
   script:
   - sh docker_bash.sh "./git_clone_dependencies.sh && Plat4m_Core/UnitTest/Unit_Test_Linux_App/build.sh"
   artifacts:
@@ -33,6 +39,8 @@ build:Unit_Test_Linux_App:
 
 build:Acceptance_Test_Linux_App:
   stage: build
+  tags:
+    - docker
   script:
   - sh docker_bash.sh "./git_clone_dependencies.sh && Test/Acceptance_Tests/Acceptance_Test_Linux_App/build.sh"
   artifacts:
@@ -41,6 +49,8 @@ build:Acceptance_Test_Linux_App:
   
 test:Unit_Test_Linux_App:
   stage: test
+  tags:
+    - docker
   script:
   - sh docker_bash.sh Plat4m_Core/UnitTest/Unit_Test_Linux_App/test.sh
   dependencies:
@@ -48,6 +58,8 @@ test:Unit_Test_Linux_App:
 
 test:Acceptance_Test_Linux_App:
   stage: test
+  tags:
+    - docker
   script:
   - sh docker_bash.sh Test/Acceptance_Tests/Acceptance_Test_Linux_App/test.sh
   dependencies:
