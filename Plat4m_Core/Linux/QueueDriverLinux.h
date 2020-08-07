@@ -101,12 +101,36 @@ public:
 private:
 
     //--------------------------------------------------------------------------
+    // Private types
+    //--------------------------------------------------------------------------
+
+    enum MessageType : long
+    {
+        MESSAGE_TYPE_DATA = 1,
+        MESSAGE_TYPE_FLUSH
+    };
+
+    struct Message
+    {
+        MessageType messageType;
+        void* value;
+    };
+
+    //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
     const uint32_t myValueSizeBytes;
     
 	int myMessageQueueId;
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    bool messageSend(const Message& message);
+
+    bool messageReceive(Message& message);
 };
 
 }; // namespace Plat4m

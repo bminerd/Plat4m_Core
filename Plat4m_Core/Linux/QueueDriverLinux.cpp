@@ -43,6 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstring>
+
 #include <sys/ipc.h>
 #include <sys/msg.h>
 
@@ -50,12 +52,6 @@
 #include <Plat4m_Core/Linux/ThreadLinux.h>
 
 using Plat4m::QueueDriverLinux;
-
-struct Message
-{
-    long mtype;     /* Message type. */
-    uint8_t value;  /* Message text. */
-};
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -109,10 +105,10 @@ uint32_t QueueDriverLinux::driverGetSizeFast()
 bool QueueDriverLinux::driverEnqueue(const void* value)
 {
     Message message;
-    message.mtype = 1;
-    message.value = *(uint8_t*) value;
+    message.messageType = MESSAGE_TYPE_DATA;
+    message.value       = (void*) value;
 
-    return msgsnd(myMessageQueueId, &message, sizeof(message), 1);
+    return messageSend(message);
 }
 
 //------------------------------------------------------------------------------
@@ -125,12 +121,9 @@ bool QueueDriverLinux::driverEnqueueFast(const void* value)
 bool QueueDriverLinux::driverDequeue(void* value)
 {
     Message message;
+    message.value = value;
 
-    msgrcv(myMessageQueueId, &message, sizeof(message), 1, 0);
-
-    *(uint8_t*) value = message.value;
-
-    return true;
+    return messageReceive(message);
 }
 
 //------------------------------------------------------------------------------
@@ -142,5 +135,57 @@ bool QueueDriverLinux::driverDequeueFast(void* value)
 //------------------------------------------------------------------------------
 void QueueDriverLinux::driverClear()
 {
-    // Read out all messages and dump
+    Message message;
+    message.messageType = MESSAGE_TYPE_FLUSH;
+    message.value       = 0;
+
+    messageSend(message);
+}
+
+//------------------------------------------------------------------------------
+// Private methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+bool QueueDriverLinux::messageSend(const Message& message)
+{
+    uint8_t messageBytes[sizeof(message.messageType) + myValueSizeBytes];
+    memset(messageBytes, 0, sizeof(messageBytes));
+
+    memcpy(&(messageBytes[0]),
+           &(message.messageType),
+           sizeof(message.messageType));
+
+    if (isValidPointer(message.value))
+    {
+        memcpy(&(messageBytes[sizeof(message.messageType)]),
+               message.value,
+               myValueSizeBytes);
+    }
+
+    return msgsnd(myMessageQueueId, messageBytes, myValueSizeBytes, 1);
+}
+
+//------------------------------------------------------------------------------
+bool QueueDriverLinux::messageReceive(Message& message)
+{
+    uint8_t messageBytes[sizeof(message.messageType) + myValueSizeBytes];
+    memset(messageBytes, 0, sizeof(messageBytes));
+
+    msgrcv(myMessageQueueId, messageBytes, myValueSizeBytes, 0, 0);
+
+    memcpy(&(message.messageType),
+           &(messageBytes[0]),
+           sizeof(message.messageType));
+
+    if (message.messageType == MESSAGE_TYPE_FLUSH)
+    {
+        return false;
+    }
+
+    memcpy(message.value,
+           &(messageBytes[sizeof(message.messageType)]),
+           myValueSizeBytes);
+
+    return true;
 }
