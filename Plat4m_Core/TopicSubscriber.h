@@ -47,6 +47,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/CallbackMethodParameter.h>
 #include <Plat4m_Core/Topic.h>
 
 //------------------------------------------------------------------------------
@@ -69,9 +70,9 @@ public:
     // Public types
     //--------------------------------------------------------------------------
 
-    enum ErrorCode
+    struct Config
     {
-        ERROR_CODE_NONE
+        uint32_t downsampleFactor;
     };
 
     //--------------------------------------------------------------------------
@@ -79,13 +80,34 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    TopicSubscriber(const uint32_t id,
-                    const Topic<SampleType>::SampleCallback& sampleCallback)
+    TopicSubscriber(
+                   const uint32_t id,
+                   const Config config,
+                   typename Topic<SampleType>::SampleCallback& sampleCallback) :
+        myConfig(),
+        mySampleCallback(sampleCallback),
+        myDownsampleCounter(1)
     {
-        Topic<SampleType>::subscribe(id,
-            Plat4m::createCallback(
-                                 this,
-                                 &TopicSubscriber<SampleType>::sampleCallback));
+        setConfig(config);
+
+        Topic<SampleType>::subscribe(
+            id,
+            createCallback(this, &TopicSubscriber::sampleCallback));
+    }
+
+    //--------------------------------------------------------------------------
+    TopicSubscriber(
+                   const uint32_t id,
+                   typename Topic<SampleType>::SampleCallback& sampleCallback) :
+        myConfig(),
+        mySampleCallback(sampleCallback),
+        myDownsampleCounter(1)
+    {
+        myConfig.downsampleFactor = 1;
+
+        Topic<SampleType>::subscribe(
+            id,
+            createCallback(this, &TopicSubscriber::sampleCallback));
     }
 
     //--------------------------------------------------------------------------
@@ -93,7 +115,7 @@ public:
     //--------------------------------------------------------------------------
     
     //--------------------------------------------------------------------------
-    virtual ~Topic()
+    virtual ~TopicSubscriber()
     {
     }
 
@@ -101,30 +123,46 @@ public:
     // Public methods
     //--------------------------------------------------------------------------
 
+    //--------------------------------------------------------------------------
+    void setConfig(const Config config)
+    {
+        myConfig = config;
+
+        if (myConfig.downsampleFactor == 0)
+        {
+            myConfig.downsampleFactor = 1;
+        }
+    }
+
 private:
-
-    //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-
-    static List< Topic<SampleType>* > myTopicList;
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    const uint32_t myId;
+    Config myConfig;
 
-    List<SampleCallback*> mySampleCallbackList;
+    typename Topic<SampleType>::SampleCallback& mySampleCallback;
+
+    uint32_t myDownsampleCounter;
 
     //--------------------------------------------------------------------------
     // Private methods
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    void sampleCallback(SampleType sample)
+    void sampleCallback(const SampleType sample)
     {
-        // Bounds checking
+        if (myDownsampleCounter >= myConfig.downsampleFactor)
+        {
+            mySampleCallback.call(sample);
+
+            myDownsampleCounter = 1;
+        }
+        else
+        {
+            myDownsampleCounter++;
+        }
     }
 };
 
