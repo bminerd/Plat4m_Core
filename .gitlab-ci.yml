@@ -30,10 +30,25 @@ build:Unit_Test_Linux_App:
   artifacts:
     paths:
       - Plat4m_Core/UnitTest/Unit_Test_Linux_App/Build/
+
+build:Acceptance_Test_Linux_App:
+  stage: build
+  script:
+  - sh docker_bash.sh "./git_clone_dependencies.sh && Test/Acceptance_Tests/Acceptance_Test_Linux_App/build.sh"
+  artifacts:
+    paths:
+      - Test/Acceptance_Tests/Acceptance_Test_Linux_App/Build/
   
-test:Test_Apps:
+test:Unit_Test_Linux_App:
   stage: test
   script:
   - sh docker_bash.sh Plat4m_Core/UnitTest/Unit_Test_Linux_App/test.sh
   dependencies:
     - build:Unit_Test_Linux_App
+
+test:Acceptance_Test_Linux_App:
+  stage: test
+  script:
+  - sh docker_bash.sh Test/Acceptance_Tests/Acceptance_Test_Linux_App/test.sh
+  dependencies:
+    - build:Acceptance_Test_Linux_App
