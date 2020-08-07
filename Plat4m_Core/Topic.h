@@ -60,7 +60,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template<typename SampleType>
+template <typename SampleType>
 class Topic
 {
 public:
@@ -81,16 +81,15 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    static void subscribe(const uint32_t& id,
-                          const SampleCallback& sampleCallback)
+    static void subscribe(const uint32_t id, SampleCallback& sampleCallback)
     {
-        List< Topic<SampleType>* >::Iterator iterator = myTopicList.iterator();
+        typename List<Topic*>::Iterator iterator = myTopicList.iterator();
 
         while (iterator.hasCurrent())
         {
-            Topic<SampleType>* topic = iterator.current();
+            Topic* topic = iterator.current();
             
-            if (topic.getId() == id)
+            if (topic->getId() == id)
             {
                 topic->subscribe(sampleCallback);
 
@@ -110,7 +109,9 @@ public:
         myId(id),
         mySampleCallbackList()
     {
-        myTopicList.append(this);
+        Topic* pointer = this;
+
+        myTopicList.append(pointer);
     }
 
     //--------------------------------------------------------------------------
@@ -133,7 +134,7 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    void subscribe(const SampleCallback& sampleCallback)
+    void subscribe(SampleCallback& sampleCallback)
     {
         SampleCallback* pointer = &sampleCallback;
 
@@ -143,7 +144,7 @@ public:
     //--------------------------------------------------------------------------
     void publish(const SampleType& sample)
     {
-        List<SampleCallback*>::Iterator iterator =
+        typename List<SampleCallback*>::Iterator iterator =
                                                 mySampleCallbackList.iterator();
 
         while (iterator.hasCurrent())
@@ -161,7 +162,7 @@ private:
     // Private static data members
     //--------------------------------------------------------------------------
 
-    static List< Topic<SampleType>* > myTopicList;
+    static List<Topic*> myTopicList;
 
     //--------------------------------------------------------------------------
     // Private data members
@@ -171,6 +172,9 @@ private:
 
     List<SampleCallback*> mySampleCallbackList;
 };
+
+template <typename SampleType>
+List< Topic<SampleType>* > Topic<SampleType>::myTopicList;
 
 }; // namespace Plat4m
 
