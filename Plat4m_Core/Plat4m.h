@@ -251,10 +251,10 @@ namespace Plat4m
     }
 
     //--------------------------------------------------------------------------
-    template <typename TValue, typename TMask>
+    template <typename TValue>
     inline bool isBitSet(const TValue value, const uint8_t bitIndex)
     {
-        return areBitsSet(value, (TMask) (((TMask) 1) << bitIndex));
+        return areBitsSet(value, (TValue) (((TValue) 1) << bitIndex));
     }
 
     //--------------------------------------------------------------------------
