@@ -151,7 +151,7 @@ private:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    void sampleCallback(const SampleType sample)
+    void sampleCallback(const SampleType& sample)
     {
         if (myDownsampleCounter >= myConfig.downsampleFactor)
         {

@@ -140,14 +140,14 @@ bool TopicSubscriberTest::acceptanceTest1()
 }
 
 //------------------------------------------------------------------------------
-void TopicSubscriberTest::acceptanceTest1TopicCallback(const uint8_t sample)
+void TopicSubscriberTest::acceptanceTest1TopicCallback(const uint8_t& sample)
 {
     acceptanceTest1Sample = sample;
     acceptanceTest1SampleCount++;
 }
 
 //------------------------------------------------------------------------------
-void TopicSubscriberTest::acceptanceTest1TopicCallback2(const uint8_t sample)
+void TopicSubscriberTest::acceptanceTest1TopicCallback2(const uint8_t& sample)
 {
     acceptanceTest1Sample2 = sample;
     acceptanceTest1SampleCount2++;

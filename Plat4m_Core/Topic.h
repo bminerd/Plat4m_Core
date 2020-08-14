@@ -74,7 +74,7 @@ public:
         ERROR_CODE_NONE
     };
 
-    typedef Callback<void, SampleType> SampleCallback;
+    typedef Callback<void, const SampleType&> SampleCallback;
 
     //--------------------------------------------------------------------------
     // Public static methods
