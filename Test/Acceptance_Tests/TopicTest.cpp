@@ -123,13 +123,13 @@ bool TopicTest::acceptanceTest1()
 }
 
 //------------------------------------------------------------------------------
-void TopicTest::acceptanceTest1TopicCallback(const uint8_t sample)
+void TopicTest::acceptanceTest1TopicCallback(const uint8_t& sample)
 {
     acceptanceTest1Sample = sample;
 }
 
 //------------------------------------------------------------------------------
-void TopicTest::acceptanceTest1TopicCallback2(const uint8_t sample)
+void TopicTest::acceptanceTest1TopicCallback2(const uint8_t& sample)
 {
     acceptanceTest1Sample2 = sample;
 }
@@ -165,7 +165,7 @@ bool TopicTest::acceptanceTest2()
 }
 
 //------------------------------------------------------------------------------
-void TopicTest::acceptanceTest2TopicCallback(const TestSample sample)
+void TopicTest::acceptanceTest2TopicCallback(const TestSample& sample)
 {
     acceptanceTest2Sample = sample;
 }

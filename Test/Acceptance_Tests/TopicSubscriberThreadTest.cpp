@@ -135,7 +135,7 @@ bool TopicSubscriberThreadTest::acceptanceTest1()
 
 //------------------------------------------------------------------------------
 void TopicSubscriberThreadTest::acceptanceTest1SampleCallback(
-                                                        const TestSample sample)
+                                                       const TestSample& sample)
 {
     acceptanceTest1Sample = sample;
 }

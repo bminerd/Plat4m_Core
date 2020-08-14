@@ -81,9 +81,9 @@ public:
 
     static bool acceptanceTest1();
 
-    static void acceptanceTest1TopicCallback(const uint8_t sample);
+    static void acceptanceTest1TopicCallback(const uint8_t& sample);
 
-    static void acceptanceTest1TopicCallback2(const uint8_t sample);
+    static void acceptanceTest1TopicCallback2(const uint8_t& sample);
 
 private:
 

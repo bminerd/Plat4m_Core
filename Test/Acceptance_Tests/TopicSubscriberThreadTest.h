@@ -94,7 +94,7 @@ public:
 
     static bool acceptanceTest1();
 
-    static void acceptanceTest1SampleCallback(const TestSample sample);
+    static void acceptanceTest1SampleCallback(const TestSample& sample);
 
 private:
 
