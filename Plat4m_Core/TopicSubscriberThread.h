@@ -154,7 +154,7 @@ private:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    void sampleCallback(const SampleType sample)
+    void sampleCallback(const SampleType& sample)
     {
         myQueue.enqueue(sample);
     }
