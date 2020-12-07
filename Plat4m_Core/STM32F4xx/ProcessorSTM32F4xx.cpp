@@ -558,7 +558,8 @@ ProcessorSTM32F4xx::Error ProcessorSTM32F4xx::setConfig(const Config& config)
     RCC->PLLCFGR = pllM                        |
                    (pllN << 6)                 |
                    (((pllP >> 1) - 1) << 16)   |
-                   (pllQ << 24);
+                   (pllQ << 24)                |
+                   (7) << 28;
     
     if (config.clockSource == CLOCK_SOURCE_EXTERNAL)
     {
@@ -659,6 +660,8 @@ ProcessorSTM32F4xx::Error ProcessorSTM32F4xx::setConfig(const Config& config)
 //            sys = SYSCFG->CMPCR;
 //        }
     }
+
+    NVIC_SetPriorityGrouping(3);
     
     myConfig = config;
     
@@ -819,16 +822,6 @@ extern "C" void UsageFault_Handler(void)
 }
 
 //------------------------------------------------------------------------------
-extern "C" void SVC_Handler(void)
-{
-}
-
-//------------------------------------------------------------------------------
 extern "C" void DebugMon_Handler(void)
-{
-}
-
-//------------------------------------------------------------------------------
-extern "C" void PendSV_Handler(void)
 {
 }

@@ -50,6 +50,7 @@
 
 #include <Plat4m_Core/Board.h>
 #include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/GpioPortSTM32F4xx.h>
 #include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
 #include <Plat4m_Core/STM32F4xx/I2cSTM32F4xx.h>
 #include <Plat4m_Core/STM32F4xx/UartSTM32F4xx.h>
@@ -128,6 +129,8 @@ public:
 
     EnableLine& getEnableLine();
 
+    GpioPortSTM32F4xx& getGpioPort(const GpioPortSTM32F4xx::Id portId);
+
     GpioPinSTM32F4xx& getGpioPin(const GpioPinId gpioPinId);
     
     ProcessorSTM32F4xx& getProcessor();
@@ -155,6 +158,8 @@ private:
     Button* myUserButton;
 
     EnableLine* myUserButtonEnableLine;
+
+    GpioPortSTM32F4xx* myGpioPorts[3];
 
     GpioPinSTM32F4xx* myGpioPins[23];
 

@@ -111,9 +111,11 @@ const IRQn_Type InterruptSTM32F4xx::myIrqNumberMap[] =
     TIM8_BRK_TIM12_IRQn,     // ID_TIM_8_BRK_TIM_12
     TIM8_UP_TIM13_IRQn,      // ID_TIM_8_UP_TIM_13
     TIM8_TRG_COM_TIM14_IRQn, // ID_TIM_8_TRG_COM_TIM_14
-    TIM8_CC_IRQn,            // ID_TIM_8_CC
+    // TIM8_CC_IRQn,            // ID_TIM_8_CC
+    (IRQn_Type) 0,
     DMA1_Stream7_IRQn,       // ID_DMA_1_STREAM_7
-    FSMC_IRQn,               // ID_FMC
+    // FSMC_IRQn,               // ID_FMC
+    (IRQn_Type) 0,
     SDIO_IRQn,               // ID_SDIO
     TIM5_IRQn,               // ID_TIM_5
     SPI3_IRQn,               // ID_SPI_3
@@ -126,8 +128,10 @@ const IRQn_Type InterruptSTM32F4xx::myIrqNumberMap[] =
     DMA2_Stream2_IRQn,       // ID_DMA_2_STREAM_2
     DMA2_Stream3_IRQn,       // ID_DMA_2_STREAM_3
     DMA2_Stream4_IRQn,       // ID_DMA_2_STREAM_4
-    ETH_IRQn,                // ID_ETH,
-    ETH_WKUP_IRQn,           // ID_ETH_WKUP,
+    // ETH_IRQn,                // ID_ETH,
+    (IRQn_Type) 0,
+    // ETH_WKUP_IRQn,           // ID_ETH_WKUP,
+    (IRQn_Type) 0,
     CAN2_TX_IRQn,            // ID_CAN_2_TX
     CAN2_RX0_IRQn,           // ID_CAN_2_RX0
     CAN2_RX1_IRQn,           // ID_CAN_2_RX_1
@@ -143,8 +147,10 @@ const IRQn_Type InterruptSTM32F4xx::myIrqNumberMap[] =
     OTG_HS_EP1_IN_IRQn,      // ID_OTG_HS_EP1_IN
     OTG_HS_WKUP_IRQn,        // ID_OTG_HS_WAKE_UP
     DCMI_IRQn,               // ID_DCMI
-    CRYP_IRQn,               // ID_CRYP,
-    HASH_RNG_IRQn,           // ID_HASH_RNG,
+    // CRYP_IRQn,               // ID_CRYP,
+    (IRQn_Type) 0,
+    // HASH_RNG_IRQn,           // ID_HASH_RNG,
+    (IRQn_Type) 0,
     FPU_IRQn                 // ID_FPU
 };
 

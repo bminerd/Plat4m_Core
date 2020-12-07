@@ -155,12 +155,22 @@ UartSTM32F4xx::UartSTM32F4xx(const Id id,
 }
 
 //------------------------------------------------------------------------------
-// Public virtual  destructors
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 UartSTM32F4xx::~UartSTM32F4xx()
 {
+}
+
+//------------------------------------------------------------------------------
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+UartSTM32F4xx::State UartSTM32F4xx::getState()
+{
+    return myState;
 }
 
 //------------------------------------------------------------------------------
@@ -184,6 +194,13 @@ Module::Error UartSTM32F4xx::driverSetEnabled(const bool enabled)
         
         myTransmitGpioPin.configure(gpioPinConfig);
         myReceiveGpioPin.configure(gpioPinConfig);
+
+        GpioPinSTM32F4xx::STM32F4xxConfig config;
+        config.alternateFunction = GpioPinSTM32F4xx::ALTERNATE_FUNCTION_USART2;
+        config.outputSpeed       = GpioPinSTM32F4xx::OUTPUT_SPEED_100MHZ;
+
+        myTransmitGpioPin.setSTM32F4xxConfig(config);
+        myReceiveGpioPin.setSTM32F4xxConfig(config);
     }
 
     setInterruptFlagEnabled(INTERRUPT_FLAG_RECEIVE_BUFFER_NOT_EMPTY, enabled);
