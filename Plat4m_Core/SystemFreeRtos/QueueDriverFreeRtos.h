@@ -48,8 +48,8 @@
 
 #include <stdint.h>
 
-#include <FreeRTOS/Source/include/FreeRTOS.h>
-#include <FreeRTOS/Source/include/queue.h>
+#include <FreeRTOS-Kernel/include/FreeRTOS.h>
+#include <FreeRTOS-Kernel/include/queue.h>
 
 #include <Plat4m_Core/QueueDriver.h>
 

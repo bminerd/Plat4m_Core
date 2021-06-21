@@ -43,8 +43,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <FreeRTOS/Source/include/FreeRTOS.h>
-#include <FreeRTOS/Source/include/task.h>
+#include <FreeRTOS-Kernel/include/FreeRTOS.h>
+#include <FreeRTOS-Kernel/include/task.h>
 
 #include <Plat4m_Core/SystemFreeRtos/SystemFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/ThreadFreeRtos.h>
@@ -77,7 +77,8 @@ extern "C" void vApplicationIdleHook(void)
 }
 
 //------------------------------------------------------------------------------
-extern "C" void vApplicationStackOverflowHook(void)
+extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask,
+                                              char * pcTaskName)
 {
 
 }

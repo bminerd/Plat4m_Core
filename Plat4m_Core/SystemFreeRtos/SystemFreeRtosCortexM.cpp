@@ -79,5 +79,9 @@ Plat4m::TimeUs SystemFreeRtosCortexM::driverGetTimeUs()
     volatile uint32_t sysTickValue =
     						   *((uint32_t*) (0xE000E000UL + 0x0010UL + 0x8UL));
 
-    return ((getTimeMs() * 1000) + ((sysTickValue * 1000) / sysTickLoad));
+    Plat4m::TimeUs timeUs =
+        ((getTimeMs() * 1000) +
+                         (((sysTickLoad - sysTickValue) * 1000) / sysTickLoad));
+
+    return timeUs;
 }
