@@ -54,6 +54,8 @@ using Plat4m::AllocationMemory;
 
 AllocationMemory* AllocationMemory::myDriver = 0;
 
+AllocationMemory* AllocationMemory::myNestedDriver = 0;
+
 //------------------------------------------------------------------------------
 extern "C" void* allocationMemoryAllocate(size_t count)
 {
@@ -73,31 +75,86 @@ extern "C" void allocationMemoryDeallocate(void* pointer)
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocate(size_t count)
 {
-    return myDriver->driverAllocate(count);
+    AllocationMemory* driver = 0;
+
+    if (isValidPointer(myNestedDriver))
+    {
+        driver = myNestedDriver;
+    }
+    else
+    {
+        driver = myDriver;
+    }
+
+    return driver->driverAllocate(count);
 }
 
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocateArray(size_t count)
 {
-    return myDriver->driverAllocateArray(count);
+    AllocationMemory* driver = 0;
+
+    if (isValidPointer(myNestedDriver))
+    {
+        driver = myNestedDriver;
+    }
+    else
+    {
+        driver = myDriver;
+    }
+
+    return driver->driverAllocateArray(count);
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocate(void* pointer)
 {
-    myDriver->driverDeallocate(pointer);
+    AllocationMemory* driver = 0;
+
+    if (isValidPointer(myNestedDriver))
+    {
+        driver = myNestedDriver;
+    }
+    else
+    {
+        driver = myDriver;
+    }
+
+    driver->driverDeallocate(pointer);
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocateArray(void* pointer)
 {
-    myDriver->driverDeallocateArray(pointer);
+    AllocationMemory* driver = 0;
+
+    if (isValidPointer(myNestedDriver))
+    {
+        driver = myNestedDriver;
+    }
+    else
+    {
+        driver = myDriver;
+    }
+
+    driver->driverDeallocateArray(pointer);
 }
 
 //------------------------------------------------------------------------------
 size_t AllocationMemory::getFreeMemorySize()
 {
-    return myDriver->driverGetFreeMemorySize();
+    AllocationMemory* driver = 0;
+
+    if (isValidPointer(myNestedDriver))
+    {
+        driver = myNestedDriver;
+    }
+    else
+    {
+        driver = myDriver;
+    }
+
+    return driver->driverGetFreeMemorySize();
 }
 
 //------------------------------------------------------------------------------
@@ -111,6 +168,10 @@ AllocationMemory::AllocationMemory()
     {
         myDriver = this;
     }
+    else if (isNullPointer(myNestedDriver))
+    {
+        myNestedDriver = this;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -120,6 +181,10 @@ AllocationMemory::AllocationMemory()
 //------------------------------------------------------------------------------
 AllocationMemory::~AllocationMemory()
 {
+    if (isValidPointer(myNestedDriver))
+    {
+        myNestedDriver = 0;
+    }
 }
 
 //------------------------------------------------------------------------------

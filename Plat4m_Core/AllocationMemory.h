@@ -99,6 +99,8 @@ private:
 
     static AllocationMemory* myDriver;
 
+    static AllocationMemory* myNestedDriver;
+
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
