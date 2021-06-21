@@ -29,6 +29,7 @@ Released: XXXX-XX-XX
 - `[IMPROVEMENT]` Removed unneeded files from ST Standard Peripheral Library for F3 and F4. [Resolves 6].
 - `[IMPROVEMENT]` Removed unused CMSIS math libraries. [Resolves 7].
 - `[IMPROVEMENT]` Added single nested driver in AllocationMemory. [Resolves 10].
+- `[IMPROVEMENT]` Added copy constructor and assignment operator to TopicSubscriber. [Resolves 12].
 
 ### 2.0.0
 
