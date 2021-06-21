@@ -111,12 +111,35 @@ public:
     }
 
     //--------------------------------------------------------------------------
+    TopicSubscriber(const TopicSubscriber<SampleType>& topicSubscriber) :
+        myConfig(topicSubscriber.myConfig),
+        mySampleCallback(topicSubscriber.mySampleCallback),
+        myDownsampleCounter(topicSubscriber.myDownsampleCounter)
+    {
+    }
+
+    //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
     
     //--------------------------------------------------------------------------
     virtual ~TopicSubscriber()
     {
+    }
+
+    //--------------------------------------------------------------------------
+    // Public operator overloads
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    TopicSubscriber<SampleType>& operator=(
+                             const TopicSubscriber<SampleType>& topicSubscriber)
+    {
+        myConfig = topicSubscriber.myConfig;
+        mySampleCallback = topicSubscriber.mySampleCallback;
+        myDownsampleCounter = topicSubscriber.myDownsampleCounter;
+
+        return (*this);
     }
 
     //--------------------------------------------------------------------------
