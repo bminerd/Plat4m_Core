@@ -32,6 +32,7 @@ Released: XXXX-XX-XX
 - `[IMPROVEMENT]` Added copy constructor and assignment operator to TopicSubscriber. [Resolves 12].
 - `[NEW FEATURE]` Added HardwareTimerSimulated as a HardwareTimer driver for a simulated timer. [Resolves 11].
 - `[IMPROVEMENT]` Updated FreeRTOS relative path references to allow using GitHub submodule. [Resolves 13].
+- `[NEW FEATURE]` Added minimal drivers for NRF5340 microcontroller. [Resolves 4].
 
 ### 2.0.0
 
