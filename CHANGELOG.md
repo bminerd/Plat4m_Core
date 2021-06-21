@@ -28,6 +28,7 @@ Released: XXXX-XX-XX
 - `[NONFUNCTIONAL]` Added design documentation for System, Thread, and ComInterface modules. [Resolves 8]. [Merge !77].
 - `[IMPROVEMENT]` Removed unneeded files from ST Standard Peripheral Library for F3 and F4. [Resolves 6].
 - `[IMPROVEMENT]` Removed unused CMSIS math libraries. [Resolves 7].
+- `[IMPROVEMENT]` Added single nested driver in AllocationMemory. [Resolves 10].
 
 ### 2.0.0
 
