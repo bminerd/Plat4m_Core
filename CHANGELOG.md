@@ -30,6 +30,7 @@ Released: XXXX-XX-XX
 - `[IMPROVEMENT]` Removed unused CMSIS math libraries. [Resolves 7].
 - `[IMPROVEMENT]` Added single nested driver in AllocationMemory. [Resolves 10].
 - `[IMPROVEMENT]` Added copy constructor and assignment operator to TopicSubscriber. [Resolves 12].
+- `[NEW FEATURE]` Added HardwareTimerSimulated as a HardwareTimer driver for a simulated timer. [Resolves 11].
 
 ### 2.0.0
 
