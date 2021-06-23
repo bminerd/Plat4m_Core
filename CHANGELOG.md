@@ -11,18 +11,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [IMPROVEMENT] - Existing functionality has been improved.
 - [DEPRECATED] - Existing functionality has been marked for removal in a future release.
 - [REMOVED] - Existing functionality has been removed.
+- [NONFUNCTIONAL] - No functionality has been added.
 
 ### Unreleased Changes
 
 Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
+
 - `[IMPROVEMENT]` Updated QueueDriverLinux implementation to handle any data type. [Resolves 54]. [Merge !59].
 - `[NEW FEATURE]` Added Topic, TopicSubscriber, and TopicSubscriberThread modules for lightweight internal publish/subscribe messaging. [Resolves 51]. [Merge !60].
 - `[IMPROVEMENT]` Added docker tag to GitLab CI jobs. [Resolves 63]. [Merge !64].
 - `[IMPROVEMENT]` Changed SampleType parameter in Topic::SampleCallback to be const reference. [Resolves 67]. [Merge !69].
 - `[IMPROVEMENT]` Added getThread() method to TopicSubscriberThread class. [Resolves 68]. [Merge !70].
 - `[BUG FIX]` Fixed syntax issue in Plat4m::isBitSet(). [Resolves 71]. [Merge !72].
+- `[NONFUNCTIONAL]` Added design documentation for System, Thread, and ComInterface modules. [Resolves 8]. [Merge !77].
 
 ### 2.0.0
 
