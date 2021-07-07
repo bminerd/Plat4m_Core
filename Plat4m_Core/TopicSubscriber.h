@@ -84,6 +84,7 @@ public:
                    const uint32_t id,
                    const Config config,
                    typename Topic<SampleType>::SampleCallback& sampleCallback) :
+        myTopicId(id),
         myConfig(),
         mySampleCallback(sampleCallback),
         myDownsampleCounter(1)
@@ -99,6 +100,7 @@ public:
     TopicSubscriber(
                    const uint32_t id,
                    typename Topic<SampleType>::SampleCallback& sampleCallback) :
+        myTopicId(id),
         myConfig(),
         mySampleCallback(sampleCallback),
         myDownsampleCounter(1)
@@ -157,11 +159,23 @@ public:
         }
     }
 
+    //--------------------------------------------------------------------------
+    void resubscribe()
+    {
+        myConfig.downsampleFactor = 1;
+
+        Topic<SampleType>::subscribe(
+                        myTopicId,
+                        createCallback(this, &TopicSubscriber::sampleCallback));
+    }
+
 private:
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
+
+    uint32_t myTopicId;
 
     Config myConfig;
 
