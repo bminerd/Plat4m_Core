@@ -48,6 +48,8 @@
 
 #include <stddef.h>
 
+#include <Plat4m_Core/Module.h>
+
 //------------------------------------------------------------------------------
 // Namespaces
 //------------------------------------------------------------------------------
@@ -59,7 +61,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class AllocationMemory
+class AllocationMemory : public Module
 {
 public:
 
@@ -97,9 +99,11 @@ private:
     // Private static data members
     //--------------------------------------------------------------------------
 
-    static AllocationMemory* myDriver;
+    static AllocationMemory* myBaseDriver;
 
     static AllocationMemory* myNestedDriver;
+
+    static AllocationMemory* myCurrentDriver;
 
     //--------------------------------------------------------------------------
     // Private pure virtual methods

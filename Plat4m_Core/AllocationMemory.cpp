@@ -52,9 +52,11 @@ using Plat4m::AllocationMemory;
 // Private static data members
 //------------------------------------------------------------------------------
 
-AllocationMemory* AllocationMemory::myDriver = 0;
+AllocationMemory* AllocationMemory::myBaseDriver = 0;
 
 AllocationMemory* AllocationMemory::myNestedDriver = 0;
+
+AllocationMemory* AllocationMemory::myCurrentDriver = 0;
 
 //------------------------------------------------------------------------------
 extern "C" void* allocationMemoryAllocate(size_t count)
@@ -75,86 +77,78 @@ extern "C" void allocationMemoryDeallocate(void* pointer)
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocate(size_t count)
 {
-    AllocationMemory* driver = 0;
-
-    if (isValidPointer(myNestedDriver))
+    if (isNullPointer(myCurrentDriver))
     {
-        driver = myNestedDriver;
-    }
-    else
-    {
-        driver = myDriver;
+        return malloc(count);
     }
 
-    return driver->driverAllocate(count);
+    if (!(myCurrentDriver->isEnabled()))
+    {
+        return malloc(count);
+    }
+
+    return (myCurrentDriver->driverAllocate(count));
 }
 
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocateArray(size_t count)
 {
-    AllocationMemory* driver = 0;
-
-    if (isValidPointer(myNestedDriver))
+    if (isNullPointer(myCurrentDriver))
     {
-        driver = myNestedDriver;
-    }
-    else
-    {
-        driver = myDriver;
+        return malloc(count);
     }
 
-    return driver->driverAllocateArray(count);
+    if (!(myCurrentDriver->isEnabled()))
+    {
+        return malloc(count);
+    }
+
+    return (myCurrentDriver->driverAllocateArray(count));
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocate(void* pointer)
 {
-    AllocationMemory* driver = 0;
-
-    if (isValidPointer(myNestedDriver))
+    if (isNullPointer(myCurrentDriver))
     {
-        driver = myNestedDriver;
+        free(pointer);
+    }
+    else if (!(myCurrentDriver->isEnabled()))
+    {
+        free(pointer);
     }
     else
     {
-        driver = myDriver;
+        myCurrentDriver->driverDeallocate(pointer);
     }
-
-    driver->driverDeallocate(pointer);
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocateArray(void* pointer)
 {
-    AllocationMemory* driver = 0;
-
-    if (isValidPointer(myNestedDriver))
+    if (isNullPointer(myCurrentDriver))
     {
-        driver = myNestedDriver;
+        free(pointer);
+    }
+    else if (!(myCurrentDriver->isEnabled()))
+    {
+        free(pointer);
     }
     else
     {
-        driver = myDriver;
+        myCurrentDriver->driverDeallocateArray(pointer);
     }
-
-    driver->driverDeallocateArray(pointer);
 }
 
 //------------------------------------------------------------------------------
 size_t AllocationMemory::getFreeMemorySize()
 {
-    AllocationMemory* driver = 0;
-
-    if (isValidPointer(myNestedDriver))
+    if (isNullPointer(myCurrentDriver))
     {
-        driver = myNestedDriver;
-    }
-    else
-    {
-        driver = myDriver;
+        return 0;
     }
 
-    return driver->driverGetFreeMemorySize();
+    return (myCurrentDriver->driverGetFreeMemorySize());
 }
 
 //------------------------------------------------------------------------------
@@ -164,14 +158,18 @@ size_t AllocationMemory::getFreeMemorySize()
 //------------------------------------------------------------------------------
 AllocationMemory::AllocationMemory()
 {
-    if (isNullPointer(myDriver))
+    if (isNullPointer(myBaseDriver))
     {
-        myDriver = this;
+        myBaseDriver = this;
+        myCurrentDriver = myBaseDriver;
     }
     else if (isNullPointer(myNestedDriver))
     {
         myNestedDriver = this;
+        myCurrentDriver = myNestedDriver;
     }
+
+    enable();
 }
 
 //------------------------------------------------------------------------------
@@ -184,7 +182,15 @@ AllocationMemory::~AllocationMemory()
     if (isValidPointer(myNestedDriver))
     {
         myNestedDriver = 0;
+        myCurrentDriver = myBaseDriver;
     }
+    else if (isValidPointer(myBaseDriver))
+    {
+        myBaseDriver = 0;
+        myCurrentDriver = 0;
+    }
+
+    disable();
 }
 
 //------------------------------------------------------------------------------
