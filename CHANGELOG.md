@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added exit logic to ThreadLinux. [Resolves 19].
 - `[NEW FEATURE]` Added enable()/disable() methods to AllocationMemory by making it subclass of Module. Cleaned up nested driver logic. [Resolves 16].
 - `[NEW FEATURE]` Added resubscribe() method to TopicSubscriber. [Resolves 15].
 - `[IMPROVEMENT]` Updated QueueDriverLinux implementation to handle any data type. [Resolves 54]. [Merge !59].
