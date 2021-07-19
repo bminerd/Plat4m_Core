@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added getThread() accessor to HardwareTimerSimulated. [Resolves 20].
 - `[IMPROVEMENT]` Added exit logic to ThreadLinux. [Resolves 19].
 - `[NEW FEATURE]` Added enable()/disable() methods to AllocationMemory by making it subclass of Module. Cleaned up nested driver logic. [Resolves 16].
 - `[NEW FEATURE]` Added resubscribe() method to TopicSubscriber. [Resolves 15].
