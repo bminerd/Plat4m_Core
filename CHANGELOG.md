@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Made Thread destructor public. [Resolves 22].
 - `[IMPROVEMENT]` Added clearing of driver pointer in System destructor. [Resolves 21].
 - `[IMPROVEMENT]` Added getThread() accessor to HardwareTimerSimulated. [Resolves 20].
 - `[IMPROVEMENT]` Added exit logic to ThreadLinux. [Resolves 19].
