@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added call to Thread destructor in HardwareTimerSimulated destructor. [Resolves 23].
 - `[IMPROVEMENT]` Made Thread destructor public. [Resolves 22].
 - `[IMPROVEMENT]` Added clearing of driver pointer in System destructor. [Resolves 21].
 - `[IMPROVEMENT]` Added getThread() accessor to HardwareTimerSimulated. [Resolves 20].
