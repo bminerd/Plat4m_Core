@@ -84,6 +84,7 @@ HardwareTimerSimulated::HardwareTimerSimulated(
 //------------------------------------------------------------------------------
 HardwareTimerSimulated::~HardwareTimerSimulated()
 {
+    myThread.~Thread();
 }
 
 //------------------------------------------------------------------------------
