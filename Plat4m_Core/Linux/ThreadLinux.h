@@ -88,6 +88,7 @@ private:
     pthread_mutex_t myMutexHandle;
     pthread_cond_t myConditionHandle;
     TimeMs myNextCallTimeMs;
+    bool myShouldExit;
 
     //--------------------------------------------------------------------------
     // Private static methods

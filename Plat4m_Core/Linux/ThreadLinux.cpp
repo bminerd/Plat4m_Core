@@ -62,7 +62,8 @@ ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
 	myThreadHandle(0),
 	myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
 	myConditionHandle(PTHREAD_COND_INITIALIZER),
-	myNextCallTimeMs(0)
+	myNextCallTimeMs(0),
+    myShouldExit(false)
 {
     int returnValue = pthread_create(&myThreadHandle,
 					 				 NULL,
@@ -85,6 +86,9 @@ ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
 //------------------------------------------------------------------------------
 ThreadLinux::~ThreadLinux()
 {
+    myShouldExit = true;
+    pthread_cond_signal(&myConditionHandle);
+    int returnValue = pthread_join(myThreadHandle, NULL);
 }
 
 //------------------------------------------------------------------------------
@@ -97,7 +101,7 @@ void* ThreadLinux::threadCallback(void* arg)
 	ThreadLinux* thread = static_cast<ThreadLinux*>(arg);
 	thread->myNextCallTimeMs = thread->getPeriodMs();
 
-	while (true) // Loop forever
+	while (!(thread->myShouldExit)) // Loop forever
 	{
 		if (!(thread->isEnabled()))
 		{
@@ -106,6 +110,13 @@ void* ThreadLinux::threadCallback(void* arg)
 								&(thread->myMutexHandle));
 			pthread_mutex_unlock(&(thread->myMutexHandle));
 		}
+
+        if (thread->myShouldExit)
+        {
+            pthread_exit(NULL);
+
+            break;
+        }
 
 		TimeMs periodMs = thread->getPeriodMs();
 
