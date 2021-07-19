@@ -86,6 +86,8 @@ public:
     void setInterruptHandlerCallback(
                             InterruptHandlerCallback& interruptHandlerCallback);
 
+    Thread& getThread();
+
 private:
     
     //--------------------------------------------------------------------------

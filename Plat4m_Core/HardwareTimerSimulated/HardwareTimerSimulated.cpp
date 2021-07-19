@@ -50,6 +50,7 @@
 using Plat4m::HardwareTimerSimulated;
 using Plat4m::HardwareTimer;
 using Plat4m::Module;
+using Plat4m::Thread;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -94,6 +95,12 @@ void HardwareTimerSimulated::setInterruptHandlerCallback(
                              InterruptHandlerCallback& interruptHandlerCallback)
 {
     myInterruptHandlerCallback = &interruptHandlerCallback;
+}
+
+//------------------------------------------------------------------------------
+Thread& HardwareTimerSimulated::getThread()
+{
+    return myThread;
 }
 
 //------------------------------------------------------------------------------
