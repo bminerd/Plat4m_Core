@@ -249,6 +249,46 @@ public:
     {
         return Iterator(*this);
     }
+
+    //--------------------------------------------------------------------------
+    void remove(T& value)
+    {
+        Item* currentItem = myFirstItem;
+
+        while (isValidPointer(currentItem))
+        {
+            T& currentValue = currentItem->value;
+
+            if (value == currentValue)
+            {
+                if (currentItem == myFirstItem)
+                {
+                    myFirstItem = myFirstItem->nextItem;
+                }
+                else if (currentItem == myLastItem)
+                {
+                    myLastItem = myLastItem->previousItem;
+
+                    if (myFirstItem == myLastItem)
+                    {
+                        myLastItem = 0;
+                    }
+                }
+                else
+                {
+                    currentItem->previousItem->nextItem = currentItem->nextItem;
+                }
+
+                mySize--;
+
+                MemoryAllocator::deallocate(currentItem);
+
+                break;
+            }
+
+            currentItem = currentItem->nextItem;
+        }
+    }
     
 private:
     
