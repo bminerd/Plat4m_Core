@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -95,24 +96,28 @@ public:
     
 private:
     
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
     
     TClass* myObject;
     CallbackMethodType myCallbackMethod;
 };
 
-    //--------------------------------------------------------------------------
-    template <class TClass, typename TReturn, typename TParameter>
-    Callback<TReturn, TParameter>& createCallback(
+//------------------------------------------------------------------------------
+// Namespace functions
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+template <class TClass, typename TReturn, typename TParameter>
+Callback<TReturn, TParameter>& createCallback(
                                         TClass* object,
                                         TReturn (TClass::*callback)(TParameter))
-    {
-        return *(new CallbackMethodParameter<TClass, TReturn, TParameter>(
-                                                                     object,
+{
+    return *(MemoryAllocator::allocate<
+               CallbackMethodParameter<TClass, TReturn, TParameter>>(object,
                                                                      callback));
-    }
+}
 
 }; // namespace Plat4m
 

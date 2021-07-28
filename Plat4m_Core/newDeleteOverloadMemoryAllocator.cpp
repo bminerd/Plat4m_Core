@@ -33,85 +33,47 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file CallbackFunction.h
+/// @file newDeleteOverloadMemoryAllocator.cpp
 /// @author Ben Minerd
-/// @date 8/13/2013
-/// @brief CallbackFunction class header file.
+/// @date 7/28/2021
+/// @brief newDeleteOverloadMemoryAllocator source file.
 ///
-
-#ifndef PLAT4M_CALLBACK_FUNCTION_H
-#define PLAT4M_CALLBACK_FUNCTION_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Callback.h>
+#include <cstddef>
+
 #include <Plat4m_Core/MemoryAllocator.h>
 
+using namespace std;
+using namespace Plat4m;
+
 //------------------------------------------------------------------------------
-// Namespaces
+// Global functions
 //------------------------------------------------------------------------------
 
-namespace Plat4m
+//------------------------------------------------------------------------------
+void* operator new(size_t count)
 {
-
-//------------------------------------------------------------------------------
-// Classes
-//------------------------------------------------------------------------------
-
-template <typename TReturn>
-class CallbackFunction : public Callback<TReturn>
-{
-public:
-    
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
-    
-    typedef TReturn (*CallbackFunctionType)();
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    CallbackFunction(CallbackFunctionType callbackFunction) :
-        Callback<TReturn>(),
-        myCallbackFunction(callbackFunction)
-    {
-    }
-    
-    //--------------------------------------------------------------------------
-    // Public methods implemented from Callback
-    //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    inline TReturn call(void* dummyParameter1 = 0, void* dummyParameter2 = 0)
-    {
-        return (*myCallbackFunction)();
-    }
-
-private:
-    
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-    
-    CallbackFunctionType myCallbackFunction;
-};
-
-//------------------------------------------------------------------------------
-// Namespace functions
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-template <typename TReturn>
-Callback<TReturn>& createCallback(TReturn (*callback)())
-{
-    return *(MemoryAllocator::allocate<CallbackFunction<TReturn>>(callback));
+    return MemoryAllocator::allocate(count);
 }
 
-}; // namespace Plat4m
+//------------------------------------------------------------------------------
+void* operator new[](size_t count)
+{
+    return MemoryAllocator::allocateArray(count);
+}
 
-#endif // PLAT4M_CALLBACK_FUNCTION_H
+//------------------------------------------------------------------------------
+void operator delete(void* pointer)
+{
+    return MemoryAllocator::deallocate(pointer);
+}
+
+//------------------------------------------------------------------------------
+void operator delete[](void* pointer)
+{
+    return MemoryAllocator::deallocateArray(pointer);
+}

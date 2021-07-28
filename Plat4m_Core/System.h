@@ -54,6 +54,7 @@
 #include <Plat4m_Core/Mutex.h>
 #include <Plat4m_Core/WaitCondition.h>
 #include <Plat4m_Core/Queue.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -105,9 +106,10 @@ public:
     static Queue<T>& createQueue(const uint32_t nValues,
                                  Thread& thread)
 	{
-    	return *(new Queue<T>(myDriver->driverCreateQueueDriver(nValues,
-    														    sizeof(T),
-    														    thread)));
+    	return *(MemoryAllocator::allocate<Queue<T>>(
+                                    myDriver->driverCreateQueueDriver(nValues,
+                                                                      sizeof(T),
+                                                                      thread)));
 	}
 
     static void run();

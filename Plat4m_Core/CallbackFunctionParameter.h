@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -74,6 +75,7 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
     
+    //--------------------------------------------------------------------------
     CallbackFunctionParameter(CallbackFunctionParameterType callbackFunction) :
         Callback<TReturn, TParameter>(),
         myCallbackFunctionParameter(callbackFunction)
@@ -84,6 +86,7 @@ public:
     // Public methods implemented from Callback
     //--------------------------------------------------------------------------
     
+    //--------------------------------------------------------------------------
     inline TReturn call(TParameter parameter, void* dummyParameter2 = 0)
     {
         return (*myCallbackFunctionParameter)(parameter);
@@ -98,17 +101,18 @@ private:
     CallbackFunctionParameterType myCallbackFunctionParameter;
 };
 
-    //--------------------------------------------------------------------------
-    // Namespace functions
-    //--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Namespace functions
+//------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    template <typename TReturn, typename TParameter>
-    Callback<TReturn, TParameter>& createCallback(
-                                                TReturn (*callback)(TParameter))
-    {
-        return *(new CallbackFunctionParameter<TReturn, TParameter>(callback));
-    }
+//------------------------------------------------------------------------------
+template <typename TReturn, typename TParameter>
+Callback<TReturn, TParameter>& createCallback(
+                                            TReturn (*callback)(TParameter))
+{
+    return *(MemoryAllocator::allocate<
+                     CallbackFunctionParameter<TReturn, TParameter>>(callback));
+}
 
 }; // namespace Plat4m
 

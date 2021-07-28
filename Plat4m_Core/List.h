@@ -47,6 +47,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -172,7 +173,7 @@ public:
     //--------------------------------------------------------------------------
     void append(T& value)
     {
-        Item* item = new Item;
+        Item* item = MemoryAllocator::allocate<Item>();
         
         item->value = value;
         item->previousItem = 0;
@@ -203,7 +204,7 @@ public:
     //--------------------------------------------------------------------------
     void prepend(T& value)
     {
-        Item* item = new Item;
+        Item* item = MemoryAllocator::allocate<Item>();
         
         item->value = value;
         item->previousItem = 0;
