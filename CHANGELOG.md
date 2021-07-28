@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added call in Topic destructor to remove it from static List in Topic class. [Resolves 26].
 - `[IMPROVEMENT]` Added remove() method to List. [Resolves 25].
 - `[NEW FEATURE]` Added MemoryAllocator class that uses placement new operator. Removed previous new/delete references and global new/delete operator overloading. [Resolves 24].
 - `[IMPROVEMENT]` Added call to Thread destructor in HardwareTimerSimulated destructor. [Resolves 23].
