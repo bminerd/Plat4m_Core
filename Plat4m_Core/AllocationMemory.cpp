@@ -77,77 +77,30 @@ extern "C" void allocationMemoryDeallocate(void* pointer)
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocate(size_t count)
 {
-    if (isNullPointer(myCurrentDriver))
-    {
-        return malloc(count);
-    }
-
-    if (!(myCurrentDriver->isEnabled()))
-    {
-        return malloc(count);
-    }
-
     return (myCurrentDriver->driverAllocate(count));
 }
 
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocateArray(size_t count)
 {
-    if (isNullPointer(myCurrentDriver))
-    {
-        return malloc(count);
-    }
-
-    if (!(myCurrentDriver->isEnabled()))
-    {
-        return malloc(count);
-    }
-
     return (myCurrentDriver->driverAllocateArray(count));
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocate(void* pointer)
 {
-    if (isNullPointer(myCurrentDriver))
-    {
-        free(pointer);
-    }
-    else if (!(myCurrentDriver->isEnabled()))
-    {
-        free(pointer);
-    }
-    else
-    {
-        myCurrentDriver->driverDeallocate(pointer);
-    }
+    myCurrentDriver->driverDeallocate(pointer);
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocateArray(void* pointer)
 {
-    if (isNullPointer(myCurrentDriver))
-    {
-        free(pointer);
-    }
-    else if (!(myCurrentDriver->isEnabled()))
-    {
-        free(pointer);
-    }
-    else
-    {
-        myCurrentDriver->driverDeallocateArray(pointer);
-    }
+    myCurrentDriver->driverDeallocateArray(pointer);
 }
 
 //------------------------------------------------------------------------------
 size_t AllocationMemory::getFreeMemorySize()
 {
-    if (isNullPointer(myCurrentDriver))
-    {
-        return 0;
-    }
-
     return (myCurrentDriver->driverGetFreeMemorySize());
 }
 
@@ -168,8 +121,6 @@ AllocationMemory::AllocationMemory()
         myNestedDriver = this;
         myCurrentDriver = myNestedDriver;
     }
-
-    enable();
 }
 
 //------------------------------------------------------------------------------
@@ -189,34 +140,4 @@ AllocationMemory::~AllocationMemory()
         myBaseDriver = 0;
         myCurrentDriver = 0;
     }
-
-    disable();
-}
-
-//------------------------------------------------------------------------------
-// Global functions
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void* operator new(size_t count)
-{
-    return AllocationMemory::allocate(count);
-}
-
-//------------------------------------------------------------------------------
-void* operator new[](size_t count)
-{
-    return AllocationMemory::allocateArray(count);
-}
-
-//------------------------------------------------------------------------------
-void operator delete(void* pointer)
-{
-    return AllocationMemory::deallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-void operator delete[](void* pointer)
-{
-    return AllocationMemory::deallocateArray(pointer);
 }
