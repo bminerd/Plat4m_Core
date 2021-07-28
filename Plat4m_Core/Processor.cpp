@@ -140,4 +140,5 @@ Processor::Processor(const Endian endian,
 //------------------------------------------------------------------------------
 Processor::~Processor()
 {
+    myDriver = 0;
 }
