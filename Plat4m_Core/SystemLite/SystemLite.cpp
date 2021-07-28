@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,7 @@
 #include <Plat4m_Core/SystemLite/WaitConditionLite.h>
 #include <Plat4m_Core/SystemLite/QueueDriverLite.h>
 #include <Plat4m_Core/Processor.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::SystemLite;
 using Plat4m::Processor;
@@ -102,7 +103,8 @@ Thread& SystemLite::driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
                                        const uint32_t nStackBytes)
 {
-    ThreadLite* thread = new ThreadLite(callback, periodMs);
+    ThreadLite* thread =
+                      MemoryAllocator::allocate<ThreadLite>(callback, periodMs);
 
     myThreadList.append(thread);
 
@@ -112,13 +114,13 @@ Thread& SystemLite::driverCreateThread(Thread::RunCallback& callback,
 //------------------------------------------------------------------------------
 Mutex& SystemLite::driverCreateMutex(Thread& thread)
 {
-    return *(new MutexLite);
+    return *(MemoryAllocator::allocate<MutexLite>());
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& SystemLite::driverCreateWaitCondition(Thread& thread)
 {
-    return *(new WaitConditionLite);
+    return *(MemoryAllocator::allocate<WaitConditionLite>());
 }
 
 //------------------------------------------------------------------------------
@@ -126,7 +128,7 @@ QueueDriver& SystemLite::driverCreateQueueDriver(const uint32_t nValues,
 												 const uint32_t valueSizeBytes,
 												 Thread& thread)
 {
-	return *(new QueueDriverLite<0>);
+	return *(MemoryAllocator::allocate<QueueDriverLite<0>>());
 }
 
 //------------------------------------------------------------------------------

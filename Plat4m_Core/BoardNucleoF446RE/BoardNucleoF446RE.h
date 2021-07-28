@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,16 +46,16 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Board.h>
-#include <ProcessorSTM32F4xx.h>
-#include <GpioPinSTM32F4xx.h>
-#include <I2cSTM32F4xx.h>
-#include <UartSTM32F4xx.h>
-#include <Button.h>
-#include <EnableLine.h>
-#include <GpioPin.h>
-
 #include <stdint.h>
+
+#include <Plat4m_Core/Board.h>
+#include <Plat4m_Core/STM32F4xx/ProcessorSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/GpioPinSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/I2cSTM32F4xx.h>
+#include <Plat4m_Core/STM32F4xx/UartSTM32F4xx.h>
+#include <Plat4m_Core/Button.h>
+#include <Plat4m_Core/EnableLine.h>
+#include <Plat4m_Core/GpioPin.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

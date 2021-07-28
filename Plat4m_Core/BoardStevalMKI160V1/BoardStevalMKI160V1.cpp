@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,6 @@
 // SOFTWARE.
 //------------------------------------------------------------------------------
 
-
 ///
 /// @file BoardStevalMKI160V1.cpp
 /// @author Ben Minerd
@@ -45,6 +44,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/BoardStevalMKI160V1/BoardStevalMKI160V1.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::BoardStevalMKI160V1;
 using Plat4m::ImuLSM6DS3;
@@ -69,7 +69,7 @@ BoardStevalMKI160V1::~BoardStevalMKI160V1()
 {
 	if (isValidPointer(myImuLSM6DS3))
 	{
-		delete myImuLSM6DS3;
+		MemoryAllocator::deallocate(myImuLSM6DS3);
 	}
 }
 
@@ -85,10 +85,11 @@ ImuLSM6DS3& BoardStevalMKI160V1::getImu(
 {
 	if (isNullPointer(myImuLSM6DS3))
 	{
-		myImuLSM6DS3 = new ImuLSM6DS3(ImuLSM6DS3::PIN_LEVEL_LOW,
-		                              i2c,
-		                              int1ExternalInterrupt,
-		                              int2ExternalInterrupt);
+		myImuLSM6DS3 = MemoryAllocator::allocate<ImuLSM6DS3>(
+                                                      ImuLSM6DS3::PIN_LEVEL_LOW,
+                                                      i2c,
+                                                      int1ExternalInterrupt,
+                                                      int2ExternalInterrupt);
 	}
 
 	return (*myImuLSM6DS3);

@@ -45,6 +45,7 @@
 
 #include <Plat4m_Core/STM32F30x/TimerSTM32F30x.h>
 #include <Plat4m_Core/CallbackMethod.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::TimerSTM32F30x;
 using Plat4m::Module;
@@ -1093,25 +1094,25 @@ void TimerSTM32F30x::initialize()
         case ID_1:
         {
             myUpdateInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_1_UP_TIM_16,
                     createCallback(
                                  this,
                                  &TimerSTM32F30x::updateInterruptEventHandler));
             myBreakInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_1_BRK_TIM_15,
                     createCallback(
                                   this,
                                   &TimerSTM32F30x::breakInterruptEventHandler));
             myCaptureCompareInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_1_CC,
                     createCallback(
                               this,
                               &TimerSTM32F30x::captureCompareInterruptHandler));
             myTriggerCommutationInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_1_TRG_COM_TIM_17,
                     createCallback(
                           this,
@@ -1136,7 +1137,7 @@ void TimerSTM32F30x::initialize()
         case ID_2:
         {
             myGlobalInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_2,
                     createCallback(
                          this,
@@ -1157,7 +1158,7 @@ void TimerSTM32F30x::initialize()
         case ID_3:
         {
             myGlobalInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_3,
                     createCallback(
                          this,
@@ -1178,7 +1179,7 @@ void TimerSTM32F30x::initialize()
         case ID_4:
         {
             myGlobalInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_4,
                     createCallback(
                          this,
@@ -1199,7 +1200,7 @@ void TimerSTM32F30x::initialize()
         case ID_6:
         {
             myGlobalInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_6_DAC,
                     createCallback(
                                   this,
@@ -1220,7 +1221,7 @@ void TimerSTM32F30x::initialize()
         case ID_7:
         {
             myGlobalInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_7,
                     createCallback(
                                   this,
@@ -1241,25 +1242,25 @@ void TimerSTM32F30x::initialize()
         case ID_8:
         {
             myUpdateInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_8_UP,
                     createCallback(
                                  this,
                                  &TimerSTM32F30x::updateInterruptEventHandler));
             myBreakInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_8_BRK,
                     createCallback(
                                   this,
                                   &TimerSTM32F30x::breakInterruptEventHandler));
             myCaptureCompareInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_8_CC,
                     createCallback(
                               this,
                               &TimerSTM32F30x::captureCompareInterruptHandler));
             myTriggerCommutationInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_8_TRG_COM,
                     createCallback(
                           this,
@@ -1286,7 +1287,7 @@ void TimerSTM32F30x::initialize()
             if (isNullPointer(interruptObjectMap[INTERRUPT_TIM_1_BRK_TIM_15]))
             {
                 myGlobalInterrupt =
-                    new InterruptSTM32F30x(
+                    MemoryAllocator::allocate<InterruptSTM32F30x>(
                         InterruptSTM32F30x::ID_TIM_1_BRK_TIM_15,
                         createCallback(
                                   this,
@@ -1308,7 +1309,7 @@ void TimerSTM32F30x::initialize()
             if (isNullPointer(interruptObjectMap[INTERRUPT_TIM_1_UP_TIM_16]))
             {
                 myGlobalInterrupt =
-                    new InterruptSTM32F30x(
+                    MemoryAllocator::allocate<InterruptSTM32F30x>(
                         InterruptSTM32F30x::ID_TIM_1_UP_TIM_16,
                         createCallback(
                                   this,
@@ -1331,7 +1332,7 @@ void TimerSTM32F30x::initialize()
                             interruptObjectMap[INTERRUPT_TIM_1_TRG_COM_TIM_17]))
             {
                 myGlobalInterrupt =
-                    new InterruptSTM32F30x(
+                    MemoryAllocator::allocate<InterruptSTM32F30x>(
                         InterruptSTM32F30x::ID_TIM_1_TRG_COM_TIM_17,
                         createCallback(
                                   this,
@@ -1351,25 +1352,25 @@ void TimerSTM32F30x::initialize()
         case ID_20:
         {
             myUpdateInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_20_UP,
                     createCallback(
                                  this,
                                  &TimerSTM32F30x::updateInterruptEventHandler));
             myBreakInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_20_BRK,
                     createCallback(
                                   this,
                                   &TimerSTM32F30x::breakInterruptEventHandler));
             myCaptureCompareInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_20_CC,
                     createCallback(
                               this,
                               &TimerSTM32F30x::captureCompareInterruptHandler));
             myTriggerCommutationInterrupt =
-                new InterruptSTM32F30x(
+                MemoryAllocator::allocate<InterruptSTM32F30x>(
                     InterruptSTM32F30x::ID_TIM_20_TRG_COM,
                     createCallback(
                           this,

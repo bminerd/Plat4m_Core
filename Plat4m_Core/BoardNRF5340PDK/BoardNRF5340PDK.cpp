@@ -44,6 +44,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/BoardNRF5340PDK/BoardNRF5340PDK.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::BoardNRF5340PDK;
 using Plat4m::GpioPin;
@@ -111,7 +112,8 @@ GpioPortNRF5340& BoardNRF5340PDK::getGpioPort(
 {
     if (isNullPointer(myGpioPorts[portId]))
     {
-        myGpioPorts[portId] = new GpioPortNRF5340(portId);
+        myGpioPorts[portId] =
+                             MemoryAllocator::allocate<GpioPortNRF5340>(portId);
     }
 
     return (*(myGpioPorts[portId]));
@@ -125,7 +127,8 @@ GpioPinNRF5340& BoardNRF5340PDK::getGpioPin(const GpioPinId gpioPinId)
 
     if (isNullPointer(myGpioPins[gpioPinId]))
     {
-        myGpioPins[gpioPinId] = new GpioPinNRF5340(
+        myGpioPins[gpioPinId] =
+            MemoryAllocator::allocate<GpioPinNRF5340>(
                         gpioPort,
                         (GpioPinNRF5340::Id) (myGpioPinIdMap[gpioPinId].pinId));
     }
@@ -138,7 +141,8 @@ ProcessorNRF5340& BoardNRF5340PDK::getProcessor()
 {
     if (isNullPointer(myProcessor))
     {
-        myProcessor = new ProcessorNRF5340(myProcessorCoreVoltage);
+        myProcessor =
+            MemoryAllocator::allocate<ProcessorNRF5340>(myProcessorCoreVoltage);
     }
 
     return (*myProcessor);
@@ -150,7 +154,9 @@ ProcessorNRF5340& BoardNRF5340PDK::getProcessor(
 {
     if (isNullPointer(myProcessor))
     {
-        myProcessor = new ProcessorNRF5340(myProcessorCoreVoltage, config);
+        myProcessor =
+             MemoryAllocator::allocate<ProcessorNRF5340>(myProcessorCoreVoltage,
+                                                         config);
     }
 
     return (*myProcessor);

@@ -53,6 +53,7 @@
 #include <Plat4m_Core/Linux/MutexLinux.h>
 #include <Plat4m_Core/Linux/WaitConditionLinux.h>
 #include <Plat4m_Core/Linux/QueueDriverLinux.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::SystemLinux;
 using Plat4m::Thread;
@@ -126,19 +127,19 @@ Thread& SystemLinux::driverCreateThread(Thread::RunCallback& callback,
                                         const TimeMs periodMs,
                                         const uint32_t nStackBytes)
 {
-    return *(new ThreadLinux(callback, periodMs));
+    return *(MemoryAllocator::allocate<ThreadLinux>(callback, periodMs));
 }
 
 //------------------------------------------------------------------------------
 Mutex& SystemLinux::driverCreateMutex(Thread& thread)
 {
-    return *(new MutexLinux);
+    return *(MemoryAllocator::allocate<MutexLinux>());
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& SystemLinux::driverCreateWaitCondition(Thread& thread)
 {
-    return *(new WaitConditionLinux);
+    return *(MemoryAllocator::allocate<WaitConditionLinux>());
 }
 
 //------------------------------------------------------------------------------
@@ -147,7 +148,7 @@ QueueDriver& SystemLinux::driverCreateQueueDriver(
                                                   const uint32_t valueSizeBytes,
                                                   Thread& thread)
 {
-    return *(new QueueDriverLinux(valueSizeBytes));
+    return *(MemoryAllocator::allocate<QueueDriverLinux>(valueSizeBytes));
 }
 
 //------------------------------------------------------------------------------

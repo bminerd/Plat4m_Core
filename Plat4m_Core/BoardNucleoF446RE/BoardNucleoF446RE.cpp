@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,14 +36,15 @@
 /// @file BoardNucleoF446RE.cpp
 /// @author Ben Minerd
 /// @date 11/18/2015
-/// @brief BoardNucleoF446RE class.
+/// @brief BoardNucleoF446RE class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BoardNucleoF446RE.h>
+#include <Plat4m_Core/BoardNucleoF446RE/BoardNucleoF446RE.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::BoardNucleoF446RE;
 using Plat4m::GpioPin;
@@ -147,7 +148,7 @@ Button& BoardNucleoF446RE::getButton()
 {
     if (isNullPointer(myUserButton))
     {
-        myUserButton = new Button(getEnableLine());
+        myUserButton = MemoryAllocator::allocate<Button>(getEnableLine());
     }
 
     return (*myUserButton);
@@ -158,8 +159,8 @@ EnableLine& BoardNucleoF446RE::getEnableLine()
 {
     if (isNullPointer(myUserButtonEnableLine))
     {
-        myUserButtonEnableLine =
-                             new EnableLine(EnableLine::MODE_INPUT,
+        myUserButtonEnableLine = MemoryAllocator::allocate<EnableLine>(
+                                            EnableLine::MODE_INPUT,
                                             EnableLine::ACTIVE_LEVEL_HIGH,
                                             getGpioPin(GPIO_PIN_ID_USER_BUTTON),
                                             false);
@@ -173,7 +174,8 @@ GpioPinSTM32F4xx& BoardNucleoF446RE::getGpioPin(const GpioPinId gpioPinId)
 {
     if (isNullPointer(myGpioPins[gpioPinId]))
     {
-        myGpioPins[gpioPinId] = new GpioPinSTM32F4xx(myGpioPinIdMap[gpioPinId]);
+        myGpioPins[gpioPinId] = MemoryAllocator::allocate<GpioPinSTM32F4xx>(
+                                                     myGpioPinIdMap[gpioPinId]);
     }
 
     return (*(myGpioPins[gpioPinId]));
@@ -184,8 +186,8 @@ ProcessorSTM32F4xx& BoardNucleoF446RE::getProcessor()
 {
     if (isNullPointer(myProcessor))
     {
-        myProcessor =
-                    new ProcessorSTM32F4xx(myProcessorCoreVoltage,
+        myProcessor = MemoryAllocator::allocate<ProcessorSTM32F4xx>(
+                                           myProcessorCoreVoltage,
                                            myProcessorExternalClockFrequencyHz);
     }
 
@@ -200,7 +202,9 @@ I2cSTM32F4xx& BoardNucleoF446RE::getI2c()
         GpioPinSTM32F4xx& i2c1Scl = getGpioPin(GPIO_PIN_ID_I2C_SCL);
         GpioPinSTM32F4xx& i2c1Sda = getGpioPin(GPIO_PIN_ID_I2C_SDA);
 
-        myI2c = new I2cSTM32F4xx(I2cSTM32F4xx::ID_1, i2c1Scl, i2c1Sda);
+        myI2c = MemoryAllocator::allocate<I2cSTM32F4xx>(I2cSTM32F4xx::ID_1,
+                                                        i2c1Scl,
+                                                        i2c1Sda);
     }
 
     return (*myI2c);
@@ -214,7 +218,7 @@ UartSTM32F4xx& BoardNucleoF446RE::getUart()
         GpioPinSTM32F4xx& uart2Tx = getGpioPin(GPIO_PIN_ID_UART_TX);
         GpioPinSTM32F4xx& uart2Rx = getGpioPin(GPIO_PIN_ID_UART_RX);
 
-        myUart = new UartSTM32F4xx(UartSTM32F4xx::ID_2, uart2Tx, uart2Rx);
+        myUart = MemoryAllocator::allocate<UartSTM32F4xx(UartSTM32F4xx::ID_2, uart2Tx, uart2Rx);
     }
 
 	return (*myUart);

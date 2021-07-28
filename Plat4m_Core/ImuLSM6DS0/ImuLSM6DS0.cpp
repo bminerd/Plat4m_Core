@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,7 @@
 #include <Plat4m_Core/SpiDeviceSt/SpiDeviceSt.h>
 #include <Plat4m_Core/I2cDevice.h>
 #include <Plat4m_Core/ByteArrayN.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::ImuLSM6DS0;
 using Plat4m::Imu;
@@ -99,7 +100,8 @@ ImuLSM6DS0::ImuLSM6DS0(Plat4m::Spi& spi, Plat4m::GpioPin& chipSelectGpioPin) :
 	mySlaveDevice(0),
 	myConfig()
 {
-	mySlaveDevice = new SpiDeviceSt(spi, chipSelectGpioPin);
+	mySlaveDevice = MemoryAllocator::allocate<SpiDeviceSt>(spi,
+                                                           chipSelectGpioPin);
 }
 
 //------------------------------------------------------------------------------
@@ -108,8 +110,9 @@ ImuLSM6DS0::ImuLSM6DS0(const PinLevel sa0PinLevel, Plat4m::I2c& i2c) :
 	mySlaveDevice(0),
 	myConfig()
 {
-	mySlaveDevice =
-				   new I2cDevice(i2cBaseAddress | ((uint8_t) sa0PinLevel), i2c);
+	mySlaveDevice = MemoryAllocator::allocate<I2cDevice>(
+                                       i2cBaseAddress | ((uint8_t) sa0PinLevel),
+                                       i2c);
 }
 
 //------------------------------------------------------------------------------

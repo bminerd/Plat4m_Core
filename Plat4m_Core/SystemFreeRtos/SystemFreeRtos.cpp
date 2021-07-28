@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,7 @@
 #include <Plat4m_Core/SystemFreeRtos/WaitConditionFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/QueueDriverFreeRtos.h>
 #include <Plat4m_Core/Processor.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::SystemFreeRtos;
 using Plat4m::Processor;
@@ -123,19 +124,21 @@ Thread& SystemFreeRtos::driverCreateThread(Thread::RunCallback& callback,
                                        	   const TimeMs periodMs,
                                        	   const uint32_t nStackBytes)
 {
-    return *(new ThreadFreeRtos(callback, periodMs, nStackBytes));
+    return *(MemoryAllocator::allocate<ThreadFreeRtos>(callback,
+                                                       periodMs,
+                                                       nStackBytes));
 }
 
 //------------------------------------------------------------------------------
 Mutex& SystemFreeRtos::driverCreateMutex(Thread& thread)
 {
-    return *(new MutexFreeRtos);
+    return *(MemoryAllocator::allocate<MutexFreeRtos>());
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& SystemFreeRtos::driverCreateWaitCondition(Thread& thread)
 {
-    return *(new WaitConditionFreeRtos(thread));
+    return *(MemoryAllocator::allocate<WaitConditionFreeRtos>(thread));
 }
 
 //------------------------------------------------------------------------------
@@ -144,7 +147,8 @@ QueueDriver& SystemFreeRtos::driverCreateQueueDriver(
 												  const uint32_t valueSizeBytes,
 												  Thread& thread)
 {
-	return *(new QueueDriverFreeRtos<0>(nValues, valueSizeBytes));
+	return *(MemoryAllocator::allocate<QueueDriverFreeRtos<0>>(nValues,
+                                                               valueSizeBytes));
 }
 
 //------------------------------------------------------------------------------

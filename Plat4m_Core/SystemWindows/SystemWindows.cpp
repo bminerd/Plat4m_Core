@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,7 @@
 #include <Plat4m_Core/SystemWindows/MutexWindows.h>
 #include <Plat4m_Core/SystemWindows/WaitConditionWindows.h>
 #include <Plat4m_Core/SystemWindows/QueueDriverWindows.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::SystemWindows;
 using Plat4m::Thread;
@@ -93,19 +94,19 @@ Thread& SystemWindows::driverCreateThread(Thread::RunCallback& callback,
                                           const TimeMs periodMs,
                                           const uint32_t nStackBytes)
 {
-    return *(new ThreadWindows(callback, periodMs));
+    return *(MemoryAllocator::allocate<ThreadWindows>(callback, periodMs));
 }
 
 //------------------------------------------------------------------------------
 Mutex& SystemWindows::driverCreateMutex(Thread& thread)
 {
-    return *(new MutexWindows);
+    return *(MemoryAllocator::allocate<MutexWindows>());
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& SystemWindows::driverCreateWaitCondition(Thread& thread)
 {
-    return *(new WaitConditionWindows);
+    return *(MemoryAllocator::allocate<WaitConditionWindows>());
 }
 
 //------------------------------------------------------------------------------
@@ -114,7 +115,7 @@ QueueDriver& SystemWindows::driverCreateQueueDriver(
                                                   const uint32_t valueSizeBytes,
                                                   Thread& thread)
 {
-    return *(new QueueDriverWindows(thread));
+    return *(MemoryAllocator::allocate<QueueDriverWindows>(thread));
 }
 
 //------------------------------------------------------------------------------

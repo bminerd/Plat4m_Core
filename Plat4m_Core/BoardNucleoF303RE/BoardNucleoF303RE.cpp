@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/BoardNucleoF303RE/BoardNucleoF303RE.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::BoardNucleoF303RE;
 using Plat4m::GpioPinSTM32F30x;
@@ -148,7 +149,7 @@ Button& BoardNucleoF303RE::getButton()
 {
     if (Plat4m::isNullPointer(myUserButton))
     {
-        myUserButton = new Button(getEnableLine());
+        myUserButton = MemoryAllocator::allocate<Button>(getEnableLine());
     }
 
     return (*myUserButton);
@@ -159,7 +160,8 @@ EnableLine& BoardNucleoF303RE::getEnableLine()
 {
     if (Plat4m::isNullPointer(myUserButtonEnableLine))
     {
-        myUserButtonEnableLine = new EnableLine(
+        myUserButtonEnableLine =
+            MemoryAllocator::allocate<EnableLine>(
                                             EnableLine::MODE_INPUT,
                                             EnableLine::ACTIVE_LEVEL_HIGH,
                                             getGpioPin(GPIO_PIN_ID_USER_BUTTON),
@@ -175,7 +177,8 @@ GpioPortSTM32F30x& BoardNucleoF303RE::getGpioPort(
 {
     if (isNullPointer(myGpioPorts[portId]))
     {
-        myGpioPorts[portId] = new GpioPortSTM32F30x(portId);
+        myGpioPorts[portId] =
+                           MemoryAllocator::allocate<GpioPortSTM32F30x>(portId);
     }
 
     return (*(myGpioPorts[portId]));
@@ -189,7 +192,8 @@ GpioPinSTM32F30x& BoardNucleoF303RE::getGpioPin(const GpioPinId gpioPinId)
 
     if (isNullPointer(myGpioPins[gpioPinId]))
     {
-        myGpioPins[gpioPinId] = new GpioPinSTM32F30x(
+        myGpioPins[gpioPinId] =
+            MemoryAllocator::allocate<GpioPinSTM32F30x>(
                       gpioPort,
                       (GpioPinSTM32F30x::Id) (myGpioPinIdMap[gpioPinId].pinId));
     }
@@ -202,7 +206,8 @@ ProcessorSTM32F30x& BoardNucleoF303RE::getProcessor()
 {
     if (isNullPointer(myProcessor))
     {
-        myProcessor = new ProcessorSTM32F30x(
+        myProcessor =
+            MemoryAllocator::allocate<ProcessorSTM32F30x>(
                                            myProcessorCoreVoltageV,
                                            myProcessorExternalClockFrequencyHz);
     }
@@ -218,7 +223,9 @@ I2cSTM32F30x& BoardNucleoF303RE::getI2c()
         GpioPinSTM32F30x& i2c1Scl = getGpioPin(GPIO_PIN_ID_I2C_SCL);
         GpioPinSTM32F30x& i2c1Sda = getGpioPin(GPIO_PIN_ID_I2C_SDA);
 
-        myI2c = new I2cSTM32F30x(I2cSTM32F30x::ID_1, i2c1Scl, i2c1Sda);
+        myI2c = MemoryAllocator::allocate<I2cSTM32F30x>(I2cSTM32F30x::ID_1,
+                                                        i2c1Scl,
+                                                        i2c1Sda);
     }
 
     return (*myI2c);
@@ -232,7 +239,9 @@ UartSTM32F30x& BoardNucleoF303RE::getUart()
         GpioPinSTM32F30x& uart2Tx = getGpioPin(GPIO_PIN_ID_UART_TX);
         GpioPinSTM32F30x& uart2Rx = getGpioPin(GPIO_PIN_ID_UART_RX);
 
-        myUart = new UartSTM32F30x(UartSTM32F30x::ID_2, uart2Tx, uart2Rx);
+        myUart = MemoryAllocator::allocate<UartSTM32F30x>(UartSTM32F30x::ID_2,
+                                                          uart2Tx,
+                                                          uart2Rx);
     }
 
     return (*myUart);

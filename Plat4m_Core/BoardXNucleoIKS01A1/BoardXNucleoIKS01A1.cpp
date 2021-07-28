@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/BoardXNucleoIKS01A1/BoardXNucleoIKS01A1.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::BoardXNucleoIKS01A1;
 using Plat4m::ImuLSM6DS0;
@@ -68,7 +69,7 @@ BoardXNucleoIKS01A1::~BoardXNucleoIKS01A1()
 {
 	if (isValidPointer(myImuLSM6DS0))
 	{
-		delete myImuLSM6DS0;
+		MemoryAllocator::deallocate(myImuLSM6DS0);
 	}
 }
 
@@ -81,7 +82,9 @@ ImuLSM6DS0& BoardXNucleoIKS01A1::getImu(I2c& i2c)
 {
 	if (isNullPointer(myImuLSM6DS0))
 	{
-		myImuLSM6DS0 = new ImuLSM6DS0(ImuLSM6DS0::PIN_LEVEL_LOW, i2c);
+		myImuLSM6DS0 = MemoryAllocator::allocate<ImuLSM6DS0>(
+                                                      ImuLSM6DS0::PIN_LEVEL_LOW,
+                                                      i2c);
 	}
 
 	return (*myImuLSM6DS0);

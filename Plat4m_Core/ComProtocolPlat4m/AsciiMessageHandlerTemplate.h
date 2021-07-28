@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,7 @@
 #include <Plat4m_Core/ComProtocolPlat4m/AsciiMessage.h>
 #include <Plat4m_Core/ComProtocolPlat4m/AsciiMessageHandler.h>
 #include <Plat4m_Core/CallbackMethod2Parameters.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -147,26 +148,27 @@ private:
     TAsciiMessageResponse myAsciiResponse;
 };
 
-    //--------------------------------------------------------------------------
-    // Namespace functions
-    //--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Namespace functions
+//------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    template <class TClass,
-              class TRequestMessage,
-              class TResponseMessage,
-              class TRequestAsciiMessage,
-              class TResponseAsciiMessage>
-    static AsciiMessageHandler& createMessageHandler(
-            TClass* object,
-            void (TClass::*callback)(const TRequestMessage&, TResponseMessage&))
-    {
-        return *(new AsciiMessageHandlerTemplate<TRequestMessage,
-                                                 TResponseMessage,
-                                                 TRequestAsciiMessage,
-                                                 TResponseAsciiMessage>(
-                                             createCallback(object, callback)));
-    }
+//------------------------------------------------------------------------------
+template <class TClass,
+          class TRequestMessage,
+          class TResponseMessage,
+          class TRequestAsciiMessage,
+          class TResponseAsciiMessage>
+static AsciiMessageHandler& createMessageHandler(
+        TClass* object,
+        void (TClass::*callback)(const TRequestMessage&, TResponseMessage&))
+{
+    return *(MemoryAllocator::allocate<
+        AsciiMessageHandlerTemplate<TRequestMessage,
+                                    TResponseMessage,
+                                    TRequestAsciiMessage,
+                                    TResponseAsciiMessage>>(
+                                            createCallback(object, callback)));
+}
 
 }; // namespace Plat4m
 
