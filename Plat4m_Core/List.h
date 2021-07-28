@@ -272,6 +272,7 @@ public:
                     if (myFirstItem == myLastItem)
                     {
                         myLastItem = 0;
+                        myFirstItem->nextItem = 0;
                     }
                 }
                 else
