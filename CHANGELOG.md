@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[NEW FEATURE]` Added MemoryAllocator class that uses placement new operator. Removed previous new/delete references and global new/delete operator overloading. [Resolves 24].
 - `[IMPROVEMENT]` Added call to Thread destructor in HardwareTimerSimulated destructor. [Resolves 23].
 - `[IMPROVEMENT]` Made Thread destructor public. [Resolves 22].
 - `[IMPROVEMENT]` Added clearing of driver pointer in System destructor. [Resolves 21].
