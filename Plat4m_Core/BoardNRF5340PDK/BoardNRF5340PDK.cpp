@@ -127,10 +127,11 @@ GpioPinNRF5340& BoardNRF5340PDK::getGpioPin(const GpioPinId gpioPinId)
 
     if (isNullPointer(myGpioPins[gpioPinId]))
     {
+        GpioPinNRF5340::Id id =
+                         (GpioPinNRF5340::Id) (myGpioPinIdMap[gpioPinId].pinId);
+
         myGpioPins[gpioPinId] =
-            MemoryAllocator::allocate<GpioPinNRF5340>(
-                        gpioPort,
-                        (GpioPinNRF5340::Id) (myGpioPinIdMap[gpioPinId].pinId));
+                        MemoryAllocator::allocate<GpioPinNRF5340>(gpioPort, id);
     }
 
     return (*(myGpioPins[gpioPinId]));
