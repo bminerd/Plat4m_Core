@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Fixed allocate() syntax in BoardNRF5340PDK. [Resolves 29].
 - `[BUG FIX]` Fixed bug in List::remove() for 2-element lists. [Resolves 28].
 - `[IMPROVEMENT]` Added clearing of driver pointer in Processor destructor. [Resolves 27].
 - `[IMPROVEMENT]` Added call in Topic destructor to remove it from static List in Topic class. [Resolves 26].
