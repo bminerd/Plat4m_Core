@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,8 @@ using Plat4m::QueueDriver;
 //------------------------------------------------------------------------------
 SystemLinux::SystemLinux() :
     System(),
-    myFirstTimeSpec()
+    myFirstTimeSpec(),
+    myIsRunning(false)
 {
     clock_gettime(CLOCK_REALTIME, &myFirstTimeSpec);
 
@@ -86,6 +87,7 @@ SystemLinux::SystemLinux() :
 //------------------------------------------------------------------------------
 SystemLinux::~SystemLinux()
 {
+    myIsRunning = false;
 }
 
 //------------------------------------------------------------------------------
@@ -111,6 +113,16 @@ inline Plat4m::TimeUs SystemLinux::getCurrentLinuxTimeUs()
 }
 
 //------------------------------------------------------------------------------
+// Protected methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void SystemLinux::runProtected()
+{
+    SystemLinux::driverRun();
+}
+
+//------------------------------------------------------------------------------
 // Private methods implemented from System
 //------------------------------------------------------------------------------
 
@@ -125,7 +137,8 @@ Plat4m::TimeUs SystemLinux::driverGetTimeUs()
 //------------------------------------------------------------------------------
 Thread& SystemLinux::driverCreateThread(Thread::RunCallback& callback,
                                         const TimeMs periodMs,
-                                        const uint32_t nStackBytes)
+                                        const uint32_t nStackBytes,
+                                        const bool isSimulated)
 {
     return *(MemoryAllocator::allocate<ThreadLinux>(callback, periodMs));
 }
@@ -154,9 +167,11 @@ QueueDriver& SystemLinux::driverCreateQueueDriver(
 //------------------------------------------------------------------------------
 void SystemLinux::driverRun()
 {
-    while (true)
+    myIsRunning = true;
+
+    while (myIsRunning)
     {
-        driverDelayTimeMs(100);
+        driverDelayTimeMs(1);
     }
 }
 
@@ -175,4 +190,23 @@ void SystemLinux::driverDelayTimeMs(const TimeMs timeMs)
     timeSpec.tv_sec = timeMs / 1000;
     timeSpec.tv_nsec = (timeMs % 1000) * 1000000;
     nanosleep(&timeSpec, NULL);
+}
+
+//------------------------------------------------------------------------------
+void SystemLinux::driverExit()
+{
+    myIsRunning = false;
+}
+
+//------------------------------------------------------------------------------
+Plat4m::TimeStamp SystemLinux::driverGetWallTimeStamp()
+{
+    struct timespec timeSpec;
+    clock_gettime(CLOCK_REALTIME, &timeSpec);
+
+    TimeStamp timeStamp;
+    timeStamp.timeS  = timeSpec.tv_sec - myFirstTimeSpec.tv_sec;
+    timeStamp.timeNs = timeSpec.tv_nsec - myFirstTimeSpec.tv_nsec;
+
+    return timeStamp;
 }

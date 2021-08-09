@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -51,6 +51,10 @@
 
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/System.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/Mutex.h>
+#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/QueueDriver.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -80,12 +84,16 @@ public:
     virtual ~SystemLinux();
 
     //--------------------------------------------------------------------------
-    // Private inline methods
+    // Public inline methods
     //--------------------------------------------------------------------------
 
     static inline TimeMs getCurrentLinuxTimeMs();
 
     static inline TimeUs getCurrentLinuxTimeUs();
+
+protected:
+
+    void runProtected();
 
 private:
 
@@ -99,29 +107,36 @@ private:
 
     TimeUs myFirstTimeUs;
 
+    bool myIsRunning;
+
     //--------------------------------------------------------------------------
     // Private methods implemented from System
     //--------------------------------------------------------------------------
 
-    TimeUs driverGetTimeUs();
+    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
+                                       const TimeMs periodMs,
+                                       const uint32_t nStackBytes,
+                                       const bool isSimulated) override;
 
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes);
+    virtual Mutex& driverCreateMutex(Thread& thread) override;
 
-    Mutex& driverCreateMutex(Thread& thread);
+    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
 
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
+    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
+                                                 const uint32_t valueSizeBytes,
+                                                 Thread& thread) override;
 
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-                                         const uint32_t valueSizeBytes,
-                                         Thread& thread);
+    virtual void driverRun() override;
 
-    void driverRun();
+    virtual TimeUs driverGetTimeUs() override;
 
-    TimeMs driverGetTimeMs();
+    virtual TimeMs driverGetTimeMs() override;
 
-    void driverDelayTimeMs(const TimeMs timeMs);
+    virtual void driverDelayTimeMs(const TimeMs timeMs) override;
+
+    virtual void driverExit() override;
+
+    virtual TimeStamp driverGetWallTimeStamp() override;
 };
 
 }; // namespace Plat4m
