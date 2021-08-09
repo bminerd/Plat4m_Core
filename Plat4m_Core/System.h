@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -95,7 +95,8 @@ public:
 
     static Thread& createThread(Thread::RunCallback& callback,
                                 const TimeMs periodMs = 0,
-                                const uint32_t nStackBytes = 0);
+                                const uint32_t nStackBytes = 0,
+                                const bool isSimulated = false);
 
     static Mutex& createMutex(Thread& thread);
 
@@ -120,9 +121,15 @@ public:
 
     static TimeUs getTimeUs();
 
+    static TimeStamp getTimeStamp();
+
+    static TimeStamp getWallTimeStamp();
+
     static void delayTimeMs(const TimeMs timeMs);
 
     static bool checkTimeMs(const TimeMs timeMs);
+
+    static void exit();
     
 protected:
     
@@ -154,7 +161,8 @@ private:
 
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
-                                       const uint32_t nStackBytes) = 0;
+                                       const uint32_t nStackBytes,
+                                       const bool isSimulated) = 0;
 
     virtual Mutex& driverCreateMutex(Thread& thread) = 0;
 
@@ -171,6 +179,16 @@ private:
     virtual TimeUs driverGetTimeUs() = 0;
 
     virtual void driverDelayTimeMs(const TimeMs timeMs) = 0;
+
+    virtual void driverExit() = 0;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual TimeStamp driverGetTimeStamp();
+
+    virtual TimeStamp driverGetWallTimeStamp();
 };
 
 }; // namespace Plat4m

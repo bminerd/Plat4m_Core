@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2036 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,8 @@
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/List.h>
 
+using namespace Plat4m;
+
 using Plat4m::System;
 using Plat4m::Thread;
 using Plat4m::Mutex;
@@ -65,9 +67,13 @@ bool System::myIsRunning = false;
 //------------------------------------------------------------------------------
 Thread& System::createThread(Thread::RunCallback& callback,
                              const TimeMs periodMs,
-                             const uint32_t nStackBytes)
+                             const uint32_t nStackBytes,
+                             const bool isSimulated)
 {
-    return (myDriver->driverCreateThread(callback, periodMs, nStackBytes));
+    return (myDriver->driverCreateThread(callback,
+                                         periodMs,
+                                         nStackBytes,
+                                         isSimulated));
 }
 
 //------------------------------------------------------------------------------
@@ -102,6 +108,18 @@ uint32_t System::getTimeMs()
 }
 
 //------------------------------------------------------------------------------
+TimeStamp System::getTimeStamp()
+{
+    return (myDriver->driverGetTimeStamp());
+}
+
+//------------------------------------------------------------------------------
+TimeStamp System::getWallTimeStamp()
+{
+    return (myDriver->driverGetWallTimeStamp());
+}
+
+//------------------------------------------------------------------------------
 uint32_t System::getTimeUs()
 {
     return (myDriver->driverGetTimeUs());
@@ -117,6 +135,12 @@ void System::delayTimeMs(const uint32_t timeMs)
 bool System::checkTimeMs(const uint32_t timeMs)
 {
     return (timeMs <= getTimeMs());
+}
+
+//------------------------------------------------------------------------------
+void System::exit()
+{
+    myDriver->driverExit();
 }
 
 //------------------------------------------------------------------------------
@@ -147,4 +171,30 @@ System::System()
 System::~System()
 {
     myDriver = 0;
+}
+
+//------------------------------------------------------------------------------
+// Private virtual methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Plat4m::TimeStamp System::driverGetTimeStamp()
+{
+    // Not implemented by subclass, default implementation
+
+    TimeUs timeUs = getTimeUs();
+
+    TimeStamp timeStamp;
+    timeStamp.timeS  = std::round(timeUs / 1000000);
+    timeStamp.timeNs = (timeUs - timeStamp.timeS * 1000000) * 1000;
+
+    return timeStamp;
+}
+
+//------------------------------------------------------------------------------
+Plat4m::TimeStamp System::driverGetWallTimeStamp()
+{
+    // Not implemented by subclass, default implementation
+
+    return driverGetTimeStamp();
 }

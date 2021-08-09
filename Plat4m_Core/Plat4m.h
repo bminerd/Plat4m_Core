@@ -104,6 +104,7 @@ namespace Plat4m
 
     typedef uint32_t Id;
 
+    typedef uint32_t TimeS;
     typedef uint32_t TimeUs;
     typedef uint32_t TimeMs;
 
@@ -144,6 +145,12 @@ namespace Plat4m
 
     typedef RealNumber AngularAccelerationDps2;
     typedef RealNumber AngularAccelerationRadPs2;
+
+    struct TimeStamp
+    {
+        TimeS timeS;
+        TimeUs timeNs;
+    };
 
     //--------------------------------------------------------------------------
     // Variables
