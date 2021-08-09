@@ -122,7 +122,8 @@ Plat4m::TimeUs SystemFreeRtos::driverGetTimeUs()
 //------------------------------------------------------------------------------
 Thread& SystemFreeRtos::driverCreateThread(Thread::RunCallback& callback,
                                        	   const TimeMs periodMs,
-                                       	   const uint32_t nStackBytes)
+                                       	   const uint32_t nStackBytes,
+                                           const bool isSimulated)
 {
     return *(MemoryAllocator::allocate<ThreadFreeRtos>(callback,
                                                        periodMs,
