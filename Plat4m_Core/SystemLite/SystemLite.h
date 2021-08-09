@@ -127,7 +127,8 @@ private:
 
     Thread& driverCreateThread(Thread::RunCallback& callback,
                                const TimeMs periodMs,
-                               const uint32_t nStackBytes);
+                               const uint32_t nStackBytes,
+                               const bool isSimulated);
 
     Mutex& driverCreateMutex(Thread& thread);
 

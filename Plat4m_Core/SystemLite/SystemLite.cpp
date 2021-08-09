@@ -101,7 +101,8 @@ void SystemLite::enableSystemClock(const uint32_t coreClockFrequencyHz)
 //------------------------------------------------------------------------------
 Thread& SystemLite::driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
-                                       const uint32_t nStackBytes)
+                                       const uint32_t nStackBytes,
+                                       const bool isSimulated)
 {
     ThreadLite* thread =
                       MemoryAllocator::allocate<ThreadLite>(callback, periodMs);
