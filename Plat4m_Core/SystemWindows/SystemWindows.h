@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -90,7 +90,8 @@ private:
 
     Thread& driverCreateThread(Thread::RunCallback& callback,
                                const TimeMs periodMs,
-                               const uint32_t nStackBytes);
+                               const uint32_t nStackBytes,
+                               const bool isSimulated);
 
     Mutex& driverCreateMutex(Thread& thread);
 
