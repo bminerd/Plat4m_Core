@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Fixed missing FreeRTOS-Kernel dependency and MemoryAllocation reference syntax for failing CI builds. [Resolves 37].
 - `[IMPROVEMENT]` Changed build scripts to report errors. [Resolves 36].
 - `[BUG FIX]` Fixed allocate() syntax in BoardNRF5340PDK. [Resolves 29].
 - `[BUG FIX]` Fixed bug in List::remove() for 2-element lists. [Resolves 28].
