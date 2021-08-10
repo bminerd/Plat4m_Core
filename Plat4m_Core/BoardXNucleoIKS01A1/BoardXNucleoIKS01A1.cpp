@@ -82,9 +82,9 @@ ImuLSM6DS0& BoardXNucleoIKS01A1::getImu(I2c& i2c)
 {
 	if (isNullPointer(myImuLSM6DS0))
 	{
-		myImuLSM6DS0 = MemoryAllocator::allocate<ImuLSM6DS0>(
-                                                      ImuLSM6DS0::PIN_LEVEL_LOW,
-                                                      i2c);
+        const ImuLSM6DS0::PinLevel pinLevel = ImuLSM6DS0::PIN_LEVEL_LOW;
+        
+		myImuLSM6DS0 = MemoryAllocator::allocate<ImuLSM6DS0>(pinLevel, i2c);
 	}
 
 	return (*myImuLSM6DS0);

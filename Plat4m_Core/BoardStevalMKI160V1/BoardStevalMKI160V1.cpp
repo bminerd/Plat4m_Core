@@ -85,11 +85,13 @@ ImuLSM6DS3& BoardStevalMKI160V1::getImu(
 {
 	if (isNullPointer(myImuLSM6DS3))
 	{
+        const ImuLSM6DS3::PinLevel pinLevel = ImuLSM6DS3::PIN_LEVEL_LOW;
+
 		myImuLSM6DS3 = MemoryAllocator::allocate<ImuLSM6DS3>(
-                                                      ImuLSM6DS3::PIN_LEVEL_LOW,
-                                                      i2c,
-                                                      int1ExternalInterrupt,
-                                                      int2ExternalInterrupt);
+                                                         pinLevel,
+                                                         i2c,
+                                                         int1ExternalInterrupt,
+                                                         int2ExternalInterrupt);
 	}
 
 	return (*myImuLSM6DS3);

@@ -110,9 +110,9 @@ ImuLSM6DS0::ImuLSM6DS0(const PinLevel sa0PinLevel, Plat4m::I2c& i2c) :
 	mySlaveDevice(0),
 	myConfig()
 {
-	mySlaveDevice = MemoryAllocator::allocate<I2cDevice>(
-                                       i2cBaseAddress | ((uint8_t) sa0PinLevel),
-                                       i2c);
+    const uint8_t address = i2cBaseAddress | ((uint8_t) sa0PinLevel);
+    
+	mySlaveDevice = MemoryAllocator::allocate<I2cDevice>(address, i2c);
 }
 
 //------------------------------------------------------------------------------
