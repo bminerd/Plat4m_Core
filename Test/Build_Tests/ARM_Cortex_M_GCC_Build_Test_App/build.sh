@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 pushd .
 
 # Switch current/working directory to here

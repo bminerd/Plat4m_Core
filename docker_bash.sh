@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ ! -z "$1" ]; then # If command is not null, run the command and exit
 
     # Create and run a container based on bminerd/plat4m_dev_linux:1.0.0 image and remove on exit
