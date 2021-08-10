@@ -9,6 +9,7 @@ if [ ! -z "$1" ]; then # If command is not null, run the command and exit
         -p 2331:2331 \
         --mount type=bind,source="$(pwd)",target="/home/${PWD##*/}" \
         --workdir "/home/${PWD##*/}" \
+        -t -e "TERM=xterm-256color" \
         bminerd/plat4m_linux_dev:1.0.0 bash -c "$*"
 
 else # If command is null, enter container
