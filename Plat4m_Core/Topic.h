@@ -48,6 +48,7 @@
 
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/List.h>
+#include <Plat4m_Core/System.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -107,7 +108,8 @@ public:
     //--------------------------------------------------------------------------
     Topic(const uint32_t id) :
         myId(id),
-        mySampleCallbackList()
+        mySampleCallbackList(),
+        mySequenceIdCounter(0)
     {
         Topic* pointer = this;
 
@@ -147,16 +149,29 @@ public:
     //--------------------------------------------------------------------------
     void publish(const SampleType& sample)
     {
+        publish(sample, System::getTimeStamp());
+    }
+
+    //--------------------------------------------------------------------------
+    void publish(const SampleType& sample, const TimeStamp timeStamp)
+    {
+        SampleType sampleCopy = sample;
+
+        sampleCopy.header.sequenceId = mySequenceIdCounter;
+        sampleCopy.header.timeStamp  = timeStamp;
+
         typename List<SampleCallback*>::Iterator iterator =
                                                 mySampleCallbackList.iterator();
 
         while (iterator.hasCurrent())
         {
             SampleCallback* sampleCallback = iterator.current();
-            sampleCallback->call(sample);
+            sampleCallback->call(sampleCopy);
 
             iterator.next();
         }
+
+        mySequenceIdCounter++;
     }
 
 private:
@@ -166,6 +181,8 @@ private:
     //--------------------------------------------------------------------------
 
     static List<Topic*> myTopicList;
+
+    uint32_t mySequenceIdCounter;
 
     //--------------------------------------------------------------------------
     // Private data members
