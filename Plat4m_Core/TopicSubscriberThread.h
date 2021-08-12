@@ -68,7 +68,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template<typename SampleType, uint32_t nQueueValues>
+template<typename SampleType, uint32_t nQueueValues = 1>
 class TopicSubscriberThread : public Module
 {
 public:
