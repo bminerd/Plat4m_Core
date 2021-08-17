@@ -126,6 +126,7 @@ bool TopicSubscriberTest::acceptanceTest1()
                                  testTopicId,
                                  config,
                                  createCallback(&acceptanceTest1TopicCallback));
+    subscriber.enable();
 
     config.downsampleFactor = 2;
 
@@ -133,6 +134,7 @@ bool TopicSubscriberTest::acceptanceTest1()
                                 testTopicId,
                                 config,
                                 createCallback(&acceptanceTest1TopicCallback2));
+    subscriber2.enable();
 
     testTopic.publish(sample);
     testTopic.publish(sample2);

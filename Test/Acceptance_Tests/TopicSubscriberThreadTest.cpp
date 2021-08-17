@@ -116,7 +116,7 @@ bool TopicSubscriberThreadTest::acceptanceTest1()
         createCallback(
                     &TopicSubscriberThreadTest::acceptanceTest1SampleCallback));
 
-    subscriber.setEnabled(true);
+    subscriber.enable();
     
     TestSample sample;
     sample.sample1 = 51;
@@ -126,7 +126,7 @@ bool TopicSubscriberThreadTest::acceptanceTest1()
 
     System::delayTimeMs(10);
 
-    subscriber.setEnabled(false);
+    subscriber.disable();
 
     // Test
 

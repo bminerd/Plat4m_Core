@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
+#include <Plat4m_Core/Module.h>
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/CallbackMethodParameter.h>
 #include <Plat4m_Core/Topic.h>
@@ -62,7 +65,7 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template<typename SampleType>
-class TopicSubscriber
+class TopicSubscriber : public Module
 {
 public:
 
@@ -72,7 +75,7 @@ public:
 
     struct Config
     {
-        uint32_t downsampleFactor;
+        std::uint32_t downsampleFactor;
     };
 
     //--------------------------------------------------------------------------
@@ -81,7 +84,7 @@ public:
 
     //--------------------------------------------------------------------------
     TopicSubscriber(
-                   const uint32_t id,
+                   const std::uint32_t id,
                    const Config config,
                    typename Topic<SampleType>::SampleCallback& sampleCallback) :
         myTopicId(id),
@@ -92,13 +95,13 @@ public:
         setConfig(config);
 
         Topic<SampleType>::subscribe(
-            id,
-            createCallback(this, &TopicSubscriber::sampleCallback));
-    }
+                        id,
+                        createCallback(this, &TopicSubscriber::sampleCallback));
+                }
 
     //--------------------------------------------------------------------------
     TopicSubscriber(
-                   const uint32_t id,
+                   const std::uint32_t id,
                    typename Topic<SampleType>::SampleCallback& sampleCallback) :
         myTopicId(id),
         myConfig(),
@@ -108,8 +111,8 @@ public:
         myConfig.downsampleFactor = 1;
 
         Topic<SampleType>::subscribe(
-            id,
-            createCallback(this, &TopicSubscriber::sampleCallback));
+                        id,
+                        createCallback(this, &TopicSubscriber::sampleCallback));
     }
 
     //--------------------------------------------------------------------------
@@ -175,13 +178,13 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    uint32_t myTopicId;
+    std::uint32_t myTopicId;
 
     Config myConfig;
 
     typename Topic<SampleType>::SampleCallback& mySampleCallback;
 
-    uint32_t myDownsampleCounter;
+    std::uint32_t myDownsampleCounter;
 
     //--------------------------------------------------------------------------
     // Private methods
@@ -190,15 +193,18 @@ private:
     //--------------------------------------------------------------------------
     void sampleCallback(const SampleType& sample)
     {
-        if (myDownsampleCounter >= myConfig.downsampleFactor)
+        if (isEnabled())
         {
-            mySampleCallback.call(sample);
+            if (myDownsampleCounter >= myConfig.downsampleFactor)
+            {
+                mySampleCallback.call(sample);
 
-            myDownsampleCounter = 1;
-        }
-        else
-        {
-            myDownsampleCounter++;
+                myDownsampleCounter = 1;
+            }
+            else
+            {
+                myDownsampleCounter++;
+            }
         }
     }
 };

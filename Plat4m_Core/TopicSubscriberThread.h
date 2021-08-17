@@ -149,7 +149,10 @@ private:
     //--------------------------------------------------------------------------
     virtual Module::Error driverSetEnabled(const bool enabled)
     {
-        Module::Error error = myThread.setEnabled(enabled);
+        Module::Error error;
+
+        error = myTopicSubscriber.setEnabled(enabled);
+        error = myThread.setEnabled(enabled);
 
         if (!enabled)
         {
