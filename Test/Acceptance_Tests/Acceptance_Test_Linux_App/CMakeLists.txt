@@ -4,6 +4,7 @@ project (Acceptance_Test_Linux_App C CXX ASM)
 set(PLAT4M_CORE_DIR ${PROJECT_SOURCE_DIR}/../../../Plat4m_Core)
 
 set(PROJECT_FLAGS "-g3 \
+                   -O0 \
                    -pthread \
                    -fdebug-prefix-map=/home/Plat4m_Core=.")
 
