@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added VS Code build and debug support. [Resolves 39].
 - `[NEW FEATURE]` Added Linux simulation System implementation. Added time stamp and wall time stamp retrieval to System interface. Added Topic header with sequence ID and time stamp. [Resolves 31].
 - `[IMPROVEMENT]` Fixed missing FreeRTOS-Kernel dependency and MemoryAllocation reference syntax for failing CI builds. [Resolves 37].
 - `[IMPROVEMENT]` Changed build scripts to report errors. [Resolves 36].
