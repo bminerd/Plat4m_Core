@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of uint8_tge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,8 @@
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/Thread.h>
 #include <Plat4m_Core/Queue.h>
+
+using namespace std;
 
 using Plat4m::TopicSubscriberThreadTest;
 using Plat4m::UnitTest;
