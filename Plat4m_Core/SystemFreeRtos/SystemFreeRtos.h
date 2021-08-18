@@ -84,33 +84,31 @@ protected:
 private:
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from System
+    // Private virtual methods overridden for System
     //--------------------------------------------------------------------------
 
-    virtual TimeUs driverGetTimeUs();
+    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
+                                       const TimeMs periodMs,
+                                       const uint32_t nStackBytes,
+                                       const bool isSimulated) override;
 
-    //--------------------------------------------------------------------------
-    // Private methods implemented from System
-    //--------------------------------------------------------------------------
+    virtual Mutex& driverCreateMutex(Thread& thread) override;
 
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes,
-                               const bool isSimulated);
+    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
 
-    Mutex& driverCreateMutex(Thread& thread);
+    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
+    									         const uint32_t valueSizeBytes,
+    									         Thread& thread) override;
 
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
+    virtual void driverRun() override;
 
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									 const uint32_t valueSizeBytes,
-    									 Thread& thread);
+    virtual TimeMs driverGetTimeMs() override;
 
-    void driverRun();
+    virtual TimeUs driverGetTimeUs() override;
 
-    TimeMs driverGetTimeMs();
+    virtual void driverDelayTimeMs(const TimeMs timeMs) override;
 
-    void driverDelayTimeMs(const TimeMs timeMs);
+    virtual void driverExit() override;
 };
 
 }; // namespace Plat4m

@@ -71,7 +71,8 @@ volatile Plat4m::TimeMs SystemLite::myTimeMs = 0;
 SystemLite::SystemLite() :
     System(),
     myThreadList(),
-    myThreadDepth(0)
+    myThreadDepth(0),
+    myIsRunning(false)
 {
 }
 
@@ -135,7 +136,9 @@ QueueDriver& SystemLite::driverCreateQueueDriver(const uint32_t nValues,
 //------------------------------------------------------------------------------
 void SystemLite::driverRun()
 {
-    while (true) // Loop forever
+    myIsRunning = true;
+
+    while (myIsRunning)
     {
         checkThreads();
     }
@@ -165,6 +168,12 @@ void SystemLite::driverDelayTimeMs(const TimeMs timeMs)
             checkThreads(timeMs);
         }
     }
+}
+
+//------------------------------------------------------------------------------
+void SystemLite::driverExit()
+{
+    myIsRunning = false;
 }
 
 //------------------------------------------------------------------------------

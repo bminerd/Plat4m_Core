@@ -64,7 +64,8 @@ using Plat4m::QueueDriver;
 
 //------------------------------------------------------------------------------
 SystemWindows::SystemWindows() :
-    System()
+    System(),
+    myIsRunning(false)
 {
 }
 
@@ -122,9 +123,11 @@ QueueDriver& SystemWindows::driverCreateQueueDriver(
 //------------------------------------------------------------------------------
 void SystemWindows::driverRun()
 {
-    while (true)
+    myIsRunning = true;
+
+    while (myIsRunning)
     {
-        // Do nothing
+        driverDelayTimeMs(1);
     }
 }
 
@@ -138,4 +141,10 @@ Plat4m::TimeMs SystemWindows::driverGetTimeMs()
 void SystemWindows::driverDelayTimeMs(const TimeMs timeMs)
 {
     Sleep((DWORD) timeMs);
+}
+
+//------------------------------------------------------------------------------
+void SystemWindows::driverExit()
+{
+    myIsRunning = false;
 }

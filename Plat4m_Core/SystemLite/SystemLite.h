@@ -114,6 +114,8 @@ private:
 
     uint32_t myThreadDepth;
 
+    bool myIsRunning;
+
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
@@ -122,29 +124,31 @@ private:
                                        const uint32_t coreClockFrequencyHz) = 0;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from System
+    // Private virtual methods overridden for System
     //--------------------------------------------------------------------------
 
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes,
-                               const bool isSimulated);
+    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
+                                       const TimeMs periodMs,
+                                       const uint32_t nStackBytes,
+                                       const bool isSimulated) override;
 
-    Mutex& driverCreateMutex(Thread& thread);
+    virtual Mutex& driverCreateMutex(Thread& thread) override;
 
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
+    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
 
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									 const uint32_t valueSizeBytes,
-    									 Thread& thread);
+    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
+                                                 const uint32_t valueSizeBytes,
+                                                 Thread& thread) override;
 
-    void driverRun();
+    virtual void driverRun() override;
 
-    TimeMs driverGetTimeMs();
+    virtual TimeMs driverGetTimeMs() override;
 
-    TimeUs driverGetTimeUs();
+    virtual TimeUs driverGetTimeUs() override;
 
-    void driverDelayTimeMs(const TimeMs timeMs);
+    virtual void driverDelayTimeMs(const TimeMs timeMs) override;
+
+    virtual void driverExit() override;
 
     //--------------------------------------------------------------------------
     // Private methods

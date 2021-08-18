@@ -116,7 +116,7 @@ Plat4m::TimeUs SystemFreeRtos::driverGetTimeUs()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from System
+// Private virtual methods overridden for System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -168,4 +168,10 @@ Plat4m::TimeMs SystemFreeRtos::driverGetTimeMs()
 void SystemFreeRtos::driverDelayTimeMs(const TimeMs timeMs)
 {
     vTaskDelay((TickType_t) timeMs);
+}
+
+//------------------------------------------------------------------------------
+void SystemFreeRtos::driverExit()
+{
+    vTaskEndScheduler();
 }
