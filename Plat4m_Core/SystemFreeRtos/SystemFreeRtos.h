@@ -46,6 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/List.h>
@@ -53,6 +55,7 @@
 #include <Plat4m_Core/Mutex.h>
 #include <Plat4m_Core/WaitCondition.h>
 #include <Plat4m_Core/QueueDriver.h>
+#include <Plat4m_Core/Semaphore.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -67,6 +70,40 @@ namespace Plat4m
 
 class SystemFreeRtos : public System
 {
+public:
+
+    //--------------------------------------------------------------------------
+    // Public virtual methods overridden for System
+    //--------------------------------------------------------------------------
+
+    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
+                                       const TimeMs periodMs,
+                                       const std::uint32_t nStackBytes,
+                                       const bool isSimulated) override;
+
+    virtual Mutex& driverCreateMutex(Thread& thread) override;
+
+    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
+
+    virtual QueueDriver& driverCreateQueueDriver(
+                                             const std::uint32_t nValues,    
+                                             const std::uint32_t valueSizeBytes,
+                                             Thread& thread) override;
+
+    virtual Semaphore& driverCreateSemaphore(
+                                     const std::uint32_t maxValue,
+                                     const std::uint32_t initialValue) override;
+
+    virtual void driverRun() override;
+
+    virtual TimeMs driverGetTimeMs() override;
+
+    virtual TimeUs driverGetTimeUs() override;
+
+    virtual void driverDelayTimeMs(const TimeMs timeMs) override;
+
+    virtual void driverExit() override;
+
 protected:
 
     //--------------------------------------------------------------------------
@@ -80,35 +117,6 @@ protected:
     //--------------------------------------------------------------------------
 
     virtual ~SystemFreeRtos();
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private virtual methods overridden for System
-    //--------------------------------------------------------------------------
-
-    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs,
-                                       const uint32_t nStackBytes,
-                                       const bool isSimulated) override;
-
-    virtual Mutex& driverCreateMutex(Thread& thread) override;
-
-    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
-
-    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									         const uint32_t valueSizeBytes,
-    									         Thread& thread) override;
-
-    virtual void driverRun() override;
-
-    virtual TimeMs driverGetTimeMs() override;
-
-    virtual TimeUs driverGetTimeUs() override;
-
-    virtual void driverDelayTimeMs(const TimeMs timeMs) override;
-
-    virtual void driverExit() override;
 };
 
 }; // namespace Plat4m

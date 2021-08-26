@@ -51,15 +51,12 @@
 #include <Plat4m_Core/SystemFreeRtos/MutexFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/WaitConditionFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/QueueDriverFreeRtos.h>
+#include <Plat4m_Core/SystemFreeRtos/SemaphoreFreeRtos.h>
 #include <Plat4m_Core/Processor.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::SystemFreeRtos;
-using Plat4m::Processor;
-using Plat4m::Thread;
-using Plat4m::Mutex;
-using Plat4m::WaitCondition;
-using Plat4m::QueueDriver;
+using namespace std;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // External functions
@@ -85,38 +82,7 @@ extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask,
 }
 
 //------------------------------------------------------------------------------
-// Protected constructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-SystemFreeRtos::SystemFreeRtos() :
-    System()
-{
-}
-
-//------------------------------------------------------------------------------
-// Protected virtual destructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-SystemFreeRtos::~SystemFreeRtos()
-{
-}
-
-//------------------------------------------------------------------------------
-// Private virtual methods implemented from System
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-Plat4m::TimeUs SystemFreeRtos::driverGetTimeUs()
-{
-	// Default if not implemented by subclass
-
-    return (driverGetTimeMs() * 1000);
-}
-
-//------------------------------------------------------------------------------
-// Private virtual methods overridden for System
+// Public virtual methods overridden for System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -153,6 +119,14 @@ QueueDriver& SystemFreeRtos::driverCreateQueueDriver(
 }
 
 //------------------------------------------------------------------------------
+Semaphore& SystemFreeRtos::driverCreateSemaphore(const uint32_t maxValue,
+                                                 const uint32_t initialValue)
+{
+    return *(MemoryAllocator::allocate<SemaphoreFreeRtos>(maxValue,
+                                                          initialValue));
+}
+
+//------------------------------------------------------------------------------
 void SystemFreeRtos::driverRun()
 {
     vTaskStartScheduler();
@@ -174,4 +148,35 @@ void SystemFreeRtos::driverDelayTimeMs(const TimeMs timeMs)
 void SystemFreeRtos::driverExit()
 {
     vTaskEndScheduler();
+}
+
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+SystemFreeRtos::SystemFreeRtos() :
+    System()
+{
+}
+
+//------------------------------------------------------------------------------
+// Protected virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+SystemFreeRtos::~SystemFreeRtos()
+{
+}
+
+//------------------------------------------------------------------------------
+// Private virtual methods implemented from System
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Plat4m::TimeUs SystemFreeRtos::driverGetTimeUs()
+{
+	// Default if not implemented by subclass
+
+    return (driverGetTimeMs() * 1000);
 }
