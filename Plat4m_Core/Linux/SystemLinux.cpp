@@ -53,13 +53,11 @@
 #include <Plat4m_Core/Linux/MutexLinux.h>
 #include <Plat4m_Core/Linux/WaitConditionLinux.h>
 #include <Plat4m_Core/Linux/QueueDriverLinux.h>
+#include <Plat4m_Core/Linux/SemaphoreLinux.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::SystemLinux;
-using Plat4m::Thread;
-using Plat4m::Mutex;
-using Plat4m::WaitCondition;
-using Plat4m::QueueDriver;
+using namespace std;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -113,17 +111,7 @@ inline Plat4m::TimeUs SystemLinux::getCurrentLinuxTimeUs()
 }
 
 //------------------------------------------------------------------------------
-// Protected methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void SystemLinux::runProtected()
-{
-    SystemLinux::driverRun();
-}
-
-//------------------------------------------------------------------------------
-// Private methods implemented from System
+// Public virtual methods overridden for System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -162,6 +150,13 @@ QueueDriver& SystemLinux::driverCreateQueueDriver(
                                                   Thread& thread)
 {
     return *(MemoryAllocator::allocate<QueueDriverLinux>(valueSizeBytes));
+}
+
+//------------------------------------------------------------------------------
+Semaphore& SystemLinux::driverCreateSemaphore(const uint32_t maxValue,
+                                              const uint32_t initialValue)
+{
+    return *(MemoryAllocator::allocate<SemaphoreLinux>(maxValue, initialValue));
 }
 
 //------------------------------------------------------------------------------
