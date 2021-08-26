@@ -46,6 +46,7 @@
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/List.h>
 
+using namespace std;
 using namespace Plat4m;
 
 using Plat4m::System;
@@ -86,6 +87,13 @@ Mutex& System::createMutex(Thread& thread)
 WaitCondition& System::createWaitCondition(Thread& thread)
 {
     return (myDriver->driverCreateWaitCondition(thread));
+}
+
+//------------------------------------------------------------------------------
+Semaphore& System::createSemaphore(const uint32_t maxValue,
+                                   const uint32_t initialValue)
+{
+    return (myDriver->driverCreateSemaphore(maxValue, initialValue));
 }
 
 //------------------------------------------------------------------------------
@@ -144,6 +152,32 @@ void System::exit()
 }
 
 //------------------------------------------------------------------------------
+// Public virtual methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Plat4m::TimeStamp System::driverGetTimeStamp()
+{
+    // Not implemented by subclass, default implementation
+
+    TimeUs timeUs = getTimeUs();
+
+    TimeStamp timeStamp;
+    timeStamp.timeS  = round(timeUs / 1000000);
+    timeStamp.timeNs = (timeUs - timeStamp.timeS * 1000000) * 1000;
+
+    return timeStamp;
+}
+
+//------------------------------------------------------------------------------
+Plat4m::TimeStamp System::driverGetWallTimeStamp()
+{
+    // Not implemented by subclass, default implementation
+
+    return driverGetTimeStamp();
+}
+
+//------------------------------------------------------------------------------
 // Protected constructors
 //------------------------------------------------------------------------------
 
@@ -171,30 +205,4 @@ System::System()
 System::~System()
 {
     myDriver = 0;
-}
-
-//------------------------------------------------------------------------------
-// Private virtual methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-Plat4m::TimeStamp System::driverGetTimeStamp()
-{
-    // Not implemented by subclass, default implementation
-
-    TimeUs timeUs = getTimeUs();
-
-    TimeStamp timeStamp;
-    timeStamp.timeS  = std::round(timeUs / 1000000);
-    timeStamp.timeNs = (timeUs - timeStamp.timeS * 1000000) * 1000;
-
-    return timeStamp;
-}
-
-//------------------------------------------------------------------------------
-Plat4m::TimeStamp System::driverGetWallTimeStamp()
-{
-    // Not implemented by subclass, default implementation
-
-    return driverGetTimeStamp();
 }
