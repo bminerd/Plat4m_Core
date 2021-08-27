@@ -160,7 +160,7 @@ void SystemLinuxSimulation::driverRun()
 {
     myTimeThread.enable();
 
-    runProtected();
+    SystemLinux::driverRun();
 }
 
 //------------------------------------------------------------------------------
