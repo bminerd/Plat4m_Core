@@ -46,6 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/System.h>
 
@@ -90,16 +92,21 @@ private:
 
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
-                                       const uint32_t nStackBytes,
+                                       const std::uint32_t nStackBytes,
                                        const bool isSimulated) override;
 
     virtual Mutex& driverCreateMutex(Thread& thread) override;
 
     virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
 
-    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-                                                 const uint32_t valueSizeBytes,
-                                                 Thread& thread) override;
+    virtual QueueDriver& driverCreateQueueDriver(
+                                             const std::uint32_t nValues,
+                                             const std::uint32_t valueSizeBytes,
+                                             Thread& thread) override;
+
+    virtual Semaphore& driverCreateSemaphore(
+                                     const std::uint32_t maxValue,
+                                     const std::uint32_t initialValue) override;
 
     virtual void driverRun() override;
 

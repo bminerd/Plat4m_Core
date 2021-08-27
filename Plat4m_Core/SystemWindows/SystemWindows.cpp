@@ -50,13 +50,11 @@
 #include <Plat4m_Core/SystemWindows/MutexWindows.h>
 #include <Plat4m_Core/SystemWindows/WaitConditionWindows.h>
 #include <Plat4m_Core/SystemWindows/QueueDriverWindows.h>
+#include <Plat4m_Core/SystemWindows/SemaphoreWindows.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::SystemWindows;
-using Plat4m::Thread;
-using Plat4m::Mutex;
-using Plat4m::WaitCondition;
-using Plat4m::QueueDriver;
+using namespace std;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -79,7 +77,7 @@ SystemWindows::~SystemWindows()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from System
+// Public virtual methods overridden for System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -118,6 +116,14 @@ QueueDriver& SystemWindows::driverCreateQueueDriver(
                                                   Thread& thread)
 {
     return *(MemoryAllocator::allocate<QueueDriverWindows>(thread));
+}
+
+//------------------------------------------------------------------------------
+Semaphore& SystemWindows::driverCreateSemaphore(const uint32_t maxValue,
+                                                const uint32_t initialValue)
+{
+    return *(MemoryAllocator::allocate<SemaphoreWindows>(maxValue,
+                                                         initialValue));
 }
 
 //------------------------------------------------------------------------------
