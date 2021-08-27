@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added simulated flag and stack bytes count parameters to TopicSubscriberThread constructors. [Resolves 43].
 - `[BUG FIX]` Fixed missing driverExit() methods in SystemLite, SystemWindows, and SystemFreeRtos. [Resolves 40].
 - `[IMPROVEMENT]` Changed TopicSubscriber to be a subclass of Module to allow enabling/disabling. [Resolves 38].
 - `[IMPROVEMENT]` Added VS Code build and debug support. [Resolves 39].
