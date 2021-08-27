@@ -36,13 +36,15 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/Mutex.cpp
                  ${PLAT4M_CORE_DIR}/WaitCondition.cpp
                  ${PLAT4M_CORE_DIR}/QueueDriver.cpp
+                 ${PLAT4M_CORE_DIR}/Semaphore.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/UnitTest.cpp
                  ${PLAT4M_CORE_DIR}/Linux/SystemLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ProcessorLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ThreadLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/MutexLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/WaitConditionLinux.cpp
-                 ${PLAT4M_CORE_DIR}/Linux/QueueDriverLinux.cpp)
+                 ${PLAT4M_CORE_DIR}/Linux/QueueDriverLinux.cpp
+                 ${PLAT4M_CORE_DIR}/Linux/SemaphoreLinux.cpp)
 
 include(CTest)
 
