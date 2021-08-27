@@ -68,7 +68,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template<typename SampleType, uint32_t nQueueValues = 1>
+template<typename SampleType, std::uint32_t nQueueValues = 1>
 class TopicSubscriberThread : public Module
 {
 public:
@@ -79,32 +79,44 @@ public:
 
     //--------------------------------------------------------------------------
     TopicSubscriberThread(
-                   const uint32_t id,
-                   const typename TopicSubscriber<SampleType>::Config config,
-                   typename Topic<SampleType>::SampleCallback& sampleCallback) :
+                     const std::uint32_t id,
+                     const typename TopicSubscriber<SampleType>::Config config,
+                     typename Topic<SampleType>::SampleCallback& sampleCallback,
+                     const std::uint32_t nStackBytes = 0,
+                     const bool isSimulated = false) :
         Module(),
         mySampleCallback(sampleCallback),
         myTopicSubscriber(
                   id,
                   config,
                   createCallback(this, &TopicSubscriberThread::sampleCallback)),
-        myThread(System::createThread(
-                 createCallback(this, &TopicSubscriberThread::threadCallback))),
+        myThread(
+            System::createThread(
+                   createCallback(this, &TopicSubscriberThread::threadCallback),
+                   0,
+                   nStackBytes,
+                   isSimulated)),
         myQueue(System::createQueue<SampleType>(nQueueValues, myThread))
     {
     }
 
     //--------------------------------------------------------------------------
     TopicSubscriberThread(
-                   const uint32_t id,
-                   typename Topic<SampleType>::SampleCallback& sampleCallback) :
+                     const std::uint32_t id,
+                     typename Topic<SampleType>::SampleCallback& sampleCallback,
+                     const std::uint32_t nStackBytes = 0,
+                     const bool isSimulated = false) :
         Module(),
         mySampleCallback(sampleCallback),
         myTopicSubscriber(
                   id,
                   createCallback(this, &TopicSubscriberThread::sampleCallback)),
-        myThread(System::createThread(
-                 createCallback(this, &TopicSubscriberThread::threadCallback))),
+        myThread(
+            System::createThread(
+                   createCallback(this, &TopicSubscriberThread::threadCallback),
+                   0,
+                   nStackBytes,
+                   isSimulated)),
         myQueue(System::createQueue<SampleType>(nQueueValues, myThread))
     {
     }
@@ -152,6 +164,7 @@ private:
         Module::Error error;
 
         error = myTopicSubscriber.setEnabled(enabled);
+
         error = myThread.setEnabled(enabled);
 
         if (!enabled)
