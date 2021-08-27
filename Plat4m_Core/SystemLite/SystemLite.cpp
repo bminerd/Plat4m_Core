@@ -47,15 +47,12 @@
 #include <Plat4m_Core/SystemLite/MutexLite.h>
 #include <Plat4m_Core/SystemLite/WaitConditionLite.h>
 #include <Plat4m_Core/SystemLite/QueueDriverLite.h>
+#include <Plat4m_Core/SystemLite/SemaphoreLite.h>
 #include <Plat4m_Core/Processor.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::SystemLite;
-using Plat4m::Processor;
-using Plat4m::Thread;
-using Plat4m::Mutex;
-using Plat4m::WaitCondition;
-using Plat4m::QueueDriver;
+using namespace std;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Private static data members
@@ -96,7 +93,7 @@ void SystemLite::enableSystemClock(const uint32_t coreClockFrequencyHz)
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from System
+// Private virtual methods overridden for System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -131,6 +128,13 @@ QueueDriver& SystemLite::driverCreateQueueDriver(const uint32_t nValues,
 												 Thread& thread)
 {
 	return *(MemoryAllocator::allocate<QueueDriverLite<0>>());
+}
+
+//------------------------------------------------------------------------------
+Semaphore& SystemLite::driverCreateSemaphore(const uint32_t maxValue,
+                                             const uint32_t initialValue)
+{
+    return *(MemoryAllocator::allocate<SemaphoreLite>(maxValue, initialValue));
 }
 
 //------------------------------------------------------------------------------

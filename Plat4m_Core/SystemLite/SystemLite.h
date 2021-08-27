@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/List.h>
@@ -53,6 +55,7 @@
 #include <Plat4m_Core/Mutex.h>
 #include <Plat4m_Core/WaitCondition.h>
 #include <Plat4m_Core/QueueDriver.h>
+#include <Plat4m_Core/Semaphore.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -82,7 +85,7 @@ public:
     // Public methods
     //--------------------------------------------------------------------------
 
-    void enableSystemClock(const uint32_t coreClockFrequencyHz);
+    void enableSystemClock(const std::uint32_t coreClockFrequencyHz);
 
 protected:
 
@@ -112,7 +115,7 @@ private:
 
     List<ThreadLite*> myThreadList;
 
-    uint32_t myThreadDepth;
+    std::uint32_t myThreadDepth;
 
     bool myIsRunning;
 
@@ -121,7 +124,7 @@ private:
     //--------------------------------------------------------------------------
 
     virtual void driverEnableSystemClock(
-                                       const uint32_t coreClockFrequencyHz) = 0;
+                                  const std::uint32_t coreClockFrequencyHz) = 0;
 
     //--------------------------------------------------------------------------
     // Private virtual methods overridden for System
@@ -129,16 +132,21 @@ private:
 
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
-                                       const uint32_t nStackBytes,
+                                       const std::uint32_t nStackBytes,
                                        const bool isSimulated) override;
 
     virtual Mutex& driverCreateMutex(Thread& thread) override;
 
     virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
 
-    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-                                                 const uint32_t valueSizeBytes,
-                                                 Thread& thread) override;
+    virtual QueueDriver& driverCreateQueueDriver(
+                                             const std::uint32_t nValues,
+                                             const std::uint32_t valueSizeBytes,
+                                             Thread& thread) override;
+
+    virtual Semaphore& driverCreateSemaphore(
+                                     const std::uint32_t maxValue,
+                                     const std::uint32_t initialValue) override;
 
     virtual void driverRun() override;
 
@@ -154,9 +162,9 @@ private:
     // Private methods
     //--------------------------------------------------------------------------
 
-    void checkThreads(const uint32_t timePeriodMs = 0);
+    void checkThreads(const std::uint32_t timePeriodMs = 0);
 };
 
 }; // namespace Plat4m
 
-#endif // SYSTEM_LITE_H
+#endif // PLAT4M_SYSTEM_LITE_H
