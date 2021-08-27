@@ -135,6 +135,12 @@ public:
 
     static void exit();
 
+    static void startTime();
+
+    static void stopTime();
+
+    static void resetTime();
+
     //--------------------------------------------------------------------------
     // Public pure virtual methods
     //--------------------------------------------------------------------------
@@ -174,6 +180,12 @@ public:
     virtual TimeStamp driverGetTimeStamp();
 
     virtual TimeStamp driverGetWallTimeStamp();
+
+    virtual void driverStartTime();
+
+    virtual void driverStopTime();
+
+    virtual void driverResetTime();
 
 protected:
     

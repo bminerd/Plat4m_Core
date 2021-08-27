@@ -152,6 +152,24 @@ void System::exit()
 }
 
 //------------------------------------------------------------------------------
+void System::startTime()
+{
+    myDriver->driverStartTime();
+}
+
+//------------------------------------------------------------------------------
+void System::stopTime()
+{
+    myDriver->driverStopTime();
+}
+
+//------------------------------------------------------------------------------
+void System::resetTime()
+{
+    myDriver->driverResetTime();
+}
+
+//------------------------------------------------------------------------------
 // Public virtual methods
 //------------------------------------------------------------------------------
 
@@ -175,6 +193,30 @@ Plat4m::TimeStamp System::driverGetWallTimeStamp()
     // Not implemented by subclass, default implementation
 
     return driverGetTimeStamp();
+}
+
+//------------------------------------------------------------------------------
+void System::driverStartTime()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
+}
+
+//------------------------------------------------------------------------------
+void System::driverStopTime()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
+}
+
+//------------------------------------------------------------------------------
+void System::driverResetTime()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
 }
 
 //------------------------------------------------------------------------------
