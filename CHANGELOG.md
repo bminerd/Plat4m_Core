@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Fixed enable/disable race condition in ThreadLinux. Improved WaitConditionLinux notify logic. [Resolves 44].
 - `[NEW FEATURE]` Added SystemSimulation wrapper class that adds simulation capabilities to any System implementation. Removed old Linux simulation classes. [Resolves 41].
 - `[NEW FEATURE]` Added Semaphore interface class. Updated System interface and all implementations. [Resolves 42].
 - `[IMPROVEMENT]` Added simulated flag and stack bytes count parameters to TopicSubscriberThread constructors. [Resolves 43].
