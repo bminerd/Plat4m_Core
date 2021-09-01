@@ -63,6 +63,7 @@ ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
 	myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
 	myConditionHandle(PTHREAD_COND_INITIALIZER),
 	myNextCallTimeMs(0),
+    myIsEnabled(false),
     myShouldExit(false)
 {
     int returnValue = pthread_create(&myThreadHandle,
@@ -87,7 +88,11 @@ ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
 ThreadLinux::~ThreadLinux()
 {
     myShouldExit = true;
-    pthread_cond_signal(&myConditionHandle);
+
+    pthread_mutex_lock(&myMutexHandle);
+    pthread_cond_broadcast(&myConditionHandle);
+    pthread_mutex_unlock(&myMutexHandle);
+
     int returnValue = pthread_join(myThreadHandle, NULL);
 }
 
@@ -103,13 +108,15 @@ void* ThreadLinux::threadCallback(void* arg)
 
 	while (!(thread->myShouldExit)) // Loop forever
 	{
-		if (!(thread->isEnabled()))
-		{
-			pthread_mutex_lock(&(thread->myMutexHandle));
+		pthread_mutex_lock(&(thread->myMutexHandle));
+
+        if (!(thread->myIsEnabled))
+	    {
 			pthread_cond_wait(&(thread->myConditionHandle),
 								&(thread->myMutexHandle));
-			pthread_mutex_unlock(&(thread->myMutexHandle));
 		}
+
+        pthread_mutex_unlock(&(thread->myMutexHandle));
 
         if (thread->myShouldExit)
         {
@@ -145,10 +152,16 @@ void* ThreadLinux::threadCallback(void* arg)
 //------------------------------------------------------------------------------
 Module::Error ThreadLinux::driverSetEnabled(const bool enabled)
 {
+    pthread_mutex_lock(&myMutexHandle);
+
+    myIsEnabled = enabled;
+
 	if (enabled)
 	{
-		pthread_cond_signal(&myConditionHandle);
+		pthread_cond_broadcast(&myConditionHandle);
 	}
+
+    pthread_mutex_unlock(&myMutexHandle);
 
 	return Module::Error(Module::ERROR_CODE_NONE);
 }
