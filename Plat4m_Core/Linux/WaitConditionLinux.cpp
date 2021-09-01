@@ -77,7 +77,9 @@ WaitConditionLinux::~WaitConditionLinux()
 //------------------------------------------------------------------------------
 void WaitConditionLinux::notifyFast()
 {
-    pthread_cond_signal(&myConditionHandle);
+    pthread_mutex_lock(&myMutexHandle);
+    pthread_cond_broadcast(&myConditionHandle);
+    pthread_mutex_unlock(&myMutexHandle);
 }
 
 //------------------------------------------------------------------------------
@@ -88,8 +90,10 @@ void WaitConditionLinux::notifyFast()
 WaitCondition::Error WaitConditionLinux::driverWait(const TimeMs waitTimeMs)
 {
     myThreadHandle = pthread_self();
+
     pthread_mutex_lock(&myMutexHandle);
     pthread_cond_wait(&myConditionHandle, &myMutexHandle);
+    pthread_mutex_unlock(&myMutexHandle);
 
     return Error(ERROR_CODE_NONE);
 }
@@ -97,7 +101,9 @@ WaitCondition::Error WaitConditionLinux::driverWait(const TimeMs waitTimeMs)
 //------------------------------------------------------------------------------
 WaitCondition::Error WaitConditionLinux::driverNotify()
 {
-    pthread_cond_signal(&myConditionHandle);
+    pthread_mutex_lock(&myMutexHandle);
+    pthread_cond_broadcast(&myConditionHandle);
+    pthread_mutex_unlock(&myMutexHandle);
 
     return Error(ERROR_CODE_NONE);
 }
