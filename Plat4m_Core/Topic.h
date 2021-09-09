@@ -102,6 +102,26 @@ public:
     }
 
     //--------------------------------------------------------------------------
+    static void unsubscribe(const uint32_t id, SampleCallback& sampleCallback)
+    {
+        typename List<Topic*>::Iterator iterator = myTopicList.iterator();
+
+        while (iterator.hasCurrent())
+        {
+            Topic* topic = iterator.current();
+
+            if (topic->getId() == id)
+            {
+                topic->unsubscribe(sampleCallback);
+
+                break;
+            }
+
+            iterator.next();
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
@@ -144,6 +164,14 @@ public:
         SampleCallback* pointer = &sampleCallback;
 
         mySampleCallbackList.append(pointer);
+    }
+
+    //--------------------------------------------------------------------------
+    void unsubscribe(SampleCallback& sampleCallback)
+    {
+        SampleCallback* pointer = &sampleCallback;
+
+        mySampleCallbackList.remove(pointer);
     }
 
     //--------------------------------------------------------------------------
