@@ -90,14 +90,14 @@ public:
         myTopicId(id),
         myConfig(),
         mySampleCallback(sampleCallback),
+        myPrivateSampleCallback(
+                        createCallback(this, &TopicSubscriber::sampleCallback)),
         myDownsampleCounter(1)
     {
         setConfig(config);
 
-        Topic<SampleType>::subscribe(
-                        id,
-                        createCallback(this, &TopicSubscriber::sampleCallback));
-                }
+        Topic<SampleType>::subscribe(id, myPrivateSampleCallback);
+    }
 
     //--------------------------------------------------------------------------
     TopicSubscriber(
@@ -106,19 +106,20 @@ public:
         myTopicId(id),
         myConfig(),
         mySampleCallback(sampleCallback),
+        myPrivateSampleCallback(
+                        createCallback(this, &TopicSubscriber::sampleCallback)),
         myDownsampleCounter(1)
     {
         myConfig.downsampleFactor = 1;
 
-        Topic<SampleType>::subscribe(
-                        id,
-                        createCallback(this, &TopicSubscriber::sampleCallback));
+        Topic<SampleType>::subscribe(id, myPrivateSampleCallback);
     }
 
     //--------------------------------------------------------------------------
     TopicSubscriber(const TopicSubscriber<SampleType>& topicSubscriber) :
         myConfig(topicSubscriber.myConfig),
         mySampleCallback(topicSubscriber.mySampleCallback),
+        myPrivateSampleCallback(topicSubscriber.myPrivateSampleCallback),
         myDownsampleCounter(topicSubscriber.myDownsampleCounter)
     {
     }
@@ -130,6 +131,7 @@ public:
     //--------------------------------------------------------------------------
     virtual ~TopicSubscriber()
     {
+        Topic<SampleType>::unsubscribe(myTopicId, myPrivateSampleCallback);
     }
 
     //--------------------------------------------------------------------------
@@ -183,6 +185,8 @@ private:
     Config myConfig;
 
     typename Topic<SampleType>::SampleCallback& mySampleCallback;
+
+    typename Topic<SampleType>::SampleCallback& myPrivateSampleCallback;
 
     std::uint32_t myDownsampleCounter;
 
