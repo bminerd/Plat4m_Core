@@ -176,9 +176,16 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    void publish(const SampleType& sample)
+    void publish(const SampleType& sample, const bool insertTimeStamp = true)
     {
-        publish(sample, System::getTimeStamp());
+        SampleType sampleCopy = sample;
+
+        if (insertTimeStamp)
+        {
+            sampleCopy.header.timeStamp = System::getTimeStamp();
+        }
+
+        publishPrivate(sampleCopy);
     }
 
     //--------------------------------------------------------------------------
@@ -186,21 +193,9 @@ public:
     {
         SampleType sampleCopy = sample;
 
-        sampleCopy.header.sequenceId = mySequenceIdCounter;
-        sampleCopy.header.timeStamp  = timeStamp;
+        sampleCopy.header.timeStamp = timeStamp;
 
-        typename List<SampleCallback*>::Iterator iterator =
-                                                mySampleCallbackList.iterator();
-
-        while (iterator.hasCurrent())
-        {
-            SampleCallback* sampleCallback = iterator.current();
-            sampleCallback->call(sampleCopy);
-
-            iterator.next();
-        }
-
-        mySequenceIdCounter++;
+        publishPrivate(sample);
     }
 
 private:
@@ -220,6 +215,29 @@ private:
     const uint32_t myId;
 
     List<SampleCallback*> mySampleCallbackList;
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    void publishPrivate(SampleType& sample)
+    {
+        sample.header.sequenceId = mySequenceIdCounter;
+
+        typename List<SampleCallback*>::Iterator iterator =
+                                                mySampleCallbackList.iterator();
+
+        while (iterator.hasCurrent())
+        {
+            SampleCallback* sampleCallback = iterator.current();
+            sampleCallback->call(sample);
+
+            iterator.next();
+        }
+
+        mySequenceIdCounter++;
+    }
 };
 
 template <typename SampleType>
