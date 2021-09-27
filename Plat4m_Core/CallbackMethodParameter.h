@@ -37,6 +37,7 @@
 /// @author Ben Minerd
 /// @date 7/8/2013
 /// @brief CallbackMethodParameter class header file.
+/// @note This class is deprecated. Callback is now a variadic template.
 ///
 
 #ifndef PLAT4M_CALLBACK_METHOD_PARAMETER_H
@@ -46,8 +47,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Callback.h>
-#include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -57,52 +57,11 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases
 //------------------------------------------------------------------------------
 
 template <class TClass, typename TReturn, typename TParameter>
-class CallbackMethodParameter : public Callback<TReturn, TParameter>
-{
-public:
-    
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
-    
-    typedef TReturn (TClass::*CallbackMethodType)(TParameter);
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    CallbackMethodParameter(TClass* object,
-                             CallbackMethodType callbackMethod) :
-        Callback<TReturn, TParameter>(),
-        myObject(object),
-        myCallbackMethod(callbackMethod)
-    {
-    }
-    
-    //--------------------------------------------------------------------------
-    // Public methods implemented from Callback
-    //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    inline TReturn call(TParameter parameter, void* dummyParameter2 = 0)
-    {
-        return (*myObject.*myCallbackMethod)(parameter);
-    }
-    
-private:
-    
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-    
-    TClass* myObject;
-    CallbackMethodType myCallbackMethod;
-};
+using CallbackMethodParameter = CallbackMethod<TClass, TReturn, TParameter>;
 
 //------------------------------------------------------------------------------
 // Namespace functions

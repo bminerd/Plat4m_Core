@@ -60,8 +60,8 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename TReturn>
-class CallbackFunction : public Callback<TReturn>
+template <typename TReturn, typename... TParameters>
+class CallbackFunction : public Callback<TReturn, TParameters...>
 {
 public:
     
@@ -69,7 +69,7 @@ public:
     // Public typedefs
     //--------------------------------------------------------------------------
     
-    typedef TReturn (*CallbackFunctionType)();
+    typedef TReturn (*CallbackFunctionType)(TParameters...);
     
     //--------------------------------------------------------------------------
     // Public constructors
@@ -77,7 +77,7 @@ public:
     
     //--------------------------------------------------------------------------
     CallbackFunction(CallbackFunctionType callbackFunction) :
-        Callback<TReturn>(),
+        Callback<TReturn, TParameters...>(),
         myCallbackFunction(callbackFunction)
     {
     }
@@ -87,9 +87,9 @@ public:
     //--------------------------------------------------------------------------
     
     //--------------------------------------------------------------------------
-    inline TReturn call(void* dummyParameter1 = 0, void* dummyParameter2 = 0)
+    inline TReturn call(TParameters... parameters)
     {
-        return (*myCallbackFunction)();
+        return (*myCallbackFunction)(parameters...);
     }
 
 private:
@@ -106,10 +106,12 @@ private:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-template <typename TReturn>
-Callback<TReturn>& createCallback(TReturn (*callback)())
+template <typename TReturn, typename... TParameters>
+Callback<TReturn, TParameters...>& createCallback(
+                                            TReturn (*callback)(TParameters...))
 {
-    return *(MemoryAllocator::allocate<CallbackFunction<TReturn>>(callback));
+    return *(MemoryAllocator::allocate<
+                          CallbackFunction<TReturn, TParameters...>>(callback));
 }
 
 }; // namespace Plat4m

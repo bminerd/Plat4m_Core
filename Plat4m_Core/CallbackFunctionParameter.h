@@ -37,6 +37,7 @@
 /// @author Ben Minerd
 /// @date 8/13/2013
 /// @brief CallbackFunctionParameter class header file.
+/// @note This class is deprecated. Callback is now a variadic template.
 ///
 
 #ifndef PLAT4M_CALLBACK_FUNCTION_PARAMETER_H
@@ -46,8 +47,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Callback.h>
-#include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/CallbackFunction.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -57,49 +57,11 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases
 //------------------------------------------------------------------------------
 
 template <typename TReturn, typename TParameter>
-class CallbackFunctionParameter : public Callback<TReturn, TParameter>
-{
-public:
-    
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
-    
-    typedef TReturn (*CallbackFunctionParameterType)(TParameter);
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    CallbackFunctionParameter(CallbackFunctionParameterType callbackFunction) :
-        Callback<TReturn, TParameter>(),
-        myCallbackFunctionParameter(callbackFunction)
-    {
-    }
-    
-    //--------------------------------------------------------------------------
-    // Public methods implemented from Callback
-    //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    inline TReturn call(TParameter parameter, void* dummyParameter2 = 0)
-    {
-        return (*myCallbackFunctionParameter)(parameter);
-    }
-
-private:
-    
-    //--------------------------------------------------------------------------
-    // Public data members
-    //--------------------------------------------------------------------------
-    
-    CallbackFunctionParameterType myCallbackFunctionParameter;
-};
+using CallbackFunctionParameter = CallbackFunction<TReturn, TParameter>;
 
 //------------------------------------------------------------------------------
 // Namespace functions
@@ -107,8 +69,7 @@ private:
 
 //------------------------------------------------------------------------------
 template <typename TReturn, typename TParameter>
-Callback<TReturn, TParameter>& createCallback(
-                                            TReturn (*callback)(TParameter))
+Callback<TReturn, TParameter>& createCallback(TReturn (*callback)(TParameter))
 {
     return *(MemoryAllocator::allocate<
                      CallbackFunctionParameter<TReturn, TParameter>>(callback));

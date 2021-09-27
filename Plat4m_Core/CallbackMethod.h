@@ -60,8 +60,8 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <class TClass, typename TReturn>
-class CallbackMethod : public Callback<TReturn>
+template <class TClass, typename TReturn, typename... TParameters>
+class CallbackMethod : public Callback<TReturn, TParameters...>
 {
 public:
     
@@ -69,14 +69,14 @@ public:
     // Public typedefs
     //--------------------------------------------------------------------------
     
-    typedef TReturn (TClass::*CallbackMethodType)();
+    typedef TReturn (TClass::*CallbackMethodType)(TParameters...);
     
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
     
     CallbackMethod(TClass* object, CallbackMethodType callbackMethod) :
-        Callback<TReturn>(),
+        Callback<TReturn, TParameters...>(),
         myObject(object),
         myCallbackMethod(callbackMethod)
     {
@@ -86,9 +86,10 @@ public:
     // Public methods implemented from Callback
     //--------------------------------------------------------------------------
     
-    inline TReturn call(void* dummyParameter1 = 0, void* dummyParameter2 = 0)
+    //--------------------------------------------------------------------------
+    inline TReturn call(TParameters... parameters)
     {
-        return (*myObject.*myCallbackMethod)();
+        return (*myObject.*myCallbackMethod)(parameters...);
     }
 
 private:
@@ -106,12 +107,12 @@ private:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-template <class TClass, typename TReturn>
-Callback<TReturn>& createCallback(TClass* object,
-                                    TReturn (TClass::*callback)())
+template <class TClass, typename TReturn, typename... TParameters>
+Callback<TReturn, TParameters...>& createCallback(TClass* object,
+                                  TReturn (TClass::*callback)(TParameters...))
 {
-    return *(MemoryAllocator::allocate<CallbackMethod<TClass, TReturn>>(
-                                                                     object,
+    return *(MemoryAllocator::allocate<
+                    CallbackMethod<TClass, TReturn, TParameters...>>(object,
                                                                      callback));
 }
 
