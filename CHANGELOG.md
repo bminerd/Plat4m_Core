@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Changed Callback to be a variadic template. Updated CallbackMethod and CallbackFunction. Deprecated Callback parameter variants. [Resolves 48].
 - `[IMPROVEMENT]` Added flag to Topic::publish() to give option for prepopulated time stamps. [Resolves 47].
 - `[IMPROVEMENT]` Made TimeStamp struct a separate class with comparison operators. [Resolves 46].
 - `[IMPROVEMENT]` Added unsubscribe() method to Topic class. TopicSubscriber destructor now calls Topic::unsubscribe(). [Resolves 45].
