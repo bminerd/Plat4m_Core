@@ -28,6 +28,7 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/WaitCondition.cpp
                  ${PLAT4M_CORE_DIR}/QueueDriver.cpp
                  ${PLAT4M_CORE_DIR}/Semaphore.cpp
+                 ${PLAT4M_CORE_DIR}/TimeStamp.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/UnitTest.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/ArrayUnitTest.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/ArrayNUnitTest.cpp
