@@ -48,7 +48,7 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/TimeStamp.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

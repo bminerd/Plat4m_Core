@@ -49,6 +49,7 @@
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/List.h>
 #include <Plat4m_Core/System.h>
+#include <Plat4m_Core/TimeStamp.h>
 
 //------------------------------------------------------------------------------
 // Namespaces

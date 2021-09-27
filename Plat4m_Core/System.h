@@ -56,6 +56,7 @@
 #include <Plat4m_Core/Queue.h>
 #include <Plat4m_Core/Semaphore.h>
 #include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/TimeStamp.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
