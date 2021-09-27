@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added flag to Topic::publish() to give option for prepopulated time stamps. [Resolves 47].
 - `[IMPROVEMENT]` Made TimeStamp struct a separate class with comparison operators. [Resolves 46].
 - `[IMPROVEMENT]` Added unsubscribe() method to Topic class. TopicSubscriber destructor now calls Topic::unsubscribe(). [Resolves 45].
 - `[BUG FIX]` Fixed enable/disable race condition in ThreadLinux. Improved WaitConditionLinux notify logic. [Resolves 44].
