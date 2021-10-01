@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[NEW FEATURE]` Fixed bug in Topic::publish() to use the sample copy. [Resolves 51].
 - `[NEW FEATURE]` Added Service and supporting classes. [Resolves 48].
 - `[IMPROVEMENT]` Changed Callback to be a variadic template. Updated CallbackMethod and CallbackFunction. Deprecated Callback parameter variants. [Resolves 48].
 - `[IMPROVEMENT]` Added flag to Topic::publish() to give option for prepopulated time stamps. [Resolves 47].
