@@ -195,7 +195,7 @@ public:
 
         sampleCopy.header.timeStamp = timeStamp;
 
-        publishPrivate(sample);
+        publishPrivate(sampleCopy);
     }
 
 private:
