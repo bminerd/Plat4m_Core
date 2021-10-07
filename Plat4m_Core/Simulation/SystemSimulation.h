@@ -183,6 +183,31 @@ public:
     }
 
     //--------------------------------------------------------------------------
+    virtual void driverSetTime(const TimeStamp& timeStamp) override
+    {
+        myTimeStepCounter =
+            (timeStamp.timeS * 1000000 + timeStamp.timeNs / 1000) /
+                                                                   myTimeStepUs;
+
+        TimeTickSample timeTick;
+        timeTick.header.timeStamp = timeStamp;
+
+        myTimeTickTopic.publish(timeTick);
+
+        if (mySimulatedThreadCount > 0)
+        {
+            std::uint32_t value = 1;
+
+            while (value != 0)
+            {
+                mySemaphore.wait();
+
+                value = mySemaphore.getValue();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
 
@@ -196,7 +221,7 @@ private:
 
     //--------------------------------------------------------------------------
     // Private data members
-    //--------------------------------------------------------------------------    
+    //--------------------------------------------------------------------------
 
     const TimeUs myTimeStepUs;
 
@@ -217,20 +242,7 @@ private:
     //--------------------------------------------------------------------------
     void timeThreadCallback()
     {
-        TimeTickSample timeTick;
-        myTimeTickTopic.publish(timeTick);
-
-        if (mySimulatedThreadCount > 0)
-        {
-            std::uint32_t value = 1;
-
-            while (value != 0)
-            {
-                mySemaphore.wait();
-
-                value = mySemaphore.getValue();
-            }
-        }
+        driverSetTime(System::getTimeStamp());
 
         myTimeStepCounter++;
     }
