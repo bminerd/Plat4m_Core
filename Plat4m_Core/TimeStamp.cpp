@@ -103,3 +103,37 @@ bool TimeStamp::operator<=(const TimeStamp& timeStamp)
 {
     return ((timeS <= timeStamp.timeS) && (timeNs <= timeStamp.timeNs));
 }
+
+//------------------------------------------------------------------------------
+TimeStamp TimeStamp::operator+(const TimeStamp& timeStamp)
+{
+    TimeStamp result;
+
+    result.timeS = timeS + timeStamp.timeS;
+
+    result.timeNs = timeNs + timeStamp.timeNs;
+
+    if (result.timeNs >= 1000000000)
+    {
+        result.timeS += 1;
+        result.timeNs -= 1000000000;
+    }
+
+    return result;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp& TimeStamp::operator+=(const TimeStamp& timeStamp)
+{
+    timeS += timeStamp.timeS;
+
+    timeNs += timeStamp.timeNs;
+
+    if (timeNs >= 1000000000)
+    {
+        timeS += 1;
+        timeNs -= 1000000000;
+    }
+
+    return (*this);
+}

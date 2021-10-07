@@ -93,6 +93,10 @@ struct TimeStamp
     bool operator>=(const TimeStamp& timeStamp);
 
     bool operator<=(const TimeStamp& timeStamp);
+
+    TimeStamp operator+(const TimeStamp& timeStamp);
+
+    TimeStamp& operator+=(const TimeStamp& timeStamp);
 };
 
 }; // namespace Plat4m
