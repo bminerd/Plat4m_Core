@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Changed default value of insert timestamp parameter in Topic::publish(). [Resolves 55].
 - `[BUG FIX]` Fixed undedefined function warning in Callback class. [Resolves 54].
 - `[NEW FEATURE]` Added addition operators to TimeStamp class. [Resolves 52].
 - `[NEW FEATURE]` Added setTime() method to System and added an implmentation in SystemSimulation. [Resolves 53].
