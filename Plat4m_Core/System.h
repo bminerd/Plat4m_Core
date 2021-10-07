@@ -142,6 +142,8 @@ public:
 
     static void resetTime();
 
+    static void setTime(const TimeStamp& timeStamp);
+
     //--------------------------------------------------------------------------
     // Public pure virtual methods
     //--------------------------------------------------------------------------
@@ -187,6 +189,8 @@ public:
     virtual void driverStopTime();
 
     virtual void driverResetTime();
+
+    virtual void driverSetTime(const TimeStamp& timeStamp);
 
 protected:
     

@@ -170,6 +170,12 @@ void System::resetTime()
 }
 
 //------------------------------------------------------------------------------
+void System::setTime(const TimeStamp& timeStamp)
+{
+    myDriver->driverSetTime(timeStamp);
+}
+
+//------------------------------------------------------------------------------
 // Public virtual methods
 //------------------------------------------------------------------------------
 
@@ -213,6 +219,14 @@ void System::driverStopTime()
 
 //------------------------------------------------------------------------------
 void System::driverResetTime()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
+}
+
+//------------------------------------------------------------------------------
+void System::driverSetTime(const TimeStamp& timeStamp)
 {
     // Not implemented by subclass, default implementation
 
