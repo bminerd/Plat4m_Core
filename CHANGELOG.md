@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Fixed undedefined function warning in Callback class. [Resolves 54].
 - `[NEW FEATURE]` Added addition operators to TimeStamp class. [Resolves 52].
 - `[NEW FEATURE]` Added setTime() method to System and added an implmentation in SystemSimulation. [Resolves 53].
 - `[BUG FIX]` Fixed bug in Topic::publish() to use the sample copy. [Resolves 51].
