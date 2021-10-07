@@ -176,7 +176,7 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    void publish(const SampleType& sample, const bool insertTimeStamp = true)
+    void publish(const SampleType& sample, const bool insertTimeStamp = false)
     {
         SampleType sampleCopy = sample;
 
