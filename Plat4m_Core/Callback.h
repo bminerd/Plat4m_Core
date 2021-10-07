@@ -70,7 +70,7 @@ public:
     // Public virtual methods
     //--------------------------------------------------------------------------
     
-    virtual inline TReturn call(TParameters... parameters) = 0;
+    virtual TReturn call(TParameters... parameters) = 0;
 };
 
 }; // namespace Plat4m
