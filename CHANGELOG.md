@@ -19,10 +19,11 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
-- `[BUG FIX]` Changed default value of insert timestamp parameter in Topic::publish(). [Resolves 55].
+- `[IMPROVEMENT]` Added not-equals operator and fromTime() methods to TimeStamp class. [Resolves 57].
+- `[IMPROVEMENT]` Changed default value of insert timestamp parameter in Topic::publish(). [Resolves 55].
 - `[BUG FIX]` Fixed undedefined function warning in Callback class. [Resolves 54].
-- `[NEW FEATURE]` Added addition operators to TimeStamp class. [Resolves 52].
-- `[NEW FEATURE]` Added setTime() method to System and added an implmentation in SystemSimulation. [Resolves 53].
+- `[IMPROVEMENT]` Added addition operators to TimeStamp class. [Resolves 52].
+- `[IMPROVEMENT]` Added setTime() method to System and added an implmentation in SystemSimulation. [Resolves 53].
 - `[BUG FIX]` Fixed bug in Topic::publish() to use the sample copy. [Resolves 51].
 - `[NEW FEATURE]` Added Service and supporting classes. [Resolves 48].
 - `[IMPROVEMENT]` Changed Callback to be a variadic template. Updated CallbackMethod and CallbackFunction. Deprecated Callback parameter variants. [Resolves 48].
