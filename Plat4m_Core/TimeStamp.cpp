@@ -77,13 +77,31 @@ TimeStamp::~TimeStamp()
 //------------------------------------------------------------------------------
 bool TimeStamp::operator>(const TimeStamp& timeStamp)
 {
-    return ((timeS >= timeStamp.timeS) && (timeNs > timeStamp.timeNs));
+    if (timeS > timeStamp.timeS)
+    {
+        return true;
+    }
+    else if (timeS == timeStamp.timeS)
+    {
+        return (timeNs > timeStamp.timeNs);
+    }
+
+    return false;
 }
 
 //------------------------------------------------------------------------------
 bool TimeStamp::operator<(const TimeStamp& timeStamp)
 {
-    return ((timeS <= timeStamp.timeS) && (timeNs < timeStamp.timeNs));
+    if (timeS < timeStamp.timeS)
+    {
+        return true;
+    }
+    else if (timeS == timeStamp.timeS)
+    {
+        return (timeNs < timeStamp.timeNs);
+    }
+
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -93,15 +111,39 @@ bool TimeStamp::operator==(const TimeStamp& timeStamp)
 }
 
 //------------------------------------------------------------------------------
+bool TimeStamp::operator!=(const TimeStamp& timeStamp)
+{
+    return ((timeS != timeStamp.timeS) || (timeNs != timeStamp.timeNs));
+}
+
+//------------------------------------------------------------------------------
 bool TimeStamp::operator>=(const TimeStamp& timeStamp)
 {
-    return ((timeS >= timeStamp.timeS) && (timeNs >= timeStamp.timeNs));
+    if (timeS > timeStamp.timeS)
+    {
+        return true;
+    }
+    else if (timeS == timeStamp.timeS)
+    {
+        return (timeNs >= timeStamp.timeNs);
+    }
+
+    return false;
 }
 
 //------------------------------------------------------------------------------
 bool TimeStamp::operator<=(const TimeStamp& timeStamp)
 {
-    return ((timeS <= timeStamp.timeS) && (timeNs <= timeStamp.timeNs));
+    if (timeS < timeStamp.timeS)
+    {
+        return true;
+    }
+    else if (timeS == timeStamp.timeS)
+    {
+        return (timeNs <= timeStamp.timeNs);
+    }
+
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -136,4 +178,29 @@ TimeStamp& TimeStamp::operator+=(const TimeStamp& timeStamp)
     }
 
     return (*this);
+}
+
+//------------------------------------------------------------------------------
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeMs(const TimeMs& timeMs)
+{
+    timeS  = timeMs / 1000;
+    timeNs = (timeMs % 1000) * 1000000;
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeUs(const TimeUs& timeUs)
+{
+    timeS  = timeUs / 1000000;
+    timeNs = (timeUs % 1000000) * 1000;
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeNs(const TimeNs& timeNs)
+{
+    timeS  = timeNs / 1000000000;
+    this->timeNs = (timeNs % 1000000000);
 }

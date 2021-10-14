@@ -90,6 +90,8 @@ struct TimeStamp
 
     bool operator==(const TimeStamp& timeStamp);
 
+    bool operator!=(const TimeStamp& timeStamp);
+
     bool operator>=(const TimeStamp& timeStamp);
 
     bool operator<=(const TimeStamp& timeStamp);
@@ -97,6 +99,16 @@ struct TimeStamp
     TimeStamp operator+(const TimeStamp& timeStamp);
 
     TimeStamp& operator+=(const TimeStamp& timeStamp);
+
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    void fromTimeMs(const TimeMs& timeMs);
+
+    void fromTimeUs(const TimeUs& timeUs);
+
+    void fromTimeNs(const TimeNs& timeNs);
 };
 
 }; // namespace Plat4m
