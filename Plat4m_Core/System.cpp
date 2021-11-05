@@ -170,9 +170,9 @@ void System::resetTime()
 }
 
 //------------------------------------------------------------------------------
-void System::setTime(const TimeStamp& timeStamp)
+System::Error System::setTime(const TimeStamp& timeStamp)
 {
-    myDriver->driverSetTime(timeStamp);
+    return (myDriver->driverSetTime(timeStamp));
 }
 
 //------------------------------------------------------------------------------
@@ -183,6 +183,8 @@ void System::setTime(const TimeStamp& timeStamp)
 Plat4m::TimeStamp System::driverGetTimeStamp()
 {
     // Not implemented by subclass, default implementation
+    //
+    // Note: This will wrap after ~1.2hr!
 
     TimeUs timeUs = getTimeUs();
 
@@ -226,11 +228,13 @@ void System::driverResetTime()
 }
 
 //------------------------------------------------------------------------------
-void System::driverSetTime(const TimeStamp& timeStamp)
+System::Error System::driverSetTime(const TimeStamp& timeStamp)
 {
     // Not implemented by subclass, default implementation
 
     // Do nothing
+
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------

@@ -74,7 +74,7 @@ class System
 public:
 
     //--------------------------------------------------------------------------
-    // Public enumerations
+    // Public types
     //--------------------------------------------------------------------------
 
     enum ErrorCode
@@ -84,10 +84,6 @@ public:
         ERROR_CODE_MODE_INVALID,
         ERROR_CODE_NOT_ENABLED
     };
-
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
 
     typedef ErrorTemplate<ErrorCode> Error;
     
@@ -142,7 +138,7 @@ public:
 
     static void resetTime();
 
-    static void setTime(const TimeStamp& timeStamp);
+    static Error setTime(const TimeStamp& timeStamp);
 
     //--------------------------------------------------------------------------
     // Public pure virtual methods
@@ -190,7 +186,7 @@ public:
 
     virtual void driverResetTime();
 
-    virtual void driverSetTime(const TimeStamp& timeStamp);
+    virtual Error driverSetTime(const TimeStamp& timeStamp);
 
 protected:
     
