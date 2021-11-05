@@ -78,21 +78,44 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    SystemSimulation(const TimeUs timeStepUs,
+    SystemSimulation(const TimeStamp timeStepTimeStamp,
                      const std::uint32_t timeTickTopicId,
                      const std::uint32_t timeThreadStackBytes = 0) :
-    SystemDriver(),
-    myTimeStepUs(timeStepUs),
-    myTimeStepCounter(0),
-    myTimeThread(
-        System::createThread(
+        SystemDriver(),
+        myTimeStepTimeStamp(timeStepTimeStamp),
+        myCurrentTimeStamp(),
+        myTimeThread(
+            System::createThread(
                     createCallback(this, &SystemSimulation::timeThreadCallback),
                     0,
                     timeThreadStackBytes)),
-    myTimeTickTopic(timeTickTopicId),
-    mySemaphore(System::createSemaphore()),
-    mySimulatedThreadCount(0)
+        myTimeTickTopic(timeTickTopicId),
+        mySemaphore(System::createSemaphore()),
+        mySimulatedThreadCount(0)
     {
+    }
+
+    //--------------------------------------------------------------------------
+    // Public deprecated constructors
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    SystemSimulation(const TimeUs timeStepUs,
+                     const std::uint32_t timeTickTopicId,
+                     const std::uint32_t timeThreadStackBytes = 0) :
+        SystemDriver(),
+        myTimeStepTimeStamp(),
+        myCurrentTimeStamp(0),
+        myTimeThread(
+            System::createThread(
+                    createCallback(this, &SystemSimulation::timeThreadCallback),
+                    0,
+                    timeThreadStackBytes)),
+        myTimeTickTopic(timeTickTopicId),
+        mySemaphore(System::createSemaphore()),
+        mySimulatedThreadCount(0)
+    {
+        myTimeStepTimeStamp.fromTimeUs(timeStepUs);
     }
 
     //--------------------------------------------------------------------------
@@ -117,13 +140,19 @@ public:
     //--------------------------------------------------------------------------
     virtual TimeMs driverGetTimeMs() override
     {
-        return (driverGetTimeUs() / 1000);
+        return (myCurrentTimeStamp.toTimeMs());
     }
 
     //--------------------------------------------------------------------------
     virtual TimeUs driverGetTimeUs() override
     {
-        return (myTimeStepCounter * myTimeStepUs);
+        return (myCurrentTimeStamp.toTimeUs());
+    }
+
+    //--------------------------------------------------------------------------
+    Plat4m::TimeStamp driverGetTimeStamp() override
+    {
+        return myCurrentTimeStamp;
     }
 
     //--------------------------------------------------------------------------
@@ -179,18 +208,22 @@ public:
     //--------------------------------------------------------------------------
     virtual void driverResetTime() override
     {
-        myTimeStepCounter = 0;
+        myCurrentTimeStamp.timeS = 0;
+        myCurrentTimeStamp.timeNs = 0;
     }
 
     //--------------------------------------------------------------------------
-    virtual void driverSetTime(const TimeStamp& timeStamp) override
+    virtual System::Error driverSetTime(const TimeStamp& timeStamp) override
     {
-        myTimeStepCounter =
-            (timeStamp.timeS * 1000000 + timeStamp.timeNs / 1000) /
-                                                                   myTimeStepUs;
+        if (timeStamp < myCurrentTimeStamp)
+        {
+            return System::Error(System::ERROR_CODE_PARAMETER_INVALID);
+        }
+
+        myCurrentTimeStamp = timeStamp;
 
         TimeTickSample timeTick;
-        timeTick.header.timeStamp = timeStamp;
+        timeTick.header.timeStamp = myCurrentTimeStamp;
 
         myTimeTickTopic.publish(timeTick);
 
@@ -205,6 +238,8 @@ public:
                 value = mySemaphore.getValue();
             }
         }
+
+        return System::Error(System::ERROR_CODE_NONE);
     }
 
     //--------------------------------------------------------------------------
@@ -223,9 +258,9 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    const TimeUs myTimeStepUs;
+    TimeStamp myTimeStepTimeStamp;
 
-    std::uint32_t myTimeStepCounter;
+    TimeStamp myCurrentTimeStamp;
 
     Thread& myTimeThread;
 
@@ -244,7 +279,7 @@ private:
     {
         driverSetTime(System::getTimeStamp());
 
-        myTimeStepCounter++;
+        myCurrentTimeStamp += myTimeStepTimeStamp;
     }
 };
 
