@@ -75,7 +75,7 @@ TimeStamp::~TimeStamp()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-bool TimeStamp::operator>(const TimeStamp& timeStamp)
+bool TimeStamp::operator>(const TimeStamp& timeStamp) const
 {
     if (timeS > timeStamp.timeS)
     {
@@ -90,7 +90,7 @@ bool TimeStamp::operator>(const TimeStamp& timeStamp)
 }
 
 //------------------------------------------------------------------------------
-bool TimeStamp::operator<(const TimeStamp& timeStamp)
+bool TimeStamp::operator<(const TimeStamp& timeStamp) const
 {
     if (timeS < timeStamp.timeS)
     {
@@ -105,19 +105,19 @@ bool TimeStamp::operator<(const TimeStamp& timeStamp)
 }
 
 //------------------------------------------------------------------------------
-bool TimeStamp::operator==(const TimeStamp& timeStamp)
+bool TimeStamp::operator==(const TimeStamp& timeStamp) const
 {
     return ((timeS == timeStamp.timeS) && (timeNs == timeStamp.timeNs));
 }
 
 //------------------------------------------------------------------------------
-bool TimeStamp::operator!=(const TimeStamp& timeStamp)
+bool TimeStamp::operator!=(const TimeStamp& timeStamp) const
 {
     return ((timeS != timeStamp.timeS) || (timeNs != timeStamp.timeNs));
 }
 
 //------------------------------------------------------------------------------
-bool TimeStamp::operator>=(const TimeStamp& timeStamp)
+bool TimeStamp::operator>=(const TimeStamp& timeStamp) const
 {
     if (timeS > timeStamp.timeS)
     {
@@ -132,7 +132,7 @@ bool TimeStamp::operator>=(const TimeStamp& timeStamp)
 }
 
 //------------------------------------------------------------------------------
-bool TimeStamp::operator<=(const TimeStamp& timeStamp)
+bool TimeStamp::operator<=(const TimeStamp& timeStamp) const
 {
     if (timeS < timeStamp.timeS)
     {
@@ -147,7 +147,7 @@ bool TimeStamp::operator<=(const TimeStamp& timeStamp)
 }
 
 //------------------------------------------------------------------------------
-TimeStamp TimeStamp::operator+(const TimeStamp& timeStamp)
+TimeStamp TimeStamp::operator+(const TimeStamp& timeStamp) const
 {
     TimeStamp result;
 
@@ -203,4 +203,64 @@ void TimeStamp::fromTimeNs(const TimeNs& timeNs)
 {
     timeS  = timeNs / 1000000000;
     this->timeNs = (timeNs % 1000000000);
+}
+
+//------------------------------------------------------------------------------
+TimeMs TimeStamp::toTimeMs()
+{
+    TimeMs timeMs = (timeS * 1000) + (timeNs * 1000000);
+
+    return timeMs;
+}
+
+//------------------------------------------------------------------------------
+TimeMs TimeStamp::toTimeMs(uint32_t& rollOverCount)
+{
+    uint64_t timeMsWithOverflow = (timeS * 1000) + (timeNs * 1000000);
+
+    TimeMs timeMs = timeMsWithOverflow;
+
+    rollOverCount = timeMsWithOverflow / ((uint64_t) timeMs);
+
+    return timeMs;
+}
+
+//------------------------------------------------------------------------------
+TimeUs TimeStamp::toTimeUs()
+{
+    TimeUs timeUs = (timeS * 1000000) + (timeNs * 1000);
+
+    return timeUs;
+}
+
+//------------------------------------------------------------------------------
+TimeUs TimeStamp::toTimeUs(uint32_t& rollOverCount)
+{
+    uint64_t timeUsWithOverflow = (timeS * 1000000) + (timeNs * 1000);
+
+    TimeUs timeUs = timeUsWithOverflow;
+
+    rollOverCount = timeUsWithOverflow / ((uint64_t) timeUs);
+
+    return timeUs;
+}
+
+//------------------------------------------------------------------------------
+TimeNs TimeStamp::toTimeNs()
+{
+    TimeNs timeNs = (timeS * 1000000000) + this->timeNs;
+
+    return timeNs;
+}
+
+//------------------------------------------------------------------------------
+TimeNs TimeStamp::toTimeNs(uint32_t& rollOverCount)
+{
+    uint64_t timeNsWithOverflow = (timeS * 1000000000) + timeNs;
+
+    TimeUs returnTimeNs = timeNsWithOverflow;
+
+    rollOverCount = timeNsWithOverflow / ((uint64_t) returnTimeNs);
+
+    return returnTimeNs;
 }

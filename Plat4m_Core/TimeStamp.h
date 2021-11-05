@@ -46,6 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/Plat4m.h>
 
 //------------------------------------------------------------------------------
@@ -84,19 +86,19 @@ struct TimeStamp
     // Public operator overloads
     //--------------------------------------------------------------------------
 
-    bool operator>(const TimeStamp& timeStamp);
+    bool operator>(const TimeStamp& timeStamp) const;
 
-    bool operator<(const TimeStamp& timeStamp);
+    bool operator<(const TimeStamp& timeStamp) const;
 
-    bool operator==(const TimeStamp& timeStamp);
+    bool operator==(const TimeStamp& timeStamp) const;
 
-    bool operator!=(const TimeStamp& timeStamp);
+    bool operator!=(const TimeStamp& timeStamp) const;
 
-    bool operator>=(const TimeStamp& timeStamp);
+    bool operator>=(const TimeStamp& timeStamp) const;
 
-    bool operator<=(const TimeStamp& timeStamp);
+    bool operator<=(const TimeStamp& timeStamp) const;
 
-    TimeStamp operator+(const TimeStamp& timeStamp);
+    TimeStamp operator+(const TimeStamp& timeStamp) const;
 
     TimeStamp& operator+=(const TimeStamp& timeStamp);
 
@@ -109,6 +111,18 @@ struct TimeStamp
     void fromTimeUs(const TimeUs& timeUs);
 
     void fromTimeNs(const TimeNs& timeNs);
+
+    TimeMs toTimeMs();
+
+    TimeMs toTimeMs(std::uint32_t& rollOverCount);
+
+    TimeUs toTimeUs();
+
+    TimeUs toTimeUs(std::uint32_t& rollOverCount);
+
+    TimeNs toTimeNs();
+
+    TimeNs toTimeNs(std::uint32_t& rollOverCount);
 };
 
 }; // namespace Plat4m
