@@ -208,7 +208,7 @@ void TimeStamp::fromTimeNs(const TimeNs& timeNs)
 //------------------------------------------------------------------------------
 TimeMs TimeStamp::toTimeMs() const
 {
-    TimeMs timeMs = (timeS * 1000) + (timeNs / 1000000);
+    TimeMs timeMs = (timeS * 1000) + integerDivideRound((int) timeNs, 1000000);
 
     return timeMs;
 }
@@ -216,7 +216,8 @@ TimeMs TimeStamp::toTimeMs() const
 //------------------------------------------------------------------------------
 TimeMs TimeStamp::toTimeMs(uint32_t& rollOverCount) const
 {
-    uint64_t timeMsWithOverflow = (timeS * 1000) + (timeNs / 1000000);
+    uint64_t timeMsWithOverflow =
+                     (timeS * 1000) + integerDivideRound((int) timeNs, 1000000);
 
     TimeMs timeMs = timeMsWithOverflow;
 
@@ -228,7 +229,7 @@ TimeMs TimeStamp::toTimeMs(uint32_t& rollOverCount) const
 //------------------------------------------------------------------------------
 TimeUs TimeStamp::toTimeUs() const
 {
-    TimeUs timeUs = (timeS * 1000000) + (timeNs / 1000);
+    TimeUs timeUs = (timeS * 1000000) + integerDivideRound((int) timeNs, 1000);
 
     return timeUs;
 }
@@ -236,7 +237,8 @@ TimeUs TimeStamp::toTimeUs() const
 //------------------------------------------------------------------------------
 TimeUs TimeStamp::toTimeUs(uint32_t& rollOverCount) const
 {
-    uint64_t timeUsWithOverflow = (timeS * 1000000) + (timeNs / 1000);
+    uint64_t timeUsWithOverflow =
+                     (timeS * 1000000) + integerDivideRound((int) timeNs, 1000);
 
     TimeUs timeUs = timeUsWithOverflow;
 

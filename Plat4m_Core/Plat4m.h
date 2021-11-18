@@ -485,6 +485,13 @@ namespace Plat4m
     	}
     }
 
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline TValue integerDivideRound(const TValue& dividend,
+                                     const TValue& divisor)
+    {
+        return ((dividend + (divisor / 2)) / divisor);
+    }
 }; // namespace Plat4m
 
 #endif // PLAT4M_H
