@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added appendCast() and prependCast() methods to Array class. [Resolves 61].
 - `[BUG FIX]` Fixed TimeStamp::toTime() calculations and added const qualifiers. [Resolves 60].
 - `[IMPROVEMENT]` Changed SystemSimulation time tracking so that it doesn't roll over often due to microsecond counter. Now won't roll over for 139 years (2^32 seconds). Added additional convenience methods to TimeStamp. [Resolves 58].
 - `[IMPROVEMENT]` Added not-equals operator and fromTime() methods to TimeStamp class. [Resolves 57].
