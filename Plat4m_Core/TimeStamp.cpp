@@ -206,17 +206,17 @@ void TimeStamp::fromTimeNs(const TimeNs& timeNs)
 }
 
 //------------------------------------------------------------------------------
-TimeMs TimeStamp::toTimeMs()
+TimeMs TimeStamp::toTimeMs() const
 {
-    TimeMs timeMs = (timeS * 1000) + (timeNs * 1000000);
+    TimeMs timeMs = (timeS * 1000) + (timeNs / 1000000);
 
     return timeMs;
 }
 
 //------------------------------------------------------------------------------
-TimeMs TimeStamp::toTimeMs(uint32_t& rollOverCount)
+TimeMs TimeStamp::toTimeMs(uint32_t& rollOverCount) const
 {
-    uint64_t timeMsWithOverflow = (timeS * 1000) + (timeNs * 1000000);
+    uint64_t timeMsWithOverflow = (timeS * 1000) + (timeNs / 1000000);
 
     TimeMs timeMs = timeMsWithOverflow;
 
@@ -226,17 +226,17 @@ TimeMs TimeStamp::toTimeMs(uint32_t& rollOverCount)
 }
 
 //------------------------------------------------------------------------------
-TimeUs TimeStamp::toTimeUs()
+TimeUs TimeStamp::toTimeUs() const
 {
-    TimeUs timeUs = (timeS * 1000000) + (timeNs * 1000);
+    TimeUs timeUs = (timeS * 1000000) + (timeNs / 1000);
 
     return timeUs;
 }
 
 //------------------------------------------------------------------------------
-TimeUs TimeStamp::toTimeUs(uint32_t& rollOverCount)
+TimeUs TimeStamp::toTimeUs(uint32_t& rollOverCount) const
 {
-    uint64_t timeUsWithOverflow = (timeS * 1000000) + (timeNs * 1000);
+    uint64_t timeUsWithOverflow = (timeS * 1000000) + (timeNs / 1000);
 
     TimeUs timeUs = timeUsWithOverflow;
 
@@ -246,7 +246,7 @@ TimeUs TimeStamp::toTimeUs(uint32_t& rollOverCount)
 }
 
 //------------------------------------------------------------------------------
-TimeNs TimeStamp::toTimeNs()
+TimeNs TimeStamp::toTimeNs() const
 {
     TimeNs timeNs = (timeS * 1000000000) + this->timeNs;
 
@@ -254,7 +254,7 @@ TimeNs TimeStamp::toTimeNs()
 }
 
 //------------------------------------------------------------------------------
-TimeNs TimeStamp::toTimeNs(uint32_t& rollOverCount)
+TimeNs TimeStamp::toTimeNs(uint32_t& rollOverCount) const
 {
     uint64_t timeNsWithOverflow = (timeS * 1000000000) + timeNs;
 

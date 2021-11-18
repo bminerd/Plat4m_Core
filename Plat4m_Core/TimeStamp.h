@@ -112,17 +112,17 @@ struct TimeStamp
 
     void fromTimeNs(const TimeNs& timeNs);
 
-    TimeMs toTimeMs();
+    TimeMs toTimeMs() const;
 
-    TimeMs toTimeMs(std::uint32_t& rollOverCount);
+    TimeMs toTimeMs(std::uint32_t& rollOverCount) const;
 
-    TimeUs toTimeUs();
+    TimeUs toTimeUs() const;
 
-    TimeUs toTimeUs(std::uint32_t& rollOverCount);
+    TimeUs toTimeUs(std::uint32_t& rollOverCount) const;
 
-    TimeNs toTimeNs();
+    TimeNs toTimeNs() const;
 
-    TimeNs toTimeNs(std::uint32_t& rollOverCount);
+    TimeNs toTimeNs(std::uint32_t& rollOverCount) const;
 };
 
 }; // namespace Plat4m
