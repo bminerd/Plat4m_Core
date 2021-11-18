@@ -263,7 +263,72 @@ public:
     {
         return append(array.getItems(), array.getSize(), greedy);
     }
-    
+
+    //--------------------------------------------------------------------------
+    template <typename OldType>
+    bool appendCast(const OldType& item)
+    {
+        if (myNUsedItems == myNMaxItems)
+        {
+            return false;
+        }
+
+        myItems[myNUsedItems++] = static_cast<T>(item);
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename OldType>
+    bool appendCast(const OldType* items,
+                    const uint32_t nItems,
+                    const bool greedy = false)
+    {
+        uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
+        uint32_t nItemsToAppend = nItems;
+
+        bool returnValue;
+
+        if (nItemsToAppend > nRemainingItems)
+        {
+            returnValue = false;
+
+            if (greedy)
+            {
+                nItemsToAppend = nRemainingItems;
+            }
+            else
+            {
+                return returnValue;
+            }
+        }
+        else
+        {
+            returnValue = true;
+        }
+
+        for (uint32_t i = 0; i < nItemsToAppend; i++)
+        {
+            myItems[myNUsedItems++] = static_cast<T>(items[i]);
+        }
+
+        return returnValue;
+    }
+
+    //--------------------------------------------------------------------------
+    template <uint32_t nItems, typename OldType>
+    bool appendCast(const OldType (&items)[nItems], const bool greedy = false)
+    {
+        return appendCast(items, nItems, greedy);
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename OldType>
+    bool appendCast(const Array<OldType>& array, const bool greedy = false)
+    {
+        return append(array.getItems(), array.getSize(), greedy);
+    }
+
     //--------------------------------------------------------------------------
     bool prepend(T item, const bool greedy = false)
     {
@@ -342,6 +407,90 @@ public:
     bool prepend(const Array<T>& array, const bool greedy = false)
     {
         return prepend(array.getItems(), array.getSize(), greedy);
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename OldType>
+    bool prependCast(OldType& item, const bool greedy = false)
+    {
+        if (myNUsedItems == myNMaxItems)
+        {
+            if (greedy)
+            {
+                myNUsedItems = myNMaxItems - 1;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        for (uint32_t i = myNUsedItems; i > 0; i--)
+        {
+            myItems[i] = myItems[(i - 1)];
+        }
+
+        myItems[0] = static_cast<T>(item);
+        myNUsedItems++;
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename OldType>
+    bool prependCast(OldType items[],
+                     const uint32_t nItems,
+                     const bool greedy = false)
+    {
+        uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
+        uint32_t nItemsToPrepend = nItems;
+
+        bool returnValue;
+
+        if (nItemsToPrepend > nRemainingItems)
+        {
+            returnValue = false;
+
+            if (greedy)
+            {
+                nItemsToPrepend = nRemainingItems;
+            }
+            else
+            {
+                return returnValue;
+            }
+        }
+        else
+        {
+            returnValue = true;
+        }
+
+        for (int32_t i = (myNUsedItems - 1); i >= 0; i--)
+        {
+            myItems[(i + nItemsToPrepend)] = myItems[i];
+        }
+
+        for (uint32_t i = 0; i < nItemsToPrepend; i++)
+        {
+            myItems[i] = items[i];
+        }
+
+        myNUsedItems += nItemsToPrepend;
+
+        return returnValue;
+    }
+
+    //--------------------------------------------------------------------------
+    template <uint32_t nItems, typename OldType>
+    bool prependCast(OldType (&items)[nItems], const bool greedy = false)
+    {
+        return prependCast(items, nItems, greedy);
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename OldType>
+    bool prependCast(const Array<OldType>& array, const bool greedy = false)
+    {
+        return prependCast(array.getItems(), array.getSize(), greedy);
     }
     
     //--------------------------------------------------------------------------
