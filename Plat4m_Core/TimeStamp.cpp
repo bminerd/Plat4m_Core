@@ -206,6 +206,16 @@ void TimeStamp::fromTimeNs(const TimeNs& timeNs)
 }
 
 //------------------------------------------------------------------------------
+float TimeStamp::toTimeSFloat() const
+{
+    float timeS =
+          static_cast<float>(this->timeS) +
+                                      (static_cast<float>(timeNs) / 1000000000);
+
+    return timeS;
+}
+
+//------------------------------------------------------------------------------
 TimeMs TimeStamp::toTimeMs() const
 {
     TimeMs timeMs = (timeS * 1000) + integerDivideRound((int) timeNs, 1000000);

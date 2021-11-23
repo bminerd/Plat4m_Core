@@ -112,6 +112,8 @@ struct TimeStamp
 
     void fromTimeNs(const TimeNs& timeNs);
 
+    float toTimeSFloat() const;
+
     TimeMs toTimeMs() const;
 
     TimeMs toTimeMs(std::uint32_t& rollOverCount) const;
