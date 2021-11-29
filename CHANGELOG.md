@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added override keyword to CallbackFunction::call() and CallbackMethod::call(). [Resolves 65].
 - `[IMPROVEMENT]` Added toTimeSFloat() to TimeStamp class. [Resolves 64].
 - `[IMPROVEMENT]` Added integerDivideRound() function to Plat4m.h for fast integer divides where the result should be rounded to the next closest multiple of the divisor. [Resolves 62].
 - `[IMPROVEMENT]` Added appendCast() and prependCast() methods to Array class. [Resolves 61].
