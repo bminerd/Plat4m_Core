@@ -83,11 +83,11 @@ public:
     }
     
     //--------------------------------------------------------------------------
-    // Public methods implemented from Callback
+    // Public methods overridden for Callback
     //--------------------------------------------------------------------------
     
     //--------------------------------------------------------------------------
-    inline TReturn call(TParameters... parameters)
+    inline TReturn call(TParameters... parameters) override
     {
         return (*myCallbackFunction)(parameters...);
     }
