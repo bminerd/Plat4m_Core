@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -60,6 +60,28 @@ using namespace std;
 using namespace Plat4m;
 
 //------------------------------------------------------------------------------
+// Public static methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+inline TimeMs SystemLinux::getCurrentLinuxTimeMs()
+{
+    struct timespec timeSpec;
+    clock_gettime(CLOCK_REALTIME, &timeSpec);
+
+    return (timeSpec.tv_sec * 1000 + timeSpec.tv_nsec / 1000000);
+}
+
+//------------------------------------------------------------------------------
+inline TimeUs SystemLinux::getCurrentLinuxTimeUs()
+{
+    struct timespec timeSpec;
+    clock_gettime(CLOCK_REALTIME, &timeSpec);
+
+    return (timeSpec.tv_sec * 1000000 + timeSpec.tv_nsec / 1000);
+}
+
+//------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
@@ -89,33 +111,11 @@ SystemLinux::~SystemLinux()
 }
 
 //------------------------------------------------------------------------------
-// Public static inline methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-inline Plat4m::TimeMs SystemLinux::getCurrentLinuxTimeMs()
-{
-    struct timespec timeSpec;
-    clock_gettime(CLOCK_REALTIME, &timeSpec);
-
-    return (timeSpec.tv_sec * 1000 + timeSpec.tv_nsec / 1000000);
-}
-
-//------------------------------------------------------------------------------
-inline Plat4m::TimeUs SystemLinux::getCurrentLinuxTimeUs()
-{
-    struct timespec timeSpec;
-    clock_gettime(CLOCK_REALTIME, &timeSpec);
-
-    return (timeSpec.tv_sec * 1000000 + timeSpec.tv_nsec / 1000);
-}
-
-//------------------------------------------------------------------------------
 // Public virtual methods overridden for System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Plat4m::TimeUs SystemLinux::driverGetTimeUs()
+TimeUs SystemLinux::driverGetTimeUs()
 {
     Plat4m::TimeUs timeUs = getCurrentLinuxTimeUs() - myFirstTimeUs;
 
@@ -144,8 +144,7 @@ WaitCondition& SystemLinux::driverCreateWaitCondition(Thread& thread)
 }
 
 //------------------------------------------------------------------------------
-QueueDriver& SystemLinux::driverCreateQueueDriver(
-                                                  const uint32_t nValues,
+QueueDriver& SystemLinux::driverCreateQueueDriver(const uint32_t nValues,
                                                   const uint32_t valueSizeBytes,
                                                   Thread& thread)
 {
@@ -171,7 +170,7 @@ void SystemLinux::driverRun()
 }
 
 //------------------------------------------------------------------------------
-Plat4m::TimeMs SystemLinux::driverGetTimeMs()
+TimeMs SystemLinux::driverGetTimeMs()
 {
     TimeMs timeMs = getCurrentLinuxTimeMs() - myFirstTimeMs;
 
@@ -194,7 +193,7 @@ void SystemLinux::driverExit()
 }
 
 //------------------------------------------------------------------------------
-Plat4m::TimeStamp SystemLinux::driverGetWallTimeStamp()
+TimeStamp SystemLinux::driverGetTimeStamp()
 {
     struct timespec timeSpec;
     clock_gettime(CLOCK_REALTIME, &timeSpec);
@@ -204,4 +203,10 @@ Plat4m::TimeStamp SystemLinux::driverGetWallTimeStamp()
     timeStamp.timeNs = timeSpec.tv_nsec - myFirstTimeSpec.tv_nsec;
 
     return timeStamp;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp SystemLinux::driverGetWallTimeStamp()
+{
+    return (driverGetTimeStamp());
 }

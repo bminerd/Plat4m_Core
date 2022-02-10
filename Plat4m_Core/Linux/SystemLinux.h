@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -73,6 +73,14 @@ class SystemLinux : public System
 public:
 
     //--------------------------------------------------------------------------
+    // Public static inline methods
+    //--------------------------------------------------------------------------
+
+    static inline TimeMs getCurrentLinuxTimeMs();
+
+    static inline TimeUs getCurrentLinuxTimeUs();
+
+    //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
@@ -85,15 +93,7 @@ public:
     virtual ~SystemLinux();
 
     //--------------------------------------------------------------------------
-    // Public inline methods
-    //--------------------------------------------------------------------------
-
-    static inline TimeMs getCurrentLinuxTimeMs();
-
-    static inline TimeUs getCurrentLinuxTimeUs();
-
-    //--------------------------------------------------------------------------
-    // Public methods overridden for System
+    // Public virtual methods overridden for System
     //--------------------------------------------------------------------------
 
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
@@ -123,6 +123,8 @@ public:
     virtual void driverDelayTimeMs(const TimeMs timeMs) override;
 
     virtual void driverExit() override;
+
+    virtual TimeStamp driverGetTimeStamp() override;
 
     virtual TimeStamp driverGetWallTimeStamp() override;
 

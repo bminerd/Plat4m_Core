@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -148,6 +148,21 @@ void SystemFreeRtos::driverDelayTimeMs(const TimeMs timeMs)
 void SystemFreeRtos::driverExit()
 {
     vTaskEndScheduler();
+}
+
+//------------------------------------------------------------------------------
+TimeStamp SystemFreeRtos::driverGetTimeStamp()
+{
+    TimeStamp timeStamp;
+    timeStamp.fromTimeMs(driverGetTimeMs());
+
+    return timeStamp;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp SystemFreeRtos::driverGetWallTimeStamp()
+{
+    return (driverGetTimeStamp());
 }
 
 //------------------------------------------------------------------------------
