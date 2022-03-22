@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Implemented InterruptPolicy class for wrapping an interrupt handler with policy behavior. [Resolves 68].
 - `[NEW FEATURE]` Added Printer interface for printing output. Added console and ComInterface implementations. [Resolves 1].
 - `[IMPROVEMENT]` Added implementations for driverGetTimeStamp() and driverGetWallTimeStamp() to SystemLinux and SystemFreeRtos. [Resolves 59].
 - `[IMPROVEMENT]` Added override keyword to CallbackFunction::call() and CallbackMethod::call(). [Resolves 65].
