@@ -70,9 +70,6 @@ public:
     // Public enumerations
     //--------------------------------------------------------------------------
     
-    /**
-     * @brief Enumeration of external interrupt errors.
-     */
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -104,27 +101,29 @@ public:
     //--------------------------------------------------------------------------
     inline void handler()
     {
-//        if (isValidPointer(myInterruptPolicy))
-//        {
-//            myInterruptPolicy->apply(*this, *myHandlerCallback);
-//        }
-//        else
-//        {
+        if (isValidPointer(myInterruptPolicy))
+        {
+            myInterruptPolicy->apply(*this, *myHandlerCallback);
+        }
+        else
+        {
             myHandlerCallback->call();
-//        }
+        }
     }
 
     //--------------------------------------------------------------------------
-    // Public virtual methods
+    // Public methods
     //--------------------------------------------------------------------------
 
-    virtual HandlerCallback* getHandlerCallback();
+    HandlerCallback* getHandlerCallback();
 
-    virtual void setHandlerCallback(HandlerCallback& handlerCallback);
+    void setHandlerCallback(HandlerCallback& handlerCallback);
 
-    virtual Error configure(const Config& config);
+    Error configure(const Config& config);
     
-    virtual void setPolicy(InterruptPolicy* interruptPolicy);
+    void setPolicy(InterruptPolicy* interruptPolicy);
+
+    InterruptPolicy* getPolicy();
     
 protected:
     
