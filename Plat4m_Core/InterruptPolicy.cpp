@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -49,43 +49,12 @@
 using Plat4m::InterruptPolicy;
 
 //------------------------------------------------------------------------------
-// Private static data members
-//------------------------------------------------------------------------------
-
-InterruptPolicy* InterruptPolicy::myDriver = 0;
-
-//------------------------------------------------------------------------------
-// Public static methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-InterruptPolicy* InterruptPolicy::get()
-{
-    return myDriver;
-}
-
-//------------------------------------------------------------------------------
-// Public methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void InterruptPolicy::apply(Interrupt& interrupt,
-                            Callback<>& interruptHandlerCallback)
-{
-    myDriver->driverApply(interrupt, interruptHandlerCallback);
-}
-
-//------------------------------------------------------------------------------
 // Protected constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 InterruptPolicy::InterruptPolicy()
 {
-    if (isNullPointer(myDriver))
-    {
-        myDriver = this;
-    }
 }
 
 //------------------------------------------------------------------------------
