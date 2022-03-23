@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,7 @@
 
 #include <Plat4m_Core/Thread.h>
 #include <Plat4m_Core/System.h>
+#include <Plat4m_Core/ThreadPolicyManager.h>
 
 using Plat4m::Thread;
 
@@ -55,7 +56,14 @@ using Plat4m::Thread;
 //------------------------------------------------------------------------------
 void Thread::run()
 {
-    myRunCallback.call();
+    if (isValidPointer(myThreadPolicy))
+    {
+        myThreadPolicy->apply(*this, myRunCallback);
+    }
+    else
+    {
+        myRunCallback.call();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -86,7 +94,8 @@ void Thread::setPriority(const uint32_t priority)
 Thread::Thread(RunCallback& runCallback, const TimeMs periodMs) :
     myRunCallback(runCallback),
     myPeriodMs(periodMs),
-    myPriority(0)
+    myPriority(0),
+    myThreadPolicy(ThreadPolicyManager::getThreadPolicy())
 {
 }
 
