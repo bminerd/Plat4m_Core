@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added enter and exit critical section methods to System. [Resolves 70].
 - `[NEW FEATURE]` Created ThreadPolicy class for wrapping a thread run function with definable policy behavior. [Resolves 69].
 - `[IMPROVEMENT]` Implemented InterruptPolicy class for wrapping an interrupt handler with policy behavior. [Resolves 68].
 - `[NEW FEATURE]` Added Printer interface for printing output. Added console and ComInterface implementations. [Resolves 1].
