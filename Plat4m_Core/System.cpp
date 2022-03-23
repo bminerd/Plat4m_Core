@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -176,6 +176,18 @@ System::Error System::setTime(const TimeStamp& timeStamp)
 }
 
 //------------------------------------------------------------------------------
+void System::enterCriticalSection()
+{
+    myDriver->driverEnterCriticalSection();
+}
+
+//------------------------------------------------------------------------------
+void System::exitCriticalSection()
+{
+    myDriver->driverExitCriticalSection();
+}
+
+//------------------------------------------------------------------------------
 // Public virtual methods
 //------------------------------------------------------------------------------
 
@@ -235,6 +247,22 @@ System::Error System::driverSetTime(const TimeStamp& timeStamp)
     // Do nothing
 
     return Error(ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+void System::driverEnterCriticalSection()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
+}
+
+//------------------------------------------------------------------------------
+void System::driverExitCriticalSection()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
 }
 
 //------------------------------------------------------------------------------
