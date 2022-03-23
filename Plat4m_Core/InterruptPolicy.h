@@ -57,7 +57,7 @@
 namespace Plat4m
 {
 
-    class Interrupt;
+class Interrupt;
 
 //------------------------------------------------------------------------------
 // Classes
