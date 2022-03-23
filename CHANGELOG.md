@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added hardware flow control enabled option to Uart. [Resolves 72].
 - `[NEW FEATURE]` Added Stopwatch interface class for accurate timing measurement. Added InterruptPolicy and ThreadPolicy implementations that use Stopwatch objects. Added StopwatchStatisticsPrinter for outputting timining statistics. [Resolves 66].
 - `[IMPROVEMENT]` Added enter and exit critical section methods to System. [Resolves 70].
 - `[NEW FEATURE]` Created ThreadPolicy class for wrapping a thread run function with definable policy behavior. [Resolves 69].
