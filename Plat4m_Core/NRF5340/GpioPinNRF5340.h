@@ -1,6 +1,36 @@
-/**
- * Copyright (c) 2021, SignalQuest LLC
- */
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2022 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
 ///
 /// @file GpioPinNRF5340.h
@@ -75,29 +105,18 @@ public:
         ID_31
     };
 
-    enum AlternateFunction
-    {
-        ALTERNATE_FUNCTION_0 = 0,
-        ALTERNATE_FUNCTION_1,
-        ALTERNATE_FUNCTION_2,
-        ALTERNATE_FUNCTION_3,
-        ALTERNATE_FUNCTION_4,
-        ALTERNATE_FUNCTION_5,
-        ALTERNATE_FUNCTION_6,
-        ALTERNATE_FUNCTION_7,
-        ALTERNATE_FUNCTION_8,
-        ALTERNATE_FUNCTION_9,
-        ALTERNATE_FUNCTION_10,
-        ALTERNATE_FUNCTION_11,
-        ALTERNATE_FUNCTION_12,
-        ALTERNATE_FUNCTION_13,
-        ALTERNATE_FUNCTION_15,
-    };
-
     enum OutputType
     {
         OUTPUT_TYPE_PUSH_PULL   = 0x00000000 << 8,
         OUTPUT_TYPE_OPEN_DRAIN  = 0x00000006 << 8
+    };
+
+    enum SubsystemSelect
+    {
+        SUBSYSTEM_SELECT_APPLICATION_MCU = 0,
+        SUBSYSTEM_SELECT_NETWORK_MCU,
+        SUBSYSTEM_SELECT_PERIPHERAL,
+        SUBSYSTEM_SELECT_TRACE_AND_DEBUG
     };
 
     struct NRF5340Config
@@ -135,15 +154,19 @@ public:
     
     void setOutputType(const OutputType outputType);
 
+    void setSubsystemSelect(const SubsystemSelect subsystemSelect);
+
 private:
     
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
 
-    static const uint32_t myModeMap[];
+    static const std::uint32_t myModeMap[];
 
-    static const uint32_t myResistorMap[];
+    static const std::uint32_t myResistorMap[];
+
+    static const std::uint32_t mySubsystemSelectMap[];
 
     //--------------------------------------------------------------------------
     // Private data members
@@ -153,7 +176,7 @@ private:
     
     const Id myId;
     
-    const uint32_t myPinBitMask;
+    const std::uint32_t myPinBitMask;
 
     NRF5340Config myNRF5340Config;
 
