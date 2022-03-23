@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,8 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
+#include <limits>
 
+#include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/TimeStamp.h>
 
 using namespace std;
@@ -181,27 +182,71 @@ TimeStamp& TimeStamp::operator+=(const TimeStamp& timeStamp)
 }
 
 //------------------------------------------------------------------------------
+TimeStamp TimeStamp::operator-(const TimeStamp& timeStamp) const
+{
+    TimeStamp result;
+
+    result.timeS = timeS - timeStamp.timeS;
+
+    result.timeNs = timeNs - timeStamp.timeNs;
+
+    if (result.timeNs > timeNs) // This means an underflow occurred
+    {
+        result.timeS -= 1;
+        result.timeNs += 1000000000;
+    }
+
+    // To-do: handle timeS underflow
+
+    return result;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp& TimeStamp::operator-=(const TimeStamp& timeStamp)
+{
+    timeS -= timeStamp.timeS;
+
+    TimeNs newTimeNs = timeNs - timeStamp.timeNs;
+
+    if (newTimeNs > timeNs) // This means an underflow occurred
+    {
+        timeS -= 1;
+        timeNs += 1000000000;
+    }
+
+    // To-do: handle timeS underflow
+
+    return (*this);
+}
+
+//------------------------------------------------------------------------------
 // Public methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void TimeStamp::fromTimeMs(const TimeMs& timeMs)
+void TimeStamp::fromTimeMs(const TimeMs& timeMs,
+                           const std::uint32_t rollOverCount)
 {
-    timeS  = timeMs / 1000;
+    timeS  = (timeMs / 1000) +
+             (std::numeric_limits<std::uint32_t>::max() / 1000) * rollOverCount;
     timeNs = (timeMs % 1000) * 1000000;
 }
 
 //------------------------------------------------------------------------------
-void TimeStamp::fromTimeUs(const TimeUs& timeUs)
+void TimeStamp::fromTimeUs(const TimeUs& timeUs,
+                           const std::uint32_t rollOverCount)
 {
-    timeS  = timeUs / 1000000;
+    timeS  = (timeUs / 1000000) +
+          (std::numeric_limits<std::uint32_t>::max() / 1000000) * rollOverCount;
     timeNs = (timeUs % 1000000) * 1000;
 }
 
 //------------------------------------------------------------------------------
-void TimeStamp::fromTimeNs(const TimeNs& timeNs)
+void TimeStamp::fromTimeNs(const TimeNs& timeNs,
+                           const std::uint32_t rollOverCount)
 {
-    timeS  = timeNs / 1000000000;
+    timeS  = (timeNs / 1000000000) +
+       (std::numeric_limits<std::uint32_t>::max() / 1000000000) * rollOverCount;
     this->timeNs = (timeNs % 1000000000);
 }
 

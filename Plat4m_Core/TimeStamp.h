@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -102,15 +102,22 @@ struct TimeStamp
 
     TimeStamp& operator+=(const TimeStamp& timeStamp);
 
+    TimeStamp operator-(const TimeStamp& timeStamp) const;
+
+    TimeStamp& operator-=(const TimeStamp& timeStamp);
+
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
 
-    void fromTimeMs(const TimeMs& timeMs);
+    void fromTimeMs(const TimeMs& timeMs,
+                    const std::uint32_t rollOverCount = 0);
 
-    void fromTimeUs(const TimeUs& timeUs);
+    void fromTimeUs(const TimeUs& timeUs,
+                    const std::uint32_t rollOverCount = 0);
 
-    void fromTimeNs(const TimeNs& timeNs);
+    void fromTimeNs(const TimeNs& timeNs,
+                    const std::uint32_t rollOverCount = 0);
 
     float toTimeSFloat() const;
 
