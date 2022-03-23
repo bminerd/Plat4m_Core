@@ -98,13 +98,9 @@ public:
 
     enum HardwareFlowControl
     {
-        HARDWARE_FLOW_CONTROL_NONE = 0
-    };
-
-    enum Interrupt
-    {
-        INTERRUPT_TX = 0,   /// Transmit interrupt.
-        INTERRUPT_RX        /// Receive interrupt.
+        HARDWARE_FLOW_CONTROL_NONE = 0,
+        HARDWARE_FLOW_CONTROL_DISABLED = HARDWARE_FLOW_CONTROL_NONE,
+        HARDWARE_FLOW_CONTROL_ENABLED
     };
 
     //--------------------------------------------------------------------------
