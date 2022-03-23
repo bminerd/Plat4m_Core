@@ -33,6 +33,8 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/Processor.cpp
                  ${PLAT4M_CORE_DIR}/AllocationMemory.cpp
                  ${PLAT4M_CORE_DIR}/Thread.cpp
+                 ${PLAT4M_CORE_DIR}/ThreadPolicy.cpp
+                 ${PLAT4M_CORE_DIR}/ThreadPolicyManager.cpp
                  ${PLAT4M_CORE_DIR}/Mutex.cpp
                  ${PLAT4M_CORE_DIR}/WaitCondition.cpp
                  ${PLAT4M_CORE_DIR}/QueueDriver.cpp
