@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,7 @@
 
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/SystemFreeRtos/SystemFreeRtos.h>
+#include <Plat4m_Core/StopwatchSystemTime/StopwatchSystemTime.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -76,14 +77,25 @@ public:
 
     virtual ~SystemFreeRtosCortexM();
 
+    //--------------------------------------------------------------------------
+    // Public methods overridden for System
+    //--------------------------------------------------------------------------
+
+    virtual TimeUs driverGetTimeUs() override;
+
+    virtual TimeStamp driverGetTimeStamp() override;
+
+    virtual TimeStamp driverGetWallTimeStamp() override;
+
 private:
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from SystemFreeRtos
+    // Public methods overridden for System
     //--------------------------------------------------------------------------
 
-    TimeUs driverGetTimeUs();
+    TimeMs myLastTimeMs;
 
+    std::uint64_t myLastNsPortion;
 };
 
 }; // namespace Plat4m

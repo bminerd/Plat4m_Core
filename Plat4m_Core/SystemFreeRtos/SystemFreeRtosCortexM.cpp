@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,10 +43,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <FreeRTOS-Kernel/include/FreeRTOS.h>
+#include <FreeRTOSConfig.h>
+
 #include <Plat4m_Core/SystemFreeRtos/SystemFreeRtosCortexM.h>
 
-using Plat4m::SystemFreeRtosCortexM;
-using Plat4m::SystemFreeRtos;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -54,7 +56,9 @@ using Plat4m::SystemFreeRtos;
 
 //------------------------------------------------------------------------------
 SystemFreeRtosCortexM::SystemFreeRtosCortexM() :
-    SystemFreeRtos()
+    SystemFreeRtos(),
+    myLastTimeMs(0),
+    myLastNsPortion(0)
 {
 }
 
@@ -70,18 +74,57 @@ SystemFreeRtosCortexM::~SystemFreeRtosCortexM()
 //------------------------------------------------------------------------------
 // Private methods implemented from SystemFreeRtos
 //------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-Plat4m::TimeUs SystemFreeRtosCortexM::driverGetTimeUs()
+TimeUs SystemFreeRtosCortexM::driverGetTimeUs()
 {
-    volatile uint32_t sysTickLoad  =
-    						   *((uint32_t*) (0xE000E000UL + 0x0010UL + 0x4UL));
-    volatile uint32_t sysTickValue =
-    						   *((uint32_t*) (0xE000E000UL + 0x0010UL + 0x8UL));
+    volatile std::uint32_t sysTickLoad  =
+                          *((std::uint32_t*) (0xE000E000UL + 0x0010UL + 0x4UL));
+    volatile std::uint32_t sysTickValue =
+                          *((std::uint32_t*) (0xE000E000UL + 0x0010UL + 0x8UL));
 
     Plat4m::TimeUs timeUs =
         ((getTimeMs() * 1000) +
                          (((sysTickLoad - sysTickValue) * 1000) / sysTickLoad));
 
     return timeUs;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp SystemFreeRtosCortexM::driverGetTimeStamp()
+{
+    volatile std::uint32_t sysTickLoad  =
+                          *((std::uint32_t*) (0xE000E000UL + 0x0010UL + 0x4UL));
+    volatile std::uint32_t sysTickValue =
+                          *((std::uint32_t*) (0xE000E000UL + 0x0010UL + 0x8UL));
+
+    // SysTick is configured to increment by 1 millisecond, so the fractional
+    // part of the timer will always be <= 1ms which means we can safely add to
+    // the nanosecond portion of the TimeStamp only
+    std::uint64_t nsPortion =
+        (((std::uint64_t) sysTickLoad - sysTickValue) * 1000000) / sysTickLoad;
+
+    TimeMs timeMs = SystemFreeRtos::driverGetTimeMs();
+    std::uint32_t timeMsRollOverCount = getTimeMsRollOverCounter();
+
+    // If the SysTick timer has rolled over but timeMs has not been updated,
+    // increment timeMs
+    if ((timeMs == myLastTimeMs) && (nsPortion < myLastNsPortion))
+    {
+        timeMs++;
+    }
+
+    TimeStamp timeStamp;
+    timeStamp.fromTimeMs(timeMs, timeMsRollOverCount);
+
+    timeStamp.timeNs += (TimeNs) nsPortion;
+
+    myLastTimeMs = timeMs;
+    myLastNsPortion = nsPortion;
+
+    return timeStamp;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp SystemFreeRtosCortexM::driverGetWallTimeStamp()
+{
+    return (driverGetTimeStamp());
 }

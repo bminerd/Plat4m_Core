@@ -104,9 +104,15 @@ public:
 
     virtual void driverExit() override;
 
-    virtual TimeStamp driverGetTimeStamp() override;
+    virtual void driverEnterCriticalSection() override;
 
-    virtual TimeStamp driverGetWallTimeStamp() override;
+    virtual void driverExitCriticalSection() override;
+
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    std::uint32_t getTimeMsRollOverCounter();
 
 protected:
 
@@ -121,6 +127,16 @@ protected:
     //--------------------------------------------------------------------------
 
     virtual ~SystemFreeRtos();
+
+private:
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    TimeMs myLastTimeMs;
+
+    std::uint32_t myTimeMsRollOverCounter;
 };
 
 }; // namespace Plat4m

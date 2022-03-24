@@ -135,7 +135,17 @@ void SystemFreeRtos::driverRun()
 //------------------------------------------------------------------------------
 Plat4m::TimeMs SystemFreeRtos::driverGetTimeMs()
 {
-    return ((TimeMs) xTaskGetTickCount());
+    TimeMs timeMs = ((TimeMs) xTaskGetTickCount());
+
+    if (timeMs < myLastTimeMs)
+    {
+        // Millisecond timer count has overflowed, approximately every 49.7 days
+        myTimeMsRollOverCounter++;
+    }
+
+    myLastTimeMs = timeMs;
+
+    return myLastTimeMs;
 }
 
 //------------------------------------------------------------------------------
@@ -151,18 +161,25 @@ void SystemFreeRtos::driverExit()
 }
 
 //------------------------------------------------------------------------------
-TimeStamp SystemFreeRtos::driverGetTimeStamp()
+void SystemFreeRtos::driverEnterCriticalSection()
 {
-    TimeStamp timeStamp;
-    timeStamp.fromTimeMs(driverGetTimeMs());
-
-    return timeStamp;
+    vPortEnterCritical();
 }
 
 //------------------------------------------------------------------------------
-TimeStamp SystemFreeRtos::driverGetWallTimeStamp()
+void SystemFreeRtos::driverExitCriticalSection()
 {
-    return (driverGetTimeStamp());
+    vPortExitCritical();
+}
+
+//------------------------------------------------------------------------------
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+std::uint32_t SystemFreeRtos::getTimeMsRollOverCounter()
+{
+    return myTimeMsRollOverCounter;
 }
 
 //------------------------------------------------------------------------------
@@ -171,7 +188,9 @@ TimeStamp SystemFreeRtos::driverGetWallTimeStamp()
 
 //------------------------------------------------------------------------------
 SystemFreeRtos::SystemFreeRtos() :
-    System()
+    System(),
+    myLastTimeMs(0),
+    myTimeMsRollOverCounter(0)
 {
 }
 
