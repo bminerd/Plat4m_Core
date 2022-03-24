@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,10 +33,10 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file BoardNRF5340PDK.h
+/// @file BoardNRF5340DK.h
 /// @author Ben Minerd
 /// @date 1/6/2021
-/// @brief BoardNRF5340PDK class.
+/// @brief BoardNRF5340DK class.
 ///
 
 #ifndef PLAT4M_BOARD_NRF5340_PDK_H
@@ -46,13 +46,14 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/Board.h>
 #include <Plat4m_Core/NRF5340/ProcessorNRF5340.h>
 #include <Plat4m_Core/NRF5340/GpioPortNRF5340.h>
 #include <Plat4m_Core/NRF5340/GpioPinNRF5340.h>
+#include <Plat4m_Core/NRF5340/UartNRF5340.h>
 #include <Plat4m_Core/GpioPin.h>
-
-#include <stdint.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -65,7 +66,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class BoardNRF5340PDK : public Board
+class BoardNRF5340DK : public Board
 {
 public:
     
@@ -82,20 +83,25 @@ public:
         GPIO_PIN_ID_LED_1,
         GPIO_PIN_ID_LED_2,
         GPIO_PIN_ID_LED_3,
-        GPIO_PIN_ID_LED_4,
+        GPIO_PIN_ID_LED_4
+    };
+
+    enum UartId
+    {
+        UART_ID_VCOM = 0
     };
     
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
     
-    BoardNRF5340PDK();
+    BoardNRF5340DK();
     
     //--------------------------------------------------------------------------
     // Public destructors
     //--------------------------------------------------------------------------
 
-	~BoardNRF5340PDK();
+	~BoardNRF5340DK();
 
     //--------------------------------------------------------------------------
     // Public methods
@@ -109,6 +115,9 @@ public:
 
     ProcessorNRF5340& getProcessor(const ProcessorNRF5340::Config& config);
 
+    UartNRF5340& getUart(const UartId uartId,
+                         const bool isHardwareFlowControlEnabled = false);
+
 private:
 
     //--------------------------------------------------------------------------
@@ -117,9 +126,11 @@ private:
 
     static const float myProcessorCoreVoltage;
 
-    static const uint32_t myProcessorExternalClockFrequencyHz;
+    static const std::uint32_t myProcessorExternalClockFrequencyHz;
 
     static const GpioPin::Id myGpioPinIdMap[];
+
+    static const UartNRF5340::Id myUartIdMap[];
 
     //--------------------------------------------------------------------------
     // Private data members
@@ -130,6 +141,8 @@ private:
     GpioPinNRF5340* myGpioPins[8];
 
     ProcessorNRF5340* myProcessor;
+
+    UartNRF5340* myUart;
 };
 
 }; // namespace Plat4m
