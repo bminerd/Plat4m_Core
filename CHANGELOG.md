@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Moved time stamp methods from SystemFreeRtos to SystemFreeRtosCortexM so that the nanosecond portion could be calculated using the SysTick timer counter. [Resolves 74].
 - `[IMPROVEMENT]` Updated NRF5340 drivers. Uart and interrupt classes are now fully functional. [Resolves 71].
 - `[IMPROVEMENT]` Added hardware flow control enabled option to Uart. [Resolves 72].
 - `[NEW FEATURE]` Added Stopwatch interface class for accurate timing measurement. Added InterruptPolicy and ThreadPolicy implementations that use Stopwatch objects. Added StopwatchStatisticsPrinter for outputting timining statistics. [Resolves 66].
