@@ -206,8 +206,6 @@ private:
 
     static List<Topic*> myTopicList;
 
-    uint32_t mySequenceIdCounter;
-
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
@@ -215,6 +213,8 @@ private:
     const uint32_t myId;
 
     List<SampleCallback*> mySampleCallbackList;
+
+    uint32_t mySequenceIdCounter;
 
     //--------------------------------------------------------------------------
     // Private methods

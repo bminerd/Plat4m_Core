@@ -93,7 +93,7 @@ ThreadLinux::~ThreadLinux()
     pthread_cond_broadcast(&myConditionHandle);
     pthread_mutex_unlock(&myMutexHandle);
 
-    int returnValue = pthread_join(myThreadHandle, NULL);
+    pthread_join(myThreadHandle, NULL);
 }
 
 //------------------------------------------------------------------------------

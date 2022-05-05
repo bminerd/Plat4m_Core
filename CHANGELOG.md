@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Addressed compiler warnings with -Wall enabled. [Resolves 75].
 - `[IMPROVEMENT]` Renamed BoardNRF5340PDK to BoardNRF5340DK and updated virtual COM port uart ID. [Resolves 73].
 - `[IMPROVEMENT]` Moved time stamp methods from SystemFreeRtos to SystemFreeRtosCortexM so that the nanosecond portion could be calculated using the SysTick timer counter. [Resolves 74].
 - `[IMPROVEMENT]` Updated NRF5340 drivers. Uart and interrupt classes are now fully functional. [Resolves 71].

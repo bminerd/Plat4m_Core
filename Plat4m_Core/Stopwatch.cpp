@@ -75,7 +75,6 @@ List<Stopwatch*>& Stopwatch::getStopwatchList()
 
 //------------------------------------------------------------------------------
 Stopwatch::Stopwatch() :
-    myName(),
     myPreemptedStopwatch(0),
     myIsFirstMeasurement(true),
     myStartTimeStamp(),

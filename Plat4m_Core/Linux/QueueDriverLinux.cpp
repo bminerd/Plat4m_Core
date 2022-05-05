@@ -90,7 +90,7 @@ uint32_t QueueDriverLinux::driverGetSize()
 {
     struct msqid_ds messageQueueInfo;
 
-    int returnValue = msgctl(myMessageQueueId, IPC_STAT, &messageQueueInfo);
+    msgctl(myMessageQueueId, IPC_STAT, &messageQueueInfo);
 
     return (messageQueueInfo.msg_qnum);
 }

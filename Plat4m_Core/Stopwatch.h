@@ -126,8 +126,6 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    const char* myName;
-
     Stopwatch* myPreemptedStopwatch;
 
     bool myIsFirstMeasurement;
