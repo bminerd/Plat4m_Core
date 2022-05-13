@@ -252,8 +252,7 @@ public:
 
     //--------------------------------------------------------------------------
     template <uint32_t nItems>
-    bool append(const T (&items)[nItems],
-                const bool greedy = false)
+    bool append(const T (&items)[nItems], const bool greedy = false)
     {
         return append(items, nItems, greedy);
     }
@@ -565,7 +564,7 @@ public:
             return Array<T>();
         }
 
-        int subNMaxItems  = 0;
+        uint32_t subNMaxItems  = 0;
 
         if ((nItems == 0) || (nItems > (myNMaxItems - index)))
         {
@@ -576,13 +575,13 @@ public:
             subNMaxItems = nItems;
         }
 
-        int subNUsedItems = myNUsedItems - index;
+        int32_t subNUsedItems = myNUsedItems - index;
 
         if (subNUsedItems < 0)
         {
             subNUsedItems = 0;
         }
-        else if ((subNUsedItems > nItems) && (nItems != 0))
+        else if ((subNUsedItems > (int32_t) nItems) && (nItems != 0))
         {
             subNUsedItems = nItems;
         }

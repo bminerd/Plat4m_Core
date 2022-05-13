@@ -215,7 +215,7 @@ bool AsciiMessage::match(const AsciiMessage& message) const
 
     if (hasParameters())
     {
-        int size = myParameterNames->getSize();
+        uint32_t size = myParameterNames->getSize();
 
         // Compare number of parameters
         if (size != message.getParameterNames()->getSize())
@@ -224,7 +224,7 @@ bool AsciiMessage::match(const AsciiMessage& message) const
         }
 
         // Compare parameters
-        for (int i = 0; i < size; i++)
+        for (uint32_t i = 0; i < size; i++)
         {
             ByteArray& name1 = myParameterNames->getItem(i);
             ByteArray& name2 = message.getParameterNames()->getItem(i);
@@ -258,10 +258,10 @@ ComProtocol::ParseStatus AsciiMessage::parseByteArray(
 {
     // Look for start and end characters before trying to parse message
 
-    int messageStartIndex = 0;
-    int messageEndIndex = 0;
-    int i = 0;
-    int size = byteArray.getSize();
+    uint32_t messageStartIndex = 0;
+    uint32_t messageEndIndex = 0;
+    uint32_t i = 0;
+    uint32_t size = byteArray.getSize();
 
     for (i = 0; i < size; i++)
     {
@@ -307,7 +307,7 @@ ComProtocol::ParseStatus AsciiMessage::parseByteArray(
         }
     }
 
-    int commandSeparatorIndex = i;
+    uint32_t commandSeparatorIndex = i;
 
     name.clear(true);
 
@@ -348,8 +348,8 @@ ComProtocol::ParseStatus AsciiMessage::parseByteArray(
     }
 
     bool stillParsing = true;
-    int nParameters = 0;
-    int parameterStartIndex = commandSeparatorIndex + 1;
+    uint32_t nParameters = 0;
+    uint32_t parameterStartIndex = commandSeparatorIndex + 1;
 
     while (stillParsing)
     {
@@ -365,8 +365,8 @@ ComProtocol::ParseStatus AsciiMessage::parseByteArray(
 
                 // Look for assignment character
 
-                int assignmentCharacterIndex = 0;
-                int j;
+                uint32_t assignmentCharacterIndex = 0;
+                uint32_t j;
 
                 for (j = parameterStartIndex; j < i; j++)
                 {
@@ -454,7 +454,7 @@ void AsciiMessage::setUint32Parameter(const uint32_t index,
 {
     char string[20];
 
-    sprintf(string, "%u", value);
+    sprintf(string, "%lu", value);
     myParameterValues->getItem(index).clear(true);
     myParameterValues->getItem(index).append(string);
 }

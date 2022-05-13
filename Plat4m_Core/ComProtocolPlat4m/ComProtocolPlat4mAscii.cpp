@@ -67,7 +67,7 @@ ComProtocolPlat4mAscii::ComProtocolPlat4mAscii(ComLink& comLink,
     myAsciiMessageTemplate(),
     myMessageHandlerList()
 {
-    for (int i = 0; i < ARRAY_SIZE(myParameterNameStorage); i++)
+    for (uint32_t i = 0; i < arraySize(myParameterNameStorage); i++)
     {
         myParameterNameStorageArray[i].setItems(
                                           myParameterNameStorage[i],
@@ -75,7 +75,7 @@ ComProtocolPlat4mAscii::ComProtocolPlat4mAscii(ComLink& comLink,
                                           0);
     }
 
-    for (int i = 0; i < ARRAY_SIZE(myParameterValueStorage); i++)
+    for (uint32_t i = 0; i < arraySize(myParameterValueStorage); i++)
     {
         myParameterValueStorageArray[i].setItems(
                                          myParameterValueStorage[i],

@@ -90,12 +90,12 @@ ComLink::ComLink(ByteArray& transmitByteArray,
     myComProtocolList(),
     myCurrentComProtocol(0),
     myCurrentComProtocolTimeoutTimeMs(0),
+    myDataParsingThread(System::createThread(
+                          createCallback(this,
+                                         &ComLink::dataParsingThreadCallback))),
     myWaitCondition(System::createWaitCondition(myDataParsingThread)),
     myMutex(System::createMutex(myDataParsingThread)),
-	myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread)),
-    myDataParsingThread(System::createThread(
-                           createCallback(this,
-                                          &ComLink::dataParsingThreadCallback)))
+	myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread))
 {
     myDataParsingThread.setPriority(3);
 

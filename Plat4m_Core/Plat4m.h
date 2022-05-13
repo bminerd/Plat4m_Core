@@ -60,6 +60,8 @@ using namespace std;
 // Defines
 //------------------------------------------------------------------------------
 
+#define PLAT4M_VERSION "0.0.24"
+
 ///
 /// @brief Returns the number of elements of any given array.
 /// @param array Array to get number of elements.
@@ -146,12 +148,6 @@ namespace Plat4m
 
     typedef RealNumber AngularAccelerationDps2;
     typedef RealNumber AngularAccelerationRadPs2;
-
-    //--------------------------------------------------------------------------
-    // Variables
-    //--------------------------------------------------------------------------
-
-    static const char* plat4mVersion = "0.0.24";
 
     //--------------------------------------------------------------------------
     // Inline functions
