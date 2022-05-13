@@ -9,11 +9,11 @@ set(EIGEN_DIR ${PROJECT_SOURCE_DIR}/../../../Dependencies/Eigen)
 
 include(${PLAT4M_CMAKE_DIR}/Plat4mMacros.cmake)
 
-set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -g3")
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -g3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3")
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -g3 -Wall -Wno-comment")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -g3 -Wall -Wno-comment")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wall -Wno-comment")
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g3")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g3 -Wall -Wno-comment")
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PLAT4M_CORE_DIR})

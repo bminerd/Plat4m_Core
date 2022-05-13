@@ -3,11 +3,11 @@ project (Unit_Test_Linux_App C CXX ASM)
 
 set(PLAT4M_CORE_DIR ${PROJECT_SOURCE_DIR}/../../../Plat4m_Core)
 
-set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -pthread")
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -pthread")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -pthread -Wall -Wno-comment")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -pthread -Wall -Wno-comment")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -Wno-comment")
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread -Wall -Wno-comment")
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PLAT4M_CORE_DIR}/../)

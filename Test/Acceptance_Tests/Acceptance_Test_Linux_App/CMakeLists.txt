@@ -3,9 +3,11 @@ project (Acceptance_Test_Linux_App C CXX ASM)
 
 set(PLAT4M_CORE_DIR ${PROJECT_SOURCE_DIR}/../../../Plat4m_Core)
 
-set(PROJECT_FLAGS "-g3 \
+set(PROJECT_FLAGS "-g \
                    -O0 \
                    -pthread \
+                   -Wall \
+                   -Wno-comment \
                    -fdebug-prefix-map=/home/Plat4m_Core=.")
 
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${PROJECT_FLAGS}")
