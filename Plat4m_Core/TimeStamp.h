@@ -67,14 +67,17 @@ struct TimeStamp
     // Public data members
     //--------------------------------------------------------------------------
 
-    TimeS timeS;
-    TimeNs timeNs;
+    TimeSecondsSigned timeS;
+    TimeNanosecondsSigned timeNs;
 
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
-    TimeStamp(const TimeS timeS = 0, const TimeNs timeNs = 0);
+    TimeStamp();
+
+    TimeStamp(const TimeSecondsSigned seconds,
+              const TimeNanosecondsSigned nanoseconds);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
@@ -110,28 +113,38 @@ struct TimeStamp
     // Public methods
     //--------------------------------------------------------------------------
 
-    void fromTimeMs(const TimeMs& timeMs,
+    void fromTimeMs(const TimeMillisecondsSigned& timeMs,
                     const std::uint32_t rollOverCount = 0);
 
-    void fromTimeUs(const TimeUs& timeUs,
+    void fromTimeUs(const TimeMicrosecondsSigned& timeUs,
                     const std::uint32_t rollOverCount = 0);
 
-    void fromTimeNs(const TimeNs& timeNs,
+    void fromTimeNs(const TimeNanosecondsSigned& timeNs,
                     const std::uint32_t rollOverCount = 0);
 
     float toTimeSFloat() const;
 
-    TimeMs toTimeMs() const;
+    TimeMillisecondsSigned toTimeMs() const;
 
-    TimeMs toTimeMs(std::uint32_t& rollOverCount) const;
+    TimeMillisecondsSigned toTimeMs(std::uint32_t& rollOverCount) const;
 
-    TimeUs toTimeUs() const;
+    TimeMicrosecondsSigned toTimeUs() const;
 
-    TimeUs toTimeUs(std::uint32_t& rollOverCount) const;
+    TimeMicrosecondsSigned toTimeUs(std::uint32_t& rollOverCount) const;
 
-    TimeNs toTimeNs() const;
+    TimeNanosecondsSigned toTimeNs() const;
 
-    TimeNs toTimeNs(std::uint32_t& rollOverCount) const;
+    TimeNanosecondsSigned toTimeNs(std::uint32_t& rollOverCount) const;
+
+private:
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    void checkForOverUnderFlow();
+
+    void checkForSignChange();
 };
 
 }; // namespace Plat4m

@@ -43,6 +43,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdlib>
 #include <limits>
 
 #include <Plat4m_Core/Plat4m.h>
@@ -56,10 +57,20 @@ using namespace Plat4m;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-TimeStamp::TimeStamp(const TimeS timeS, const TimeNs timeNs) :
-    timeS(timeS),
-    timeNs(timeNs)
+TimeStamp::TimeStamp() :
+    timeS(0),
+    timeNs(0)
 {
+}
+
+//------------------------------------------------------------------------------
+TimeStamp::TimeStamp(const TimeSecondsSigned seconds,
+                     const TimeNanosecondsSigned nanoseconds) :
+    timeS(seconds),
+    timeNs(nanoseconds)
+{
+    checkForOverUnderFlow();
+    checkForSignChange();
 }
 
 //------------------------------------------------------------------------------
@@ -156,11 +167,8 @@ TimeStamp TimeStamp::operator+(const TimeStamp& timeStamp) const
 
     result.timeNs = timeNs + timeStamp.timeNs;
 
-    if (result.timeNs >= 1000000000)
-    {
-        result.timeS += 1;
-        result.timeNs -= 1000000000;
-    }
+    result.checkForOverUnderFlow();
+    result.checkForSignChange();
 
     return result;
 }
@@ -172,11 +180,8 @@ TimeStamp& TimeStamp::operator+=(const TimeStamp& timeStamp)
 
     timeNs += timeStamp.timeNs;
 
-    if (timeNs >= 1000000000)
-    {
-        timeS += 1;
-        timeNs -= 1000000000;
-    }
+    checkForOverUnderFlow();
+    checkForSignChange();
 
     return (*this);
 }
@@ -190,13 +195,8 @@ TimeStamp TimeStamp::operator-(const TimeStamp& timeStamp) const
 
     result.timeNs = timeNs - timeStamp.timeNs;
 
-    if (result.timeNs > timeNs) // This means an underflow occurred
-    {
-        result.timeS -= 1;
-        result.timeNs += 1000000000;
-    }
-
-    // To-do: handle timeS underflow
+    result.checkForOverUnderFlow();
+    result.checkForSignChange();
 
     return result;
 }
@@ -206,15 +206,10 @@ TimeStamp& TimeStamp::operator-=(const TimeStamp& timeStamp)
 {
     timeS -= timeStamp.timeS;
 
-    TimeNs newTimeNs = timeNs - timeStamp.timeNs;
+    timeNs -= timeStamp.timeNs;
 
-    if (newTimeNs > timeNs) // This means an underflow occurred
-    {
-        timeS -= 1;
-        timeNs += 1000000000;
-    }
-
-    // To-do: handle timeS underflow
+    checkForOverUnderFlow();
+    checkForSignChange();
 
     return (*this);
 }
@@ -224,29 +219,29 @@ TimeStamp& TimeStamp::operator-=(const TimeStamp& timeStamp)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void TimeStamp::fromTimeMs(const TimeMs& timeMs,
+void TimeStamp::fromTimeMs(const TimeMillisecondsSigned& timeMs,
                            const std::uint32_t rollOverCount)
 {
     timeS  = (timeMs / 1000) +
-             (std::numeric_limits<std::uint32_t>::max() / 1000) * rollOverCount;
+              (std::numeric_limits<std::int32_t>::max() / 1000) * rollOverCount;
     timeNs = (timeMs % 1000) * 1000000;
 }
 
 //------------------------------------------------------------------------------
-void TimeStamp::fromTimeUs(const TimeUs& timeUs,
+void TimeStamp::fromTimeUs(const TimeMicrosecondsSigned& timeUs,
                            const std::uint32_t rollOverCount)
 {
     timeS  = (timeUs / 1000000) +
-          (std::numeric_limits<std::uint32_t>::max() / 1000000) * rollOverCount;
+           (std::numeric_limits<std::int32_t>::max() / 1000000) * rollOverCount;
     timeNs = (timeUs % 1000000) * 1000;
 }
 
 //------------------------------------------------------------------------------
-void TimeStamp::fromTimeNs(const TimeNs& timeNs,
+void TimeStamp::fromTimeNs(const TimeNanosecondsSigned& timeNs,
                            const std::uint32_t rollOverCount)
 {
     timeS  = (timeNs / 1000000000) +
-       (std::numeric_limits<std::uint32_t>::max() / 1000000000) * rollOverCount;
+        (std::numeric_limits<std::int32_t>::max() / 1000000000) * rollOverCount;
     this->timeNs = (timeNs % 1000000000);
 }
 
@@ -261,63 +256,136 @@ float TimeStamp::toTimeSFloat() const
 }
 
 //------------------------------------------------------------------------------
-TimeMs TimeStamp::toTimeMs() const
+TimeMillisecondsSigned TimeStamp::toTimeMs() const
 {
-    TimeMs timeMs = (timeS * 1000) + integerDivideRound((int) timeNs, 1000000);
+    uint32_t rollOverCount = 0;
+
+    return toTimeMs(rollOverCount);
+}
+
+//------------------------------------------------------------------------------
+TimeMillisecondsSigned TimeStamp::toTimeMs(uint32_t& rollOverCount) const
+{
+    int64_t timeMsWithOverflow =
+           ((int64_t) timeS * 1000) + integerDivideRound((int) timeNs, 1000000);
+
+    TimeMillisecondsSigned timeMs = timeMsWithOverflow;
+
+    if ((timeMs < 0) && ((timeS > 0) || (timeNs > 0)))
+    {
+        timeMs += std::numeric_limits<std::int32_t>::max();
+        timeMs += 1;
+    }
+    else if ((timeMs > 0) && ((timeS < 0) || (timeNs < 0)))
+    {
+        timeMs -= std::numeric_limits<std::int32_t>::max();
+        timeMs -= 1;
+    }
+
+    rollOverCount =
+        std::abs(timeMsWithOverflow /
+                      ((int64_t) std::numeric_limits<std::int32_t>::max() + 1));
 
     return timeMs;
 }
 
 //------------------------------------------------------------------------------
-TimeMs TimeStamp::toTimeMs(uint32_t& rollOverCount) const
+TimeMicrosecondsSigned TimeStamp::toTimeUs() const
 {
-    uint64_t timeMsWithOverflow =
-                     (timeS * 1000) + integerDivideRound((int) timeNs, 1000000);
+    uint32_t rollOverCount = 0;
 
-    TimeMs timeMs = timeMsWithOverflow;
-
-    rollOverCount = timeMsWithOverflow / ((uint64_t) timeMs);
-
-    return timeMs;
+    return toTimeUs(rollOverCount);
 }
 
 //------------------------------------------------------------------------------
-TimeUs TimeStamp::toTimeUs() const
+TimeMicrosecondsSigned TimeStamp::toTimeUs(uint32_t& rollOverCount) const
 {
-    TimeUs timeUs = (timeS * 1000000) + integerDivideRound((int) timeNs, 1000);
+    int64_t timeUsWithOverflow =
+           ((int64_t) timeS * 1000000) + integerDivideRound((int) timeNs, 1000);
+
+    TimeMicrosecondsSigned timeUs = timeUsWithOverflow;
+
+    if ((timeUs < 0) && ((timeS > 0) || (timeNs > 0)))
+    {
+        timeUs += std::numeric_limits<std::int32_t>::max();
+        timeUs += 1;
+    }
+    else if ((timeUs > 0) && ((timeS < 0) || (timeNs < 0)))
+    {
+        timeUs -= std::numeric_limits<std::int32_t>::max();
+        timeUs -= 1;
+    }
+
+    rollOverCount =
+        std::abs(timeUsWithOverflow /
+                      ((int64_t) std::numeric_limits<std::int32_t>::max() + 1));
 
     return timeUs;
 }
 
 //------------------------------------------------------------------------------
-TimeUs TimeStamp::toTimeUs(uint32_t& rollOverCount) const
+TimeNanosecondsSigned TimeStamp::toTimeNs() const
 {
-    uint64_t timeUsWithOverflow =
-                     (timeS * 1000000) + integerDivideRound((int) timeNs, 1000);
+    uint32_t rollOverCount = 0;
 
-    TimeUs timeUs = timeUsWithOverflow;
-
-    rollOverCount = timeUsWithOverflow / ((uint64_t) timeUs);
-
-    return timeUs;
+    return toTimeNs(rollOverCount);
 }
 
 //------------------------------------------------------------------------------
-TimeNs TimeStamp::toTimeNs() const
+TimeNanosecondsSigned TimeStamp::toTimeNs(uint32_t& rollOverCount) const
 {
-    TimeNs timeNs = (timeS * 1000000000) + this->timeNs;
+    int64_t timeNsWithOverflow = ((int64_t) timeS * 1000000000) + timeNs;
 
-    return timeNs;
-}
+    TimeNanosecondsSigned returnTimeNs = timeNsWithOverflow;
 
-//------------------------------------------------------------------------------
-TimeNs TimeStamp::toTimeNs(uint32_t& rollOverCount) const
-{
-    uint64_t timeNsWithOverflow = (timeS * 1000000000) + timeNs;
+    if ((returnTimeNs < 0) && ((timeS > 0) || (timeNs > 0)))
+    {
+        returnTimeNs += std::numeric_limits<std::int32_t>::max();
+        returnTimeNs += 1;
+    }
+    else if ((returnTimeNs > 0) && ((timeS < 0) || (timeNs < 0)))
+    {
+        returnTimeNs -= std::numeric_limits<std::int32_t>::max();
+        returnTimeNs -= 1;
+    }
 
-    TimeUs returnTimeNs = timeNsWithOverflow;
-
-    rollOverCount = timeNsWithOverflow / ((uint64_t) returnTimeNs);
+    rollOverCount =
+        std::abs(timeNsWithOverflow /
+                      ((int64_t) std::numeric_limits<std::int32_t>::max() + 1));
 
     return returnTimeNs;
+}
+
+//------------------------------------------------------------------------------
+// Private methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void TimeStamp::checkForOverUnderFlow()
+{
+    if (timeNs <= -1000000000)
+    {
+        timeS -= 1;
+        timeNs += 1000000000;
+    }
+    else if (timeNs >= 1000000000)
+    {
+        timeS += 1;
+        timeNs -= 1000000000;
+    }
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::checkForSignChange()
+{
+    if ((timeS < 0) && (timeNs > 0))
+    {
+        timeS += 1;
+        timeNs -= 1000000000;
+    }
+    else if ((timeS > 0) && (timeNs < 0))
+    {
+        timeS -= 1;
+        timeNs += 1000000000;
+    }
 }
