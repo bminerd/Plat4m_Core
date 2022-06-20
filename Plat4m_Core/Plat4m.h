@@ -111,6 +111,16 @@ namespace Plat4m
     typedef uint32_t TimeUs;
     typedef uint32_t TimeNs;
 
+    typedef TimeS TimeSeconds;
+    typedef TimeMs TimeMilliseconds;
+    typedef TimeUs TimeMicroseconds;
+    typedef TimeNs TimeNanoSeconds;
+
+    typedef int32_t TimeSecondsSigned;
+    typedef int32_t TimeMillisecondsSigned;
+    typedef int32_t TimeMicrosecondsSigned;
+    typedef int32_t TimeNanosecondsSigned;
+
 #ifndef PLAT4M_CORE_CONFIG
     typedef float RealNumber;
 #endif
@@ -486,6 +496,11 @@ namespace Plat4m
     inline TValue integerDivideRound(const TValue& dividend,
                                      const TValue& divisor)
     {
+        if (dividend < 0)
+        {
+            return ((dividend - (divisor / 2)) / divisor);
+        }
+
         return ((dividend + (divisor / 2)) / divisor);
     }
 }; // namespace Plat4m
