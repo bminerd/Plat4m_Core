@@ -20,5 +20,21 @@
                 }
             ]
         },
+        {
+            "name": "Unit_Test_Linux_App - Container debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/Plat4m_Core/UnitTest/Unit_Test_Linux_App/Build/Unit_Test_Linux_App",
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "cwd": "${workspaceRoot}",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
     ]
 }
