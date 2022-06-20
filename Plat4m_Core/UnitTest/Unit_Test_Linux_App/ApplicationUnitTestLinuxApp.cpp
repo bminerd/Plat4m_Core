@@ -66,7 +66,8 @@ ApplicationUnitTestLinuxApp::ApplicationUnitTestLinuxApp() :
     myArrayNUnitTest(),
     myBufferUnitTest(),
     myByteArrayUnitTest(),
-    myModuleUnitTest()
+    myModuleUnitTest(),
+    myTimeStampUnitTest()
 {
 }
 
@@ -110,4 +111,5 @@ void ApplicationUnitTestLinuxApp::initializeSystem()
     addUnitTest(myBufferUnitTest);
     addUnitTest(myByteArrayUnitTest);
     addUnitTest(myModuleUnitTest);
+    addUnitTest(myTimeStampUnitTest);
 }

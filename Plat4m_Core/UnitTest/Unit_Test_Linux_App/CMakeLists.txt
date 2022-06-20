@@ -3,11 +3,13 @@ project (Unit_Test_Linux_App C CXX ASM)
 
 set(PLAT4M_CORE_DIR ${PROJECT_SOURCE_DIR}/../../../Plat4m_Core)
 
-set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -pthread -Wall -Wno-comment")
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -pthread -Wall -Wno-comment")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -Wno-comment")
+set(COMPILER_FLAGS "-O0 -g -pthread -Wall -Wno-comment")
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread -Wall -Wno-comment")
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${COMPILER_FLAGS}")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${COMPILER_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILER_FLAGS}")
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${COMPILER_FLAGS}")
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PLAT4M_CORE_DIR}/../)
@@ -37,6 +39,7 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/BufferUnitTest.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/ByteArrayUnitTest.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/ModuleUnitTest.cpp
+                 ${PLAT4M_CORE_DIR}/UnitTest/TimeStampUnitTest.cpp
                  ${PLAT4M_CORE_DIR}/Linux/SystemLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ProcessorLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ThreadLinux.cpp
