@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Modified TimeStamp class so that it can represent negative values. Added TimeStamp unit tests. [Resolves 77].
 - `[IMPROVEMENT]` Addressed additional compiler warnings with -Wall enabled. [Resolves 76].
 - `[IMPROVEMENT]` Addressed compiler warnings with -Wall enabled. [Resolves 75].
 - `[IMPROVEMENT]` Renamed BoardNRF5340PDK to BoardNRF5340DK and updated virtual COM port uart ID. [Resolves 73].
