@@ -105,7 +105,7 @@ public:
                      const std::uint32_t timeThreadStackBytes = 0) :
         SystemDriver(),
         myTimeStepTimeStamp(),
-        myCurrentTimeStamp(0),
+        myCurrentTimeStamp(),
         myTimeThread(
             System::createThread(
                     createCallback(this, &SystemSimulation::timeThreadCallback),
