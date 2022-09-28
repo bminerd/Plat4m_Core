@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added copy of Standard Peripheral Library v1.8.0 for STM32F4xx. [Resolves 2].
 - `[BUG FIX]` Fixed TimeStamp data member initialization in SystemSimulation. [Resolves 79].
 - `[IMPROVEMENT]` Modified TimeStamp class so that it can represent negative values. Added TimeStamp unit tests. [Resolves 77].
 - `[IMPROVEMENT]` Addressed additional compiler warnings with -Wall enabled. [Resolves 76].
