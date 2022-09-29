@@ -116,10 +116,21 @@ namespace Plat4m
     typedef TimeUs TimeMicroseconds;
     typedef TimeNs TimeNanoSeconds;
 
-    typedef int32_t TimeSecondsSigned;
-    typedef int32_t TimeMillisecondsSigned;
-    typedef int32_t TimeMicrosecondsSigned;
-    typedef int32_t TimeNanosecondsSigned;
+    typedef int32_t TimeSSigned;
+    typedef int32_t TimeMsSigned;
+    typedef int32_t TimeUsSigned;
+    typedef int32_t TimeNsSigned;
+
+    typedef TimeSSigned TimeSecondsSigned;
+    typedef TimeMsSigned TimeMillisecondsSigned;
+    typedef TimeUsSigned TimeMicrosecondsSigned;
+    typedef TimeNsSigned TimeNanosecondsSigned;
+
+    typedef float TimeSFloat;
+    typedef TimeSFloat TimeSecondsFloat;
+
+    typedef double TimeSDouble;
+    typedef TimeSDouble TimeSecondsDouble;
 
 #ifndef PLAT4M_CORE_CONFIG
     typedef float RealNumber;

@@ -219,30 +219,57 @@ TimeStamp& TimeStamp::operator-=(const TimeStamp& timeStamp)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void TimeStamp::fromTimeMs(const TimeMillisecondsSigned& timeMs,
+void TimeStamp::fromTimeMs(const TimeMs& timeMs,
                            const std::uint32_t rollOverCount)
 {
     timeS  = (timeMs / 1000) +
-              (std::numeric_limits<std::int32_t>::max() / 1000) * rollOverCount;
+                    (std::numeric_limits<TimeMs>::max() / 1000) * rollOverCount;
     timeNs = (timeMs % 1000) * 1000000;
 }
 
 //------------------------------------------------------------------------------
-void TimeStamp::fromTimeUs(const TimeMicrosecondsSigned& timeUs,
+void TimeStamp::fromTimeUs(const TimeUs& timeUs,
                            const std::uint32_t rollOverCount)
 {
     timeS  = (timeUs / 1000000) +
-           (std::numeric_limits<std::int32_t>::max() / 1000000) * rollOverCount;
+                 (std::numeric_limits<TimeUs>::max() / 1000000) * rollOverCount;
     timeNs = (timeUs % 1000000) * 1000;
 }
 
 //------------------------------------------------------------------------------
-void TimeStamp::fromTimeNs(const TimeNanosecondsSigned& timeNs,
+void TimeStamp::fromTimeNs(const TimeNs& timeNs,
                            const std::uint32_t rollOverCount)
 {
     timeS  = (timeNs / 1000000000) +
-        (std::numeric_limits<std::int32_t>::max() / 1000000000) * rollOverCount;
+              (std::numeric_limits<TimeNs>::max() / 1000000000) * rollOverCount;
     this->timeNs = (timeNs % 1000000000);
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeMsSigned(const TimeMsSigned& timeMsSigned,
+                                 const std::uint32_t rollOverCount)
+{
+    timeS  = (timeMsSigned / 1000) +
+              (std::numeric_limits<TimeMsSigned>::max() / 1000) * rollOverCount;
+    timeNs = (timeMsSigned % 1000) * 1000000;
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeUsSigned(const TimeUsSigned& timeUsSigned,
+                                 const std::uint32_t rollOverCount)
+{
+    timeS  = (timeUsSigned / 1000000) +
+           (std::numeric_limits<TimeUsSigned>::max() / 1000000) * rollOverCount;
+    timeNs = (timeUsSigned % 1000000) * 1000;
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeNsSigned(const TimeNsSigned& timeNsSigned,
+                                 const std::uint32_t rollOverCount)
+{
+    timeS  = (timeNsSigned / 1000000000) +
+        (std::numeric_limits<TimeNsSigned>::max() / 1000000000) * rollOverCount;
+    this->timeNs = (timeNsSigned % 1000000000);
 }
 
 //------------------------------------------------------------------------------
@@ -256,104 +283,150 @@ float TimeStamp::toTimeSFloat() const
 }
 
 //------------------------------------------------------------------------------
-TimeMillisecondsSigned TimeStamp::toTimeMs() const
+TimeMillisecondsSigned TimeStamp::toTimeMsSigned() const
 {
-    uint32_t rollOverCount = 0;
+    std::uint32_t rollOverCount = 0;
 
-    return toTimeMs(rollOverCount);
+    return toTimeMsSigned(rollOverCount);
 }
 
 //------------------------------------------------------------------------------
-TimeMillisecondsSigned TimeStamp::toTimeMs(uint32_t& rollOverCount) const
+TimeMsSigned TimeStamp::toTimeMsSigned(std::uint32_t& rollOverCount) const
 {
-    int64_t timeMsWithOverflow =
-           ((int64_t) timeS * 1000) + integerDivideRound((int) timeNs, 1000000);
+    std::int64_t timeMsSignedWithOverflow =
+        (static_cast<std::int64_t>(timeS) * 1000) +
+                                      integerDivideRound((int) timeNs, 1000000);
 
-    TimeMillisecondsSigned timeMs = timeMsWithOverflow;
+    TimeMsSigned timeMsSigned = timeMsSignedWithOverflow;
 
-    if ((timeMs < 0) && ((timeS > 0) || (timeNs > 0)))
+    if ((timeMsSigned < 0) && ((timeS > 0) || (timeNs > 0)))
     {
-        timeMs += std::numeric_limits<std::int32_t>::max();
-        timeMs += 1;
+        timeMsSigned += std::numeric_limits<TimeMsSigned>::max();
+        timeMsSigned += 1;
     }
-    else if ((timeMs > 0) && ((timeS < 0) || (timeNs < 0)))
+    else if ((timeMsSigned > 0) && ((timeS < 0) || (timeNs < 0)))
     {
-        timeMs -= std::numeric_limits<std::int32_t>::max();
-        timeMs -= 1;
+        timeMsSigned -= std::numeric_limits<TimeMsSigned>::max();
+        timeMsSigned -= 1;
     }
 
     rollOverCount =
-        std::abs(timeMsWithOverflow /
-                      ((int64_t) std::numeric_limits<std::int32_t>::max() + 1));
+        std::abs(timeMsSignedWithOverflow /
+            (static_cast<std::int64_t>(
+                                std::numeric_limits<TimeMsSigned>::max()) + 1));
 
-    return timeMs;
+    return timeMsSigned;
 }
 
 //------------------------------------------------------------------------------
-TimeMicrosecondsSigned TimeStamp::toTimeUs() const
+TimeUsSigned TimeStamp::toTimeUsSigned() const
 {
-    uint32_t rollOverCount = 0;
+    std::uint32_t rollOverCount = 0;
 
-    return toTimeUs(rollOverCount);
+    return toTimeUsSigned(rollOverCount);
 }
 
 //------------------------------------------------------------------------------
-TimeMicrosecondsSigned TimeStamp::toTimeUs(uint32_t& rollOverCount) const
+TimeUsSigned TimeStamp::toTimeUsSigned(uint32_t& rollOverCount) const
 {
-    int64_t timeUsWithOverflow =
-           ((int64_t) timeS * 1000000) + integerDivideRound((int) timeNs, 1000);
+    std::int64_t timeUsSignedWithOverflow =
+        (static_cast<std::int64_t>(timeS) * 1000000) +
+                                         integerDivideRound((int) timeNs, 1000);
 
-    TimeMicrosecondsSigned timeUs = timeUsWithOverflow;
+    TimeUsSigned timeUsSigned = timeUsSignedWithOverflow;
 
-    if ((timeUs < 0) && ((timeS > 0) || (timeNs > 0)))
+    if ((timeUsSigned < 0) && ((timeS > 0) || (timeNs > 0)))
     {
-        timeUs += std::numeric_limits<std::int32_t>::max();
-        timeUs += 1;
+        timeUsSigned += std::numeric_limits<TimeUsSigned>::max();
+        timeUsSigned += 1;
     }
-    else if ((timeUs > 0) && ((timeS < 0) || (timeNs < 0)))
+    else if ((timeUsSigned > 0) && ((timeS < 0) || (timeNs < 0)))
     {
-        timeUs -= std::numeric_limits<std::int32_t>::max();
-        timeUs -= 1;
-    }
-
-    rollOverCount =
-        std::abs(timeUsWithOverflow /
-                      ((int64_t) std::numeric_limits<std::int32_t>::max() + 1));
-
-    return timeUs;
-}
-
-//------------------------------------------------------------------------------
-TimeNanosecondsSigned TimeStamp::toTimeNs() const
-{
-    uint32_t rollOverCount = 0;
-
-    return toTimeNs(rollOverCount);
-}
-
-//------------------------------------------------------------------------------
-TimeNanosecondsSigned TimeStamp::toTimeNs(uint32_t& rollOverCount) const
-{
-    int64_t timeNsWithOverflow = ((int64_t) timeS * 1000000000) + timeNs;
-
-    TimeNanosecondsSigned returnTimeNs = timeNsWithOverflow;
-
-    if ((returnTimeNs < 0) && ((timeS > 0) || (timeNs > 0)))
-    {
-        returnTimeNs += std::numeric_limits<std::int32_t>::max();
-        returnTimeNs += 1;
-    }
-    else if ((returnTimeNs > 0) && ((timeS < 0) || (timeNs < 0)))
-    {
-        returnTimeNs -= std::numeric_limits<std::int32_t>::max();
-        returnTimeNs -= 1;
+        timeUsSigned -= std::numeric_limits<TimeUsSigned>::max();
+        timeUsSigned -= 1;
     }
 
     rollOverCount =
-        std::abs(timeNsWithOverflow /
-                      ((int64_t) std::numeric_limits<std::int32_t>::max() + 1));
+        std::abs(timeUsSignedWithOverflow /
+            (static_cast<std::int64_t>(
+                                std::numeric_limits<TimeUsSigned>::max()) + 1));
 
-    return returnTimeNs;
+    return timeUsSigned;
+}
+
+//------------------------------------------------------------------------------
+TimeNsSigned TimeStamp::toTimeNsSigned() const
+{
+    std::uint32_t rollOverCount = 0;
+
+    return toTimeNsSigned(rollOverCount);
+}
+
+//------------------------------------------------------------------------------
+TimeNsSigned TimeStamp::toTimeNsSigned(std::uint32_t& rollOverCount) const
+{
+    std::int64_t timeNsSignedWithOverflow =
+                       (static_cast<std::int64_t>(timeS) * 1000000000) + timeNs;
+
+    TimeNsSigned timeNsSigned = timeNsSignedWithOverflow;
+
+    if ((timeNsSigned < 0) && ((timeS > 0) || (timeNs > 0)))
+    {
+        timeNsSigned += std::numeric_limits<TimeNsSigned>::max();
+        timeNsSigned += 1;
+    }
+    else if ((timeNsSigned > 0) && ((timeS < 0) || (timeNs < 0)))
+    {
+        timeNsSigned -= std::numeric_limits<TimeNsSigned>::max();
+        timeNsSigned -= 1;
+    }
+
+    rollOverCount =
+        std::abs(timeNsSignedWithOverflow /
+            (static_cast<std::int64_t>(
+                                std::numeric_limits<TimeNsSigned>::max()) + 1));
+
+    return timeNsSigned;
+}
+
+//------------------------------------------------------------------------------
+// Public deprecated methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+TimeMsSigned TimeStamp::toTimeMs() const
+{
+    return toTimeMsSigned();
+}
+
+//------------------------------------------------------------------------------
+TimeMsSigned TimeStamp::toTimeMs(std::uint32_t& rollOverCount) const
+{
+    return toTimeMsSigned(rollOverCount);
+}
+
+//------------------------------------------------------------------------------
+TimeUsSigned TimeStamp::toTimeUs() const
+{
+    return toTimeUsSigned();
+}
+
+//------------------------------------------------------------------------------
+TimeUsSigned TimeStamp::toTimeUs(std::uint32_t& rollOverCount) const
+{
+    return toTimeUsSigned(rollOverCount);
+}
+
+//------------------------------------------------------------------------------
+TimeNsSigned TimeStamp::toTimeNs() const
+{
+    return toTimeNsSigned();
+}
+
+//------------------------------------------------------------------------------
+TimeNsSigned TimeStamp::toTimeNs(std::uint32_t& rollOverCount) const
+{
+    return toTimeNsSigned(rollOverCount);
 }
 
 //------------------------------------------------------------------------------

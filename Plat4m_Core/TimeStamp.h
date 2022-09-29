@@ -113,28 +113,53 @@ struct TimeStamp
     // Public methods
     //--------------------------------------------------------------------------
 
-    void fromTimeMs(const TimeMillisecondsSigned& timeMs,
+    void fromTimeMs(const TimeMs& timeMs,
                     const std::uint32_t rollOverCount = 0);
 
-    void fromTimeUs(const TimeMicrosecondsSigned& timeUs,
+    void fromTimeUs(const TimeUs& timeUs,
                     const std::uint32_t rollOverCount = 0);
 
-    void fromTimeNs(const TimeNanosecondsSigned& timeNs,
+    void fromTimeNs(const TimeNs& timeNs,
                     const std::uint32_t rollOverCount = 0);
+
+    void fromTimeMsSigned(const TimeMsSigned& timeMsSigned,
+                          const std::uint32_t rollOverCount = 0);
+
+    void fromTimeUsSigned(const TimeUsSigned& timeUsSigned,
+                         const std::uint32_t rollOverCount = 0);
+
+    void fromTimeNsSigned(const TimeNsSigned& timeNsSigned,
+                          const std::uint32_t rollOverCount = 0);
 
     float toTimeSFloat() const;
 
-    TimeMillisecondsSigned toTimeMs() const;
+    TimeMsSigned toTimeMsSigned() const;
 
-    TimeMillisecondsSigned toTimeMs(std::uint32_t& rollOverCount) const;
+    TimeMsSigned toTimeMsSigned(std::uint32_t& rollOverCount) const;
 
-    TimeMicrosecondsSigned toTimeUs() const;
+    TimeUsSigned toTimeUsSigned() const;
 
-    TimeMicrosecondsSigned toTimeUs(std::uint32_t& rollOverCount) const;
+    TimeUsSigned toTimeUsSigned(std::uint32_t& rollOverCount) const;
 
-    TimeNanosecondsSigned toTimeNs() const;
+    TimeNsSigned toTimeNsSigned() const;
 
-    TimeNanosecondsSigned toTimeNs(std::uint32_t& rollOverCount) const;
+    TimeNsSigned toTimeNsSigned(std::uint32_t& rollOverCount) const;
+
+    //--------------------------------------------------------------------------
+    // Public deprecated methods
+    //--------------------------------------------------------------------------
+
+    TimeMsSigned toTimeMs() const;
+
+    TimeMsSigned toTimeMs(std::uint32_t& rollOverCount) const;
+
+    TimeUsSigned toTimeUs() const;
+
+    TimeUsSigned toTimeUs(std::uint32_t& rollOverCount) const;
+
+    TimeNsSigned toTimeNs() const;
+
+    TimeNsSigned toTimeNs(std::uint32_t& rollOverCount) const;
 
 private:
 
