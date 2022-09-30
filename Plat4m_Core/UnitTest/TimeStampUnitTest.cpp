@@ -73,18 +73,21 @@ const UnitTest::TestCallbackFunction TimeStampUnitTest::myTestCallbackFunctions[
     &TimeStampUnitTest::fromTimeMsTest,
     &TimeStampUnitTest::fromTimeUsTest,
     &TimeStampUnitTest::fromTimeNsTest,
-    &TimeStampUnitTest::toTimeMsTest1,
-    &TimeStampUnitTest::toTimeMsTest2,
-    &TimeStampUnitTest::toTimeMsTest3,
-    &TimeStampUnitTest::toTimeMsTest4,
-    &TimeStampUnitTest::toTimeUsTest1,
-    &TimeStampUnitTest::toTimeUsTest2,
-    &TimeStampUnitTest::toTimeUsTest3,
-    &TimeStampUnitTest::toTimeUsTest4,
-    &TimeStampUnitTest::toTimeNsTest1,
-    &TimeStampUnitTest::toTimeNsTest2,
-    &TimeStampUnitTest::toTimeNsTest3,
-    &TimeStampUnitTest::toTimeNsTest4
+    &TimeStampUnitTest::fromTimeMsSignedTest,
+    &TimeStampUnitTest::fromTimeUsSignedTest,
+    &TimeStampUnitTest::fromTimeNsSignedTest,
+    &TimeStampUnitTest::toTimeMsSignedTest1,
+    &TimeStampUnitTest::toTimeMsSignedTest2,
+    &TimeStampUnitTest::toTimeMsSignedTest3,
+    &TimeStampUnitTest::toTimeMsSignedTest4,
+    &TimeStampUnitTest::toTimeUsSignedTest1,
+    &TimeStampUnitTest::toTimeUsSignedTest2,
+    &TimeStampUnitTest::toTimeUsSignedTest3,
+    &TimeStampUnitTest::toTimeUsSignedTest4,
+    &TimeStampUnitTest::toTimeNsSignedTest1,
+    &TimeStampUnitTest::toTimeNsSignedTest2,
+    &TimeStampUnitTest::toTimeNsSignedTest3,
+    &TimeStampUnitTest::toTimeNsSignedTest4
 };
 
 //------------------------------------------------------------------------------
@@ -358,7 +361,7 @@ bool TimeStampUnitTest::fromTimeMsTest()
 {
     TimeStamp timeStamp;
 
-    TimeMillisecondsSigned timeMs = 1250;
+    TimeMs timeMs = 1250;
 
     timeStamp.fromTimeMs(timeMs);
 
@@ -374,7 +377,7 @@ bool TimeStampUnitTest::fromTimeUsTest()
 {
     TimeStamp timeStamp;
 
-    TimeMicrosecondsSigned timeUs = 1250000;
+    TimeUs timeUs = 1250000;
 
     timeStamp.fromTimeUs(timeUs);
 
@@ -390,7 +393,7 @@ bool TimeStampUnitTest::fromTimeNsTest()
 {
     TimeStamp timeStamp;
 
-    TimeNanosecondsSigned timeNs = 1250000000;
+    TimeNs timeNs = 1250000000;
 
     timeStamp.fromTimeNs(timeNs);
 
@@ -402,7 +405,55 @@ bool TimeStampUnitTest::fromTimeNsTest()
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeMsTest1()
+bool TimeStampUnitTest::fromTimeMsSignedTest()
+{
+    TimeStamp timeStamp;
+
+    TimeMsSigned timeMsSigned = -1250;
+
+    timeStamp.fromTimeMsSigned(timeMsSigned);
+
+    const TimeStamp expected(-1, -250000000);
+
+    const bool compare = timeStamp == expected;
+
+    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true));
+}
+
+//------------------------------------------------------------------------------
+bool TimeStampUnitTest::fromTimeUsSignedTest()
+{
+    TimeStamp timeStamp;
+
+    TimeUsSigned timeUsSigned = -1250000;
+
+    timeStamp.fromTimeUsSigned(timeUsSigned);
+
+    const TimeStamp expected(-1, -250000000);
+
+    const bool compare = timeStamp == expected;
+
+    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true));
+}
+
+//------------------------------------------------------------------------------
+bool TimeStampUnitTest::fromTimeNsSignedTest()
+{
+    TimeStamp timeStamp;
+
+    TimeNsSigned timeNsSigned = -1250000000;
+
+    timeStamp.fromTimeNsSigned(timeNsSigned);
+
+    const TimeStamp expected(-1, -250000000);
+
+    const bool compare = timeStamp == expected;
+
+    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true));
+}
+
+//------------------------------------------------------------------------------
+bool TimeStampUnitTest::toTimeMsSignedTest1()
 {
     TimeStamp timeStamp(1, 250000000);
 
@@ -416,7 +467,7 @@ bool TimeStampUnitTest::toTimeMsTest1()
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeMsTest2()
+bool TimeStampUnitTest::toTimeMsSignedTest2()
 {
     TimeStamp timeStamp(-1, -250000000);
 
@@ -430,11 +481,11 @@ bool TimeStampUnitTest::toTimeMsTest2()
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeMsTest3()
+bool TimeStampUnitTest::toTimeMsSignedTest3()
 {
     TimeStamp timeStamp(2500000, 150000000);
 
-    uint32_t rollOverCount = 0;
+    std::uint32_t rollOverCount = 0;
 
     TimeMillisecondsSigned timeMs = timeStamp.toTimeMs(rollOverCount);
 
@@ -443,16 +494,17 @@ bool TimeStampUnitTest::toTimeMsTest3()
 
     const bool compare = timeMs == expected;
 
-    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true) &
-                            UNIT_TEST_CASE_EQUAL(rollOverCount, (uint32_t) 1));
+    return UNIT_TEST_REPORT(
+            UNIT_TEST_CASE_EQUAL(compare, true) &
+            UNIT_TEST_CASE_EQUAL(rollOverCount, static_cast<std::uint32_t>(1)));
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeMsTest4()
+bool TimeStampUnitTest::toTimeMsSignedTest4()
 {
     TimeStamp timeStamp(-2500000, -150000000);
 
-    uint32_t rollOverCount = 0;
+    std::uint32_t rollOverCount = 0;
 
     TimeMillisecondsSigned timeMs = timeStamp.toTimeMs(rollOverCount);
 
@@ -461,12 +513,13 @@ bool TimeStampUnitTest::toTimeMsTest4()
 
     const bool compare = timeMs == expected;
 
-    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true) &
-                            UNIT_TEST_CASE_EQUAL(rollOverCount, (uint32_t) 1));
+    return UNIT_TEST_REPORT(
+            UNIT_TEST_CASE_EQUAL(compare, true) &
+            UNIT_TEST_CASE_EQUAL(rollOverCount, static_cast<std::uint32_t>(1)));
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeUsTest1()
+bool TimeStampUnitTest::toTimeUsSignedTest1()
 {
     TimeStamp timeStamp(1, 250000000);
 
@@ -480,7 +533,7 @@ bool TimeStampUnitTest::toTimeUsTest1()
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeUsTest2()
+bool TimeStampUnitTest::toTimeUsSignedTest2()
 {
     TimeStamp timeStamp(-1, -250000000);
 
@@ -494,11 +547,11 @@ bool TimeStampUnitTest::toTimeUsTest2()
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeUsTest3()
+bool TimeStampUnitTest::toTimeUsSignedTest3()
 {
     TimeStamp timeStamp(2500, 150000);
 
-    uint32_t rollOverCount = 0;
+    std::uint32_t rollOverCount = 0;
 
     TimeMicrosecondsSigned timeUs = timeStamp.toTimeUs(rollOverCount);
 
@@ -507,16 +560,17 @@ bool TimeStampUnitTest::toTimeUsTest3()
 
     const bool compare = timeUs == expected;
 
-    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true) &
-                            UNIT_TEST_CASE_EQUAL(rollOverCount, (uint32_t) 1));
+    return UNIT_TEST_REPORT(
+            UNIT_TEST_CASE_EQUAL(compare, true) &
+            UNIT_TEST_CASE_EQUAL(rollOverCount, static_cast<std::uint32_t>(1)));
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeUsTest4()
+bool TimeStampUnitTest::toTimeUsSignedTest4()
 {
     TimeStamp timeStamp(-2500, -150000);
 
-    uint32_t rollOverCount = 0;
+    std::uint32_t rollOverCount = 0;
 
     TimeMicrosecondsSigned timeUs = timeStamp.toTimeUs(rollOverCount);
 
@@ -525,12 +579,13 @@ bool TimeStampUnitTest::toTimeUsTest4()
 
     const bool compare = timeUs == expected;
 
-    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true) &
-                            UNIT_TEST_CASE_EQUAL(rollOverCount, (uint32_t) 1));
+    return UNIT_TEST_REPORT(
+            UNIT_TEST_CASE_EQUAL(compare, true) &
+            UNIT_TEST_CASE_EQUAL(rollOverCount, static_cast<std::uint32_t>(1)));
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeNsTest1()
+bool TimeStampUnitTest::toTimeNsSignedTest1()
 {
     TimeStamp timeStamp(1, 250000000);
 
@@ -544,7 +599,7 @@ bool TimeStampUnitTest::toTimeNsTest1()
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeNsTest2()
+bool TimeStampUnitTest::toTimeNsSignedTest2()
 {
     TimeStamp timeStamp(-1, -250000000);
 
@@ -558,11 +613,11 @@ bool TimeStampUnitTest::toTimeNsTest2()
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeNsTest3()
+bool TimeStampUnitTest::toTimeNsSignedTest3()
 {
     TimeStamp timeStamp(2, 500000150);
 
-    uint32_t rollOverCount = 0;
+    std::uint32_t rollOverCount = 0;
 
     TimeNanosecondsSigned timeNs = timeStamp.toTimeNs(rollOverCount);
 
@@ -571,16 +626,17 @@ bool TimeStampUnitTest::toTimeNsTest3()
 
     const bool compare = timeNs == expected;
 
-    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true) &
-                            UNIT_TEST_CASE_EQUAL(rollOverCount, (uint32_t) 1));
+    return UNIT_TEST_REPORT(
+            UNIT_TEST_CASE_EQUAL(compare, true) &
+            UNIT_TEST_CASE_EQUAL(rollOverCount, static_cast<std::uint32_t>(1)));
 }
 
 //------------------------------------------------------------------------------
-bool TimeStampUnitTest::toTimeNsTest4()
+bool TimeStampUnitTest::toTimeNsSignedTest4()
 {
     TimeStamp timeStamp(-2, -500000150);
 
-    uint32_t rollOverCount = 0;
+    std::uint32_t rollOverCount = 0;
 
     TimeNanosecondsSigned timeNs = timeStamp.toTimeNs(rollOverCount);
 
@@ -589,6 +645,7 @@ bool TimeStampUnitTest::toTimeNsTest4()
 
     const bool compare = timeNs == expected;
 
-    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true) &
-                            UNIT_TEST_CASE_EQUAL(rollOverCount, (uint32_t) 1));
+    return UNIT_TEST_REPORT(
+            UNIT_TEST_CASE_EQUAL(compare, true) &
+            UNIT_TEST_CASE_EQUAL(rollOverCount, static_cast<std::uint32_t>(1)));
 }

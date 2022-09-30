@@ -117,29 +117,35 @@ public:
 
     static bool fromTimeNsTest();
 
-    static bool toTimeMsTest1();
+    static bool fromTimeMsSignedTest();
 
-    static bool toTimeMsTest2();
+    static bool fromTimeUsSignedTest();
 
-    static bool toTimeMsTest3();
+    static bool fromTimeNsSignedTest();
 
-    static bool toTimeMsTest4();
+    static bool toTimeMsSignedTest1();
 
-    static bool toTimeUsTest1();
+    static bool toTimeMsSignedTest2();
 
-    static bool toTimeUsTest2();
+    static bool toTimeMsSignedTest3();
 
-    static bool toTimeUsTest3();
+    static bool toTimeMsSignedTest4();
 
-    static bool toTimeUsTest4();
+    static bool toTimeUsSignedTest1();
 
-    static bool toTimeNsTest1();
+    static bool toTimeUsSignedTest2();
 
-    static bool toTimeNsTest2();
+    static bool toTimeUsSignedTest3();
 
-    static bool toTimeNsTest3();
+    static bool toTimeUsSignedTest4();
 
-    static bool toTimeNsTest4();
+    static bool toTimeNsSignedTest1();
+
+    static bool toTimeNsSignedTest2();
+
+    static bool toTimeNsSignedTest3();
+
+    static bool toTimeNsSignedTest4();
 
 private:
 
