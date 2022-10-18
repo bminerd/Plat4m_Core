@@ -116,7 +116,7 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    ComInterfaceDeviceTemplate<TxBufferSize, 0> myComInterfaceDevice;
+    ComInterfaceDeviceTemplate<TxBufferSize, 1> myComInterfaceDevice;
 
     //--------------------------------------------------------------------------
     // Private virtual methods implemented from Module

@@ -127,7 +127,7 @@ QueueDriver& SystemLite::driverCreateQueueDriver(const uint32_t nValues,
 												 const uint32_t valueSizeBytes,
 												 Thread& thread)
 {
-	return *(MemoryAllocator::allocate<QueueDriverLite<0>>());
+	return *(MemoryAllocator::allocate<QueueDriverLite<1>>());
 }
 
 //------------------------------------------------------------------------------
