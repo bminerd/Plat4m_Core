@@ -73,7 +73,7 @@ ThreadFreeRtos::ThreadFreeRtos(RunCallback& callback,
 
 	BaseType_t returnValue = xTaskCreate(&ThreadFreeRtos::taskCallback,
 										 "",
-										 nTotalStackBytes,
+										 nTotalStackBytes / 4,
 										 (void*) this,
 										 tskIDLE_PRIORITY,
 										 &myTaskHandle);
