@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Removed zero array creations to improve compiler compatibility. [Resolves 83].
 - `[IMPROVEMENT]` Changed variadic template argument to use a forwarding reference in MemoryAllocator::allocate(). [Resolves 84].
 - `[IMPROVEMENT]` Updated all STM32F4xx related files to use updated file syntax and formatting. [Resolves 81].
 - `[IMPROVEMENT]` Improved clarity of signed integer time values in TimeStamp to/from time methods. Deprecated old methods that didn't indicate sign. [Resolves 82].
