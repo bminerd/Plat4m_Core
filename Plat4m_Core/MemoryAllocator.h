@@ -83,7 +83,7 @@ public:
 
     //--------------------------------------------------------------------------
     template <typename T, typename ... Arguments>
-    static T* allocate(Arguments&... arguments)
+    static T* allocate(Arguments&&... arguments)
     {
         void* memoryPointer = AllocationMemory::allocate(sizeof(T));
 
