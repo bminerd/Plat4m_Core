@@ -110,7 +110,7 @@ public:
             return Error(ERROR_CODE_SERVICE_INVALID);
         }
 
-        Error error = service->call(request, response);
+        Error error = service->request(request, response);
 
         return error;
     }
