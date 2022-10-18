@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Fixed syntax in Service::request(). [Resolves 85].
 - `[IMPROVEMENT]` Removed zero array creations to improve compiler compatibility. [Resolves 83].
 - `[IMPROVEMENT]` Changed variadic template argument to use a forwarding reference in MemoryAllocator::allocate(). [Resolves 84].
 - `[IMPROVEMENT]` Updated all STM32F4xx related files to use updated file syntax and formatting. [Resolves 81].
