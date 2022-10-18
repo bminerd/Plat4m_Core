@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Updated all STM32F4xx related files to use updated file syntax and formatting. [Resolves 81].
 - `[IMPROVEMENT]` Improved clarity of signed integer time values in TimeStamp to/from time methods. Deprecated old methods that didn't indicate sign. [Resolves 82].
 - `[IMPROVEMENT]` Added copy of Standard Peripheral Library v1.8.0 for STM32F4xx. [Resolves 2].
 - `[BUG FIX]` Fixed TimeStamp data member initialization in SystemSimulation. [Resolves 79].
