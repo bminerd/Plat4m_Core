@@ -201,8 +201,7 @@ Plat4m::TimeStamp System::driverGetTimeStamp()
     TimeUs timeUs = getTimeUs();
 
     TimeStamp timeStamp;
-    timeStamp.timeS  = round(timeUs / 1000000);
-    timeStamp.timeNs = (timeUs - timeStamp.timeS * 1000000) * 1000;
+    timeStamp.fromTimeUs(timeUs);
 
     return timeStamp;
 }
