@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Replaced manual time stamp calculation in System::driverGetTimeStamp() with TimeStamp::fromTimeUs(). [Resolves 78].
 - `[BUG FIX]` Fixed stack size calculation in ThreadFreeRtos constructor. [Resolves 35].
 - `[BUG FIX]` Fixed syntax in Service::request(). [Resolves 85].
 - `[IMPROVEMENT]` Removed zero array creations to improve compiler compatibility. [Resolves 83].
