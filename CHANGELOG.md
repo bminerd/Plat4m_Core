@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[NEW FEATURE]` Created ChildApplication class for applications that exist beneath a main Application. [Resolves 87].
 - `[IMPROVEMENT]` Added getDataAs() template method to Array that allows accessing the item pointer and casting it to a new type in a single step. [Resolves 86].
 - `[IMPROVEMENT]` Replaced manual time stamp calculation in System::driverGetTimeStamp() with TimeStamp::fromTimeUs(). [Resolves 78].
 - `[BUG FIX]` Fixed stack size calculation in ThreadFreeRtos constructor. [Resolves 35].
