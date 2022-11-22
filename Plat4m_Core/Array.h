@@ -136,6 +136,13 @@ public:
     {
         return myItems;
     }
+
+    //--------------------------------------------------------------------------
+    template <typename NewType>
+    NewType getDataAs()
+    {
+        return reinterpret_cast<NewType>(myItems);
+    }
     
     //--------------------------------------------------------------------------
     T& getItem(const uint32_t index) const
@@ -196,9 +203,21 @@ public:
     }
 
     //--------------------------------------------------------------------------
+    uint32_t getSizeInBytes() const
+    {
+        return (myNUsedItems * sizeof(T));
+    }
+
+    //--------------------------------------------------------------------------
     uint32_t getMaxSize() const
     {
         return myNMaxItems;
+    }
+
+    //--------------------------------------------------------------------------
+    uint32_t getMaxSizeInBytes() const
+    {
+        return (myNMaxItems * sizeof(T));
     }
     
     //--------------------------------------------------------------------------
