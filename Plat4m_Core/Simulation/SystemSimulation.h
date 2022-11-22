@@ -51,6 +51,7 @@
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/TopicBase.h>
 #include <Plat4m_Core/Topic.h>
 #include <Plat4m_Core/TimeTickSample.h>
 #include <Plat4m_Core/Semaphore.h>
@@ -79,7 +80,7 @@ public:
 
     //--------------------------------------------------------------------------
     SystemSimulation(const TimeStamp timeStepTimeStamp,
-                     const std::uint32_t timeTickTopicId,
+                     const TopicBase::Id timeTickTopicId,
                      const std::uint32_t timeThreadStackBytes = 0) :
         SystemDriver(),
         myTimeStepTimeStamp(timeStepTimeStamp),
@@ -89,7 +90,7 @@ public:
                     createCallback(this, &SystemSimulation::timeThreadCallback),
                     0,
                     timeThreadStackBytes)),
-        myTimeTickTopic(timeTickTopicId),
+        myTimeTickTopic(Topic<TimeTickSample>::create(timeTickTopicId)),
         mySemaphore(System::createSemaphore()),
         mySimulatedThreadCount(0)
     {
@@ -111,7 +112,7 @@ public:
                     createCallback(this, &SystemSimulation::timeThreadCallback),
                     0,
                     timeThreadStackBytes)),
-        myTimeTickTopic(timeTickTopicId),
+        myTimeTickTopic(Topic<TimeTickSample>::create(timeTickTopicId)),
         mySemaphore(System::createSemaphore()),
         mySimulatedThreadCount(0)
     {
@@ -264,7 +265,7 @@ private:
 
     Thread& myTimeThread;
 
-    Topic<TimeTickSample> myTimeTickTopic;
+    Topic<TimeTickSample>& myTimeTickTopic;
 
     Semaphore& mySemaphore;
 
