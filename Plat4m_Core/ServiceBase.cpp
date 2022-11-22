@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,77 +33,51 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ServiceClient.h
+/// @file ServiceBase.cpp
 /// @author Ben Minerd
-/// @date 9/22/2021
-/// @brief ServiceClient class header file.
+/// @date 10/25/2022
+/// @brief ServiceBase class source file.
 ///
-
-#ifndef PLAT4M_SERVICE_CLIENT_H
-#define PLAT4M_SERVICE_CLIENT_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/ServiceBase.h>
-#include <Plat4m_Core/Service.h>
+
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
-// Namespaces
+// Public methods
 //------------------------------------------------------------------------------
 
-namespace Plat4m
+//------------------------------------------------------------------------------
+void ServiceBase::setId(const Id id)
 {
+    myId = id;
+}
 
 //------------------------------------------------------------------------------
-// Classes
-//------------------------------------------------------------------------------
-
-template <typename RequestType, typename ResponseType>
-class ServiceClient
+Id ServiceBase::getId() const
 {
-public:
+    return myId;
+}
 
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Public virtual destructors
+//------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    ServiceClient(const ServiceBase::Id id) :
-        myService(Service<RequestType, ResponseType>::find(id))
-    {
-    }
+//------------------------------------------------------------------------------
+ServiceBase::~ServiceBase()
+{
+}
 
-    //--------------------------------------------------------------------------
-    // Public virtual destructors
-    //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    virtual ~ServiceClient()
-    {
-    }
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // Public methods
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    typename ServiceBase::Error request(const RequestType& request,
-                                        ResponseType& response)
-    {
-        return (myService.request(request, response));
-    }
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    Service<RequestType, ResponseType>& myService;
-};
-
-}; // namespace Plat4m
-
-#endif // PLAT4M_SERVICE_CLIENT_H
+//------------------------------------------------------------------------------
+ServiceBase::ServiceBase(const Id id) :
+    myId(id)
+{
+}

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,11 +46,14 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <new>
+
 #include <Plat4m_Core/ServiceBase.h>
 #include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/List.h>
 #include <Plat4m_Core/System.h>
+#include <Plat4m_Core/ServiceManager.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -79,54 +82,50 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    static Service* find(const Id id)
+    static Service& create(const ServiceBase::Id id, ServiceCallback& callback)
     {
-        typename List<Service*>::Iterator iterator = myServiceList.iterator();
+        Service* service = static_cast<Service*>(ServiceManager::find(id));
 
-        while (iterator.hasCurrent())
+        if (isNullPointer(service))
         {
-            Service* service = iterator.current();
-
-            if (service->getId() == id)
-            {
-                return service;
-            }
-
-            iterator.next();
+            service = createPrivate(id, callback);
+        }
+        else
+        {
+            service->myCallback = &callback;
         }
 
-        return 0;
+        return (*service);
     }
 
     //--------------------------------------------------------------------------
-    static Error request(const Id id,
+    static Service& find(const ServiceBase::Id id)
+    {
+        Service* service = static_cast<Service*>(ServiceManager::find(id));
+
+        if (isNullPointer(service))
+        {
+            service = createPrivate(id);
+        }
+
+        return (*service);
+    }
+
+    //--------------------------------------------------------------------------
+    static Error request(const ServiceBase::Id id,
                          const RequestType& request,
                          ResponseType& response)
     {
         Service* service = find(id);
 
-        if (isValidPointer(service))
+        if (isNullPointer(service))
         {
             return Error(ERROR_CODE_SERVICE_INVALID);
         }
 
-        Error error = service->request(request, response);
+        Error error = service->call(request, response);
 
         return error;
-    }
-
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    Service(const Id id, ServiceCallback& callback) :
-        myId(id),
-        myCallback(callback)
-    {
-        Service* pointer = this;
-
-        myServiceList.append(pointer);
     }
 
     //--------------------------------------------------------------------------
@@ -138,7 +137,7 @@ public:
     {
         Service* pointer = this;
 
-        myServiceList.remove(pointer);
+        ServiceManager::remove(*pointer);
     }
 
     //--------------------------------------------------------------------------
@@ -146,37 +145,73 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    Id getId() const
-    {
-        return myId;
-    }
-
-    //--------------------------------------------------------------------------
     Error request(const RequestType& request, ResponseType& response)
     {
-        return (myCallback.call(request, response));
+        if (isValidPointer(myCallback))
+        {
+            return (myCallback->call(request, response));
+        }
+
+        return Error(ERROR_CODE_SERVICE_NOT_INITIALIZED);
     }
 
 private:
 
     //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-
-    static List<Service*> myServiceList;
-
-    //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    const Id myId;
+    ServiceCallback* myCallback;
 
-    ServiceCallback& myCallback;
+    //--------------------------------------------------------------------------
+    // Private static methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    static Service* createPrivate(const ServiceBase::Id id)
+    {
+        void* memoryPointer = AllocationMemory::allocate(sizeof(Service));
+
+        Service* service = new(memoryPointer) Service(id);
+
+        return service;
+    }
+
+    //--------------------------------------------------------------------------
+    static Service* createPrivate(const ServiceBase::Id id,
+                                  ServiceCallback& callback)
+    {
+        void* memoryPointer = AllocationMemory::allocate(sizeof(Service));
+
+        Service* service = new(memoryPointer) Service(id, callback);
+
+        return service;
+    }
+
+    //--------------------------------------------------------------------------
+    // Private constructors
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    Service(const ServiceBase::Id id) :
+        ServiceBase(id),
+        myCallback(0)
+    {
+        Service* pointer = this;
+
+        ServiceManager::add(*pointer);
+    }
+
+    //--------------------------------------------------------------------------
+    Service(const ServiceBase::Id id, ServiceCallback& callback) :
+        ServiceBase(id),
+        myCallback(&callback)
+    {
+        Service* pointer = this;
+
+        ServiceManager::add(*pointer);
+    }
 };
-
-template <typename RequestType, typename ResponseType>
-List< Service<RequestType, ResponseType>* >
-                              Service<RequestType, ResponseType>::myServiceList;
 
 }; // namespace Plat4m
 
