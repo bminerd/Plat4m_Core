@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,10 +46,15 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <new>
+
+#include <Plat4m_Core/TopicBase.h>
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/List.h>
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/TimeStamp.h>
+#include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/TopicManager.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,7 +68,7 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename SampleType>
-class Topic
+class Topic : public TopicBase
 {
 public:
 
@@ -83,58 +88,42 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    static void subscribe(const uint32_t id, SampleCallback& sampleCallback)
+    static Topic& create(const TopicBase::Id id)
     {
-        typename List<Topic*>::Iterator iterator = myTopicList.iterator();
+        Topic* topic = static_cast<Topic*>(TopicManager::find(id));
 
-        while (iterator.hasCurrent())
+        if (isNullPointer(topic))
         {
-            Topic* topic = iterator.current();
-            
-            if (topic->getId() == id)
-            {
-                topic->subscribe(sampleCallback);
-
-                break;
-            }
-
-            iterator.next();
+            topic = createPrivate(id);
         }
+
+        return (*topic);
     }
 
     //--------------------------------------------------------------------------
-    static void unsubscribe(const uint32_t id, SampleCallback& sampleCallback)
+    static void subscribe(const TopicBase::Id id,
+                          SampleCallback& sampleCallback)
     {
-        typename List<Topic*>::Iterator iterator = myTopicList.iterator();
+        Topic* topic = static_cast<Topic*>(TopicManager::find(id));
 
-        while (iterator.hasCurrent())
+        if (isNullPointer(topic))
         {
-            Topic* topic = iterator.current();
-
-            if (topic->getId() == id)
-            {
-                topic->unsubscribe(sampleCallback);
-
-                break;
-            }
-
-            iterator.next();
+            topic = createPrivate(id);
         }
+
+        topic->subscribe(sampleCallback);
     }
 
     //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    Topic(const uint32_t id) :
-        myId(id),
-        mySampleCallbackList(),
-        mySequenceIdCounter(0)
+    static void unsubscribe(const TopicBase::Id id,
+                            SampleCallback& sampleCallback)
     {
-        Topic* pointer = this;
+        Topic* topic = static_cast<Topic*>(TopicManager::find(id));
 
-        myTopicList.append(pointer);
+        if (isValidPointer(topic))
+        {
+            topic->unsubscribe(sampleCallback);
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -146,18 +135,12 @@ public:
     {
         Topic* pointer = this;
 
-        myTopicList.remove(pointer);
+        TopicManager::remove(*pointer);
     }
 
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    uint32_t getId() const
-    {
-        return myId;
-    }
 
     //--------------------------------------------------------------------------
     void subscribe(SampleCallback& sampleCallback)
@@ -201,20 +184,49 @@ public:
 private:
 
     //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-
-    static List<Topic*> myTopicList;
-
-    //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    const uint32_t myId;
-
     List<SampleCallback*> mySampleCallbackList;
 
-    uint32_t mySequenceIdCounter;
+    std::uint32_t mySequenceIdCounter;
+
+    //--------------------------------------------------------------------------
+    // Private static methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    static Topic* createPrivate(const TopicBase::Id id)
+    {
+        void* memoryPointer = AllocationMemory::allocate(sizeof(Topic));
+
+        Topic* topic = new(memoryPointer) Topic(id);
+
+        return topic;
+    }
+
+    //--------------------------------------------------------------------------
+    // Private constructors
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    Topic(const TopicBase::Id id) :
+        TopicBase(id),
+        mySampleCallbackList(),
+        mySequenceIdCounter(0)
+    {
+        Topic* pointer = this;
+
+        TopicManager::add(*pointer);
+    }
+
+    //--------------------------------------------------------------------------
+    Topic(const Topic& topic) :
+        TopicBase(topic.myId),
+        mySampleCallbackList(topic.mySampleCallbackList),
+        mySequenceIdCounter(topic.mySequenceIdCounter)
+    {
+    }
 
     //--------------------------------------------------------------------------
     // Private methods
@@ -239,9 +251,6 @@ private:
         mySequenceIdCounter++;
     }
 };
-
-template <typename SampleType>
-List< Topic<SampleType>* > Topic<SampleType>::myTopicList;
 
 }; // namespace Plat4m
 

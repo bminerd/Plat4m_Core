@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file TopicSubscriberThread.h
+/// @file TopicSubscriberExternal.h
 /// @author Ben Minerd
-/// @date 7/24/2020
-/// @brief TopicSubscriberThread class header file.
+/// @date 5/13/2022
+/// @brief TopicSubscriberExternal class header file.
 ///
 
-#ifndef PLAT4M_TOPIC_SUBSCRIBER_THREAD_H
-#define PLAT4M_TOPIC_SUBSCRIBER_THREAD_H
+#ifndef PLAT4M_TOPIC_SUBSCRIBER_EXTERNAL_H
+#define PLAT4M_TOPIC_SUBSCRIBER_EXTERNAL_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,14 +48,12 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Module.h>
-#include <Plat4m_Core/TopicSubscriber.h>
 #include <Plat4m_Core/TopicBase.h>
-#include <Plat4m_Core/Topic.h>
+#include <Plat4m_Core/TopicSubscriber.h>
 #include <Plat4m_Core/CallbackMethod.h>
-#include <Plat4m_Core/System.h>
-#include <Plat4m_Core/Thread.h>
-#include <Plat4m_Core/Queue.h>
+#include <Plat4m_Core/Topic.h>
+#include <Plat4m_Core/ComProtocol.h>
+#include <Plat4m_Core/ByteArrayN.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -68,8 +66,8 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template<typename SampleType, std::uint32_t nQueueValues = 1>
-class TopicSubscriberThread : public TopicSubscriber<SampleType>
+template<typename SampleType, typename SampleFrameType>
+class TopicSubscriberExternal : public TopicSubscriber<SampleType>
 {
 public:
 
@@ -78,37 +76,26 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    TopicSubscriberThread(
-                     const TopicBase::Id id,
-                     const typename TopicSubscriber<SampleType>::Config config,
-                     typename Topic<SampleType>::SampleCallback& sampleCallback,
-                     const std::uint32_t nStackBytes = 0,
-                     const bool isSimulated = false) :
-        TopicSubscriber<SampleType>(id, config, sampleCallback),
-        myThread(
-            System::createThread(
-                   createCallback(this, &TopicSubscriberThread::threadCallback),
-                   0,
-                   nStackBytes,
-                   isSimulated)),
-        myQueue(System::createQueue<SampleType>(nQueueValues, myThread))
+    TopicSubscriberExternal(
+                      const TopicBase::Id id,
+                      const typename TopicSubscriber<SampleType>::Config config,
+                      ComProtocol& comProtocol) :
+        TopicSubscriber<SampleType>(
+              id,
+              config,
+              createCallback(this,
+                             &TopicSubscriberExternal<SampleType, SampleFrameType>::sampleCallbackInternal)),
+        myComProtocol(comProtocol)
     {
     }
 
     //--------------------------------------------------------------------------
-    TopicSubscriberThread(
-                     const TopicBase::Id id,
-                     typename Topic<SampleType>::SampleCallback& sampleCallback,
-                     const std::uint32_t nStackBytes = 0,
-                     const bool isSimulated = false) :
-        TopicSubscriber<SampleType>(id, sampleCallback),
-        myThread(
-            System::createThread(
-                   createCallback(this, &TopicSubscriberThread::threadCallback),
-                   0,
-                   nStackBytes,
-                   isSimulated)),
-        myQueue(System::createQueue<SampleType>(nQueueValues, myThread))
+    TopicSubscriberExternal(const TopicBase::Id id, ComProtocol& comProtocol) :
+        TopicSubscriber<SampleType>(
+              id,
+              createCallback(this,
+                             &TopicSubscriberExternal<SampleType, SampleFrameType>::sampleCallbackInternal)),
+        myComProtocol(comProtocol)
     {
     }
 
@@ -117,19 +104,13 @@ public:
     //--------------------------------------------------------------------------
     
     //--------------------------------------------------------------------------
-    virtual ~TopicSubscriberThread()
+    virtual ~TopicSubscriberExternal()
     {
     }
 
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    Thread& getThread()
-    {
-        return myThread;
-    }
 
 private:
 
@@ -137,9 +118,7 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    Thread& myThread;
-
-    Queue<SampleType>& myQueue;
+    ComProtocol& myComProtocol;
 
     //--------------------------------------------------------------------------
     // Private virtual methods implemented from Module
@@ -150,12 +129,9 @@ private:
     {
         Module::Error error;
 
-        error = myThread.setEnabled(enabled);
+        // error = TopicSubscriber<SampleType>::setEnabled(enabled);
 
-        if (!enabled)
-        {
-            myQueue.clear();
-        }
+        error = myComProtocol.setEnabled(enabled);
 
         return error;
     }
@@ -167,32 +143,18 @@ private:
     //--------------------------------------------------------------------------
     virtual void sampleCallbackInternal(const SampleType& sample) override
     {
-        myQueue.enqueue(sample);
-    }
+        SampleType copy = sample;
 
-    //--------------------------------------------------------------------------
-    // Private methods
-    //--------------------------------------------------------------------------
+        SampleFrameType frame(copy);
 
-    //--------------------------------------------------------------------------
-    void threadCallback()
-    {
-        SampleType sample;
+        ByteArrayN<256> bytes;
 
-        if (myQueue.dequeue(sample))
-        {
-            typename Topic<SampleType>::SampleCallback*
-                sampleCallback =
-                               TopicSubscriber<SampleType>::getSampleCallback();
+        frame.toByteArray(bytes);
 
-            if (isValidPointer(sampleCallback))
-            {
-                sampleCallback->call(sample);
-            }
-        }
+        myComProtocol.transmitData(bytes);
     }
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_TOPIC_SUBSCRIBER_THREAD_H
+#endif // PLAT4M_TOPIC_SUBSCRIBER_EXTERNAL_H

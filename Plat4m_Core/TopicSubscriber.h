@@ -51,6 +51,7 @@
 #include <Plat4m_Core/Module.h>
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/CallbackMethodParameter.h>
+#include <Plat4m_Core/TopicBase.h>
 #include <Plat4m_Core/Topic.h>
 
 //------------------------------------------------------------------------------
@@ -84,12 +85,13 @@ public:
 
     //--------------------------------------------------------------------------
     TopicSubscriber(
-                   const std::uint32_t id,
+                   const TopicBase::Id id,
                    const Config config,
                    typename Topic<SampleType>::SampleCallback& sampleCallback) :
+        Module(),
         myTopicId(id),
         myConfig(),
-        mySampleCallback(sampleCallback),
+        mySampleCallback(&sampleCallback),
         myPrivateSampleCallback(
                         createCallback(this, &TopicSubscriber::sampleCallback)),
         myDownsampleCounter(1)
@@ -101,11 +103,42 @@ public:
 
     //--------------------------------------------------------------------------
     TopicSubscriber(
-                   const std::uint32_t id,
+                   const TopicBase::Id id,
                    typename Topic<SampleType>::SampleCallback& sampleCallback) :
+        Module(),
         myTopicId(id),
         myConfig(),
-        mySampleCallback(sampleCallback),
+        mySampleCallback(&sampleCallback),
+        myPrivateSampleCallback(
+                        createCallback(this, &TopicSubscriber::sampleCallback)),
+        myDownsampleCounter(1)
+    {
+        myConfig.downsampleFactor = 1;
+
+        Topic<SampleType>::subscribe(id, myPrivateSampleCallback);
+    }
+
+    //--------------------------------------------------------------------------
+    TopicSubscriber(const Config config, const TopicBase::Id id) :
+        Module(),
+        myTopicId(id),
+        myConfig(),
+        mySampleCallback(0),
+        myPrivateSampleCallback(
+                        createCallback(this, &TopicSubscriber::sampleCallback)),
+        myDownsampleCounter(1)
+    {
+        setConfig(config);
+
+        Topic<SampleType>::subscribe(id, myPrivateSampleCallback);
+    }
+
+    //--------------------------------------------------------------------------
+    TopicSubscriber(const TopicBase::Id id) :
+        Module(),
+        myTopicId(id),
+        myConfig(),
+        mySampleCallback(0),
         myPrivateSampleCallback(
                         createCallback(this, &TopicSubscriber::sampleCallback)),
         myDownsampleCounter(1)
@@ -117,6 +150,7 @@ public:
 
     //--------------------------------------------------------------------------
     TopicSubscriber(const TopicSubscriber<SampleType>& topicSubscriber) :
+        Module(),
         myConfig(topicSubscriber.myConfig),
         mySampleCallback(topicSubscriber.mySampleCallback),
         myPrivateSampleCallback(topicSubscriber.myPrivateSampleCallback),
@@ -174,21 +208,48 @@ public:
                         createCallback(this, &TopicSubscriber::sampleCallback));
     }
 
+protected:
+
+    //--------------------------------------------------------------------------
+    // Protected methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    typename Topic<SampleType>::SampleCallback* getSampleCallback()
+    {
+        return mySampleCallback;
+    }
+
 private:
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-    std::uint32_t myTopicId;
+    TopicBase::Id myTopicId;
 
     Config myConfig;
 
-    typename Topic<SampleType>::SampleCallback& mySampleCallback;
+    typename Topic<SampleType>::SampleCallback* mySampleCallback;
 
     typename Topic<SampleType>::SampleCallback& myPrivateSampleCallback;
 
     std::uint32_t myDownsampleCounter;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    virtual void sampleCallbackInternal(const SampleType& sample)
+    {
+        // Not implemented by subclass, default implementation
+
+        if (isValidPointer(mySampleCallback))
+        {
+            mySampleCallback->call(sample);
+        }
+    }
 
     //--------------------------------------------------------------------------
     // Private methods
@@ -201,7 +262,7 @@ private:
         {
             if (myDownsampleCounter >= myConfig.downsampleFactor)
             {
-                mySampleCallback.call(sample);
+                sampleCallbackInternal(sample);
 
                 myDownsampleCounter = 1;
             }
@@ -211,6 +272,7 @@ private:
             }
         }
     }
+
 };
 
 }; // namespace Plat4m
