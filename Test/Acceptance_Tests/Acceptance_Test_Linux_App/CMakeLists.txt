@@ -42,6 +42,8 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/QueueDriver.cpp
                  ${PLAT4M_CORE_DIR}/Semaphore.cpp
                  ${PLAT4M_CORE_DIR}/TimeStamp.cpp
+                 ${PLAT4M_CORE_DIR}/TopicBase.cpp
+                 ${PLAT4M_CORE_DIR}/TopicManager.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/UnitTest.cpp
                  ${PLAT4M_CORE_DIR}/Linux/SystemLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ProcessorLinux.cpp

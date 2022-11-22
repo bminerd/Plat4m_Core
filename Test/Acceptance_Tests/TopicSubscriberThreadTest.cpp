@@ -11,9 +11,9 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
-// Permission is hereby granted, free of uint8_tge, to any person obtaining a copy
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -46,17 +46,14 @@
 #include <iostream>
 
 #include <Test/Acceptance_Tests/TopicSubscriberThreadTest.h>
+#include <Plat4m_Core/TopicBase.h>
+#include <Plat4m_Core/Topic.h>
 #include <Plat4m_Core/TopicSubscriberThread.h>
 #include <Plat4m_Core/CallbackFunctionParameter.h>
 #include <Plat4m_Core/CallbackFunction.h>
 #include <Plat4m_Core/System.h>
-#include <Plat4m_Core/Thread.h>
-#include <Plat4m_Core/Queue.h>
 
-using namespace std;
-
-using Plat4m::TopicSubscriberThreadTest;
-using Plat4m::UnitTest;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Private static data members
@@ -107,9 +104,9 @@ bool TopicSubscriberThreadTest::acceptanceTest1()
 
     // Setup / Operation
 
-    const uint32_t testTopicId = 5;
+    const TopicBase::Id testTopicId = 5;
 
-    Topic<TestSample> testTopic(testTopicId);
+    Topic<TestSample>& testTopic = Topic<TestSample>::create(testTopicId);
 
     TopicSubscriberThread<TestSample, 8> subscriber(
         testTopicId,
@@ -131,8 +128,8 @@ bool TopicSubscriberThreadTest::acceptanceTest1()
     // Test
 
     return UNIT_TEST_REPORT(
-             UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample.sample1, (uint8_t) 51) &
-             UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample.sample2, (uint8_t) 3));
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample.sample1, (std::uint8_t) 51) &
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample.sample2, (std::uint8_t) 3));
 }
 
 //------------------------------------------------------------------------------

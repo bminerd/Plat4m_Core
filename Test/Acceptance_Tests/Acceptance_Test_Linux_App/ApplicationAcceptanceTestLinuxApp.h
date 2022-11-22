@@ -49,6 +49,8 @@
 #include <Plat4m_Core/UnitTest/ApplicationUnitTestApp.h>
 #include <Plat4m_Core/Linux/SystemLinux.h>
 #include <Plat4m_Core/Linux/ProcessorLinux.h>
+#include <Plat4m_Core/AllocationMemoryLite/AllocationMemoryLite.h>
+#include <Plat4m_Core/TopicManager.h>
 #include <Test/Acceptance_Tests/TopicTest.h>
 #include <Test/Acceptance_Tests/TopicSubscriberTest.h>
 #include <Test/Acceptance_Tests/TopicSubscriberThreadTest.h>
@@ -89,6 +91,10 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
+
+    AllocationMemoryLite<4096> myAllocationMemory;
+
+    TopicManager myTopicManager;
 
     SystemLinux mySystem;
 
