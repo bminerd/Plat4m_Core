@@ -116,9 +116,9 @@ void ThreadSimulationTick::timeTickSampleCallback(
     if (System::checkTimeMs(myNextCallTimeMs))
     {
         Thread::run();
+
+        myNextCallTimeMs += getPeriodMs();
     }
 
     myRunCompleteSemaphore.post();
-
-    myNextCallTimeMs += getPeriodMs();
 }
