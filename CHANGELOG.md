@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added method toTimeSDouble() and template method toTimeSValueType() to TimeStamp. [Resolves 91].
 - `[BUG FIX]` Fixed call time increment in ThreadSimulationTick. [Resolves 90].
 - `[IMPROVEMENT]` Added TopicManager and ServiceManager classes to allow subscribing to a topic/service before it has been instantiated. Note: Topics and Services can no longer be instantiated directly, Topic::create() and Service::create() must be used instead. [Resolves 88].
 - `[NEW FEATURE]` Created ChildApplication class for applications that exist beneath a main Application. [Resolves 87].
