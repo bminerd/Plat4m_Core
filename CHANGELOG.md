@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Fixed call time increment in ThreadSimulationTick. [Resolves 90].
 - `[IMPROVEMENT]` Added TopicManager and ServiceManager classes to allow subscribing to a topic/service before it has been instantiated. Note: Topics and Services can no longer be instantiated directly, Topic::create() and Service::create() must be used instead. [Resolves 88].
 - `[NEW FEATURE]` Created ChildApplication class for applications that exist beneath a main Application. [Resolves 87].
 - `[IMPROVEMENT]` Added getDataAs() template method to Array that allows accessing the item pointer and casting it to a new type in a single step. [Resolves 86].
