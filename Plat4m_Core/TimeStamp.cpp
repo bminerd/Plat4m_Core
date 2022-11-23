@@ -275,11 +275,13 @@ void TimeStamp::fromTimeNsSigned(const TimeNsSigned& timeNsSigned,
 //------------------------------------------------------------------------------
 float TimeStamp::toTimeSFloat() const
 {
-    float timeS =
-          static_cast<float>(this->timeS) +
-                                      (static_cast<float>(timeNs) / 1000000000);
+    return (toTimeSValueType<float>());
+}
 
-    return timeS;
+//------------------------------------------------------------------------------
+double TimeStamp::toTimeSDouble() const
+{
+    return (toTimeSValueType<double>());
 }
 
 //------------------------------------------------------------------------------
@@ -427,6 +429,13 @@ TimeNsSigned TimeStamp::toTimeNs() const
 TimeNsSigned TimeStamp::toTimeNs(std::uint32_t& rollOverCount) const
 {
     return toTimeNsSigned(rollOverCount);
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::reset()
+{
+    timeNs = 0;
+    timeS = 0;
 }
 
 //------------------------------------------------------------------------------

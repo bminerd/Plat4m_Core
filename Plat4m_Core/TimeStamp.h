@@ -133,6 +133,19 @@ struct TimeStamp
 
     float toTimeSFloat() const;
 
+    double toTimeSDouble() const;
+
+    //--------------------------------------------------------------------------
+    template <typename ValueType>
+    ValueType toTimeSValueType() const
+    {
+        ValueType timeS =
+          static_cast<ValueType>(this->timeS) +
+                                  (static_cast<ValueType>(timeNs) / 1000000000);
+
+        return timeS;
+    }
+
     TimeMsSigned toTimeMsSigned() const;
 
     TimeMsSigned toTimeMsSigned(std::uint32_t& rollOverCount) const;
@@ -160,6 +173,8 @@ struct TimeStamp
     TimeNsSigned toTimeNs() const;
 
     TimeNsSigned toTimeNs(std::uint32_t& rollOverCount) const;
+
+    void reset();
 
 private:
 
