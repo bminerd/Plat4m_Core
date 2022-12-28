@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added private copy constructor to Service class. This prevents accidental copying of a Service, which must be avoided. [Resolves 94].
 - `[IMPROVEMENT]` Added method toTimeSDouble() and template method toTimeSValueType() to TimeStamp. [Resolves 91].
 - `[BUG FIX]` Fixed call time increment in ThreadSimulationTick. [Resolves 90].
 - `[IMPROVEMENT]` Added TopicManager and ServiceManager classes to allow subscribing to a topic/service before it has been instantiated. Note: Topics and Services can no longer be instantiated directly, Topic::create() and Service::create() must be used instead. [Resolves 88].
