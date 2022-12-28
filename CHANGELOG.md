@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Fixed null pointers in List::first() and List::last(). [Resolves 95].
 - `[IMPROVEMENT]` Added private copy constructor to Service class. This prevents accidental copying of a Service, which must be avoided. [Resolves 94].
 - `[IMPROVEMENT]` Added method toTimeSDouble() and template method toTimeSValueType() to TimeStamp. [Resolves 91].
 - `[BUG FIX]` Fixed call time increment in ThreadSimulationTick. [Resolves 90].
