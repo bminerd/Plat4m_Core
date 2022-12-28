@@ -48,6 +48,7 @@
 
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -64,7 +65,19 @@ template <typename T>
 class List
 {
 public:
-    
+
+    //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
+
+    enum ErrorCode
+    {
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_ITEM_NULL
+    };
+
+    typedef ErrorTemplate<ErrorCode> Error;
+
     struct Item
     {
         T value;
@@ -235,13 +248,31 @@ public:
     //--------------------------------------------------------------------------
     T& first()
     {
-        return myFirstItem->value;
+        T* value = 0;
+
+        if (isNullPointer(myFirstItem))
+        {
+            Error error(ERROR_CODE_ITEM_NULL);
+
+            return (*value);
+        }
+
+        return (myFirstItem->value);
     }
     
     //--------------------------------------------------------------------------
     T& last()
     {
-        return myFirstItem->value;
+        T* value = 0;
+
+        if (isNullPointer(myFirstItem))
+        {
+            Error error(ERROR_CODE_ITEM_NULL);
+
+            return (*value);
+        }
+
+        return (myLastItem->value);
     }
     
     //--------------------------------------------------------------------------
