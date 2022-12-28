@@ -211,6 +211,13 @@ private:
 
         ServiceManager::add(*pointer);
     }
+
+    //--------------------------------------------------------------------------
+    Service(const Service& service) :
+        ServiceBase(service.id),
+        myCallback(service.myCallback)
+    {
+    }
 };
 
 }; // namespace Plat4m
