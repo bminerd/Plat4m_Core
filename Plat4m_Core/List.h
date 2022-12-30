@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -230,7 +230,8 @@ public:
         }
         else if (isNullPointer(myLastItem))
         {
-            myLastItem = item;
+            myLastItem = myFirstItem;
+            myFirstItem = item;
             myFirstItem->nextItem = myLastItem;
             myLastItem->previousItem = myFirstItem;
         }
@@ -246,33 +247,29 @@ public:
     }
     
     //--------------------------------------------------------------------------
-    T& first()
+    T* first()
     {
-        T* value = 0;
-
         if (isNullPointer(myFirstItem))
         {
             Error error(ERROR_CODE_ITEM_NULL);
 
-            return (*value);
+            return 0;
         }
 
-        return (myFirstItem->value);
+        return &(myFirstItem->value);
     }
     
     //--------------------------------------------------------------------------
-    T& last()
+    T* last()
     {
-        T* value = 0;
-
         if (isNullPointer(myFirstItem))
         {
             Error error(ERROR_CODE_ITEM_NULL);
 
-            return (*value);
+            return 0;
         }
 
-        return (myLastItem->value);
+        return &(myLastItem->value);
     }
     
     //--------------------------------------------------------------------------
@@ -282,7 +279,7 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    void remove(T& value)
+    void remove(const T& value)
     {
         Item* currentItem = myFirstItem;
 
@@ -295,10 +292,30 @@ public:
                 if (currentItem == myFirstItem)
                 {
                     myFirstItem = myFirstItem->nextItem;
+
+                    if (isValidPointer(myFirstItem))
+                    {
+                        myFirstItem->previousItem = 0;
+                    }
+
+                    if (myFirstItem == myLastItem)
+                    {
+                        myLastItem = 0;
+
+                        if (isValidPointer(myFirstItem))
+                        {
+                            myFirstItem->nextItem = 0;
+                        }
+                    }
                 }
                 else if (currentItem == myLastItem)
                 {
                     myLastItem = myLastItem->previousItem;
+
+                    if (isValidPointer(myLastItem))
+                    {
+                        myLastItem->nextItem = 0;
+                    }
 
                     if (myFirstItem == myLastItem)
                     {
@@ -309,6 +326,8 @@ public:
                 else
                 {
                     currentItem->previousItem->nextItem = currentItem->nextItem;
+                    currentItem->nextItem->previousItem =
+                                                      currentItem->previousItem;
                 }
 
                 mySize--;
