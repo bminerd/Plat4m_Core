@@ -55,6 +55,7 @@
 #include <Plat4m_Core/UnitTest/ByteArrayUnitTest.h>
 #include <Plat4m_Core/UnitTest/ModuleUnitTest.h>
 #include <Plat4m_Core/UnitTest/TimeStampUnitTest.h>
+#include <Plat4m_Core/UnitTest/ListUnitTest.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -103,6 +104,7 @@ private:
     ByteArrayUnitTest myByteArrayUnitTest;
     ModuleUnitTest myModuleUnitTest;
     TimeStampUnitTest myTimeStampUnitTest;
+    ListUnitTest myListUnitTest;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Application

@@ -40,6 +40,7 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/ByteArrayUnitTest.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/ModuleUnitTest.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/TimeStampUnitTest.cpp
+                 ${PLAT4M_CORE_DIR}/UnitTest/ListUnitTest.cpp
                  ${PLAT4M_CORE_DIR}/Linux/SystemLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ProcessorLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ThreadLinux.cpp
