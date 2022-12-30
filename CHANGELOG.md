@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Fixed backward link and null pointer bugs in List::remove(). Updated first() and last() to return pointers. Added unit tests for List class. [Resolves 93].
 - `[BUG FIX]` Fixed null pointers in List::first() and List::last(). [Resolves 95].
 - `[IMPROVEMENT]` Added private copy constructor to Service class. This prevents accidental copying of a Service, which must be avoided. [Resolves 94].
 - `[IMPROVEMENT]` Added method toTimeSDouble() and template method toTimeSValueType() to TimeStamp. [Resolves 91].
