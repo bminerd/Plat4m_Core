@@ -162,7 +162,8 @@ struct TimeStamp
 
         TimeNsSigned truncatedInt =
             static_cast<TimeNsSigned>(
-                                 remainder * roundingPrecisionMultiplier + 0.5);
+                remainder * roundingPrecisionMultiplier +
+                                                   static_cast<ValueType>(0.5));
 
         timeNs = truncatedInt * (1000000000 / roundingPrecisionMultiplier);
     }
