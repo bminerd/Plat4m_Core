@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2021 - 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -270,6 +270,32 @@ void TimeStamp::fromTimeNsSigned(const TimeNsSigned& timeNsSigned,
     timeS  = (timeNsSigned / 1000000000) +
         (std::numeric_limits<TimeNsSigned>::max() / 1000000000) * rollOverCount;
     this->timeNs = (timeNsSigned % 1000000000);
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeSFloat(const TimeSFloat& timeSFloat)
+{
+    fromTimeSValueType<float>(timeSFloat);
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeSFloat(const TimeSFloat& timeSFloat,
+                               const std::uint32_t roundingPrecision)
+{
+    fromTimeSValueType<float>(timeSFloat, roundingPrecision);
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeSDouble(const TimeSDouble& timeSDouble)
+{
+    fromTimeSValueType<double>(timeSDouble);
+}
+
+//------------------------------------------------------------------------------
+void TimeStamp::fromTimeSDouble(const TimeSDouble& timeSDouble,
+                                const std::uint32_t roundingPrecision)
+{
+    fromTimeSValueType<double>(timeSDouble, roundingPrecision);
 }
 
 //------------------------------------------------------------------------------

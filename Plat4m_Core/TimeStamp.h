@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2021 - 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -130,6 +130,42 @@ struct TimeStamp
 
     void fromTimeNsSigned(const TimeNsSigned& timeNsSigned,
                           const std::uint32_t rollOverCount = 0);
+
+    void fromTimeSFloat(const TimeSFloat& timeSFloat);
+
+    void fromTimeSFloat(const TimeSFloat& timeSFloat,
+                        const std::uint32_t roundingPrecision);
+
+    void fromTimeSDouble(const TimeSDouble& timeSDouble);
+
+    void fromTimeSDouble(const TimeSDouble& timeSDouble,
+                         const std::uint32_t roundingPrecision);
+
+    //--------------------------------------------------------------------------
+    template <typename ValueType>
+    void fromTimeSValueType(const ValueType& timeSValueType)
+    {
+        timeS = static_cast<TimeSSigned>(timeSValueType);
+
+        timeNs =
+            static_cast<TimeSSigned>(
+                 (timeSValueType - static_cast<ValueType>(timeS)) * 1000000000);
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename ValueType>
+    void fromTimeSValueType(const ValueType& timeSValueType,
+                            const std::uint32_t roundingPrecisionMultiplier)
+    {
+        timeS = static_cast<TimeSSigned>(timeSValueType);
+        ValueType remainder = timeSValueType - static_cast<ValueType>(timeS);
+
+        TimeNsSigned truncatedInt =
+            static_cast<TimeNsSigned>(
+                                 remainder * roundingPrecisionMultiplier + 0.5);
+
+        timeNs = truncatedInt * (1000000000 / roundingPrecisionMultiplier);
+    }
 
     float toTimeSFloat() const;
 
