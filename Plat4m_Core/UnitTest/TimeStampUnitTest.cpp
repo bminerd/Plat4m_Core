@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022 - 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,34 +56,57 @@ using namespace Plat4m;
 const UnitTest::TestCallbackFunction TimeStampUnitTest::myTestCallbackFunctions[] =
 {
     &TimeStampUnitTest::operatorGreaterThanTest,
+
     &TimeStampUnitTest::operatorLessThanTest,
+
     &TimeStampUnitTest::operatorEqualsTest,
+
     &TimeStampUnitTest::operatorGreaterThanOrEqualToTest,
+
     &TimeStampUnitTest::operatorLessThanOrEqualToTest,
+
     &TimeStampUnitTest::operatorAddTest1,
     &TimeStampUnitTest::operatorAddTest2,
     &TimeStampUnitTest::operatorAddTest3,
+
     &TimeStampUnitTest::operatorAddEqualsTest1,
     &TimeStampUnitTest::operatorAddEqualsTest2,
+
     &TimeStampUnitTest::operatorSubtractTest1,
     &TimeStampUnitTest::operatorSubtractTest2,
     &TimeStampUnitTest::operatorSubtractTest3,
+
     &TimeStampUnitTest::operatorSubtractEqualsTest1,
     &TimeStampUnitTest::operatorSubtractEqualsTest2,
+
     &TimeStampUnitTest::fromTimeMsTest,
+
     &TimeStampUnitTest::fromTimeUsTest,
+
     &TimeStampUnitTest::fromTimeNsTest,
+
+    &TimeStampUnitTest::fromTimeSFloatTest1,
+    &TimeStampUnitTest::fromTimeSFloatTest2,
+
+    &TimeStampUnitTest::fromTimeSDoubleTest1,
+    &TimeStampUnitTest::fromTimeSDoubleTest2,
+
     &TimeStampUnitTest::fromTimeMsSignedTest,
+
     &TimeStampUnitTest::fromTimeUsSignedTest,
+
     &TimeStampUnitTest::fromTimeNsSignedTest,
+
     &TimeStampUnitTest::toTimeMsSignedTest1,
     &TimeStampUnitTest::toTimeMsSignedTest2,
     &TimeStampUnitTest::toTimeMsSignedTest3,
     &TimeStampUnitTest::toTimeMsSignedTest4,
+
     &TimeStampUnitTest::toTimeUsSignedTest1,
     &TimeStampUnitTest::toTimeUsSignedTest2,
     &TimeStampUnitTest::toTimeUsSignedTest3,
     &TimeStampUnitTest::toTimeUsSignedTest4,
+
     &TimeStampUnitTest::toTimeNsSignedTest1,
     &TimeStampUnitTest::toTimeNsSignedTest2,
     &TimeStampUnitTest::toTimeNsSignedTest3,
@@ -396,6 +419,70 @@ bool TimeStampUnitTest::fromTimeNsTest()
     TimeNs timeNs = 1250000000;
 
     timeStamp.fromTimeNs(timeNs);
+
+    const TimeStamp expected(1, 250000000);
+
+    const bool compare = timeStamp == expected;
+
+    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true));
+}
+
+//------------------------------------------------------------------------------
+bool TimeStampUnitTest::fromTimeSFloatTest1()
+{
+    TimeStamp timeStamp;
+
+    const TimeSFloat timeS = 1.25;
+
+    timeStamp.fromTimeSFloat(timeS);
+
+    const TimeStamp expected(1, 250000000);
+
+    const bool compare = timeStamp == expected;
+
+    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true));
+}
+
+//------------------------------------------------------------------------------
+bool TimeStampUnitTest::fromTimeSFloatTest2()
+{
+    TimeStamp timeStamp;
+
+    const TimeSFloat timeS = 1.25005;
+
+    timeStamp.fromTimeSFloat(timeS, 1000);
+
+    const TimeStamp expected(1, 250000000);
+
+    const bool compare = timeStamp == expected;
+
+    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true));
+}
+
+//------------------------------------------------------------------------------
+bool TimeStampUnitTest::fromTimeSDoubleTest1()
+{
+    TimeStamp timeStamp;
+
+    const TimeSDouble timeS = 1.25;
+
+    timeStamp.fromTimeSDouble(timeS);
+
+    const TimeStamp expected(1, 250000000);
+
+    const bool compare = timeStamp == expected;
+
+    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true));
+}
+
+//------------------------------------------------------------------------------
+bool TimeStampUnitTest::fromTimeSDoubleTest2()
+{
+    TimeStamp timeStamp;
+
+    const TimeSDouble timeS = 1.25005;
+
+    timeStamp.fromTimeSDouble(timeS, 1000);
 
     const TimeStamp expected(1, 250000000);
 

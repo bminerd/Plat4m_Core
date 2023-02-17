@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022 - 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -92,23 +92,17 @@ public:
     static bool operatorLessThanOrEqualToTest();
 
     static bool operatorAddTest1();
-
     static bool operatorAddTest2();
-
     static bool operatorAddTest3();
 
     static bool operatorAddEqualsTest1();
-
     static bool operatorAddEqualsTest2();
 
     static bool operatorSubtractTest1();
-
     static bool operatorSubtractTest2();
-
     static bool operatorSubtractTest3();
 
     static bool operatorSubtractEqualsTest1();
-
     static bool operatorSubtractEqualsTest2();
 
     static bool fromTimeMsTest();
@@ -117,6 +111,12 @@ public:
 
     static bool fromTimeNsTest();
 
+    static bool fromTimeSFloatTest1();
+    static bool fromTimeSFloatTest2();
+
+    static bool fromTimeSDoubleTest1();
+    static bool fromTimeSDoubleTest2();
+
     static bool fromTimeMsSignedTest();
 
     static bool fromTimeUsSignedTest();
@@ -124,27 +124,18 @@ public:
     static bool fromTimeNsSignedTest();
 
     static bool toTimeMsSignedTest1();
-
     static bool toTimeMsSignedTest2();
-
     static bool toTimeMsSignedTest3();
-
     static bool toTimeMsSignedTest4();
 
     static bool toTimeUsSignedTest1();
-
     static bool toTimeUsSignedTest2();
-
     static bool toTimeUsSignedTest3();
-
     static bool toTimeUsSignedTest4();
 
     static bool toTimeNsSignedTest1();
-
     static bool toTimeNsSignedTest2();
-
     static bool toTimeNsSignedTest3();
-
     static bool toTimeNsSignedTest4();
 
 private:
