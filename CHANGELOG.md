@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Fixed syntax issues in Service class. [Resolves 107].
 - `[BUG FIX]` Fixed implicit conversion error in TimeStamp for ARM v5 compiler. [Resolves 104].
 - `[IMPROVEMENT]` Added fromTimeSFloat(), fromTimeSDouble(), and fromTimeSValueType() templated method. Also added variants that accept a rounding precision parameter. [Resolves 102].
 - `[BUG FIX]` Fixed backward link and null pointer bugs in List::remove(). Updated first() and last() to return pointers. Added unit tests for List class. [Resolves 93].
