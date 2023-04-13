@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -79,14 +79,15 @@ public:
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
                                        const std::uint32_t nStackBytes,
-                                       const bool isSimulated) override;
+                                       const bool isSimulated,
+                                       const char* name) override;
 
     virtual Mutex& driverCreateMutex(Thread& thread) override;
 
     virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
 
     virtual QueueDriver& driverCreateQueueDriver(
-                                             const std::uint32_t nValues,    
+                                             const std::uint32_t nValues,
                                              const std::uint32_t valueSizeBytes,
                                              Thread& thread) override;
 
@@ -137,6 +138,8 @@ private:
     TimeMs myLastTimeMs;
 
     std::uint32_t myTimeMsRollOverCounter;
+
+    std::uint32_t mySavedInterruptStatus;
 };
 
 }; // namespace Plat4m

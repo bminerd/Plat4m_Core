@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -99,7 +99,8 @@ public:
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
                                        const std::uint32_t nStackBytes,
-                                       const bool isSimulated) override;
+                                       const bool isSimulated,
+                                       const char* name) override;
 
     virtual Mutex& driverCreateMutex(Thread& thread) override;
 

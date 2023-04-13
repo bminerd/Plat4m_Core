@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -89,11 +89,13 @@ extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask,
 Thread& SystemFreeRtos::driverCreateThread(Thread::RunCallback& callback,
                                        	   const TimeMs periodMs,
                                        	   const uint32_t nStackBytes,
-                                           const bool isSimulated)
+                                           const bool isSimulated,
+                                           const char* name)
 {
     return *(MemoryAllocator::allocate<ThreadFreeRtos>(callback,
                                                        periodMs,
-                                                       nStackBytes));
+                                                       nStackBytes,
+                                                       name));
 }
 
 //------------------------------------------------------------------------------
@@ -163,13 +165,27 @@ void SystemFreeRtos::driverExit()
 //------------------------------------------------------------------------------
 void SystemFreeRtos::driverEnterCriticalSection()
 {
-    vPortEnterCritical();
+    if (Processor::isInterruptActive())
+    {
+        mySavedInterruptStatus = taskENTER_CRITICAL_FROM_ISR();
+    }
+    else
+    {
+        taskENTER_CRITICAL();
+    }
 }
 
 //------------------------------------------------------------------------------
 void SystemFreeRtos::driverExitCriticalSection()
 {
-    vPortExitCritical();
+    if (Processor::isInterruptActive())
+    {
+        taskEXIT_CRITICAL_FROM_ISR(mySavedInterruptStatus);
+    }
+    else
+    {
+        taskEXIT_CRITICAL();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -190,7 +206,8 @@ std::uint32_t SystemFreeRtos::getTimeMsRollOverCounter()
 SystemFreeRtos::SystemFreeRtos() :
     System(),
     myLastTimeMs(0),
-    myTimeMsRollOverCounter(0)
+    myTimeMsRollOverCounter(0),
+    mySavedInterruptStatus(0)
 {
 }
 

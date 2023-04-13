@@ -93,7 +93,8 @@ private:
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
                                        const std::uint32_t nStackBytes,
-                                       const bool isSimulated) override;
+                                       const bool isSimulated, 
+                                       const char* name) override;
 
     virtual Mutex& driverCreateMutex(Thread& thread) override;
 

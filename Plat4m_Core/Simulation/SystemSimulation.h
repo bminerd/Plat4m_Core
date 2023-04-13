@@ -89,7 +89,9 @@ public:
             System::createThread(
                     createCallback(this, &SystemSimulation::timeThreadCallback),
                     0,
-                    timeThreadStackBytes)),
+                    timeThreadStackBytes,
+                    false,
+                    "SystemSimulation Time Thread")),
         myTimeTickTopic(Topic<TimeTickSample>::create(timeTickTopicId)),
         mySemaphore(System::createSemaphore()),
         mySimulatedThreadCount(0)
@@ -111,7 +113,9 @@ public:
             System::createThread(
                     createCallback(this, &SystemSimulation::timeThreadCallback),
                     0,
-                    timeThreadStackBytes)),
+                    timeThreadStackBytes,
+                    false,
+                    "SystemSimulation Time Thread")),
         myTimeTickTopic(Topic<TimeTickSample>::create(timeTickTopicId)),
         mySemaphore(System::createSemaphore()),
         mySimulatedThreadCount(0)
@@ -166,7 +170,8 @@ public:
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
                                        const std::uint32_t nStackBytes,
-                                       const bool isSimulated) override
+                                       const bool isSimulated,
+                                       const char* name) override
     {
         if (isSimulated)
         {
@@ -180,18 +185,23 @@ public:
                                                                     callback,
                                                                     timeTopicId,
                                                                     mySemaphore,
-                                                                    periodMs));
+                                                                    periodMs,
+                                                                    nStackBytes,
+                                                                    name));
             }
 
             return *(MemoryAllocator::allocate<ThreadSimulation>(callback,
                                                                  mySemaphore,
-                                                                 periodMs));
+                                                                 periodMs,
+                                                                 nStackBytes,
+                                                                 name));
         }
 
         return (SystemDriver::driverCreateThread(callback,
                                                  periodMs,
                                                  nStackBytes,
-                                                 isSimulated));
+                                                 isSimulated,
+                                                 name));
     }
 
     //--------------------------------------------------------------------------

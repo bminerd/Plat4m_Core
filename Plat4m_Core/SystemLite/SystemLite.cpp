@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -100,10 +100,12 @@ void SystemLite::enableSystemClock(const uint32_t coreClockFrequencyHz)
 Thread& SystemLite::driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
                                        const uint32_t nStackBytes,
-                                       const bool isSimulated)
+                                       const bool isSimulated,
+                                       const char* name)
 {
-    ThreadLite* thread =
-                      MemoryAllocator::allocate<ThreadLite>(callback, periodMs);
+    ThreadLite* thread = MemoryAllocator::allocate<ThreadLite>(callback,
+                                                               periodMs,
+                                                               name);
 
     myThreadList.append(thread);
 
@@ -124,10 +126,10 @@ WaitCondition& SystemLite::driverCreateWaitCondition(Thread& thread)
 
 //------------------------------------------------------------------------------
 QueueDriver& SystemLite::driverCreateQueueDriver(const uint32_t nValues,
-												 const uint32_t valueSizeBytes,
-												 Thread& thread)
+                                                 const uint32_t valueSizeBytes,
+                                                 Thread& thread)
 {
-	return *(MemoryAllocator::allocate<QueueDriverLite<1>>());
+    return *(MemoryAllocator::allocate<QueueDriverLite<1>>());
 }
 
 //------------------------------------------------------------------------------

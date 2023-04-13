@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -126,9 +126,10 @@ TimeUs SystemLinux::driverGetTimeUs()
 Thread& SystemLinux::driverCreateThread(Thread::RunCallback& callback,
                                         const TimeMs periodMs,
                                         const uint32_t nStackBytes,
-                                        const bool isSimulated)
+                                        const bool isSimulated,
+                                        const char* name)
 {
-    return *(MemoryAllocator::allocate<ThreadLinux>(callback, periodMs));
+    return *(MemoryAllocator::allocate<ThreadLinux>(callback, periodMs, name));
 }
 
 //------------------------------------------------------------------------------

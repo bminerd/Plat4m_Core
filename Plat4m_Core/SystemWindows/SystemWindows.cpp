@@ -92,9 +92,12 @@ Plat4m::TimeUs SystemWindows::driverGetTimeUs()
 Thread& SystemWindows::driverCreateThread(Thread::RunCallback& callback,
                                           const TimeMs periodMs,
                                           const uint32_t nStackBytes,
-                                          const bool isSimulated)
+                                          const bool isSimulated,
+                                          const char* name)
 {
-    return *(MemoryAllocator::allocate<ThreadWindows>(callback, periodMs));
+    return *(MemoryAllocator::allocate<ThreadWindows>(callback,
+                                                      periodMs,
+                                                      name));
 }
 
 //------------------------------------------------------------------------------
