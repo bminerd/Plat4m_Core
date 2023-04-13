@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,8 @@ using namespace Plat4m;
 const StopwatchStatisticsPrinter::Config
                                    StopwatchStatisticsPrinter::myDefaultConfig =
 {
-    1 /// .outputFrequencyHz
+    1,   /// .outputFrequencyHz
+    true /// .outputHeartbeat
 };
 
 //------------------------------------------------------------------------------
@@ -74,7 +75,6 @@ StopwatchStatisticsPrinter::StopwatchStatisticsPrinter(
                                                 const bool createOutputThread,
                                                 const Config config) :
     myConfig(config),
-    myStopwatchNameList(0),
     myOutputThread(0)
 {
     if (createOutputThread)
@@ -87,7 +87,9 @@ StopwatchStatisticsPrinter::StopwatchStatisticsPrinter(
                              this,
                              &StopwatchStatisticsPrinter::outputThreadCallback),
                 periodTimeMs,
-                4096);
+                4096,
+                false,
+                "Stopwatch Statistics Printer");
     }
 }
 
@@ -124,22 +126,37 @@ StopwatchStatisticsPrinter::Config StopwatchStatisticsPrinter::getConfig()
 }
 
 //------------------------------------------------------------------------------
-void StopwatchStatisticsPrinter::setStopwatchNameList(
-                                           List<const char*>& stopwatchNameList)
-{
-    myStopwatchNameList = &stopwatchNameList;
-}
-
-//------------------------------------------------------------------------------
-List<const char*>* StopwatchStatisticsPrinter::getStopwatchNameList()
-{
-    return myStopwatchNameList;
-}
-
-//------------------------------------------------------------------------------
 void StopwatchStatisticsPrinter::printStopwatchStatistics()
 {
-    outputThreadCallback();
+    ByteArrayN<2048> bytes;
+
+    bytes.append("\n--------------------\n");
+    bytes.append("Stopwatch Statistics\n");
+    bytes.append("--------------------\n\n");
+
+    List<Stopwatch*>::Iterator stopwatchIterator =
+                                       Stopwatch::getStopwatchList().iterator();
+
+    while (stopwatchIterator.hasCurrent())
+    {
+        Stopwatch* stopwatch = stopwatchIterator.current();
+
+        const char* stopwatchName = stopwatch->getName();
+
+        if (stopwatchName == 0)
+        {
+            stopwatchName = "(Unnamed)";
+        }
+
+        addStopwatchName(bytes, stopwatchName);
+        addStopwatchStatistics(bytes, stopwatch);
+
+        stopwatchIterator.next();
+    }
+
+    bytes.append("\n---- End ----\n");
+
+    Printer::print(bytes);
 }
 
 //------------------------------------------------------------------------------
@@ -164,58 +181,14 @@ Module::Error StopwatchStatisticsPrinter::driverSetEnabled(const bool enabled)
 //------------------------------------------------------------------------------
 void StopwatchStatisticsPrinter::outputThreadCallback()
 {
-    ByteArrayN<2048> bytes;
-
-    bytes.append("\n--------------------\n");
-    bytes.append("Stopwatch Statistics\n");
-    bytes.append("--------------------\n\n");
-
-    List<Stopwatch*>::Iterator stopwatchIterator =
-                                       Stopwatch::getStopwatchList().iterator();
-
-    if (isValidPointer(myStopwatchNameList))
+    if (myConfig.outputHeartbeat)
     {
-        List<const char*>::Iterator stopwatchNameIterator =
-                                                myStopwatchNameList->iterator();
-
-        while (stopwatchIterator.hasCurrent())
-        {
-            const char* stopwatchName = stopwatchNameIterator.current();
-            addStopwatchName(bytes, stopwatchName);
-
-            Stopwatch* stopwatch = stopwatchIterator.current();
-            addStopwatchStatistics(bytes, stopwatch);
-
-            stopwatchIterator.next();
-            stopwatchNameIterator.next();
-        }
+        Printer::print(".");
     }
     else
     {
-        std::uint32_t i = 0;
-
-        while (stopwatchIterator.hasCurrent())
-        {
-            char stopwatchName[16];
-
-            std::snprintf(stopwatchName,
-                          arraySize(stopwatchName),
-                          "Stopwatch %u",
-                          i);
-            addStopwatchName(bytes, stopwatchName);
-
-            Stopwatch* stopwatch = stopwatchIterator.current();
-            addStopwatchStatistics(bytes, stopwatch);
-
-            stopwatchIterator.next();
-            
-            i++;
-        }
+        printStopwatchStatistics();
     }
-
-    bytes.append("\n---- End ----\n");
-
-    Printer::print(bytes);
 }
 
 //------------------------------------------------------------------------------
@@ -280,4 +253,3 @@ void StopwatchStatisticsPrinter::addStopwatchStatistics(ByteArray& byteArray,
 
     byteArray.append("\n");
 }
-

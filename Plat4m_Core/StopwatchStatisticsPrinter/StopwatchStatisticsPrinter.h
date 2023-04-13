@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -75,6 +75,7 @@ public:
     struct Config
     {
         FrequencyHz outputFrequencyHz;
+        bool outputHeartbeat;
     };
 
     //--------------------------------------------------------------------------
@@ -98,14 +99,10 @@ public:
 
     Config getConfig();
 
-    void setStopwatchNameList(List<const char*>& stopwatchNameList);
-
-    List<const char*>* getStopwatchNameList();
-
     void printStopwatchStatistics();
-    
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
@@ -117,8 +114,6 @@ private:
     //--------------------------------------------------------------------------
 
     Config myConfig;
-
-    List<const char*>* myStopwatchNameList;
 
     Thread* myOutputThread;
 
