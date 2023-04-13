@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -87,15 +87,24 @@ void Thread::setPriority(const uint32_t priority)
 }
 
 //------------------------------------------------------------------------------
+const char* Thread::getName() const
+{
+    return myName;
+}
+
+//------------------------------------------------------------------------------
 // Protected constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Thread::Thread(RunCallback& runCallback, const TimeMs periodMs) :
+Thread::Thread(RunCallback& runCallback,
+               const TimeMs periodMs,
+               const char* name) :
     myRunCallback(runCallback),
     myPeriodMs(periodMs),
+    myName(name),
     myPriority(0),
-    myThreadPolicy(ThreadPolicyManager::getThreadPolicy())
+    myThreadPolicy(ThreadPolicyManager::getThreadPolicy(*this))
 {
 }
 

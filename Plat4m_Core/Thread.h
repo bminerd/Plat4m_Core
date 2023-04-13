@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,11 +65,11 @@ namespace Plat4m
 class Thread : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum Priority
     {
         PRIORITY_LOW = 0,
@@ -78,7 +78,7 @@ public:
     };
 
     typedef Callback<> RunCallback;
-    
+
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
@@ -90,14 +90,16 @@ public:
     //--------------------------------------------------------------------------
 
     void run();
-    
+
     TimeMs getPeriodMs() const;
-    
+
     void setPeriodMs(const TimeMs periodMs);
 
     uint32_t getPriority() const;
 
     void setPriority(const uint32_t priority);
+
+    const char* getName() const;
 
 protected:
 
@@ -105,17 +107,19 @@ protected:
     // Protected constructors
     //--------------------------------------------------------------------------
 
-    Thread(RunCallback& callback, const TimeMs periodMs);
+    Thread(RunCallback& callback, const TimeMs periodMs, const char* name);
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
     RunCallback& myRunCallback;
-    
+
     TimeMs myPeriodMs;
+
+    const char* myName;
 
     uint32_t myPriority;
 
