@@ -101,8 +101,8 @@ extern void allocationMemoryDeallocate(void* pointer);
 #define configTICK_RATE_HZ				( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES			( 5 )
 #define configMINIMAL_STACK_SIZE		( ( unsigned short ) 130 )
-#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 75 * 1024 ) )
-#define configMAX_TASK_NAME_LEN			( 10 )
+#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 0 ) )
+#define configMAX_TASK_NAME_LEN			( 40 )
 #define configUSE_TRACE_FACILITY		1
 #define configUSE_16_BIT_TICKS			0
 #define configIDLE_SHOULD_YIELD			1
@@ -114,6 +114,7 @@ extern void allocationMemoryDeallocate(void* pointer);
 #define configUSE_APPLICATION_TASK_TAG	0
 #define configUSE_COUNTING_SEMAPHORES	1
 #define configGENERATE_RUN_TIME_STATS	0
+#define configRECORD_STACK_HIGH_ADDRESS 1
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES 		0
