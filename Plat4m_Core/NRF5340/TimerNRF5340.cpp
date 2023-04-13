@@ -1,6 +1,36 @@
-/**
- * Copyright (c) 2021, SignalQuest LLC
- */
+//------------------------------------------------------------------------------
+//       _______    __                           ___
+//      ||  ___ \  || |             __          //  |
+//      || |  || | || |   _______  || |__      //   |    _____  ___
+//      || |__|| | || |  // ___  | ||  __|    // _  |   ||  _ \/ _ \
+//      ||  ____/  || | || |  || | || |      // /|| |   || |\\  /\\ \
+//      || |       || | || |__|| | || |     // /_|| |_  || | || | || |
+//      || |       || |  \\____  | || |__  //_____   _| || | || | || |
+//      ||_|       ||_|       ||_|  \\___|       ||_|   ||_| ||_| ||_|
+//
+//
+// The MIT License (MIT)
+//
+// Copyright (c) 2021-2023 Benjamin Minerd
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//------------------------------------------------------------------------------
 
 ///
 /// @file TimerNRF5340.cpp
@@ -124,7 +154,7 @@ NRF_TIMER_Type* TimerNRF5340::getTimer()
 //------------------------------------------------------------------------------
 InterruptNRF5340& TimerNRF5340::getInterrupt()
 {
-	return myInterrupt;
+    return myInterrupt;
 }
 
 //------------------------------------------------------------------------------
@@ -326,13 +356,13 @@ TimerNRF5340::Error TimerNRF5340::setConfig(const Config& config)
     setBitMode(myBitMode);
     setChannelCaptureCompareValue(CHANNEL_0, period);
     setInterruptEventEnabled(INTERRUPT_EVENT_COMPARE_0, true);
-    
+
     triggerTask(TASK_START);
 
     myConfig = config;
 
     myIsConfigured = true;
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -350,7 +380,7 @@ uint32_t TimerNRF5340::getChannelCaptureCompareValue(const Channel channel)
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

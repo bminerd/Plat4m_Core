@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,7 @@ Spi::Error Spi::setConfig(const Config& config)
 //------------------------------------------------------------------------------
 Spi::Config Spi::getConfig() const
 {
-	return myConfig;
+    return myConfig;
 }
 
 //------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ Spi::Error Spi::masterTransfer(const TransferMode transferMode,
     {
         return Error(ERROR_CODE_NOT_ENABLED);
     }
-    
+
     Transfer transfer;
     transfer.transferMode      = transferMode;
     transfer.chipSelectGpioPin = chipSelectGpioPin;
@@ -106,7 +106,7 @@ Spi::Error Spi::masterTransfer(const TransferMode transferMode,
     {
         mailbox->receiveByteArray = &receiveByteArray;
     }
-    
+
     Error error = driverMasterTransfer(transfer);
 
     if (isValidPointer(mailbox) && (error.getCode() == ERROR_CODE_NONE))
@@ -124,9 +124,9 @@ Spi::Error Spi::masterTransfer(const TransferMode transferMode,
 //------------------------------------------------------------------------------
 Spi::Spi(const TransmissionMode transmissionMode) :
     Module(),
-	myTransmissionMode(transmissionMode),
-	myConfig(),
-	myTransferBuffer()
+    myTransmissionMode(transmissionMode),
+    myConfig(),
+    myTransferBuffer()
 {
 }
 

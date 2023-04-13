@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -81,22 +81,22 @@ public:
     virtual ~QueueDriverLinux();
 
     //--------------------------------------------------------------------------
-    // Public methods implemented from QueueDriver
+    // Public virtual methods overridden for QueueDriver
     //--------------------------------------------------------------------------
 
-	uint32_t driverGetSize();
+    uint32_t driverGetSize();
 
-	uint32_t driverGetSizeFast();
+    uint32_t driverGetSizeFast();
 
-	bool driverEnqueue(const void* value);
+    bool driverEnqueue(const void* value);
 
-	bool driverEnqueueFast(const void* value);
+    bool driverEnqueueFast(const void* value);
 
-	bool driverDequeue(void* value);
+    bool driverDequeue(void* value);
 
-	bool driverDequeueFast(void* value);
+    bool driverDequeueFast(void* value);
 
-	void driverClear();
+    void driverClear();
 
 private:
 
@@ -121,8 +121,8 @@ private:
     //--------------------------------------------------------------------------
 
     const uint32_t myValueSizeBytes;
-    
-	int myMessageQueueId;
+
+    int myMessageQueueId;
 
     //--------------------------------------------------------------------------
     // Private methods

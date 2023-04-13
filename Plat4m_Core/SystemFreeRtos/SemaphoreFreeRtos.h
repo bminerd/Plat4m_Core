@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -76,10 +76,10 @@ public:
                       const std::uint32_t initialValue);
 
     //--------------------------------------------------------------------------
-    // Public destructors
+    // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    ~SemaphoreFreeRtos();
+    virtual ~SemaphoreFreeRtos();
 
 private:
 
@@ -92,7 +92,7 @@ private:
     //--------------------------------------------------------------------------
     // Private virtual methods overridden for Semaphore
     //--------------------------------------------------------------------------
-    
+
     virtual Error driverWait() override;
 
     virtual Error driverPost() override;

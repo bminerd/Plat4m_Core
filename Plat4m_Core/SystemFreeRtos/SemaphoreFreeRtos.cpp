@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,7 @@ using namespace Plat4m;
 SemaphoreFreeRtos::SemaphoreFreeRtos(const uint32_t maxValue,
                                      const uint32_t initialValue) :
     Semaphore(maxValue, initialValue),
-	mySemaphoreHandle()
+    mySemaphoreHandle()
 {
     uint32_t newMaxValue = 0;
 
@@ -82,7 +82,7 @@ SemaphoreFreeRtos::~SemaphoreFreeRtos()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Semaphore
+// Private virtual methods overridden for Semaphore
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ namespace Plat4m
 class I2cSTM32F4xx : public I2c
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
@@ -81,30 +81,30 @@ public:
         ID_3
     };
 
-	enum Interrupt
-	{
-		INTERRUPT_EVENT = 0,
-		INTERRUPT_BUFFER,
-		INTERRUPT_ERROR
-	};
+    enum Interrupt
+    {
+        INTERRUPT_EVENT = 0,
+        INTERRUPT_BUFFER,
+        INTERRUPT_ERROR
+    };
 
-	enum Event
-	{
-		EVENT_MASTER_MODE_SELECT = I2C_EVENT_MASTER_MODE_SELECT,
-		EVENT_MASTER_TRANSMITTER_MODE_SELECTED = I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED,
-		EVENT_MASTER_RECEIVER_MODE_SELECTED = I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED,
-		EVENT_MASTER_BYTE_TRANSMITTING = I2C_EVENT_MASTER_BYTE_TRANSMITTING,
-		EVENT_MASTER_BYTE_TRANSMITTED = I2C_EVENT_MASTER_BYTE_TRANSMITTED,
-		EVENT_MASTER_BYTE_RECEIVING = I2C_EVENT_MASTER_BYTE_RECEIVED,
-		EVENT_MASTER_BYTE_RECEIVED = I2C_EVENT_MASTER_BYTE_RECEIVED | 0x00000004
-	};
+    enum Event
+    {
+        EVENT_MASTER_MODE_SELECT = I2C_EVENT_MASTER_MODE_SELECT,
+        EVENT_MASTER_TRANSMITTER_MODE_SELECTED = I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED,
+        EVENT_MASTER_RECEIVER_MODE_SELECTED = I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED,
+        EVENT_MASTER_BYTE_TRANSMITTING = I2C_EVENT_MASTER_BYTE_TRANSMITTING,
+        EVENT_MASTER_BYTE_TRANSMITTED = I2C_EVENT_MASTER_BYTE_TRANSMITTED,
+        EVENT_MASTER_BYTE_RECEIVING = I2C_EVENT_MASTER_BYTE_RECEIVED,
+        EVENT_MASTER_BYTE_RECEIVED = I2C_EVENT_MASTER_BYTE_RECEIVED | 0x00000004
+    };
 
-	enum State
-	{
-		STATE_IDLE,
-		STATE_BUSY,
-		STATE_ERROR
-	};
+    enum State
+    {
+        STATE_IDLE,
+        STATE_BUSY,
+        STATE_ERROR
+    };
 
     struct Register
     {
@@ -249,20 +249,20 @@ private:
     volatile State myState;
 
     Transfer* myCurrentTransfer;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from Module
-    //--------------------------------------------------------------------------
-
-    Module::Error driverSetEnabled(const bool enable);
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from I2c
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    I2c::Error driverSetConfig(const Config& config);
+    virtual Module::Error driverSetEnabled(const bool enable) override;
 
-    I2c::Error driverMasterTransfer(Transfer& transfer);
+    //--------------------------------------------------------------------------
+    // Private virtual methods overridden for I2c
+    //--------------------------------------------------------------------------
+
+    virtual I2c::Error driverSetConfig(const Config& config) override;
+
+    virtual I2c::Error driverMasterTransfer(Transfer& transfer) override;
 
     //--------------------------------------------------------------------------
     // Private inline methods
@@ -273,7 +273,7 @@ private:
     inline void masterStop();
 
     inline void masterWriteAddress(const uint8_t address,
-    							   const MasterMode masterMode);
+                                   const MasterMode masterMode);
 
     inline void writeByte(const uint8_t byte);
 

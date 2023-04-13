@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Benjamin Minerd
+// Copyright (c) 2015-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -74,13 +74,13 @@ public:
     //--------------------------------------------------------------------------
 
     SerialPortWindows(const char* comPort);
-    
+
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
 
     virtual ~SerialPortWindows();
-    
+
 private:
 
     //--------------------------------------------------------------------------
@@ -92,7 +92,7 @@ private:
     static const uint8_t myStopBitsMap[];
 
     static const uint8_t myParityMap[];
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
@@ -104,24 +104,26 @@ private:
     Mutex& myMutex;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-	Module::Error driverSetEnabled(const bool enabled);
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from SerialPort
+    // Private virtual methods overridden for SerialPort
     //--------------------------------------------------------------------------
-    
-    SerialPort::Error driverSetConfig(const Config& config);
-    
-    ComInterface::Error driverTransmitBytes(const ByteArray& byteArray,
-                                            const bool waitUntilDone);
-    
-    uint32_t driverGetReceivedBytesCount();
 
-    ComInterface::Error driverGetReceivedBytes(ByteArray& byteArray,
-                                               const uint32_t nBytes);
+    virtual SerialPort::Error driverSetConfig(const Config& config) override;
+
+    virtual ComInterface::Error driverTransmitBytes(
+                                             const ByteArray& byteArray,
+                                             const bool waitUntilDone) override;
+
+    virtual uint32_t driverGetReceivedBytesCount() override;
+
+    virtual ComInterface::Error driverGetReceivedBytes(
+                                                ByteArray& byteArray,
+                                                const uint32_t nBytes) override;
 
     //--------------------------------------------------------------------------
     // Private methods

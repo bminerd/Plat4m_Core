@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file AdcSTM32F4xx.cpp
 /// @author Ben Minerd
-/// @date 4/10/13
+/// @date 4/10/2013
 /// @brief AdcSTM32F4xx class source file.
 ///
 
@@ -158,7 +158,7 @@ Plat4m::VoltageV AdcSTM32F4xx::readChannelVoltageVFast(
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -171,7 +171,7 @@ Module::Error AdcSTM32F4xx::driverSetEnabled(const bool enabled)
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -72,7 +72,9 @@ SystemFreeRtosCortexM::~SystemFreeRtosCortexM()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from SystemFreeRtos
+// Private virtual methods overridden for SystemFreeRtos
+//------------------------------------------------------------------------------
+
 //------------------------------------------------------------------------------
 TimeUs SystemFreeRtosCortexM::driverGetTimeUs()
 {

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -77,20 +77,20 @@ MutexWindows::~MutexWindows()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Mutex
+// Private virtual methods overridden for Mutex
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Mutex::Error MutexWindows::driverSetLocked(const bool locked)
 {
-	if (locked)
-	{
-		WaitForSingleObject(myMutexHandle, INFINITE);
-	}
-	else
-	{
-		ReleaseMutex(myMutexHandle);
-	}
+    if (locked)
+    {
+        WaitForSingleObject(myMutexHandle, INFINITE);
+    }
+    else
+    {
+        ReleaseMutex(myMutexHandle);
+    }
 
     return ERROR_NONE;
 }

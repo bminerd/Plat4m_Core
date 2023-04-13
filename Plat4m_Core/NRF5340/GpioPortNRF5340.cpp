@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@
 #include <Plat4m_Core/NRF5340/GpioPortNRF5340.h>
 
 using namespace Plat4m;
-     
+
 //------------------------------------------------------------------------------
 // Private static data members
 //------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ GpioPortNRF5340::GpioPortNRF5340(const Id id) :
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from GpioPort
+// Public virtual methods overridden for GpioPort
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ uint8_t GpioPortNRF5340::getNPins() const
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ Module::Error GpioPortNRF5340::driverSetEnabled(const bool enabled)
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from GpioPort
+// Private virtual methods overridden for GpioPort
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -166,7 +166,7 @@ GpioPort<uint32_t>::Error GpioPortNRF5340::driverConfigure(
                                                            const Config& config)
 {
     // Set mode
-    
+
     for (int i = 0; i < myNPins; i++)
     {
         // Set mode and resistor bits for this pin
@@ -174,7 +174,7 @@ GpioPort<uint32_t>::Error GpioPortNRF5340::driverConfigure(
                 myModeMap[config.mode] |
                     myResistorMap[config.resistor]);
     }
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -183,7 +183,7 @@ GpioPort<uint32_t>::Error GpioPortNRF5340::driverSetValue(
                                                       const std::uint32_t value)
 {
     myPort->OUT = maskBits(value, myBitMask);
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -191,7 +191,7 @@ GpioPort<uint32_t>::Error GpioPortNRF5340::driverSetValue(
 GpioPort<uint32_t>::Error GpioPortNRF5340::driverGetValue(std::uint32_t& value)
 {
     value = maskBits(myPort->OUT, myBitMask);
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -199,6 +199,6 @@ GpioPort<uint32_t>::Error GpioPortNRF5340::driverGetValue(std::uint32_t& value)
 GpioPort<uint32_t>::Error GpioPortNRF5340::driverReadValue(std::uint32_t& value)
 {
     value = maskBits(myPort->IN, myBitMask);
-    
+
     return Error(ERROR_CODE_NONE);
 }

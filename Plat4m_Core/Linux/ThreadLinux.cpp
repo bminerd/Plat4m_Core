@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -97,24 +97,24 @@ ThreadLinux::~ThreadLinux()
 }
 
 //------------------------------------------------------------------------------
-// Private static methods implemented from Thread
+// Private static methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 void* ThreadLinux::threadCallback(void* arg)
 {
-	ThreadLinux* thread = static_cast<ThreadLinux*>(arg);
-	thread->myNextCallTimeMs = thread->getPeriodMs();
+    ThreadLinux* thread = static_cast<ThreadLinux*>(arg);
+    thread->myNextCallTimeMs = thread->getPeriodMs();
 
-	while (!(thread->myShouldExit)) // Loop forever
-	{
-		pthread_mutex_lock(&(thread->myMutexHandle));
+    while (!(thread->myShouldExit)) // Loop forever
+    {
+        pthread_mutex_lock(&(thread->myMutexHandle));
 
         if (!(thread->myIsEnabled))
-	    {
-			pthread_cond_wait(&(thread->myConditionHandle),
-								&(thread->myMutexHandle));
-		}
+        {
+            pthread_cond_wait(&(thread->myConditionHandle),
+                              &(thread->myMutexHandle));
+        }
 
         pthread_mutex_unlock(&(thread->myMutexHandle));
 
@@ -125,28 +125,28 @@ void* ThreadLinux::threadCallback(void* arg)
             break;
         }
 
-		TimeMs periodMs = thread->getPeriodMs();
+        TimeMs periodMs = thread->getPeriodMs();
 
-		if (periodMs != 0)
-		{
-			TimeMs sleepTimeMs = thread->getPeriodMs();
+        if (periodMs != 0)
+        {
+            TimeMs sleepTimeMs = thread->getPeriodMs();
 
-			struct timespec timeSpec;
-			timeSpec.tv_sec = sleepTimeMs / 1000;
-			timeSpec.tv_nsec = (sleepTimeMs % 1000) * 1000000;
-			nanosleep(&timeSpec, NULL);
-		}
+            struct timespec timeSpec;
+            timeSpec.tv_sec = sleepTimeMs / 1000;
+            timeSpec.tv_nsec = (sleepTimeMs % 1000) * 1000000;
+            nanosleep(&timeSpec, NULL);
+        }
 
-		thread->run();
+        thread->run();
 
-		thread->myNextCallTimeMs += periodMs;
-	}
+        thread->myNextCallTimeMs += periodMs;
+    }
 
-	return 0;
+    return 0;
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -156,18 +156,18 @@ Module::Error ThreadLinux::driverSetEnabled(const bool enabled)
 
     myIsEnabled = enabled;
 
-	if (enabled)
-	{
-		pthread_cond_broadcast(&myConditionHandle);
-	}
+    if (enabled)
+    {
+        pthread_cond_broadcast(&myConditionHandle);
+    }
 
     pthread_mutex_unlock(&myMutexHandle);
 
-	return Module::Error(Module::ERROR_CODE_NONE);
+    return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Thread
+// Private virtual methods overridden for Thread
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -179,5 +179,5 @@ void ThreadLinux::driverSetPeriodMs(const TimeMs periodMs)
 //------------------------------------------------------------------------------
 uint32_t ThreadLinux::driverSetPriority(const uint32_t priority)
 {
-	return 0;
+    return 0;
 }

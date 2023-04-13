@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,11 +64,11 @@ namespace Plat4m
 class ProcessorWindows : public Processor
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum Error
     {
         ERROR_NONE
@@ -77,7 +77,7 @@ public:
     //--------------------------------------------------------------------------
     // Public structures
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
@@ -89,22 +89,22 @@ public:
     //--------------------------------------------------------------------------
 
     virtual ~ProcessorWindows();
-    
+
 private:
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Processor
+    // Private virtual methods overridden for Processor
     //--------------------------------------------------------------------------
-    
-    Processor::Error driverReset();
-    
-    Processor::Error driverConfigure(const Processor::Config& config);
-    
-    Processor::Error driverSetPowerMode(const Processor::PowerMode powerMode);
 
-    uint32_t driverGetCoreClockFrequencyHz();
+    virtual Processor::Error driverReset() override;
 
-    Processor::Error driverJumpToAddress(const intptr_t address);
+    virtual Processor::Error driverConfigure(
+                                      const Processor::Config& config) override;
+
+    virtual Processor::Error driverSetPowerMode(
+                                 const Processor::PowerMode powerMode) override;
+
+    virtual uint32_t driverGetCoreClockFrequencyHz() override;
 };
 
 }; // namespace Plat4m

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -71,11 +71,11 @@ namespace Plat4m
 class TimerSTM32F4xx : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE = 0
@@ -87,16 +87,16 @@ public:
         ID_2,
         ID_3,
         ID_4,
-		ID_5,
+        ID_5,
         ID_6,
         ID_7,
         ID_8,
-		ID_9,
-		ID_10,
-		ID_11,
-		ID_12,
-		ID_13,
-		ID_14
+        ID_9,
+        ID_10,
+        ID_11,
+        ID_12,
+        ID_13,
+        ID_14
     };
 
     enum ChannelId
@@ -301,21 +301,21 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const Id myId;
     
     TIM_TypeDef* myTimer;
-    
+
     GpioPinSTM32F4xx* myGpioPin;
-    
+
     InterruptSTM32F4xx* myUpdateInterrupt;
 
     float myInputClockFrequencyHz;
-    
+
     float myOutputClockFrequencyHz;
     
     uint32_t myPeriod;
-    
+
     Config myConfig;
 
     UpdateInterruptCallback* myUpdateInterruptCallback;
@@ -335,10 +335,10 @@ private:
     static void tim1BrkTim15InterruptHandler();
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
-    
-    Module::Error driverSetEnabled(const bool enabled);
+
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
     // Private inline methods

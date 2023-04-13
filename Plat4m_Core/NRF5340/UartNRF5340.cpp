@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -201,23 +201,23 @@ UartNRF5340::UartNRF5340(const Id id,
 //------------------------------------------------------------------------------
 GpioPinNRF5340& UartNRF5340::getTransmitGpioPin()
 {
-	return myTransmitGpioPin;
+    return myTransmitGpioPin;
 }
 
 //------------------------------------------------------------------------------
 GpioPinNRF5340& UartNRF5340::getReceiveGpioPin()
 {
-	return myReceiveGpioPin;
+    return myReceiveGpioPin;
 }
 
 //------------------------------------------------------------------------------
 InterruptNRF5340& UartNRF5340::getInterrupt()
 {
-	return myInterrupt;
+    return myInterrupt;
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -271,7 +271,7 @@ Module::Error UartNRF5340::driverSetEnabled(const bool enabled)
     interruptConfig.priority = 7;
     myInterrupt.configure(interruptConfig);
 
-	myInterrupt.setEnabled(enabled);
+    myInterrupt.setEnabled(enabled);
 
     setPeripheralEnabled(enabled);
 
@@ -279,7 +279,7 @@ Module::Error UartNRF5340::driverSetEnabled(const bool enabled)
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Uart
+// Private virtual methods overridden for Uart
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -389,17 +389,17 @@ ComInterface::Error UartNRF5340::driverGetReceivedBytes(
         nBytesToRead = nBytes;
     }
 
-	while (nBytesToRead--)
-	{
-		setInterruptEventEnabled(INTERRUPT_EVENT_DATA_RECEIVED_IN_RXD, false);
+    while (nBytesToRead--)
+    {
+        setInterruptEventEnabled(INTERRUPT_EVENT_DATA_RECEIVED_IN_RXD, false);
 
-		if (getReceiveBuffer()->read(byte))
-		{
-			byteArray.append(byte);
-		}
+        if (getReceiveBuffer()->read(byte))
+        {
+            byteArray.append(byte);
+        }
 
-		setInterruptEventEnabled(INTERRUPT_EVENT_DATA_RECEIVED_IN_RXD, true);
-	}
+        setInterruptEventEnabled(INTERRUPT_EVENT_DATA_RECEIVED_IN_RXD, true);
+    }
 
     return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
 }

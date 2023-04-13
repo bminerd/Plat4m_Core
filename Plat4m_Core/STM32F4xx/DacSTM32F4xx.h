@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -39,8 +39,8 @@
 /// @brief DacSTM32F4xx class header file.
 ///
 
-#ifndef DAC_STM32F4XX_H
-#define DAC_STM32F4XX_H
+#ifndef PLAT4M_DAC_STM32F4XX_H
+#define PLAT4M_DAC_STM32F4XX_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -68,7 +68,7 @@ namespace Plat4m
 class DacSTM32F4xx : public Dac
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
@@ -81,45 +81,45 @@ public:
         CHANNEL_ID_1 = 0,
         CHANNEL_ID_2
     };
-    
+
     //--------------------------------------------------------------------------
     // Public static methods
     //--------------------------------------------------------------------------
-    
+
     static DacSTM32F4xx& get(const ChannelId channelId,
                              GpioPinSTM32F4xx& gpioPin);
-    
+
 private:
     
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const ChannelId myChannelId;
-    
+
     GpioPinSTM32F4xx& myGpioPin;
-    
+
     //--------------------------------------------------------------------------
     // Private constructors
     //--------------------------------------------------------------------------
-    
+
     DacSTM32F4xx(const ChannelId channelId, GpioPinSTM32F4xx& gpioPin);
     
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverEnable(const bool enable);
-    
+    virtual Module::Error driverEnable(const bool enable) override;
+
     //--------------------------------------------------------------------------
-    // Private methods implemented from Dac
+    // Private virtual methods overridden for Dac
     //--------------------------------------------------------------------------
-    
-    Error driverConfigure(const Config& config);
-    
-    Error driverSetVoltage(const float voltage);
+
+    virtual Error driverConfigure(const Config& config) override;
+
+    virtual Error driverSetVoltage(const float voltage) override;
 };
 
 }; // namespace Plat4m
 
-#endif // DAC_STM32F4XX_H
+#endif // PLAT4M_DAC_STM32F4XX_H

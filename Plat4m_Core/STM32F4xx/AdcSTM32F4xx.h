@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -314,10 +314,10 @@ private:
     uint8_t myChannelToValueMap[16];
     
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverSetEnabled(const bool enabled);
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
     // Private inline methods

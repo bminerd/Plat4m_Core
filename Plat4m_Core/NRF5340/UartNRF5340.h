@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,11 +69,11 @@ namespace Plat4m
 class UartNRF5340 : public Uart
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum Id
     {
         ID_0 = 0,
@@ -163,7 +163,7 @@ private:
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
-    
+
     // Constants
 
     static const InterruptNRF5340::Id myInterruptMap[];
@@ -189,19 +189,19 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const Id myId;
 
     NRF_UARTE_Type* myUart;
-    
+
     GpioPinNRF5340& myTransmitGpioPin;
-    
+
     GpioPinNRF5340& myReceiveGpioPin;
 
     GpioPinNRF5340* myClearToSendGpioPin;
 
     GpioPinNRF5340* myReadyToSendGpioPin;
-    
+
     InterruptNRF5340 myInterrupt;
 
     volatile State myState;
@@ -209,24 +209,26 @@ private:
     volatile bool myHasReceiveDmaRolledOver;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverSetEnabled(const bool enabled);
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Uart
     //--------------------------------------------------------------------------
-    
-    Error driverSetConfig(const Config& config);
-    
-    ComInterface::Error driverTransmitBytes(const ByteArray& byteArray,
-                                            const bool waitUntilDone);
 
-    std::uint32_t driverGetReceivedBytesCount();
+    virtual Error driverSetConfig(const Config& config) override;
 
-    ComInterface::Error driverGetReceivedBytes(ByteArray& byteArray,
-                                               const std::uint32_t nBytes);
+    virtual ComInterface::Error driverTransmitBytes(
+                                             const ByteArray& byteArray,
+                                             const bool waitUntilDone) override;
+
+    virtual std::uint32_t driverGetReceivedBytesCount() override;
+
+    virtual ComInterface::Error driverGetReceivedBytes(
+                                           ByteArray& byteArray,
+                                           const std::uint32_t nBytes) override;
 
     //--------------------------------------------------------------------------
     // Private inline methods

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -86,7 +86,7 @@ SemaphoreLinux::~SemaphoreLinux()
 //------------------------------------------------------------------------------
 Semaphore::Error SemaphoreLinux::driverWait()
 {
-	sem_wait(&mySemaphoreHandle);
+    sem_wait(&mySemaphoreHandle);
 
     return Error(ERROR_CODE_NONE);
 }
@@ -94,7 +94,7 @@ Semaphore::Error SemaphoreLinux::driverWait()
 //------------------------------------------------------------------------------
 Semaphore::Error SemaphoreLinux::driverPost()
 {
-	sem_post(&mySemaphoreHandle);
+    sem_post(&mySemaphoreHandle);
 
     return Error(ERROR_CODE_NONE);
 }
@@ -102,7 +102,7 @@ Semaphore::Error SemaphoreLinux::driverPost()
 //------------------------------------------------------------------------------
 uint32_t SemaphoreLinux::driverGetValue()
 {
-	uint32_t value;
+    uint32_t value;
 
     sem_getvalue(&mySemaphoreHandle, (int*) &value);
 

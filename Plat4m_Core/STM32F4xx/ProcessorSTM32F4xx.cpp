@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -123,7 +123,7 @@ const uint32_t ProcessorSTM32F4xx::myFlashWaitStatesFrequencyMap[][9] =
         120000000, /// FLASH_WAIT_STATES_5
         140000000, /// FLASH_WAIT_STATES_6
         160000000, /// FLASH_WAIT_STATES_7
-		168000000  /// FLASH_WAIT_STATES_8
+        168000000  /// FLASH_WAIT_STATES_8
     },
     /// INPUT_VOLTAGE_V2R1_TO_V2R4
     {
@@ -135,7 +135,7 @@ const uint32_t ProcessorSTM32F4xx::myFlashWaitStatesFrequencyMap[][9] =
         132000000, /// FLASH_WAIT_STATES_5
         154000000, /// FLASH_WAIT_STATES_6
         168000000, /// FLASH_WAIT_STATES_7
-		180000000  /// FLASH_WAIT_STATES_8
+        180000000  /// FLASH_WAIT_STATES_8
     },
     /// INPUT_VOLTAGE_V2R4_TO_V2R7
     {
@@ -147,7 +147,7 @@ const uint32_t ProcessorSTM32F4xx::myFlashWaitStatesFrequencyMap[][9] =
         144000000, /// FLASH_WAIT_STATES_5
         168000000, /// FLASH_WAIT_STATES_6
         180000000, /// FLASH_WAIT_STATES_7
-		0          /// FLASH_WAIT_STATES_8
+        0          /// FLASH_WAIT_STATES_8
     },
     /// INPUT_VOLTAGE_V2R7_TO_V3R6
     {
@@ -158,7 +158,7 @@ const uint32_t ProcessorSTM32F4xx::myFlashWaitStatesFrequencyMap[][9] =
         150000000, /// FLASH_WAIT_STATES_4
         180000000, /// FLASH_WAIT_STATES_5
         0,         /// FLASH_WAIT_STATES_6
-		0,         /// FLASH_WAIT_STATES_7
+        0,         /// FLASH_WAIT_STATES_7
         0          /// FLASH_WAIT_STATES_8
     }
 };
@@ -669,7 +669,7 @@ ProcessorSTM32F4xx::Error ProcessorSTM32F4xx::setConfig(const Config& config)
 }
 
 //------------------------------------------------------------------------------
-// Private implemented methods
+// Private virtual methods overridden for Processor
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -732,6 +732,13 @@ Processor::Error ProcessorSTM32F4xx::driverSetPowerMode(
 uint32_t ProcessorSTM32F4xx::driverGetCoreClockFrequencyHz()
 {
     return (myConfig.coreClockFrequencyHz);
+}
+
+//------------------------------------------------------------------------------
+bool ProcessorSTM32F4xx::driverIsInterruptActive()
+{
+    return ((SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0);
+    // return (NVIC->IABR != 0);
 }
 
 //------------------------------------------------------------------------------

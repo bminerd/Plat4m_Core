@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,40 +64,40 @@ template <class TClass, typename TReturn, typename... TParameters>
 class CallbackMethod : public Callback<TReturn, TParameters...>
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public typedefs
     //--------------------------------------------------------------------------
-    
+
     typedef TReturn (TClass::*CallbackMethodType)(TParameters...);
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
     CallbackMethod(TClass* object, CallbackMethodType callbackMethod) :
         Callback<TReturn, TParameters...>(),
         myObject(object),
         myCallbackMethod(callbackMethod)
     {
     }
-    
+
     //--------------------------------------------------------------------------
-    // Public methods overridden for Callback
+    // Public virtual methods overridden for Callback
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
-    inline TReturn call(TParameters... parameters) override
+    virtual inline TReturn call(TParameters... parameters) override
     {
         return (*myObject.*myCallbackMethod)(parameters...);
     }
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     TClass* myObject;
     CallbackMethodType myCallbackMethod;
 };

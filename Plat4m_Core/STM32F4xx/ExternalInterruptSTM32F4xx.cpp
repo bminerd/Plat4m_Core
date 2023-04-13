@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file ExternalInterruptSTM32F4xx.cpp
 /// @author Ben Minerd
-/// @date 11/26/12
+/// @date 4/17/2013
 /// @brief ExternalInterruptSTM32F4xx class source file.
 ///
 
@@ -174,7 +174,7 @@ void ExternalInterruptSTM32F4xx::clear(const Id id)
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -195,12 +195,12 @@ Module::Error ExternalInterruptSTM32F4xx::driverEnable(const bool enable)
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from ExternalInterrupt
+// Private virtual methods overridden for ExternalInterrupt
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 ExternalInterrupt::Error ExternalInterruptSTM32F4xx::driverConfigure(
-														   const Config& config)
+                                                           const Config& config)
 {
     EXTI_InitTypeDef extiInit;
     extiInit.EXTI_Line    = lineMap[myId];

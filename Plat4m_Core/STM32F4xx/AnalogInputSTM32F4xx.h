@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,7 +65,7 @@ namespace Plat4m
 class AnalogInputSTM32F4xx : public AnalogInput
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
@@ -81,15 +81,15 @@ public:
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
-    
+
     virtual ~AnalogInputSTM32F4xx();
 
     //--------------------------------------------------------------------------
-    // Public methods implemented from AnalogInput
+    // Public virtual methods overridden for AnalogInput
     //--------------------------------------------------------------------------
 
-    VoltageV readVoltageVFast();
-    
+    virtual VoltageV readVoltageVFast() override;
+
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
@@ -103,24 +103,24 @@ private:
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
-    
+
     AdcSTM32F4xx& myAdc;
 
     const AdcSTM32F4xx::ChannelId myChannelId;
-    
+
     GpioPinSTM32F4xx& myGpioPin;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverSetEnabled(const bool enabled);
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from AnalogInput
+    // Private virtual methods overridden for AnalogInput
     //--------------------------------------------------------------------------
-    
-    AnalogInput::Error driverReadVoltageV(VoltageV& voltageV);
+
+    virtual AnalogInput::Error driverReadVoltageV(VoltageV& voltageV) override;
 };
 
 }; // namespace Plat4m

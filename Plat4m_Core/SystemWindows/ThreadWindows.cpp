@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file ThreadWindows.cpp
 /// @author Ben Minerd
-/// @date 12/23/2017
+/// @date 2/19/2018
 /// @brief ThreadWindows class source file.
 ///
 
@@ -103,42 +103,42 @@ DWORD ThreadWindows::getThreadId() const
 //------------------------------------------------------------------------------
 DWORD WINAPI ThreadWindows::threadCallback(LPVOID lpParameter)
 {
-	ThreadWindows* thread = static_cast<ThreadWindows*>(lpParameter);
+    ThreadWindows* thread = static_cast<ThreadWindows*>(lpParameter);
 
-	while (true) // Loop forever
-	{
-		if (thread->getPeriodMs() != 0)
-		{
-		    Sleep(thread->getPeriodMs());
-		}
+    while (true) // Loop forever
+    {
+        if (thread->getPeriodMs() != 0)
+        {
+            Sleep(thread->getPeriodMs());
+        }
 
-		thread->run();
-	}
+        thread->run();
+    }
 
-	return 0;
+    return 0;
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error ThreadWindows::driverSetEnabled(const bool enabled)
 {
-	if (enabled)
-	{
-		ResumeThread(myThreadHandle);
-	}
-	else
-	{
-		SuspendThread(myThreadHandle);
-	}
+    if (enabled)
+    {
+        ResumeThread(myThreadHandle);
+    }
+    else
+    {
+        SuspendThread(myThreadHandle);
+    }
 
-	return Module::Error(Module::ERROR_CODE_NONE);
+    return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Thread
+// Private virtual methods overridden for Thread
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -150,7 +150,5 @@ void ThreadWindows::driverSetPeriodMs(const TimeMs periodMs)
 //------------------------------------------------------------------------------
 uint32_t ThreadWindows::driverSetPriority(const uint32_t priority)
 {
-//	vTaskPrioritySet(myTaskHandle, priority);
-
-	return 0;
+    return 0;
 }

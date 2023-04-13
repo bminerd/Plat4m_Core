@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,31 +69,31 @@ const ProcessorSTM32F4xx::Peripheral TimerSTM32F4xx::myPeripheralMap[] =
     ProcessorSTM32F4xx::PERIPHERAL_TIM_2,  /// ID_2
     ProcessorSTM32F4xx::PERIPHERAL_TIM_3,  /// ID_3
     ProcessorSTM32F4xx::PERIPHERAL_TIM_4,  /// ID_4
-	ProcessorSTM32F4xx::PERIPHERAL_TIM_5,  /// ID_5
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_5,  /// ID_5
     ProcessorSTM32F4xx::PERIPHERAL_TIM_6,  /// ID_6
     ProcessorSTM32F4xx::PERIPHERAL_TIM_7,  /// ID_7
     ProcessorSTM32F4xx::PERIPHERAL_TIM_8,  /// ID_8
-	ProcessorSTM32F4xx::PERIPHERAL_TIM_9,  /// ID_9
-	ProcessorSTM32F4xx::PERIPHERAL_TIM_10, /// ID_10
-	ProcessorSTM32F4xx::PERIPHERAL_TIM_11, /// ID_11
-	ProcessorSTM32F4xx::PERIPHERAL_TIM_12, /// ID_12
-	ProcessorSTM32F4xx::PERIPHERAL_TIM_13, /// ID_13
-	ProcessorSTM32F4xx::PERIPHERAL_TIM_14  /// ID_14
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_9,  /// ID_9
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_10, /// ID_10
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_11, /// ID_11
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_12, /// ID_12
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_13, /// ID_13
+    ProcessorSTM32F4xx::PERIPHERAL_TIM_14  /// ID_14
 };
 
 const InterruptSTM32F4xx::Id TimerSTM32F4xx::myInterruptIdMap[] =
 {
-	InterruptSTM32F4xx::ID_TIM_1_BRK_TIM_9,
-	InterruptSTM32F4xx::ID_TIM_1_UP_TIM_10,
-	InterruptSTM32F4xx::ID_TIM_1_TRG_COM_TIM_11,
-	InterruptSTM32F4xx::ID_TIM_1_CC,
-	InterruptSTM32F4xx::ID_TIM_2,
-	InterruptSTM32F4xx::ID_TIM_3,
-	InterruptSTM32F4xx::ID_TIM_4,
-	InterruptSTM32F4xx::ID_TIM_8_BRK_TIM_12,
-	InterruptSTM32F4xx::ID_TIM_8_UP_TIM_13,
-	InterruptSTM32F4xx::ID_TIM_8_TRG_COM_TIM_14,
-	InterruptSTM32F4xx::ID_TIM_8_CC
+    InterruptSTM32F4xx::ID_TIM_1_BRK_TIM_9,
+    InterruptSTM32F4xx::ID_TIM_1_UP_TIM_10,
+    InterruptSTM32F4xx::ID_TIM_1_TRG_COM_TIM_11,
+    InterruptSTM32F4xx::ID_TIM_1_CC,
+    InterruptSTM32F4xx::ID_TIM_2,
+    InterruptSTM32F4xx::ID_TIM_3,
+    InterruptSTM32F4xx::ID_TIM_4,
+    InterruptSTM32F4xx::ID_TIM_8_BRK_TIM_12,
+    InterruptSTM32F4xx::ID_TIM_8_UP_TIM_13,
+    InterruptSTM32F4xx::ID_TIM_8_TRG_COM_TIM_14,
+    InterruptSTM32F4xx::ID_TIM_8_CC
 };
 
 TIM_TypeDef* TimerSTM32F4xx::myTimerMap[] =
@@ -575,7 +575,7 @@ void TimerSTM32F4xx::tim1BrkTim15InterruptHandler()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

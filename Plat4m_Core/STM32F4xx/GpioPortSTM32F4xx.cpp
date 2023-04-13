@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file GpioPortSTM32F4xx.cpp
 /// @author Ben Minerd
-/// @date 3/25/13
+/// @date 3/25/2013
 /// @brief GpioPortSTM32F4xx class.
 ///
 
@@ -57,27 +57,27 @@ using Plat4m::ProcessorSTM32F4xx;
 
 GPIO_TypeDef* GpioPortSTM32F4xx::myPortMap[] =
 {
-	GPIOA, /// ID_A
-	GPIOB, /// ID_B
-	GPIOC, /// ID_C
-	GPIOD, /// ID_D
-	GPIOE, /// ID_E
-	GPIOF, /// ID_F
-	GPIOG, /// ID_G
-	GPIOH, /// ID_H
-	GPIOI  /// ID_I
+    GPIOA, /// ID_A
+    GPIOB, /// ID_B
+    GPIOC, /// ID_C
+    GPIOD, /// ID_D
+    GPIOE, /// ID_E
+    GPIOF, /// ID_F
+    GPIOG, /// ID_G
+    GPIOH, /// ID_H
+    GPIOI  /// ID_I
 };
 
 const ProcessorSTM32F4xx::Peripheral GpioPortSTM32F4xx::myPeripheralMap[] =
 {
-	ProcessorSTM32F4xx::PERIPHERAL_GPIO_A, /// ID_A
-	ProcessorSTM32F4xx::PERIPHERAL_GPIO_B, /// ID_B
-	ProcessorSTM32F4xx::PERIPHERAL_GPIO_C, /// ID_C
-	ProcessorSTM32F4xx::PERIPHERAL_GPIO_D, /// ID_D
-	ProcessorSTM32F4xx::PERIPHERAL_GPIO_E, /// ID_E
-	ProcessorSTM32F4xx::PERIPHERAL_GPIO_F, /// ID_F
-	ProcessorSTM32F4xx::PERIPHERAL_GPIO_G, /// ID_G
-	ProcessorSTM32F4xx::PERIPHERAL_GPIO_H  /// ID_H
+    ProcessorSTM32F4xx::PERIPHERAL_GPIO_A, /// ID_A
+    ProcessorSTM32F4xx::PERIPHERAL_GPIO_B, /// ID_B
+    ProcessorSTM32F4xx::PERIPHERAL_GPIO_C, /// ID_C
+    ProcessorSTM32F4xx::PERIPHERAL_GPIO_D, /// ID_D
+    ProcessorSTM32F4xx::PERIPHERAL_GPIO_E, /// ID_E
+    ProcessorSTM32F4xx::PERIPHERAL_GPIO_F, /// ID_F
+    ProcessorSTM32F4xx::PERIPHERAL_GPIO_G, /// ID_G
+    ProcessorSTM32F4xx::PERIPHERAL_GPIO_H  /// ID_H
 };
 
 const uint32_t GpioPortSTM32F4xx::myModeMap[] =
@@ -123,68 +123,68 @@ GpioPortSTM32F4xx::~GpioPortSTM32F4xx()
 //------------------------------------------------------------------------------
 GpioPortSTM32F4xx::Id GpioPortSTM32F4xx::getId() const
 {
-	return myId;
+    return myId;
 }
 
 //------------------------------------------------------------------------------
 GPIO_TypeDef* GpioPortSTM32F4xx::getPort()
 {
-	return myPort;
+    return myPort;
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from GpioPort
+// Public virtual methods overridden for GpioPort
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 void GpioPortSTM32F4xx::setValueFast(const uint16_t value)
 {
-	myPort->ODR = value;
+    myPort->ODR = value;
 }
 
 //------------------------------------------------------------------------------
 uint16_t GpioPortSTM32F4xx::getValueFast()
 {
-	return (myPort->ODR & 0xFFFF);
+    return (myPort->ODR & 0xFFFF);
 }
 
 //------------------------------------------------------------------------------
 uint16_t GpioPortSTM32F4xx::readValueFast()
 {
-	return (myPort->IDR & 0xFFFF);
+    return (myPort->IDR & 0xFFFF);
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error GpioPortSTM32F4xx::driverSetEnabled(const bool enabled)
 {
-	ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
-												  enabled);
-    
+    ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
+                                                  enabled);
+
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from GpioPort
+// Private virtual methods overridden for GpioPort
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 GpioPort<uint16_t>::Error GpioPortSTM32F4xx::driverConfigure(
-														   const Config& config)
+                                                           const Config& config)
 {
     // Set mode
-    
+
     // Set mode bits for this port
     myPort->MODER = myModeMap[config.mode];
-    
+
     // Set resistor
-    
+
     // Set resistor bits for this pin
     myPort->PUPDR = myResistorMap[config.resistor];
-    
+
     if ((config.mode) == MODE_DIGITAL_OUTPUT_PUSH_PULL)
     {
         // Set speed bits for this pin
@@ -193,16 +193,16 @@ GpioPort<uint16_t>::Error GpioPortSTM32F4xx::driverConfigure(
         // Set output bits for this pin
         myPort->OTYPER = 0x00000000;
     }
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
 GpioPort<uint16_t>::Error GpioPortSTM32F4xx::driverSetValue(
-														   const uint16_t value)
+                                                           const uint16_t value)
 {
     myPort->ODR = value;
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -210,7 +210,7 @@ GpioPort<uint16_t>::Error GpioPortSTM32F4xx::driverSetValue(
 GpioPort<uint16_t>::Error GpioPortSTM32F4xx::driverGetValue(uint16_t& value)
 {
     value = (myPort->ODR & 0xFFFF);
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -218,6 +218,6 @@ GpioPort<uint16_t>::Error GpioPortSTM32F4xx::driverGetValue(uint16_t& value)
 GpioPort<uint16_t>::Error GpioPortSTM32F4xx::driverReadValue(uint16_t& value)
 {
     value = (myPort->IDR & 0xFFFF);
-    
+
     return Error(ERROR_CODE_NONE);
 }

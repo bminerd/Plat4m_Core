@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,11 +65,11 @@ namespace Plat4m
 class InterruptNRF5340 : public Interrupt
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum Id
     {
         ID_RESET = 0,
@@ -144,20 +144,20 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const Id myId;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from Module
-    //--------------------------------------------------------------------------
-    
-    Module::Error driverSetEnabled(const bool enabled);
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Interrupt
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
-    
-    Error driverConfigure(const Config& config);
+
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods overridden for Interrupt
+    //--------------------------------------------------------------------------
+
+    virtual Error driverConfigure(const Config& config) override;
 };
 
 }; // namespace Plat4m

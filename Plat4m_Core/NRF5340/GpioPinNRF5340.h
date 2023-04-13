@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,7 @@ namespace Plat4m
 class GpioPinNRF5340 : public GpioPin
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
@@ -131,33 +131,33 @@ public:
     GpioPinNRF5340(GpioPortNRF5340& gpioPort, const Id id);
 
     //--------------------------------------------------------------------------
-    // Public methods implemented from GpioPin
+    // Public virtual methods overridden for GpioPin
     //--------------------------------------------------------------------------
 
-    void setLevelFast(const Level level);
+    virtual void setLevelFast(const Level level) override;
 
-    Level getLevelFast();
+    virtual Level getLevelFast() override;
 
-    Level readLevelFast();
+    virtual Level readLevelFast() override;
 
-    void toggleLevelFast();
-    
+    virtual void toggleLevelFast() override;
+
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
+
     GpioPortNRF5340& getGpioPort();
-    
+
     Id getId() const;
-    
+
     void setNRF5340Config(NRF5340Config& config);
-    
+
     void setOutputType(const OutputType outputType);
 
     void setSubsystemSelect(const SubsystemSelect subsystemSelect);
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
@@ -171,34 +171,34 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     GpioPortNRF5340& myGpioPort;
-    
+
     const Id myId;
-    
+
     const std::uint32_t myPinBitMask;
 
     NRF5340Config myNRF5340Config;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
-    
-    Module::Error driverSetEnabled(const bool enable);
+
+    virtual Module::Error driverSetEnabled(const bool enable) override;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from GpioPin
+    // Private virtual methods overridden for GpioPin
     //--------------------------------------------------------------------------
-    
-    GpioPin::Error driverConfigure(const Config& config);
-    
-    GpioPin::Error driverSetLevel(const Level level);
-    
-    GpioPin::Error driverGetLevel(Level& level);
-    
-    GpioPin::Error driverReadLevel(Level& level);
-    
-    GpioPin::Error driverToggleLevel();
+
+    virtual GpioPin::Error driverConfigure(const Config& config) override;
+
+    virtual GpioPin::Error driverSetLevel(const Level level) override;
+
+    virtual GpioPin::Error driverGetLevel(Level& level) override;
+
+    virtual GpioPin::Error driverReadLevel(Level& level) override;
+
+    virtual GpioPin::Error driverToggleLevel() override;
 };
 
 }; // namespace Plat4m

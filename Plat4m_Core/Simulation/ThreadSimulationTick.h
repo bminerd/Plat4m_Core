@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -94,22 +94,23 @@ private:
     TopicSubscriberThread<TimeTickSample> myTimeTickTopicSubscriberThread;
 
     Semaphore& myRunCompleteSemaphore;
-    
+
     TimeMs myNextCallTimeMs;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverSetEnabled(const bool enabled);
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Thread
+    // Private virtual methods overridden for Thread
     //--------------------------------------------------------------------------
 
-    void driverSetPeriodMs(const TimeMs periodMs);
+    virtual void driverSetPeriodMs(const TimeMs periodMs) override;
 
-    std::uint32_t driverSetPriority(const std::uint32_t priority);
+    virtual std::uint32_t driverSetPriority(
+                                         const std::uint32_t priority) override;
 
     //--------------------------------------------------------------------------
     // Private methods

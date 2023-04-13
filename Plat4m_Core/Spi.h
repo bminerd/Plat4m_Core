@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,11 +68,11 @@ namespace Plat4m
 class Spi : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -80,7 +80,7 @@ public:
         ERROR_CODE_NOT_ENABLED,
         ERROR_CODE_TX_BUFFER_FULL,
         ERROR_CODE_TIMEOUT,
-		ERROR_CODE_CLOCK_FREQUENCY_INVALID
+        ERROR_CODE_CLOCK_FREQUENCY_INVALID
     };
 
     enum Mode
@@ -119,7 +119,7 @@ public:
         TRANSMISSION_MODE_RX,
         TRANSMISSION_MODE_TX
     };
-    
+
     enum TransferMode
     {
         TRANSFER_MODE_TRANSMIT,
@@ -132,7 +132,7 @@ public:
         TRANSFER_MODE_TRANSMIT_RECEIVE_CONCURRENT,
         TRANSFER_MODE_TRANSMIT_RECEIVE_CONCURRENT_MAILBOX
     };
-    
+
     //--------------------------------------------------------------------------
     // Public typedefs
     //--------------------------------------------------------------------------
@@ -142,7 +142,7 @@ public:
     //--------------------------------------------------------------------------
     // Public structures
     //--------------------------------------------------------------------------
-    
+
     struct Config
     {
     	uint32_t clockFrequencyHz;
@@ -152,25 +152,25 @@ public:
         ClockPhase clockPhase;
         BitOrder bitOrder;
     };
-    
-	struct Transfer
-	{
-		TransferMode transferMode;
-		GpioPin* chipSelectGpioPin;
-		uint32_t transmitCount;
-		uint32_t receiveCount;
-		Buffer<uint8_t> transmitBuffer;
-		Buffer<uint8_t> receiveBuffer;
-		MasterSlaveBus::Mailbox* mailbox;
-		Error error;
-	};
+
+    struct Transfer
+    {
+        TransferMode transferMode;
+        GpioPin* chipSelectGpioPin;
+        uint32_t transmitCount;
+        uint32_t receiveCount;
+        Buffer<uint8_t> transmitBuffer;
+        Buffer<uint8_t> receiveBuffer;
+        MasterSlaveBus::Mailbox* mailbox;
+        Error error;
+    };
 
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
 
     Error setConfig(const Config& config);
-    
+
     Config getConfig() const;
 
     Error masterTransfer(const TransferMode transferMode,
@@ -180,13 +180,13 @@ public:
                          MasterSlaveBus::Mailbox* mailbox = 0);
 
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
 
     Spi(const TransmissionMode transmissionMode);
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
@@ -194,7 +194,7 @@ protected:
     virtual ~Spi();
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
@@ -202,15 +202,15 @@ private:
     const TransmissionMode myTransmissionMode;
 
     Config myConfig;
-    
+
     BufferN<Transfer, 10> myTransferBuffer;
-    
+
     Transfer myLastTransfer;
 
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Error driverSetConfig(const Config& config) = 0;
 
     virtual Error driverMasterTransfer(Transfer& transfer) = 0;

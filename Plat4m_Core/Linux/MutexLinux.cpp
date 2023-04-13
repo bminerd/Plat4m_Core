@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -79,20 +79,20 @@ MutexLinux::~MutexLinux()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Mutex
+// Private virtual methods overridden for Mutex
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Mutex::Error MutexLinux::driverSetLocked(const bool locked)
 {
-	if (locked)
-	{
-		pthread_mutex_lock(&myMutexHandle);
-	}
-	else
-	{
-		pthread_mutex_unlock(&myMutexHandle);
-	}
+    if (locked)
+    {
+        pthread_mutex_lock(&myMutexHandle);
+    }
+    else
+    {
+        pthread_mutex_unlock(&myMutexHandle);
+    }
 
     return ERROR_NONE;
 }

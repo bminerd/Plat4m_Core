@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -167,7 +167,7 @@ InterruptSTM32F4xx::InterruptSTM32F4xx(const Id id,
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -180,12 +180,12 @@ Module::Error InterruptSTM32F4xx::driverSetEnabled(const bool enabled)
     nvicInit.NVIC_IRQChannelCmd                = (FunctionalState) enabled;
 
     NVIC_Init(&nvicInit);
-    
+
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Interrupt
+// Private virtual methods overridden for Interrupt
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -198,6 +198,6 @@ Interrupt::Error InterruptSTM32F4xx::driverConfigure(const Config& config)
     nvicInit.NVIC_IRQChannelCmd                = ENABLE;
 
     NVIC_Init(&nvicInit);
-    
+
     return Error(ERROR_CODE_NONE);
 }

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ WaitConditionLinux::WaitConditionLinux() :
     WaitCondition(),
     myConditionHandle(PTHREAD_COND_INITIALIZER),
     myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
-	myThreadHandle(0)
+    myThreadHandle(0)
 {
 }
 
@@ -83,7 +83,7 @@ void WaitConditionLinux::notifyFast()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from WaitCondition
+// Private virtual methods overridden for WaitCondition
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
