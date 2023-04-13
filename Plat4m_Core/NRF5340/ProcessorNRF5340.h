@@ -151,7 +151,8 @@ private:
     
     virtual Processor::Error driverReset() override;
     
-    virtual Processor::Error driverConfigure(const Processor::Config& config) override;
+    virtual Processor::Error driverConfigure(
+                                      const Processor::Config& config) override;
     
     virtual Processor::Error driverSetPowerMode(
                                  const Processor::PowerMode powerMode) override;
@@ -159,6 +160,8 @@ private:
     virtual uint32_t driverGetCoreClockFrequencyHz() override;
 
     virtual Processor::Error driverJumpToAddress(const intptr_t address);
+
+    virtual bool driverIsInterruptActive() override;
 };
 
 }; // namespace Plat4m

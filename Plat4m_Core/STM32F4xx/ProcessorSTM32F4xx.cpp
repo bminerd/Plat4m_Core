@@ -738,7 +738,6 @@ uint32_t ProcessorSTM32F4xx::driverGetCoreClockFrequencyHz()
 bool ProcessorSTM32F4xx::driverIsInterruptActive()
 {
     return ((SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0);
-    // return (NVIC->IABR != 0);
 }
 
 //------------------------------------------------------------------------------

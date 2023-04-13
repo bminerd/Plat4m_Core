@@ -293,6 +293,12 @@ Processor::Error ProcessorNRF5340::driverJumpToAddress(const intptr_t address)
 }
 
 //------------------------------------------------------------------------------
+bool ProcessorNRF5340::driverIsInterruptActive()
+{
+    return ((SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0);
+}
+
+//------------------------------------------------------------------------------
 // Interrupt service routines
 //------------------------------------------------------------------------------
 
