@@ -17,7 +17,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g3 -Wall -Wno-comment")
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PLAT4M_CORE_DIR})
-include_directories(${PLAT4M_CORE_DIR}/SystemFreeRtos)
+include_directories(${PLAT4M_CORE_DIR}/SystemFreeRtos/Config)
 include_directories(${PLAT4M_CORE_DIR}/SystemFreeRtos/FreeRTOSv9.0.0)
 include_directories(${PLAT4M_CORE_DIR}/SystemFreeRtos/FreeRTOSv9.0.0/FreeRTOS/Source/include)
 include_directories(${PLAT4M_CORE_DIR}/SystemFreeRtos/FreeRTOSv9.0.0/FreeRTOS/Source/portable/GCC/ARM_CM4F)
