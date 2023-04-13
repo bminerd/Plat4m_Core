@@ -56,7 +56,7 @@ using namespace Plat4m;
 //------------------------------------------------------------------------------
 InterruptPolicyStopwatch::InterruptPolicyStopwatch() :
     InterruptPolicy(),
-    myStopwatch(StopwatchManager::createStopwatch())
+    myStopwatch(StopwatchManager::createStopwatch("(Unnamed Interrupt)"))
 {
 }
 

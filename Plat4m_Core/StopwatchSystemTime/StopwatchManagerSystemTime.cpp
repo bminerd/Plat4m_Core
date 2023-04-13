@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -73,7 +73,7 @@ StopwatchManagerSystemTime::~StopwatchManagerSystemTime()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Stopwatch& StopwatchManagerSystemTime::driverCreateStopwatch()
+Stopwatch& StopwatchManagerSystemTime::driverCreateStopwatch(const char* name)
 {
-    return *(MemoryAllocator::allocate<StopwatchSystemTime>());
+    return *(MemoryAllocator::allocate<StopwatchSystemTime>(name));
 }

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -67,7 +67,7 @@ public:
     // Public static methods
     //--------------------------------------------------------------------------
 
-    static ThreadPolicy* getThreadPolicy();
+    static ThreadPolicy* getThreadPolicy(Thread& thread);
 
 protected:
     
@@ -95,7 +95,7 @@ private:
     // Private pure virtual methods
     //--------------------------------------------------------------------------
 
-    virtual ThreadPolicy& driverGetThreadPolicy() = 0;
+    virtual ThreadPolicy& driverGetThreadPolicy(Thread& thread) = 0;
 };
 
 }; // namespace Plat4m

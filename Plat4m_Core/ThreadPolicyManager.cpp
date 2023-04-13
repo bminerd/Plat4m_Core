@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -59,11 +59,11 @@ ThreadPolicyManager* ThreadPolicyManager::myDriver = 0;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadPolicy* ThreadPolicyManager::getThreadPolicy()
+ThreadPolicy* ThreadPolicyManager::getThreadPolicy(Thread& thread)
 {
     if (isValidPointer(myDriver))
     {
-        return &(myDriver->driverGetThreadPolicy());
+        return &(myDriver->driverGetThreadPolicy(thread));
     }
 
     return 0;

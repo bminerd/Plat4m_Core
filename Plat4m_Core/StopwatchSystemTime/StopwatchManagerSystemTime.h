@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -88,7 +88,7 @@ private:
     // Private virtual methods overridden for StopwatchManager
     //--------------------------------------------------------------------------
 
-    virtual Stopwatch& driverCreateStopwatch() override;
+    virtual Stopwatch& driverCreateStopwatch(const char* name) override;
 };
 
 }; // namespace Plat4m

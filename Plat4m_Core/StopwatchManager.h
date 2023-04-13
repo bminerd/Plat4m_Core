@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,7 @@ public:
     // Public static methods
     //--------------------------------------------------------------------------
 
-    static Stopwatch& createStopwatch();
+    static Stopwatch& createStopwatch(const char* name = 0);
 
 protected:
 
@@ -83,9 +83,9 @@ protected:
     //--------------------------------------------------------------------------
 
     virtual ~StopwatchManager();
-    
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
@@ -96,7 +96,7 @@ private:
     // Private pure virtual methods
     //--------------------------------------------------------------------------
 
-    virtual Stopwatch& driverCreateStopwatch() = 0;
+    virtual Stopwatch& driverCreateStopwatch(const char* name) = 0;
 };
 
 }; // namespace Plat4m

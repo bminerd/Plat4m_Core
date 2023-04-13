@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -53,9 +53,9 @@ using namespace Plat4m;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadPolicyStopwatch::ThreadPolicyStopwatch() :
+ThreadPolicyStopwatch::ThreadPolicyStopwatch(Thread& thread) :
     ThreadPolicy(),
-    myStopwatch(StopwatchManager::createStopwatch())
+    myStopwatch(StopwatchManager::createStopwatch(thread.getName()))
 {
 }
 

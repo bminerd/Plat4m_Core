@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -58,9 +58,17 @@ StopwatchManager* StopwatchManager::myDriver = 0;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Stopwatch& StopwatchManager::createStopwatch()
+Stopwatch& StopwatchManager::createStopwatch(const char* name)
 {
-    return (myDriver->driverCreateStopwatch());
+    if (isNullPointer(myDriver))
+    {
+        while (true)
+        {
+            // Lock up, no StopwatchManager has been instantiated
+        }
+    }
+
+    return (myDriver->driverCreateStopwatch(name));
 }
 
 //------------------------------------------------------------------------------
