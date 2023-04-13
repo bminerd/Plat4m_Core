@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added virtual and override keywords to overridden methods in subclasses. This improves compatiblity with some compilers and is a defensive programming technique. [Resolves 80].
 - `[BUG FIX]` Fixed syntax issues in Service class. [Resolves 107].
 - `[BUG FIX]` Fixed implicit conversion error in TimeStamp for ARM v5 compiler. [Resolves 104].
 - `[IMPROVEMENT]` Added fromTimeSFloat(), fromTimeSDouble(), and fromTimeSValueType() templated method. Also added variants that accept a rounding precision parameter. [Resolves 102].
