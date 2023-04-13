@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Benjamin Minerd
+// Copyright (c) 2020-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -83,14 +83,16 @@ public:
                      const typename TopicSubscriber<SampleType>::Config config,
                      typename Topic<SampleType>::SampleCallback& sampleCallback,
                      const std::uint32_t nStackBytes = 0,
-                     const bool isSimulated = false) :
+                     const bool isSimulated = false,
+                     const char* name = 0) :
         TopicSubscriber<SampleType>(id, config, sampleCallback),
         myThread(
             System::createThread(
                    createCallback(this, &TopicSubscriberThread::threadCallback),
                    0,
                    nStackBytes,
-                   isSimulated)),
+                   isSimulated,
+                   name)),
         myQueue(System::createQueue<SampleType>(nQueueValues, myThread))
     {
     }
@@ -100,14 +102,16 @@ public:
                      const TopicBase::Id id,
                      typename Topic<SampleType>::SampleCallback& sampleCallback,
                      const std::uint32_t nStackBytes = 0,
-                     const bool isSimulated = false) :
+                     const bool isSimulated = false,
+                     const char* name = 0) :
         TopicSubscriber<SampleType>(id, sampleCallback),
         myThread(
             System::createThread(
                    createCallback(this, &TopicSubscriberThread::threadCallback),
                    0,
                    nStackBytes,
-                   isSimulated)),
+                   isSimulated,
+                   name)),
         myQueue(System::createQueue<SampleType>(nQueueValues, myThread))
     {
     }

@@ -71,9 +71,10 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-	ThreadFreeRtos(RunCallback& callback,
-	               const TimeMs periodMs = 0,
-	               const uint32_t nStackBytes = 0);
+    ThreadFreeRtos(RunCallback& callback,
+                   const TimeMs periodMs = 0,
+                   const uint32_t nStackBytes = 0,
+                   const char* name = 0);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors

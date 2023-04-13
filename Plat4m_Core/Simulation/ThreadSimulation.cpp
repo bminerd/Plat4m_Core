@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -59,12 +59,16 @@ using namespace Plat4m;
 ThreadSimulation::ThreadSimulation(RunCallback& callback,
                                    Semaphore& runCompleteSemaphore,
                                    const TimeMs periodMs,
-                                   const uint32_t nStackBytes) :
-    Thread(callback, periodMs),
+                                   const uint32_t nStackBytes,
+                                   const char* name) :
+    Thread(callback, periodMs, name),
     myThread(
         System::createThread(
                         createCallback(this, &ThreadSimulation::threadCallback),
-                        periodMs)),
+                        periodMs,
+                        nStackBytes,
+                        false,
+                        name)),
     myRunCompleteSemaphore(runCompleteSemaphore)
 {
 }
@@ -79,7 +83,7 @@ ThreadSimulation::~ThreadSimulation()
 }
 
 //------------------------------------------------------------------------------
-// Private methods overridden for Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -91,7 +95,7 @@ Module::Error ThreadSimulation::driverSetEnabled(const bool enabled)
 }
 
 //------------------------------------------------------------------------------
-// Private methods overridden for Thread
+// Private virtual methods overridden for Thread
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

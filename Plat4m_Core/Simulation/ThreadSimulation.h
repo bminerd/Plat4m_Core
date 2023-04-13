@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -71,10 +71,11 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-	ThreadSimulation(RunCallback& callback,
+    ThreadSimulation(RunCallback& callback,
                      Semaphore& runCompleteSemaphore,
                      const TimeMs periodMs = 0,
-                     const std::uint32_t nStackBytes = 0);
+                     const std::uint32_t nStackBytes = 0,
+                     const char* name = 0);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors

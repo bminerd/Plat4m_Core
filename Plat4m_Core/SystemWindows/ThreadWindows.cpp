@@ -54,10 +54,12 @@ using Plat4m::Module;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadWindows::ThreadWindows(RunCallback& callback, const TimeMs periodMs) :
-    Thread(callback, periodMs),
-	myThreadHandle(0),
-	myThreadId(0)
+ThreadWindows::ThreadWindows(RunCallback& callback,
+                             const TimeMs periodMs,
+                             const char* name) :
+    Thread(callback, periodMs, name),
+    myThreadHandle(0),
+    myThreadId(0)
 {
     myThreadHandle = CreateThread(0,
                                   0,

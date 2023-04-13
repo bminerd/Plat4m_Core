@@ -53,8 +53,10 @@ using Plat4m::ThreadLite;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadLite::ThreadLite(RunCallback& callback, const TimeMs periodMs) :
-    Thread(callback, periodMs),
+ThreadLite::ThreadLite(RunCallback& callback,
+                       const TimeMs periodMs,
+                       const char* name) :
+    Thread(callback, periodMs, name),
     myIsActive(false),
     myCallTimeMs(0),
     myWorstCaseRunTimeMs(0xFFFFFFFF)

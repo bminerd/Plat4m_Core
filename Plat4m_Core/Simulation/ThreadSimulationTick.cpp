@@ -59,14 +59,15 @@ ThreadSimulationTick::ThreadSimulationTick(RunCallback& callback,
                                            const uint32_t timeTickTopicId,
                                            Semaphore& runCompleteSemaphore,
                                            const TimeMs periodMs,
-                                           const uint32_t nStackBytes) :
-    Thread(callback, periodMs),
+                                           const uint32_t nStackBytes,
+                                           const char* name) :
+    Thread(callback, periodMs, name),
     myTimeTickTopicSubscriberThread(
-                 timeTickTopicId,
-                 createCallback(this,
-                                &ThreadSimulationTick::timeTickSampleCallback),
-                 nStackBytes,
-                 true),
+            timeTickTopicId,
+            createCallback(this, &ThreadSimulationTick::timeTickSampleCallback),
+            nStackBytes,
+            false,
+            name),
     myRunCompleteSemaphore(runCompleteSemaphore),
     myNextCallTimeMs(0)
 {

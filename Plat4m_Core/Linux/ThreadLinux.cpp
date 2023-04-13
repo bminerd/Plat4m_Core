@@ -57,19 +57,21 @@ using Plat4m::Module;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
-    Thread(callback, periodMs),
-	myThreadHandle(0),
-	myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
-	myConditionHandle(PTHREAD_COND_INITIALIZER),
-	myNextCallTimeMs(0),
+ThreadLinux::ThreadLinux(RunCallback& callback,
+                         const TimeMs periodMs, 
+                         const char* name) :
+    Thread(callback, periodMs, name),
+    myThreadHandle(0),
+    myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
+    myConditionHandle(PTHREAD_COND_INITIALIZER),
+    myNextCallTimeMs(0),
     myIsEnabled(false),
     myShouldExit(false)
 {
     int returnValue = pthread_create(&myThreadHandle,
-					 				 NULL,
-									 &threadCallback,
-									 this);
+                                     NULL,
+                                     &threadCallback,
+                                     this);
 
     if (returnValue != 0)
     {
@@ -78,6 +80,15 @@ ThreadLinux::ThreadLinux(RunCallback& callback, const TimeMs periodMs) :
             // Lock up, unable to create thread
         }
     }
+
+    const char* newName = name;
+
+    if (isNullPointer(newName))
+    {
+        newName = "(Unnamed Thread)";
+    }
+
+    returnValue = pthread_setname_np(myThreadHandle, newName);
 }
 
 //------------------------------------------------------------------------------

@@ -70,7 +70,9 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-	ThreadWindows(RunCallback& callback, const TimeMs periodMs = 0);
+    ThreadWindows(RunCallback& callback,
+                  const TimeMs periodMs = 0,
+                  const char* name = 0);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
