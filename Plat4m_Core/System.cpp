@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,12 +69,14 @@ bool System::myIsRunning = false;
 Thread& System::createThread(Thread::RunCallback& callback,
                              const TimeMs periodMs,
                              const uint32_t nStackBytes,
-                             const bool isSimulated)
+                             const bool isSimulated,
+                             const char* name)
 {
     return (myDriver->driverCreateThread(callback,
                                          periodMs,
                                          nStackBytes,
-                                         isSimulated));
+                                         isSimulated,
+                                         name));
 }
 
 //------------------------------------------------------------------------------
@@ -99,7 +101,7 @@ Semaphore& System::createSemaphore(const uint32_t maxValue,
 //------------------------------------------------------------------------------
 void System::run()
 {
-	myIsRunning = true;
+    myIsRunning = true;
     myDriver->driverRun();
 }
 

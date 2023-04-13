@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -94,7 +94,8 @@ public:
     static Thread& createThread(Thread::RunCallback& callback,
                                 const TimeMs periodMs = 0,
                                 const std::uint32_t nStackBytes = 0,
-                                const bool isSimulated = false);
+                                const bool isSimulated = false,
+                                const char* name = 0);
 
     static Mutex& createMutex(Thread& thread);
 
@@ -151,7 +152,8 @@ public:
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
                                        const std::uint32_t nStackBytes,
-                                       const bool isSimulated) = 0;
+                                       const bool isSimulated,
+                                       const char* name) = 0;
 
     virtual Mutex& driverCreateMutex(Thread& thread) = 0;
 
