@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2021-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,8 @@ List<Stopwatch*>& Stopwatch::getStopwatchList()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Stopwatch::Stopwatch() :
+Stopwatch::Stopwatch(const char* name) :
+    myName(name),
     myPreemptedStopwatch(0),
     myIsFirstMeasurement(true),
     myStartTimeStamp(),
@@ -107,6 +108,18 @@ Stopwatch::~Stopwatch()
 //------------------------------------------------------------------------------
 // Public methods
 //------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void Stopwatch::setName(const char* name)
+{
+    myName = name;
+}
+
+//------------------------------------------------------------------------------
+const char* Stopwatch::getName() const
+{
+    return myName;
+}
 
 //------------------------------------------------------------------------------
 void Stopwatch::start()
