@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added string name parameter to Thread and Stopwatch classes. Updated all references to pass string name to Thread and Stopwatch. Updated StopwatchStatisticsPrinter to use internal Stopwatch name and added heartbeat output configuration option. [Resolves 111].
 - `[IMPROVEMENT]` Added isInterruptActive() methods to Processor class. Added implementations to STM32F4xx, STM32F30x, and NRF5340 subclasses. [Resolves 110].
 - `[IMPROVEMENT]` Added virtual and override keywords to overridden methods in subclasses. This improves compatiblity with some compilers and is a defensive programming technique. [Resolves 80].
 - `[BUG FIX]` Fixed syntax issues in Service class. [Resolves 107].
