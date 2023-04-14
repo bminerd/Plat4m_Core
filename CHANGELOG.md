@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added reset of singleton drivers in Manager classes. [Resolves 114].
 - `[IMPROVEMENT]` Updated default FreeRTOSConfig.h to record stack high address. Also increased length of string task name and set heap size to zero. Moved into subfolder ./Config. [Resolves 113].
 - `[IMPROVEMENT]` Updated GitLab CI yaml file to use bminerd/plat4m_linux_dev container directly to improve job speed. [Resolves 92].
 - `[IMPROVEMENT]` Added string name parameter to Thread and Stopwatch classes. Updated all references to pass string name to Thread and Stopwatch. Updated StopwatchStatisticsPrinter to use internal Stopwatch name and added heartbeat output configuration option. [Resolves 111].
