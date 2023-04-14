@@ -95,4 +95,5 @@ InterruptPolicyManager::InterruptPolicyManager()
 //------------------------------------------------------------------------------
 InterruptPolicyManager::~InterruptPolicyManager()
 {
+    myDriver = 0;
 }

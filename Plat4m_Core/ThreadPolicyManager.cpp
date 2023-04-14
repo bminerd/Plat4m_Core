@@ -95,4 +95,5 @@ ThreadPolicyManager::ThreadPolicyManager()
 //------------------------------------------------------------------------------
 ThreadPolicyManager::~ThreadPolicyManager()
 {
+    myDriver = 0;
 }

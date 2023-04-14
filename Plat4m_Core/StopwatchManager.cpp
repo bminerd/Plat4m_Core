@@ -98,4 +98,5 @@ StopwatchManager::StopwatchManager() :
 //------------------------------------------------------------------------------
 StopwatchManager::~StopwatchManager()
 {
+    myDriver = 0;
 }
