@@ -72,7 +72,8 @@ public:
     enum ErrorCode
     {
         ERROR_CODE_NONE,
-        ERROR_CODE_TOPIC_INVALID
+        ERROR_CODE_TOPIC_INVALID,
+        ERROR_CODE_TOPIC_TYPE_ID_MISMATCH
     };
 
     typedef ErrorTemplate<ErrorCode> Error;

@@ -76,11 +76,6 @@ public:
     // Public types
     //--------------------------------------------------------------------------
 
-    enum ErrorCode
-    {
-        ERROR_CODE_NONE
-    };
-
     typedef Callback<void, const SampleType&> SampleCallback;
 
     //--------------------------------------------------------------------------
@@ -90,12 +85,7 @@ public:
     //--------------------------------------------------------------------------
     static Topic& create(const TopicBase::Id id)
     {
-        Topic* topic = static_cast<Topic*>(TopicManager::find(id));
-
-        if (isNullPointer(topic))
-        {
-            topic = createPrivate(id);
-        }
+        Topic* topic = findOrCreate(id);
 
         return (*topic);
     }
@@ -104,12 +94,7 @@ public:
     static void subscribe(const TopicBase::Id id,
                           SampleCallback& sampleCallback)
     {
-        Topic* topic = static_cast<Topic*>(TopicManager::find(id));
-
-        if (isNullPointer(topic))
-        {
-            topic = createPrivate(id);
-        }
+        Topic* topic = findOrCreate(id);
 
         topic->subscribe(sampleCallback);
     }
@@ -196,11 +181,44 @@ private:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
+    static Topic* find(const TopicBase::Id id)
+    {
+        Topic* topic = 0;
+
+        TopicBase* topicBase = TopicManager::find(id);
+
+        if (isValidPointer(topicBase))
+        {
+            topic = dynamic_cast<Topic*>(topicBase);
+
+            if (isNullPointer(topic))
+            {
+                Error error(TopicBase::ERROR_CODE_TOPIC_TYPE_ID_MISMATCH);
+            }
+        }
+
+        return topic;
+    }
+
+    //--------------------------------------------------------------------------
     static Topic* createPrivate(const TopicBase::Id id)
     {
         void* memoryPointer = AllocationMemory::allocate(sizeof(Topic));
 
         Topic* topic = new(memoryPointer) Topic(id);
+
+        return topic;
+    }
+
+    //--------------------------------------------------------------------------
+    static Topic* findOrCreate(const TopicBase::Id id)
+    {
+        Topic* topic = find(id);
+
+        if (isNullPointer(topic))
+        {
+            topic = createPrivate(id);
+        }
 
         return topic;
     }
