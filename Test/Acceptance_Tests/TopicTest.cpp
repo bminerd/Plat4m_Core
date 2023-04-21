@@ -46,6 +46,7 @@
 #include <Test/Acceptance_Tests/TopicTest.h>
 #include <Plat4m_Core/TopicBase.h>
 #include <Plat4m_Core/Topic.h>
+#include <Plat4m_Core/TopicManager.h>
 #include <Plat4m_Core/CallbackFunctionParameter.h>
 
 using namespace Plat4m;
@@ -106,6 +107,8 @@ bool TopicTest::acceptanceTest1()
     TestSample1 testTopicSample;
     testTopicSample.sample = 42;
 
+    TopicManager topicManager;
+
     Topic<TestSample1>& testTopic = Topic<TestSample1>::create(testTopicId);
 
     Topic<TestSample1>::subscribe(
@@ -152,6 +155,8 @@ bool TopicTest::acceptanceTest2()
     TestSample2 sample;
     sample.sample1 = 42;
     sample.sample2 = 67;
+
+    TopicManager topicManager;
 
     Topic<TestSample2>& testTopic = Topic<TestSample2>::create(testTopicId);
 

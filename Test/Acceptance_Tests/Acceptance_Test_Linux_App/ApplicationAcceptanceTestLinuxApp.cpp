@@ -63,7 +63,6 @@ ApplicationAcceptanceTestLinuxApp::ApplicationAcceptanceTestLinuxApp() :
                            "UNIT_TEST_LINUX",
                            "0.1.0"),
     myAllocationMemory(),
-    myTopicManager(),
     mySystem(),
     myProcessor(),
     myTopicTest(),

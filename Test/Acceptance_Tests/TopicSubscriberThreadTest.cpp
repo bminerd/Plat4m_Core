@@ -52,6 +52,7 @@
 #include <Plat4m_Core/CallbackFunctionParameter.h>
 #include <Plat4m_Core/CallbackFunction.h>
 #include <Plat4m_Core/System.h>
+#include <Plat4m_Core/TopicManager.h>
 
 using namespace Plat4m;
 
@@ -105,6 +106,8 @@ bool TopicSubscriberThreadTest::acceptanceTest1()
     // Setup / Operation
 
     const TopicBase::Id testTopicId = 5;
+
+    TopicManager topicManager;
 
     Topic<TestSample>& testTopic = Topic<TestSample>::create(testTopicId);
 

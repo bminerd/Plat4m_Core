@@ -117,6 +117,8 @@ bool TopicSubscriberTest::acceptanceTest1()
     TestSample sample3;
     sample3.sample = 23;
 
+    TopicManager topicManager;
+
     Topic<TestSample>& testTopic = Topic<TestSample>::create(testTopicId);
 
     TopicSubscriber<TestSample>::Config config;
