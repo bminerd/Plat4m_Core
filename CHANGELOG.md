@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added modulus operator to TimeStamp class. [Resolves 117].
 - `[BUG FIX]` Fixed Topic subscription bug that could subscribe to a topic of an incompatible type if the wrong ID was provided. Fix uses dynamic_cast which requires RTTI. [Resolves 106].
 - `[IMPROVEMENT]` Added reset of singleton drivers in Manager classes. [Resolves 114].
 - `[IMPROVEMENT]` Updated default FreeRTOSConfig.h to record stack high address. Also increased length of string task name and set heap size to zero. Moved into subfolder ./Config. [Resolves 113].
