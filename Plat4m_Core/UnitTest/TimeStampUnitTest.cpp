@@ -79,6 +79,8 @@ const UnitTest::TestCallbackFunction TimeStampUnitTest::myTestCallbackFunctions[
     &TimeStampUnitTest::operatorSubtractEqualsTest1,
     &TimeStampUnitTest::operatorSubtractEqualsTest2,
 
+    &TimeStampUnitTest::operatorModulusTest,
+
     &TimeStampUnitTest::fromTimeMsTest,
 
     &TimeStampUnitTest::fromTimeUsTest,
@@ -375,6 +377,22 @@ bool TimeStampUnitTest::operatorSubtractEqualsTest2()
     const TimeStamp expected(0, -750000000);
 
     const bool compare = timeStamp1 == expected;
+
+    return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true));
+}
+
+//------------------------------------------------------------------------------
+bool TimeStampUnitTest::operatorModulusTest()
+{
+    const TimeStamp timeStamp1(5, 250000000);
+
+    const TimeStamp timeStamp2(1, 200000000);
+
+    TimeStamp result = timeStamp1 % timeStamp2;
+
+    const TimeStamp expected(0, 450000000);
+
+    const bool compare = result == expected;
 
     return UNIT_TEST_REPORT(UNIT_TEST_CASE_EQUAL(compare, true));
 }

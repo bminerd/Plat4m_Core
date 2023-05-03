@@ -105,6 +105,8 @@ public:
     static bool operatorSubtractEqualsTest1();
     static bool operatorSubtractEqualsTest2();
 
+    static bool operatorModulusTest();
+
     static bool fromTimeMsTest();
 
     static bool fromTimeUsTest();
