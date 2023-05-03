@@ -109,6 +109,8 @@ struct TimeStamp
 
     TimeStamp& operator-=(const TimeStamp& timeStamp);
 
+    TimeStamp operator%(const TimeStamp& timeStamp) const;
+
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------

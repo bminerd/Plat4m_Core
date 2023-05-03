@@ -215,6 +215,25 @@ TimeStamp& TimeStamp::operator-=(const TimeStamp& timeStamp)
 }
 
 //------------------------------------------------------------------------------
+TimeStamp TimeStamp::operator%(const TimeStamp& timeStamp) const
+{
+    TimeStamp result;
+
+    int64_t ns = static_cast<int64_t>(timeS) * 1000000000 +
+                                                   static_cast<int64_t>(timeNs);
+
+    int64_t timeStampNs = static_cast<int64_t>(timeStamp.timeS) * 1000000000 +
+                                         static_cast<int64_t>(timeStamp.timeNs);
+
+    int64_t modulus = ns % timeStampNs;
+
+    result.timeS = modulus / 1000000000;
+    result.timeNs = modulus % 1000000000;
+
+    return result;
+}
+
+//------------------------------------------------------------------------------
 // Public methods
 //------------------------------------------------------------------------------
 
