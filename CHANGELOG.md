@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Fixed Service finding bug that could return a service of an incompatible type if the wrong ID was provided. Fix uses dynamic_cast which requires RTTI. [Resolves 123].
 - `[IMPROVEMENT]` Added modulus operator to TimeStamp class. [Resolves 117].
 - `[BUG FIX]` Fixed Topic subscription bug that could subscribe to a topic of an incompatible type if the wrong ID was provided. Fix uses dynamic_cast which requires RTTI. [Resolves 106].
 - `[IMPROVEMENT]` Added reset of singleton drivers in Manager classes. [Resolves 114].
