@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file Service.h
 /// @author Ben Minerd
-/// @date 9/22/2021
+/// @date 9/22/2022
 /// @brief Service class header file.
 ///
 
@@ -49,7 +49,6 @@
 #include <new>
 
 #include <Plat4m_Core/ServiceBase.h>
-#include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/List.h>
 #include <Plat4m_Core/System.h>
@@ -84,7 +83,7 @@ public:
     //--------------------------------------------------------------------------
     static Service& create(const ServiceBase::Id id, ServiceCallback& callback)
     {
-        Service* service = static_cast<Service*>(ServiceManager::find(id));
+        Service* service = findPrivate(id);
 
         if (isNullPointer(service))
         {
@@ -101,12 +100,7 @@ public:
     //--------------------------------------------------------------------------
     static Service& find(const ServiceBase::Id id)
     {
-        Service* service = static_cast<Service*>(ServiceManager::find(id));
-
-        if (isNullPointer(service))
-        {
-            service = createPrivate(id);
-        }
+        Service* service = findOrCreate(id);
 
         return (*service);
     }
@@ -116,7 +110,7 @@ public:
                          const RequestType& request,
                          ResponseType& response)
     {
-        Service* service = find(id);
+        Service* service = findPrivate(id);
 
         if (isNullPointer(service))
         {
@@ -168,6 +162,26 @@ private:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
+    static Service* findPrivate(const ServiceBase::Id id)
+    {
+        Service* service = 0;
+
+        ServiceBase* serviceBase = ServiceManager::find(id);
+
+        if (isValidPointer(serviceBase))
+        {
+            service = dynamic_cast<Service*>(serviceBase);
+
+            if (isNullPointer(service))
+            {
+                Error error(ERROR_CODE_SERVICE_TYPE_ID_MISMATCH);
+            }
+        }
+
+        return service;
+    }
+
+    //--------------------------------------------------------------------------
     static Service* createPrivate(const ServiceBase::Id id)
     {
         void* memoryPointer = AllocationMemory::allocate(sizeof(Service));
@@ -184,6 +198,19 @@ private:
         void* memoryPointer = AllocationMemory::allocate(sizeof(Service));
 
         Service* service = new(memoryPointer) Service(id, callback);
+
+        return service;
+    }
+
+    //--------------------------------------------------------------------------
+    static Service* findOrCreate(const ServiceBase::Id id)
+    {
+        Service* service = findPrivate(id);
+
+        if (isNullPointer(service))
+        {
+            service = createPrivate(id);
+        }
 
         return service;
     }

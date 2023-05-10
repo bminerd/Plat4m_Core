@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2023-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file ServiceBase.h
 /// @author Ben Minerd
-/// @date 9/22/2021
+/// @date 9/22/2022
 /// @brief ServiceBase class header file.
 ///
 
@@ -73,7 +73,8 @@ public:
     {
         ERROR_CODE_NONE,
         ERROR_CODE_SERVICE_NOT_INITIALIZED,
-        ERROR_CODE_SERVICE_INVALID
+        ERROR_CODE_SERVICE_INVALID,
+        ERROR_CODE_SERVICE_TYPE_ID_MISMATCH
     };
 
     typedef ErrorTemplate<ErrorCode> Error;
