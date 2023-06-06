@@ -234,7 +234,7 @@ public:
         myCurrentTimeStamp = timeStamp;
 
         TimeTickSample timeTick;
-        timeTick.header.timeStamp = myCurrentTimeStamp;
+        timeTick.timeStamp = myCurrentTimeStamp;
 
         myTimeTickTopic.publish(timeTick);
 
