@@ -68,8 +68,8 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template<typename SampleType, std::uint32_t nQueueValues = 1>
-class TopicSubscriberThread : public TopicSubscriber<SampleType>
+template<typename DataType, std::uint32_t nQueueValues = 1>
+class TopicSubscriberThread : public TopicSubscriber<DataType>
 {
 public:
 
@@ -79,13 +79,13 @@ public:
 
     //--------------------------------------------------------------------------
     TopicSubscriberThread(
-                     const TopicBase::Id id,
-                     const typename TopicSubscriber<SampleType>::Config config,
-                     typename Topic<SampleType>::SampleCallback& sampleCallback,
-                     const std::uint32_t nStackBytes = 0,
-                     const bool isSimulated = false,
-                     const char* name = 0) :
-        TopicSubscriber<SampleType>(id, config, sampleCallback),
+                       const TopicBase::Id id,
+                       const typename TopicSubscriber<DataType>::Config config,
+                       typename Topic<DataType>::SampleCallback& sampleCallback,
+                       const std::uint32_t nStackBytes = 0,
+                       const bool isSimulated = false,
+                       const char* name = 0) :
+        TopicSubscriber<DataType>(id, config, sampleCallback),
         myThread(
             System::createThread(
                    createCallback(this, &TopicSubscriberThread::threadCallback),
@@ -93,18 +93,18 @@ public:
                    nStackBytes,
                    isSimulated,
                    name)),
-        myQueue(System::createQueue<SampleType>(nQueueValues, myThread))
+        myQueue(System::createQueue<SampleAndDataType>(nQueueValues, myThread))
     {
     }
 
     //--------------------------------------------------------------------------
     TopicSubscriberThread(
-                     const TopicBase::Id id,
-                     typename Topic<SampleType>::SampleCallback& sampleCallback,
-                     const std::uint32_t nStackBytes = 0,
-                     const bool isSimulated = false,
-                     const char* name = 0) :
-        TopicSubscriber<SampleType>(id, sampleCallback),
+                       const TopicBase::Id id,
+                       typename Topic<DataType>::SampleCallback& sampleCallback,
+                       const std::uint32_t nStackBytes = 0,
+                       const bool isSimulated = false,
+                       const char* name = 0) :
+        TopicSubscriber<DataType>(id, sampleCallback),
         myThread(
             System::createThread(
                    createCallback(this, &TopicSubscriberThread::threadCallback),
@@ -112,7 +112,7 @@ public:
                    nStackBytes,
                    isSimulated,
                    name)),
-        myQueue(System::createQueue<SampleType>(nQueueValues, myThread))
+        myQueue(System::createQueue<SampleAndDataType>(nQueueValues, myThread))
     {
     }
 
@@ -138,12 +138,33 @@ public:
 private:
 
     //--------------------------------------------------------------------------
+    // Private types
+    //--------------------------------------------------------------------------
+
+    struct SampleAndDataType
+    {
+        TopicSample<DataType> sample;
+        DataType data;
+
+        //----------------------------------------------------------------------
+        // Public constructors
+        //----------------------------------------------------------------------
+
+        //----------------------------------------------------------------------
+        SampleAndDataType(const DataType& data) :
+            sample(data),
+            data()
+        {
+        }
+    };
+
+    //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
     Thread& myThread;
 
-    Queue<SampleType>& myQueue;
+    Queue<SampleAndDataType>& myQueue;
 
     //--------------------------------------------------------------------------
     // Private virtual methods implemented from Module
@@ -169,9 +190,15 @@ private:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual void sampleCallbackInternal(const SampleType& sample) override
+    virtual void sampleCallbackInternal(
+                                   const TopicSample<DataType>& sample) override
     {
-        myQueue.enqueue(sample);
+        SampleAndDataType sampleAndData(sampleAndData.data);
+        sampleAndData.sample.sequenceId = sample.sequenceId;
+        sampleAndData.sample.timeStamp = sample.timeStamp;
+        sampleAndData.data = sample.data;
+
+        myQueue.enqueue(sampleAndData);
     }
 
     //--------------------------------------------------------------------------
@@ -181,17 +208,16 @@ private:
     //--------------------------------------------------------------------------
     void threadCallback()
     {
-        SampleType sample;
+        SampleAndDataType sampleAndData(sampleAndData.data);
 
-        if (myQueue.dequeue(sample))
+        if (myQueue.dequeue(sampleAndData))
         {
-            typename Topic<SampleType>::SampleCallback*
-                sampleCallback =
-                               TopicSubscriber<SampleType>::getSampleCallback();
+            typename Topic<DataType>::SampleCallback*
+                sampleCallback = TopicSubscriber<DataType>::getSampleCallback();
 
             if (isValidPointer(sampleCallback))
             {
-                sampleCallback->call(sample);
+                sampleCallback->call(sampleAndData.sample);
             }
         }
     }

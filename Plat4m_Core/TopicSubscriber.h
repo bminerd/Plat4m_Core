@@ -53,6 +53,7 @@
 #include <Plat4m_Core/CallbackMethodParameter.h>
 #include <Plat4m_Core/TopicBase.h>
 #include <Plat4m_Core/Topic.h>
+#include <Plat4m_Core/TopicSample.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -65,7 +66,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template<typename SampleType>
+template<typename DataType>
 class TopicSubscriber : public Module
 {
 public:
@@ -87,7 +88,7 @@ public:
     TopicSubscriber(
                    const TopicBase::Id id,
                    const Config config,
-                   typename Topic<SampleType>::SampleCallback& sampleCallback) :
+                   typename Topic<DataType>::SampleCallback& sampleCallback) :
         Module(),
         myTopicId(id),
         myConfig(),
@@ -98,13 +99,13 @@ public:
     {
         setConfig(config);
 
-        Topic<SampleType>::subscribe(id, myPrivateSampleCallback);
+        Topic<DataType>::subscribe(id, myPrivateSampleCallback);
     }
 
     //--------------------------------------------------------------------------
     TopicSubscriber(
                    const TopicBase::Id id,
-                   typename Topic<SampleType>::SampleCallback& sampleCallback) :
+                   typename Topic<DataType>::SampleCallback& sampleCallback) :
         Module(),
         myTopicId(id),
         myConfig(),
@@ -115,7 +116,7 @@ public:
     {
         myConfig.downsampleFactor = 1;
 
-        Topic<SampleType>::subscribe(id, myPrivateSampleCallback);
+        Topic<DataType>::subscribe(id, myPrivateSampleCallback);
     }
 
     //--------------------------------------------------------------------------
@@ -130,7 +131,7 @@ public:
     {
         setConfig(config);
 
-        Topic<SampleType>::subscribe(id, myPrivateSampleCallback);
+        Topic<DataType>::subscribe(id, myPrivateSampleCallback);
     }
 
     //--------------------------------------------------------------------------
@@ -145,11 +146,11 @@ public:
     {
         myConfig.downsampleFactor = 1;
 
-        Topic<SampleType>::subscribe(id, myPrivateSampleCallback);
+        Topic<DataType>::subscribe(id, myPrivateSampleCallback);
     }
 
     //--------------------------------------------------------------------------
-    TopicSubscriber(const TopicSubscriber<SampleType>& topicSubscriber) :
+    TopicSubscriber(const TopicSubscriber<DataType>& topicSubscriber) :
         Module(),
         myConfig(topicSubscriber.myConfig),
         mySampleCallback(topicSubscriber.mySampleCallback),
@@ -165,7 +166,7 @@ public:
     //--------------------------------------------------------------------------
     virtual ~TopicSubscriber()
     {
-        Topic<SampleType>::unsubscribe(myTopicId, myPrivateSampleCallback);
+        Topic<DataType>::unsubscribe(myTopicId, myPrivateSampleCallback);
     }
 
     //--------------------------------------------------------------------------
@@ -173,8 +174,8 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    TopicSubscriber<SampleType>& operator=(
-                             const TopicSubscriber<SampleType>& topicSubscriber)
+    TopicSubscriber<DataType>& operator=(
+                             const TopicSubscriber<DataType>& topicSubscriber)
     {
         myConfig = topicSubscriber.myConfig;
         mySampleCallback = topicSubscriber.mySampleCallback;
@@ -203,7 +204,7 @@ public:
     {
         myConfig.downsampleFactor = 1;
 
-        Topic<SampleType>::subscribe(
+        Topic<DataType>::subscribe(
                         myTopicId,
                         createCallback(this, &TopicSubscriber::sampleCallback));
     }
@@ -215,7 +216,7 @@ protected:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    typename Topic<SampleType>::SampleCallback* getSampleCallback()
+    typename Topic<DataType>::SampleCallback* getSampleCallback()
     {
         return mySampleCallback;
     }
@@ -230,9 +231,9 @@ private:
 
     Config myConfig;
 
-    typename Topic<SampleType>::SampleCallback* mySampleCallback;
+    typename Topic<DataType>::SampleCallback* mySampleCallback;
 
-    typename Topic<SampleType>::SampleCallback& myPrivateSampleCallback;
+    typename Topic<DataType>::SampleCallback& myPrivateSampleCallback;
 
     std::uint32_t myDownsampleCounter;
 
@@ -241,7 +242,7 @@ private:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual void sampleCallbackInternal(const SampleType& sample)
+    virtual void sampleCallbackInternal(const TopicSample<DataType>& sample)
     {
         // Not implemented by subclass, default implementation
 
@@ -256,7 +257,7 @@ private:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    void sampleCallback(const SampleType& sample)
+    void sampleCallback(const TopicSample<DataType>& sample)
     {
         if (isEnabled())
         {

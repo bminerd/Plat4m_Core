@@ -66,8 +66,8 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template<typename SampleType, typename SampleFrameType>
-class TopicSubscriberExternal : public TopicSubscriber<SampleType>
+template<typename DataType, typename SampleFrameType>
+class TopicSubscriberExternal : public TopicSubscriber<DataType>
 {
 public:
 
@@ -78,23 +78,23 @@ public:
     //--------------------------------------------------------------------------
     TopicSubscriberExternal(
                       const TopicBase::Id id,
-                      const typename TopicSubscriber<SampleType>::Config config,
+                      const typename TopicSubscriber<DataType>::Config config,
                       ComProtocol& comProtocol) :
-        TopicSubscriber<SampleType>(
+        TopicSubscriber<DataType>(
               id,
               config,
               createCallback(this,
-                             &TopicSubscriberExternal<SampleType, SampleFrameType>::sampleCallbackInternal)),
+                             &TopicSubscriberExternal<DataType, SampleFrameType>::sampleCallbackInternal)),
         myComProtocol(comProtocol)
     {
     }
 
     //--------------------------------------------------------------------------
     TopicSubscriberExternal(const TopicBase::Id id, ComProtocol& comProtocol) :
-        TopicSubscriber<SampleType>(
+        TopicSubscriber<DataType>(
               id,
               createCallback(this,
-                             &TopicSubscriberExternal<SampleType, SampleFrameType>::sampleCallbackInternal)),
+                             &TopicSubscriberExternal<DataType, SampleFrameType>::sampleCallbackInternal)),
         myComProtocol(comProtocol)
     {
     }
@@ -129,7 +129,7 @@ private:
     {
         Module::Error error;
 
-        // error = TopicSubscriber<SampleType>::setEnabled(enabled);
+        // error = TopicSubscriber<DataType>::setEnabled(enabled);
 
         error = myComProtocol.setEnabled(enabled);
 
@@ -141,9 +141,9 @@ private:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual void sampleCallbackInternal(const SampleType& sample) override
+    virtual void sampleCallbackInternal(const DataType& sample) override
     {
-        SampleType copy = sample;
+        DataType copy = sample;
 
         SampleFrameType frame(copy);
 
