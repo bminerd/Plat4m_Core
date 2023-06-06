@@ -46,7 +46,7 @@
 // Includes
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/TopicSampleHeader.h>
+#include <Plat4m_Core/TimeStamp.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -61,7 +61,7 @@ namespace Plat4m
 
 struct TimeTickSample
 {
-    TopicSampleHeader header;
+    TimeStamp timeStamp;
 };
 
 }; // end namespace Plat4m
