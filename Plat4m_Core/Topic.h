@@ -55,6 +55,7 @@
 #include <Plat4m_Core/TimeStamp.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 #include <Plat4m_Core/TopicManager.h>
+#include <Plat4m_Core/TopicSample.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -67,7 +68,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename SampleType>
+template <typename DataType>
 class Topic : public TopicBase
 {
 public:
@@ -76,7 +77,7 @@ public:
     // Public types
     //--------------------------------------------------------------------------
 
-    typedef Callback<void, const SampleType&> SampleCallback;
+    typedef Callback<void, const TopicSample<DataType>&> SampleCallback;
 
     //--------------------------------------------------------------------------
     // Public static methods
@@ -114,7 +115,7 @@ public:
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
     virtual ~Topic()
     {
@@ -144,26 +145,11 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    void publish(const SampleType& sample, const bool insertTimeStamp = false)
+    void publish(const DataType& sample)
     {
-        SampleType sampleCopy = sample;
+        TopicSample<DataType> topicSample(sample);
 
-        if (insertTimeStamp)
-        {
-            sampleCopy.header.timeStamp = System::getTimeStamp();
-        }
-
-        publishPrivate(sampleCopy);
-    }
-
-    //--------------------------------------------------------------------------
-    void publish(const SampleType& sample, const TimeStamp timeStamp)
-    {
-        SampleType sampleCopy = sample;
-
-        sampleCopy.header.timeStamp = timeStamp;
-
-        publishPrivate(sampleCopy);
+        publishPrivate(topicSample);
     }
 
 private:
@@ -251,9 +237,10 @@ private:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    void publishPrivate(SampleType& sample)
+    void publishPrivate(TopicSample<DataType>& sample)
     {
-        sample.header.sequenceId = mySequenceIdCounter;
+        sample.sequenceId = mySequenceIdCounter;
+        sample.timeStamp = System::getTimeStamp();
 
         typename List<SampleCallback*>::Iterator iterator =
                                                 mySampleCallbackList.iterator();
