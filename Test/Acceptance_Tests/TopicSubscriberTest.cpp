@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2020-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -152,16 +152,19 @@ bool TopicSubscriberTest::acceptanceTest1()
 }
 
 //------------------------------------------------------------------------------
-void TopicSubscriberTest::acceptanceTest1TopicCallback(const TestSample& sample)
+void TopicSubscriberTest::acceptanceTest1TopicCallback(
+                                          const TopicSample<TestSample>& sample)
 {
-    acceptanceTest1Sample = sample;
+    // acceptanceTest1Sample = *(sample.data);
+    acceptanceTest1Sample = sample.data;
     acceptanceTest1SampleCount++;
 }
 
 //------------------------------------------------------------------------------
 void TopicSubscriberTest::acceptanceTest1TopicCallback2(
-                                                       const TestSample& sample)
+                                          const TopicSample<TestSample>& sample)
 {
-    acceptanceTest1Sample2 = sample;
+    // acceptanceTest1Sample2 = *(sample.data);
+    acceptanceTest1Sample2 = sample.data;
     acceptanceTest1SampleCount2++;
 }

@@ -53,6 +53,7 @@
 #include <Plat4m_Core/TopicSubscriberThread.h>
 #include <Plat4m_Core/TimeTickSample.h>
 #include <Plat4m_Core/Semaphore.h>
+#include <Plat4m_Core/TopicSample.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -117,7 +118,7 @@ private:
     // Private methods
     //--------------------------------------------------------------------------
 
-    void timeTickSampleCallback(const TimeTickSample& timeTick);
+    void timeTickSampleCallback(const TopicSample<TimeTickSample>& timeTick);
 };
 
 }; // namespace Plat4m

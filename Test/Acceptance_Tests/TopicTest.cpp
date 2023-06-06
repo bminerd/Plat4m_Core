@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2020-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -61,11 +61,15 @@ const UnitTest::TestCallbackFunction TopicTest::myTestCallbackFunctions[] =
     &TopicTest::acceptanceTest2
 };
 
-TopicTest::TestSample1 TopicTest::acceptanceTest1Sample;
+std::uint8_t TopicTest::acceptanceTest1Sample = 0;
 
-TopicTest::TestSample1 TopicTest::acceptanceTest1Sample2;
+std::uint8_t TopicTest::acceptanceTest1Sample2 = 0;
 
-TopicTest::TestSample2 TopicTest::acceptanceTest2Sample;
+TopicTest::TestSample TopicTest::acceptanceTest2Sample =
+{
+    0,
+    0
+};
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -104,18 +108,17 @@ bool TopicTest::acceptanceTest1()
     // Setup / Operation
 
     const TopicBase::Id testTopicId = 1;
-    TestSample1 testTopicSample;
-    testTopicSample.sample = 42;
+    std::uint8_t testTopicSample = 42;
 
     TopicManager topicManager;
 
-    Topic<TestSample1>& testTopic = Topic<TestSample1>::create(testTopicId);
+    Topic<std::uint8_t>& testTopic = Topic<std::uint8_t>::create(testTopicId);
 
-    Topic<TestSample1>::subscribe(
+    Topic<std::uint8_t>::subscribe(
                                  testTopicId,
                                  createCallback(&acceptanceTest1TopicCallback));
 
-    Topic<TestSample1>::subscribe(
+    Topic<std::uint8_t>::subscribe(
                                 testTopicId,
                                 createCallback(&acceptanceTest1TopicCallback2));
 
@@ -124,20 +127,22 @@ bool TopicTest::acceptanceTest1()
     // Test
 
     return UNIT_TEST_REPORT(
-        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample.sample, (std::uint8_t) 42)) &
-        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample2.sample, (std::uint8_t) 42);
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample, (std::uint8_t) 42)) &
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample2, (std::uint8_t) 42);
 }
 
 //------------------------------------------------------------------------------
-void TopicTest::acceptanceTest1TopicCallback(const TestSample1& sample)
+void TopicTest::acceptanceTest1TopicCallback(
+                                        const TopicSample<std::uint8_t>& sample)
 {
-    acceptanceTest1Sample = sample;
+    acceptanceTest1Sample = sample.data;
 }
 
 //------------------------------------------------------------------------------
-void TopicTest::acceptanceTest1TopicCallback2(const TestSample1& sample)
+void TopicTest::acceptanceTest1TopicCallback2(
+                                        const TopicSample<std::uint8_t>& sample)
 {
-    acceptanceTest1Sample2 = sample;
+    acceptanceTest1Sample2 = sample.data;
 }
 
 //------------------------------------------------------------------------------
@@ -152,16 +157,15 @@ bool TopicTest::acceptanceTest2()
     // Setup / Operation
 
     const TopicBase::Id testTopicId = 1;
-    TestSample2 sample;
+    TestSample sample;
     sample.sample1 = 42;
     sample.sample2 = 67;
 
     TopicManager topicManager;
 
-    Topic<TestSample2>& testTopic = Topic<TestSample2>::create(testTopicId);
+    Topic<TestSample>& testTopic = Topic<TestSample>::create(testTopicId);
 
-    Topic<TestSample2>::subscribe(
-                                 testTopicId,
+    Topic<TestSample>::subscribe(testTopicId,
                                  createCallback(&acceptanceTest2TopicCallback));
 
     testTopic.publish(sample);
@@ -175,7 +179,8 @@ bool TopicTest::acceptanceTest2()
 }
 
 //------------------------------------------------------------------------------
-void TopicTest::acceptanceTest2TopicCallback(const TestSample2& sample)
+void TopicTest::acceptanceTest2TopicCallback(
+                                          const TopicSample<TestSample>& sample)
 {
-    acceptanceTest2Sample = sample;
+    acceptanceTest2Sample = sample.data;
 }

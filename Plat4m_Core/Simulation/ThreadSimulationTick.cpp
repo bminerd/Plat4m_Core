@@ -112,7 +112,7 @@ uint32_t ThreadSimulationTick::driverSetPriority(const uint32_t priority)
 
 //------------------------------------------------------------------------------
 void ThreadSimulationTick::timeTickSampleCallback(
-                                                 const TimeTickSample& timeTick)
+                                    const TopicSample<TimeTickSample>& timeTick)
 {
     if (System::checkTimeMs(myNextCallTimeMs))
     {

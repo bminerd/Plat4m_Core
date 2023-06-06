@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2020-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@
 #include <cstdint>
 
 #include <Plat4m_Core/UnitTest/UnitTest.h>
-#include <Plat4m_Core/TopicSampleHeader.h>
+#include <Plat4m_Core/TopicSample.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -70,15 +70,8 @@ public:
     // Public types
     //--------------------------------------------------------------------------
 
-    struct TestSample1
+    struct TestSample
     {
-        TopicSampleHeader header;
-        std::uint8_t sample;
-    };
-
-    struct TestSample2
-    {
-        TopicSampleHeader header;
         std::uint8_t sample1;
         std::uint8_t sample2;
     };
@@ -101,13 +94,16 @@ public:
 
     static bool acceptanceTest1();
 
-    static void acceptanceTest1TopicCallback(const TestSample1& sample);
+    static void acceptanceTest1TopicCallback(
+                                       const TopicSample<std::uint8_t>& sample);
 
-    static void acceptanceTest1TopicCallback2(const TestSample1& sample);
+    static void acceptanceTest1TopicCallback2(
+                                       const TopicSample<std::uint8_t>& sample);
 
     static bool acceptanceTest2();
 
-    static void acceptanceTest2TopicCallback(const TestSample2& sample);
+    static void acceptanceTest2TopicCallback(
+                                         const TopicSample<TestSample>& sample);
 
 private:
 
@@ -117,11 +113,11 @@ private:
 
     static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
 
-    static TestSample1 acceptanceTest1Sample;
+    static std::uint8_t acceptanceTest1Sample;
 
-    static TestSample1 acceptanceTest1Sample2;
+    static std::uint8_t acceptanceTest1Sample2;
 
-    static TestSample2 acceptanceTest2Sample;
+    static TestSample acceptanceTest2Sample;
 };
 
 }; // namespace Plat4m

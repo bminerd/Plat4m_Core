@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2020-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@
 #include <cstdint>
 
 #include <Plat4m_Core/UnitTest/UnitTest.h>
-#include <Plat4m_Core/TopicSampleHeader.h>
+#include <Plat4m_Core/TopicSample.h>
 #include <Plat4m_Core/Topic.h>
 #include <Plat4m_Core/Thread.h>
 #include <Plat4m_Core/Queue.h>
@@ -75,7 +75,6 @@ public:
 
     struct TestSample
     {
-        TopicSampleHeader header;
         std::uint8_t sample1;
         std::uint8_t sample2;
     };
@@ -98,7 +97,8 @@ public:
 
     static bool acceptanceTest1();
 
-    static void acceptanceTest1SampleCallback(const TestSample& sample);
+    static void acceptanceTest1SampleCallback(
+                                         const TopicSample<TestSample>& sample);
 
 private:
 
