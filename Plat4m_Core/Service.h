@@ -53,6 +53,8 @@
 #include <Plat4m_Core/List.h>
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/ServiceManager.h>
+#include <Plat4m_Core/ServiceRequest.h>
+#include <Plat4m_Core/ServiceResponse.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -74,7 +76,9 @@ public:
     // Public types
     //--------------------------------------------------------------------------
 
-    typedef Callback<Error, const RequestType&, ResponseType&> ServiceCallback;
+    using ServiceCallback = Callback<Error,
+                                     const ServiceRequest<RequestType>&,
+                                     ServiceResponse<ResponseType>&>;
 
     //--------------------------------------------------------------------------
     // Public static methods
@@ -141,12 +145,18 @@ public:
     //--------------------------------------------------------------------------
     Error request(const RequestType& request, ResponseType& response)
     {
-        if (isValidPointer(myCallback))
+        if (isNullPointer(myCallback))
         {
-            return (myCallback->call(request, response));
+            return Error(ERROR_CODE_SERVICE_NOT_INITIALIZED);
         }
 
-        return Error(ERROR_CODE_SERVICE_NOT_INITIALIZED);
+        ServiceRequest<RequestType> serviceRequest(request);
+
+        ServiceResponse<ResponseType> serviceResponse(response);
+
+        Error error = myCallback->call(serviceRequest, serviceResponse);
+
+        return error;
     }
 
 private:
@@ -246,6 +256,34 @@ private:
     {
     }
 };
+
+//------------------------------------------------------------------------------
+// Namespace functions
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+template <typename TClass, typename RequestType, typename ResponseType>
+Service<RequestType, ResponseType>& createService(
+      const ServiceBase::Id id,
+      TClass* object,
+      ServiceBase::Error (TClass::*callback)(const RequestType&, ResponseType&))
+{
+    return (Service<RequestType, ResponseType>::create(
+                                             id,
+                                             createCallback(object, callback)));
+}
+
+//------------------------------------------------------------------------------
+template <typename RequestType, typename ResponseType>
+Service<RequestType, ResponseType>& createService(
+    const ServiceBase::Id id,
+    ServiceBase::Error (*callback)
+           (const ServiceRequest<RequestType>&, ServiceResponse<ResponseType>&))
+{
+    return (Service<RequestType, ResponseType>::create(
+                                                     id,
+                                                     createCallback(callback)));
+}
 
 }; // namespace Plat4m
 
