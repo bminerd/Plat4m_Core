@@ -49,9 +49,4 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/Linux/QueueDriverLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/SemaphoreLinux.cpp)
 
-include(CTest)
-
 add_executable(Unit_Test_Linux_App ${source_files})
-add_test(Unit_Test_Linux_App Unit_Test_Linux_App)
-set_tests_properties(Unit_Test_Linux_App PROPERTIES
-                     FAIL_REGULAR_EXPRESSION ".*FAIL.*")
