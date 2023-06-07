@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Updated Topic and Service APIs to receive user data types directly in publish() and request(), respectively. Handling callbacks receive user data types wrapped in TopicSample<> and ServiceRequest<> / ServiceResponse<> templated types. Added Service and ServiceClient tests. [Resolves 122].
 - `[BUG FIX]` Fixed Service finding bug that could return a service of an incompatible type if the wrong ID was provided. Fix uses dynamic_cast which requires RTTI. [Resolves 123].
 - `[IMPROVEMENT]` Added modulus operator to TimeStamp class. [Resolves 117].
 - `[BUG FIX]` Fixed Topic subscription bug that could subscribe to a topic of an incompatible type if the wrong ID was provided. Fix uses dynamic_cast which requires RTTI. [Resolves 106].
