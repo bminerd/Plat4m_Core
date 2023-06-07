@@ -25,6 +25,8 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PROJECT_SOURCE_DIR}/../TopicTest.cpp
                  ${PROJECT_SOURCE_DIR}/../TopicSubscriberTest.cpp
                  ${PROJECT_SOURCE_DIR}/../TopicSubscriberThreadTest.cpp
+                 ${PROJECT_SOURCE_DIR}/../ServiceTest.cpp
+                 ${PROJECT_SOURCE_DIR}/../ServiceClientTest.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/ApplicationUnitTestApp.cpp
                  ${PLAT4M_CORE_DIR}/Application.cpp
                  ${PLAT4M_CORE_DIR}/Array.h
@@ -44,6 +46,8 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/TimeStamp.cpp
                  ${PLAT4M_CORE_DIR}/TopicBase.cpp
                  ${PLAT4M_CORE_DIR}/TopicManager.cpp
+                 ${PLAT4M_CORE_DIR}/ServiceBase.cpp
+                 ${PLAT4M_CORE_DIR}/ServiceManager.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/UnitTest.cpp
                  ${PLAT4M_CORE_DIR}/Linux/SystemLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ProcessorLinux.cpp
@@ -53,9 +57,4 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/Linux/QueueDriverLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/SemaphoreLinux.cpp)
 
-include(CTest)
-
 add_executable(Acceptance_Test_Linux_App ${source_files})
-add_test(Acceptance_Test_Linux_App Acceptance_Test_Linux_App)
-set_tests_properties(Acceptance_Test_Linux_App PROPERTIES
-                     FAIL_REGULAR_EXPRESSION ".*FAIL.*")

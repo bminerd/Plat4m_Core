@@ -67,7 +67,9 @@ ApplicationAcceptanceTestLinuxApp::ApplicationAcceptanceTestLinuxApp() :
     myProcessor(),
     myTopicTest(),
     myTopicSubscriberTest(),
-    myTopicSubscriberThreadTest()
+    myTopicSubscriberThreadTest(),
+    myServiceTest(),
+    myServiceClientTest()
 {
 }
 
@@ -109,4 +111,6 @@ void ApplicationAcceptanceTestLinuxApp::initializeSystem()
     addUnitTest(myTopicTest);
     addUnitTest(myTopicSubscriberTest);
     addUnitTest(myTopicSubscriberThreadTest);
+    addUnitTest(myServiceTest);
+    addUnitTest(myServiceClientTest);
 }

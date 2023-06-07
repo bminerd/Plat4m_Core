@@ -53,6 +53,8 @@
 #include <Test/Acceptance_Tests/TopicTest.h>
 #include <Test/Acceptance_Tests/TopicSubscriberTest.h>
 #include <Test/Acceptance_Tests/TopicSubscriberThreadTest.h>
+#include <Test/Acceptance_Tests/ServiceTest.h>
+#include <Test/Acceptance_Tests/ServiceClientTest.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -102,6 +104,10 @@ private:
     TopicSubscriberTest myTopicSubscriberTest;
 
     TopicSubscriberThreadTest myTopicSubscriberThreadTest;
+
+    ServiceTest myServiceTest;
+
+    ServiceClientTest myServiceClientTest;
 
     //--------------------------------------------------------------------------
     // Private methods implemented from Application

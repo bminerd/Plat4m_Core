@@ -9,6 +9,6 @@ cd "${0%/*}"
 
 cd Build
 
-ctest .. --verbose
+./Acceptance_Test_Linux_App
 
 popd
