@@ -264,9 +264,10 @@ private:
 //------------------------------------------------------------------------------
 template <typename TClass, typename RequestType, typename ResponseType>
 Service<RequestType, ResponseType>& createService(
-      const ServiceBase::Id id,
-      TClass* object,
-      ServiceBase::Error (TClass::*callback)(const RequestType&, ResponseType&))
+    const ServiceBase::Id id,
+    TClass* object,
+    ServiceBase::Error (TClass::*callback)
+           (const ServiceRequest<RequestType>&, ServiceResponse<ResponseType>&))
 {
     return (Service<RequestType, ResponseType>::create(
                                              id,
