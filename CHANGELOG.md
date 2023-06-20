@@ -19,6 +19,8 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added ability for List to store reference types. [Resolves 131].
+- `[NEW FEATURE]` Added DataObject class as a data-centric interface for accessing application data. Added DataObjectTopicService as a DataObject implementation that uses Topics and Services to access the data. [Resolves 130]. 
 - `[BUG FIX]` Fixed syntax in callback method version of createSerice() function inside Service.h. [Resolves 129].
 - `[IMPROVEMENT]` Updated Topic and Service APIs to receive user data types directly in publish() and request(), respectively. Handling callbacks receive user data types wrapped in TopicSample<> and ServiceRequest<> / ServiceResponse<> templated types. Added Service and ServiceClient tests. [Resolves 122].
 - `[BUG FIX]` Fixed Service finding bug that could return a service of an incompatible type if the wrong ID was provided. Fix uses dynamic_cast which requires RTTI. [Resolves 123].
