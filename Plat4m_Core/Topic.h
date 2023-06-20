@@ -47,6 +47,7 @@
 //------------------------------------------------------------------------------
 
 #include <new>
+#include <cstdint>
 
 #include <Plat4m_Core/TopicBase.h>
 #include <Plat4m_Core/Callback.h>
@@ -180,6 +181,11 @@ private:
             if (isNullPointer(topic))
             {
                 Error error(TopicBase::ERROR_CODE_TOPIC_TYPE_ID_MISMATCH);
+
+                // Lock up, error condition
+                while (true)
+                {
+                }
             }
         }
 
@@ -256,6 +262,18 @@ private:
         mySequenceIdCounter++;
     }
 };
+
+//------------------------------------------------------------------------------
+// Namespace functions
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+template <typename DataType>
+Topic<DataType>& createTopic(const TopicBase::Id id,
+                             const Topic<DataType>& topic)
+{
+    return (Topic<DataType>::create(id));
+}
 
 }; // namespace Plat4m
 
