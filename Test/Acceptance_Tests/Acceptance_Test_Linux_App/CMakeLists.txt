@@ -27,6 +27,7 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PROJECT_SOURCE_DIR}/../TopicSubscriberThreadTest.cpp
                  ${PROJECT_SOURCE_DIR}/../ServiceTest.cpp
                  ${PROJECT_SOURCE_DIR}/../ServiceClientTest.cpp
+                 ${PROJECT_SOURCE_DIR}/../DataObjectTopicServiceTest.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/ApplicationUnitTestApp.cpp
                  ${PLAT4M_CORE_DIR}/Application.cpp
                  ${PLAT4M_CORE_DIR}/Array.h
@@ -48,6 +49,8 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/TopicManager.cpp
                  ${PLAT4M_CORE_DIR}/ServiceBase.cpp
                  ${PLAT4M_CORE_DIR}/ServiceManager.cpp
+                 ${PLAT4M_CORE_DIR}/DataObjectBase.cpp
+                 ${PLAT4M_CORE_DIR}/DataObjectManager.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/UnitTest.cpp
                  ${PLAT4M_CORE_DIR}/Linux/SystemLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ProcessorLinux.cpp

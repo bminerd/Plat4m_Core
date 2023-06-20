@@ -127,8 +127,8 @@ bool TopicTest::acceptanceTest1()
     // Test
 
     return UNIT_TEST_REPORT(
-        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample, (std::uint8_t) 42)) &
-        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample2, (std::uint8_t) 42);
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample, (std::uint8_t) 42) &
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample2, (std::uint8_t) 42));
 }
 
 //------------------------------------------------------------------------------
@@ -174,8 +174,8 @@ bool TopicTest::acceptanceTest2()
 
     return UNIT_TEST_REPORT(
         UNIT_TEST_CASE_EQUAL(
-                            acceptanceTest2Sample.sample1, (std::uint8_t) 42)) &
-        UNIT_TEST_CASE_EQUAL(acceptanceTest2Sample.sample2, (std::uint8_t) 67);
+                            acceptanceTest2Sample.sample1, (std::uint8_t) 42) &
+        UNIT_TEST_CASE_EQUAL(acceptanceTest2Sample.sample2, (std::uint8_t) 67));
 }
 
 //------------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Benjamin Minerd
+// Copyright (c) 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,29 +33,25 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ApplicationAcceptanceTestLinuxApp.h
+/// @file DataObjectTopicServiceTest.h
 /// @author Ben Minerd
-/// @date 7/24/2020
-/// @brief ApplicationAcceptanceTestLinuxApp class header file.
+/// @date 6/20/2023
+/// @brief DataObjectTopicServiceTest class header file.
 ///
 
-#ifndef PLAT4M_APPLICATION_ACCEPTANCE_TEST_LINUX_APP_H
-#define PLAT4M_APPLICATION_ACCEPTANCE_TEST_LINUX_APP_H
+#ifndef PLAT4M_DATA_OBJECT_TOPIC_SERVICE_TEST_H
+#define PLAT4M_DATA_OBJECT_TOPIC_SERVICE_TEST_H
 
 //------------------------------------------------------------------------------
-// Includes
+// Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/UnitTest/ApplicationUnitTestApp.h>
-#include <Plat4m_Core/Linux/SystemLinux.h>
-#include <Plat4m_Core/Linux/ProcessorLinux.h>
-#include <Plat4m_Core/AllocationMemoryLite/AllocationMemoryLite.h>
-#include <Test/Acceptance_Tests/TopicTest.h>
-#include <Test/Acceptance_Tests/TopicSubscriberTest.h>
-#include <Test/Acceptance_Tests/TopicSubscriberThreadTest.h>
-#include <Test/Acceptance_Tests/ServiceTest.h>
-#include <Test/Acceptance_Tests/ServiceClientTest.h>
-#include <Test/Acceptance_Tests/DataObjectTopicServiceTest.h>
+#include <cstdint>
+
+#include <Plat4m_Core/UnitTest/UnitTest.h>
+#include <Plat4m_Core/ServiceBase.h>
+#include <Plat4m_Core/ServiceRequest.h>
+#include <Plat4m_Core/ServiceResponse.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -68,7 +64,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class ApplicationAcceptanceTestLinuxApp : public ApplicationUnitTestApp
+class DataObjectTopicServiceTest : public UnitTest
 {
 public:
 
@@ -76,13 +72,41 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-    ApplicationAcceptanceTestLinuxApp();
+    DataObjectTopicServiceTest();
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    virtual ~ApplicationAcceptanceTestLinuxApp();
+    virtual ~DataObjectTopicServiceTest();
+
+    //--------------------------------------------------------------------------
+    // Public static methods
+    //--------------------------------------------------------------------------
+
+    static bool acceptanceTest1();
+
+    static void acceptanceTest1DataObjectUpdatedCallback(
+                                                      const std::uint8_t& data);
+
+    static void acceptanceTest1DataObjectChangedCallback(
+                                                      const std::uint8_t& data);
+
+    static bool acceptanceTest2();
+
+    static ServiceBase::Error acceptanceTest2DataObjectGetDataCallback(
+                                       const ServiceRequest<void*>& request,
+                                       ServiceResponse<std::uint8_t>& response);
+
+    static bool acceptanceTest3();
+
+    static ServiceBase::Error acceptanceTest3DataObjectSetDataCallback(
+                                    const ServiceRequest<std::uint8_t>& request,
+                                    ServiceResponse<void*>& response);
+
+    static ServiceBase::Error acceptanceTest3DataObjectGetDataCallback(
+                                       const ServiceRequest<void*>& request,
+                                       ServiceResponse<std::uint8_t>& response);
 
 private:
 
@@ -90,43 +114,21 @@ private:
     // Private static data members
     //--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
+    static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
 
-    AllocationMemoryLite<4096> myAllocationMemory;
+    static std::uint8_t acceptanceTest1UpdatedData;
 
-    SystemLinux mySystem;
+    static std::uint8_t acceptanceTest1ChangedData;
 
-    ProcessorLinux myProcessor;
+    static std::uint32_t acceptanceTest1DataObjectUpdatedCallbackCallCount;
 
-    TopicTest myTopicTest;
+    static std::uint32_t acceptanceTest1DataObjectChangedCallbackCallCount;
 
-    TopicSubscriberTest myTopicSubscriberTest;
+    static std::uint8_t acceptanceTest2Data;
 
-    TopicSubscriberThreadTest myTopicSubscriberThreadTest;
-
-    ServiceTest myServiceTest;
-
-    ServiceClientTest myServiceClientTest;
-
-    DataObjectTopicServiceTest myDataObjectTopicServiceTest;
-
-    //--------------------------------------------------------------------------
-    // Private methods implemented from Application
-    //--------------------------------------------------------------------------
-
-    void driverRun();
-
-    //--------------------------------------------------------------------------
-    // Private methods
-    //--------------------------------------------------------------------------
-
-    void initializeProcessor();
-
-    void initializeSystem();
+    static std::uint8_t acceptanceTest3Data;
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_APPLICATION_ACCEPTANCE_TEST_LINUX_APP_H
+#endif // PLAT4M_DATA_OBJECT_TOPIC_SERVICE_TEST_H
