@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Benjamin Minerd
+// Copyright (c) 2015-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -63,35 +63,36 @@ template <typename TCode>
 class ErrorTemplate
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
-	//--------------------------------------------------------------------------
-	ErrorTemplate()
-	{
-	}
+    //--------------------------------------------------------------------------
+    ErrorTemplate() :
+        myCode(static_cast<TCode>(0))
+    {
+    }
 
     //--------------------------------------------------------------------------
     explicit ErrorTemplate(const TCode code) :
-        myCode()
+        myCode(static_cast<TCode>(0))
     {
         setCode(code);
     }
 
-	//--------------------------------------------------------------------------
-	ErrorTemplate(const ErrorTemplate<TCode>& errorTemplate) :
-	    myCode(errorTemplate.myCode)
-	{
-	    // Don't log any errors
-	}
+    //--------------------------------------------------------------------------
+    ErrorTemplate(const ErrorTemplate<TCode>& errorTemplate) :
+        myCode(errorTemplate.myCode)
+    {
+        // Don't log any errors
+    }
 
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
-	//--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
     ErrorTemplate& operator=(const ErrorTemplate<TCode>& errorTemplate)
     {
         myCode = errorTemplate.myCode;
@@ -111,26 +112,19 @@ public:
         return myCode;
     }
 
-	//--------------------------------------------------------------------------
-	void setCode(const TCode code)
-	{
-		myCode = code;
+    //--------------------------------------------------------------------------
+    void setCode(const TCode code)
+    {
+        myCode = code;
+    }
 
-		// Psuedocode...
-		//
-		// if (myCode != 0)
-		// {
-		//     ErrorHandler::call(*this);
-		// }
-	}
-    
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-	TCode myCode;
+    TCode myCode;
 };
 
 }; // namespace Plat4m
