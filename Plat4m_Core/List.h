@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2022 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,9 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
+#include <cstdint>
+
 #include <Plat4m_Core/MemoryAllocator.h>
-#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -83,6 +83,26 @@ public:
         T value;
         Item* previousItem;
         Item* nextItem;
+
+        //----------------------------------------------------------------------
+        // Public nested constructors
+        //----------------------------------------------------------------------
+
+        //----------------------------------------------------------------------
+        Item() :
+            value(),
+            previousItem(0),
+            nextItem(0)
+        {
+        }
+
+        //----------------------------------------------------------------------
+        Item(T value) :
+            value(value),
+            previousItem(0),
+            nextItem(0)
+        {
+        }
     };
     
     //--------------------------------------------------------------------------
@@ -170,28 +190,27 @@ public:
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
-    uint32_t size() const
+    std::uint32_t size() const
     {
         return mySize;
     }
-    
+
     //--------------------------------------------------------------------------
     bool isEmpty()
     {
         return (mySize == 0);
     }
-    
+
     //--------------------------------------------------------------------------
     void append(T& value)
     {
-        Item* item = MemoryAllocator::allocate<Item>();
-        
-        item->value = value;
+        Item* item = MemoryAllocator::allocate<Item>(value);
+
         item->previousItem = 0;
         item->nextItem = 0;
-        
+
         // Advance myLastItem pointer
         if (isNullPointer(myFirstItem))
         {
@@ -210,19 +229,19 @@ public:
             oldLastItem->nextItem = item;
             myLastItem = item;
         }
-        
+
         mySize++;
     }
-    
+
     //--------------------------------------------------------------------------
     void prepend(T& value)
     {
         Item* item = MemoryAllocator::allocate<Item>();
-        
+
         item->value = value;
         item->previousItem = 0;
         item->nextItem = 0;
-        
+
         // Advance myLastItem pointer
         if (isNullPointer(myFirstItem))
         {
@@ -242,34 +261,34 @@ public:
             oldFirstItem->previousItem = item;
             myFirstItem = item;
         }
-        
+
         mySize++;
     }
-    
+
     //--------------------------------------------------------------------------
-    T* first()
+    bool first(T& value)
     {
         if (isNullPointer(myFirstItem))
         {
-            Error error(ERROR_CODE_ITEM_NULL);
-
-            return 0;
+            return false;
         }
 
-        return &(myFirstItem->value);
+        value = myFirstItem->value;
+
+        return true;
     }
     
     //--------------------------------------------------------------------------
-    T* last()
+    bool last(T& value)
     {
         if (isNullPointer(myFirstItem))
         {
-            Error error(ERROR_CODE_ITEM_NULL);
-
-            return 0;
+            return false;
         }
 
-        return &(myLastItem->value);
+        value = myLastItem->value;
+
+        return true;
     }
     
     //--------------------------------------------------------------------------
@@ -340,15 +359,15 @@ public:
             currentItem = currentItem->nextItem;
         }
     }
-    
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
-    uint32_t mySize;
-    
+
+    std::uint32_t mySize;
+
     Item* myFirstItem;
     Item* myLastItem;
 };
