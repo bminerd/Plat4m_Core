@@ -47,6 +47,7 @@
 //------------------------------------------------------------------------------
 
 #include <new>
+#include <cstdint>
 
 #include <Plat4m_Core/ServiceBase.h>
 #include <Plat4m_Core/Callback.h>
@@ -151,10 +152,18 @@ public:
         }
 
         ServiceRequest<RequestType> serviceRequest(request);
+        serviceRequest.sequenceId = myRequestSequenceId;
+        serviceRequest.timeStamp = System::getTimeStamp();
 
         ServiceResponse<ResponseType> serviceResponse(response);
 
         Error error = myCallback->call(serviceRequest, serviceResponse);
+
+        serviceResponse.sequenceId = myResponseSequeceId;
+        serviceResponse.timeStamp = System::getTimeStamp();
+
+        myRequestSequenceId++;
+        myResponseSequeceId++;
 
         return error;
     }
@@ -166,6 +175,10 @@ private:
     //--------------------------------------------------------------------------
 
     ServiceCallback* myCallback;
+
+    std::uint32_t myRequestSequenceId;
+
+    std::uint32_t myResponseSequeceId;
 
     //--------------------------------------------------------------------------
     // Private static methods
@@ -185,6 +198,11 @@ private:
             if (isNullPointer(service))
             {
                 Error error(ERROR_CODE_SERVICE_TYPE_ID_MISMATCH);
+
+                // Lock up, error condition
+                while (true)
+                {
+                }
             }
         }
 
