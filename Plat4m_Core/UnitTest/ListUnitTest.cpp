@@ -103,11 +103,17 @@ bool ListUnitTest::constructorTest()
 {
     List<std::uint8_t> list;
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-             UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(0))  &
-             UNIT_TEST_CASE_EQUAL(list.isEmpty(), true)                        &
-             UNIT_TEST_CASE_EQUAL(list.first(), static_cast<std::uint8_t*>(0)) &
-             UNIT_TEST_CASE_EQUAL(list.last(), static_cast<std::uint8_t*>(0)));
+             UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(0)) &
+             UNIT_TEST_CASE_EQUAL(list.isEmpty(), true)                       &
+             UNIT_TEST_CASE_EQUAL(isFirst, false)                             &
+             UNIT_TEST_CASE_EQUAL(isLast, false));
 }
 
 //------------------------------------------------------------------------------
@@ -119,11 +125,17 @@ bool ListUnitTest::appendTest()
 
     list.append(value);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(1))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(3)) &
-           UNIT_TEST_CASE_EQUAL(list.last(), static_cast<std::uint8_t*>(0)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(1)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(3))        &
+           UNIT_TEST_CASE_EQUAL(isLast, false));
 }
 
 //------------------------------------------------------------------------------
@@ -139,11 +151,17 @@ bool ListUnitTest::appendTest2()
 
     list.append(value2);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(3)) &
-           UNIT_TEST_CASE_EQUAL(*(list.last()), static_cast<std::uint8_t>(5)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(3))        &
+           UNIT_TEST_CASE_EQUAL(last, static_cast<std::uint8_t>(5)));
 }
 
 //------------------------------------------------------------------------------
@@ -163,11 +181,17 @@ bool ListUnitTest::appendTest3()
 
     list.append(value3);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(3))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(3)) &
-           UNIT_TEST_CASE_EQUAL(*(list.last()), static_cast<std::uint8_t>(1)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(3)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(3))        &
+           UNIT_TEST_CASE_EQUAL(last, static_cast<std::uint8_t>(1)));
 }
 
 //------------------------------------------------------------------------------
@@ -179,11 +203,17 @@ bool ListUnitTest::prependTest()
 
     list.prepend(value);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(1))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(3)) &
-           UNIT_TEST_CASE_EQUAL(list.last(), static_cast<std::uint8_t*>(0)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(1)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(3))        &
+           UNIT_TEST_CASE_EQUAL(isLast, false));
 }
 
 //------------------------------------------------------------------------------
@@ -199,11 +229,17 @@ bool ListUnitTest::prependTest2()
 
     list.prepend(value2);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(5)) &
-           UNIT_TEST_CASE_EQUAL(*(list.last()), static_cast<std::uint8_t>(3)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(5))        &
+           UNIT_TEST_CASE_EQUAL(last, static_cast<std::uint8_t>(3)));
 }
 
 //------------------------------------------------------------------------------
@@ -223,11 +259,17 @@ bool ListUnitTest::prependTest3()
 
     list.prepend(value3);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(3))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(1)) &
-           UNIT_TEST_CASE_EQUAL(*(list.last()), static_cast<std::uint8_t>(3)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(3)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(1))        &
+           UNIT_TEST_CASE_EQUAL(last, static_cast<std::uint8_t>(3)));
 }
 
 //------------------------------------------------------------------------------
@@ -241,11 +283,17 @@ bool ListUnitTest::removeTest()
 
     list.remove(value);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(0))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), true)                          &
-           UNIT_TEST_CASE_EQUAL(list.first(), static_cast<std::uint8_t*>(0))   &
-           UNIT_TEST_CASE_EQUAL(list.last(), static_cast<std::uint8_t*>(0)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(0)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), true)                       &
+           UNIT_TEST_CASE_EQUAL(isFirst, false)                             &
+           UNIT_TEST_CASE_EQUAL(isLast, false));
 }
 
 //------------------------------------------------------------------------------
@@ -264,11 +312,17 @@ bool ListUnitTest::removeTest2()
     // This should move value2 to the first element position
     list.remove(value1);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(1))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(5)) &
-           UNIT_TEST_CASE_EQUAL(list.last(), static_cast<std::uint8_t*>(0)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(1)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(5))        &
+           UNIT_TEST_CASE_EQUAL(isLast, false));
 }
 
 //------------------------------------------------------------------------------
@@ -287,11 +341,17 @@ bool ListUnitTest::removeTest3()
     // This should leave value1 in the first element position
     list.remove(value2);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(1))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(3)) &
-           UNIT_TEST_CASE_EQUAL(list.last(), static_cast<std::uint8_t*>(0)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(1)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(3))        &
+           UNIT_TEST_CASE_EQUAL(isLast, false));
 }
 
 //------------------------------------------------------------------------------
@@ -314,11 +374,17 @@ bool ListUnitTest::removeTest4()
     // This should move value2 to the first element position
     list.remove(value1);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(5)) &
-           UNIT_TEST_CASE_EQUAL(*(list.last()), static_cast<std::uint8_t>(1)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(5))        &
+           UNIT_TEST_CASE_EQUAL(last, static_cast<std::uint8_t>(1)));
 }
 
 //------------------------------------------------------------------------------
@@ -342,11 +408,17 @@ bool ListUnitTest::removeTest5()
     // last element position
     list.remove(value2);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(3)) &
-           UNIT_TEST_CASE_EQUAL(*(list.last()), static_cast<std::uint8_t>(1)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(3))        &
+           UNIT_TEST_CASE_EQUAL(last, static_cast<std::uint8_t>(1)));
 }
 
 //------------------------------------------------------------------------------
@@ -369,9 +441,15 @@ bool ListUnitTest::removeTest6()
     // This should move value2 to the last element position
     list.remove(value3);
 
+    std::uint8_t first = 0;
+    bool isFirst = list.first(first);
+
+    std::uint8_t last = 0;
+    bool isLast = list.last(last);
+
     return UNIT_TEST_REPORT(
-           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2))    &
-           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                         &
-           UNIT_TEST_CASE_EQUAL(*(list.first()), static_cast<std::uint8_t>(3)) &
-           UNIT_TEST_CASE_EQUAL(*(list.last()), static_cast<std::uint8_t>(5)));
+           UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &
+           UNIT_TEST_CASE_EQUAL(list.isEmpty(), false)                      &
+           UNIT_TEST_CASE_EQUAL(first, static_cast<std::uint8_t>(3))        &
+           UNIT_TEST_CASE_EQUAL(last, static_cast<std::uint8_t>(5)));
 }
