@@ -286,6 +286,11 @@ public:
             return false;
         }
 
+        if (isNullPointer(myLastItem))
+        {
+            return false;
+        }
+
         value = myLastItem->value;
 
         return true;
