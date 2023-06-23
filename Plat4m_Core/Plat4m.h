@@ -444,39 +444,39 @@ namespace Plat4m
     //--------------------------------------------------------------------------
     inline AngleDegrees radiansToDegrees(const AngleRadians angleRadians)
     {
-        return (angleRadians * (180.0 / M_PI));
+        return static_cast<AngleDegrees>(angleRadians * (180.0 / M_PI));
     }
 
     //--------------------------------------------------------------------------
     inline AngleRadians degreesToRadians(const AngleDegrees angleDegrees)
     {
-        return (angleDegrees * (M_PI / 180.0));
+        return static_cast<AngleRadians>(angleDegrees * (M_PI / 180.0));
     }
 
     //--------------------------------------------------------------------------
     inline AngularVelocityDps radPsToDps(const AngularVelocityRadPs radPs)
     {
-        return (radPs * (180.0 / M_PI));
+        return static_cast<AngularVelocityDps>(radPs * (180.0 / M_PI));
     }
 
     //--------------------------------------------------------------------------
     inline AngularVelocityRadPs dpsToRadPs(const AngularVelocityDps dps)
     {
-        return (dps * (M_PI / 180.0));
+        return static_cast<AngularVelocityRadPs>(dps * (M_PI / 180.0));
     }
 
     //--------------------------------------------------------------------------
     inline AngularAccelerationDps2 radPs2ToDps2(
     									 const AngularAccelerationRadPs2 radPs2)
     {
-        return (radPs2 * (180.0 / M_PI));
+        return static_cast<AngularAccelerationDps2>(radPs2 * (180.0 / M_PI));
     }
 
     //--------------------------------------------------------------------------
     inline AngularAccelerationRadPs2 dps2ToRadPs2(
     										 const AngularAccelerationDps2 dps2)
     {
-        return (dps2 * (M_PI / 180.0));
+        return static_cast<AngularAccelerationRadPs2>(dps2 * (M_PI / 180.0));
     }
 
     //--------------------------------------------------------------------------

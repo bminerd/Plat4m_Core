@@ -227,8 +227,8 @@ TimeStamp TimeStamp::operator%(const TimeStamp& timeStamp) const
 
     int64_t modulus = ns % timeStampNs;
 
-    result.timeS = modulus / 1000000000;
-    result.timeNs = modulus % 1000000000;
+    result.timeS = static_cast<TimeSecondsSigned>(modulus / 1000000000);
+    result.timeNs = static_cast<TimeNanosecondsSigned>(modulus % 1000000000);
 
     return result;
 }
@@ -344,7 +344,8 @@ TimeMsSigned TimeStamp::toTimeMsSigned(std::uint32_t& rollOverCount) const
         (static_cast<std::int64_t>(timeS) * 1000) +
                                       integerDivideRound((int) timeNs, 1000000);
 
-    TimeMsSigned timeMsSigned = timeMsSignedWithOverflow;
+    TimeMsSigned timeMsSigned =
+                            static_cast<TimeMsSigned>(timeMsSignedWithOverflow);
 
     if ((timeMsSigned < 0) && ((timeS > 0) || (timeNs > 0)))
     {
@@ -358,9 +359,9 @@ TimeMsSigned TimeStamp::toTimeMsSigned(std::uint32_t& rollOverCount) const
     }
 
     rollOverCount =
-        std::abs(timeMsSignedWithOverflow /
+        static_cast<std::uint32_t>(std::abs(timeMsSignedWithOverflow /
             (static_cast<std::int64_t>(
-                                std::numeric_limits<TimeMsSigned>::max()) + 1));
+                                std::numeric_limits<TimeMsSigned>::max()) + 1)));
 
     return timeMsSigned;
 }
@@ -380,7 +381,8 @@ TimeUsSigned TimeStamp::toTimeUsSigned(uint32_t& rollOverCount) const
         (static_cast<std::int64_t>(timeS) * 1000000) +
                                          integerDivideRound((int) timeNs, 1000);
 
-    TimeUsSigned timeUsSigned = timeUsSignedWithOverflow;
+    TimeUsSigned timeUsSigned =
+                            static_cast<TimeUsSigned>(timeUsSignedWithOverflow);
 
     if ((timeUsSigned < 0) && ((timeS > 0) || (timeNs > 0)))
     {
@@ -394,9 +396,9 @@ TimeUsSigned TimeStamp::toTimeUsSigned(uint32_t& rollOverCount) const
     }
 
     rollOverCount =
-        std::abs(timeUsSignedWithOverflow /
+        static_cast<std::uint32_t>(std::abs(timeUsSignedWithOverflow /
             (static_cast<std::int64_t>(
-                                std::numeric_limits<TimeUsSigned>::max()) + 1));
+                               std::numeric_limits<TimeUsSigned>::max()) + 1)));
 
     return timeUsSigned;
 }
@@ -415,7 +417,8 @@ TimeNsSigned TimeStamp::toTimeNsSigned(std::uint32_t& rollOverCount) const
     std::int64_t timeNsSignedWithOverflow =
                        (static_cast<std::int64_t>(timeS) * 1000000000) + timeNs;
 
-    TimeNsSigned timeNsSigned = timeNsSignedWithOverflow;
+    TimeNsSigned timeNsSigned =
+                            static_cast<TimeNsSigned>(timeNsSignedWithOverflow);
 
     if ((timeNsSigned < 0) && ((timeS > 0) || (timeNs > 0)))
     {
@@ -429,9 +432,9 @@ TimeNsSigned TimeStamp::toTimeNsSigned(std::uint32_t& rollOverCount) const
     }
 
     rollOverCount =
-        std::abs(timeNsSignedWithOverflow /
+        static_cast<std::uint32_t>(std::abs(timeNsSignedWithOverflow /
             (static_cast<std::int64_t>(
-                                std::numeric_limits<TimeNsSigned>::max()) + 1));
+                               std::numeric_limits<TimeNsSigned>::max()) + 1)));
 
     return timeNsSigned;
 }
