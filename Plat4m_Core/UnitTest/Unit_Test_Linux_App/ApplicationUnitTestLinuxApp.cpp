@@ -86,12 +86,12 @@ ApplicationUnitTestLinuxApp::~ApplicationUnitTestLinuxApp()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void ApplicationUnitTestLinuxApp::driverRun()
+int ApplicationUnitTestLinuxApp::driverRun()
 {
     initializeProcessor();
     initializeSystem();
 
-    runParentApplication();
+    return (runParentApplication());
 }
 
 //------------------------------------------------------------------------------

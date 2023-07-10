@@ -48,7 +48,5 @@ int main()
 {
     static Plat4m::ApplicationAcceptanceTestLinuxApp application;
 
-    application.run();
-
-    return 0;
+    return (application.run());
 }

@@ -88,12 +88,12 @@ ApplicationAcceptanceTestLinuxApp::~ApplicationAcceptanceTestLinuxApp()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void ApplicationAcceptanceTestLinuxApp::driverRun()
+int ApplicationAcceptanceTestLinuxApp::driverRun()
 {
     initializeProcessor();
     initializeSystem();
 
-    runParentApplication();
+    return (runParentApplication());
 }
 
 //------------------------------------------------------------------------------

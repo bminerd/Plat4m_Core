@@ -116,7 +116,7 @@ private:
     // Private methods implemented from Application
     //--------------------------------------------------------------------------
 
-    void driverRun();
+    int driverRun();
 
     //--------------------------------------------------------------------------
     // Private methods
