@@ -109,19 +109,30 @@ public:
     {
     }
 
+protected:
+
     //--------------------------------------------------------------------------
-    // Public virtual methods overridden for DataObject
+    // Protected virtual methods overridden for DataObject
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual DataObjectBase::Error read(DataType& data) override
+    virtual DataObjectBase::Error subclassRead(
+                                             DataType& data,
+                                             const bool isInternal,
+                                             const bool isForcedUpdate) override
     {
         data = DataObjectInterface<DataType>::getCurrentData();
 
         return DataObjectBase::Error(DataObjectBase::ERROR_CODE_NONE);
     }
 
-protected:
+private:
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    TopicSubscriber<DataType> myTopicSubscriber;
 
     //--------------------------------------------------------------------------
     // Private virtual methods overridden for Plat4m::Module
@@ -135,14 +146,6 @@ protected:
         return Module::Error(Module::ERROR_CODE_NONE);
     }
 
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    TopicSubscriber<DataType> myTopicSubscriber;
-
     //--------------------------------------------------------------------------
     // Private methods
     //--------------------------------------------------------------------------
@@ -150,7 +153,7 @@ private:
     //--------------------------------------------------------------------------
     void sampleCallback(const TopicSample<DataType>& sample)
     {
-        DataObjectInterface<DataType>::dataUpdated(sample.data);
+        DataObjectInterface<DataType>::dataUpdated(sample.data, true, false);
     }
 };
 
@@ -189,12 +192,17 @@ public:
     {
     }
 
+protected:
+
     //--------------------------------------------------------------------------
-    // Public virtual methods overridden for DataObject
+    // Protected virtual methods overridden for DataObject
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual DataObjectBase::Error read(DataType& data) override
+    virtual DataObjectBase::Error subclassRead(
+                                             DataType& data,
+                                             const bool isInternal,
+                                             const bool isForcedUpdate) override
     {
         ServiceBase::Error serviceError = 
                                        myGetValueServiceClient.request(0, data);
@@ -205,7 +213,9 @@ public:
                                         DataObjectBase::ERROR_CODE_READ_FAILED);
         }
 
-        DataObjectInterface<DataType>::dataUpdated(data);
+        DataObjectInterface<DataType>::dataUpdated(data,
+                                                   isInternal,
+                                                   isForcedUpdate);
 
         return DataObjectBase::Error(DataObjectBase::ERROR_CODE_NONE);
     }
@@ -258,12 +268,17 @@ public:
     {
     }
 
+protected:
+
     //--------------------------------------------------------------------------
-    // Public virtual methods overridden for DataObject
+    // Protected virtual methods overridden for DataObject
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual DataObjectBase::Error read(DataType& data) override
+    virtual DataObjectBase::Error subclassRead(
+                                             DataType& data,
+                                             const bool isInternal,
+                                             const bool isForcedUpdate) override
     {
         ServiceBase::Error serviceError = 
                                        myGetValueServiceClient.request(0, data);
@@ -274,19 +289,18 @@ public:
                                         DataObjectBase::ERROR_CODE_READ_FAILED);
         }
 
-        DataObjectInterface<DataType>::dataUpdated(data);
+        DataObjectInterface<DataType>::dataUpdated(data,
+                                                   isInternal,
+                                                   isForcedUpdate);
 
         return DataObjectBase::Error(DataObjectBase::ERROR_CODE_NONE);
     }
 
-protected:
-
     //--------------------------------------------------------------------------
-    // Protected virtual methods overridden for DataObject
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual DataObjectBase::Error subclassWrite(const DataType& data) override
+    virtual DataObjectBase::Error subclassWrite(
+                                             const DataType& data,
+                                             const bool isInternal,
+                                             const bool isForcedUpdate) override
     {
         DataAccessError dataAccessError;
 
@@ -299,7 +313,9 @@ protected:
                                        DataObjectBase::ERROR_CODE_WRITE_FAILED);
         }
 
-        DataObjectInterface<DataType>::dataUpdated(data);
+        DataObjectInterface<DataType>::dataUpdated(data,
+                                                   isInternal,
+                                                   isForcedUpdate);
 
         return DataObjectBase::Error(DataObjectBase::ERROR_CODE_NONE);
     }
@@ -357,7 +373,10 @@ protected:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual DataObjectBase::Error subclassWrite(const DataType& data) override
+    virtual DataObjectBase::Error subclassWrite(
+                                             const DataType& data,
+                                             const bool isInternal,
+                                             const bool isForcedUpdate) override
     {
         DataAccessError dataAccessError;
 
@@ -370,7 +389,9 @@ protected:
                                        DataObjectBase::ERROR_CODE_WRITE_FAILED);
         }
 
-        DataObjectInterface<DataType>::dataUpdated(data);
+        DataObjectInterface<DataType>::dataUpdated(data,
+                                                   isInternal,
+                                                   isForcedUpdate);
 
         return DataObjectBase::Error(DataObjectBase::ERROR_CODE_NONE);
     }
