@@ -99,10 +99,22 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    // Public pure virtual methods
+    // Public methods
     //--------------------------------------------------------------------------
 
-    virtual DataObjectBase::Error read(DataType& data) = 0;
+    //--------------------------------------------------------------------------
+    DataObjectBase::Error read(DataType& data)
+    {
+        return subclassRead(data, false, false);
+    }
+
+    //--------------------------------------------------------------------------
+    DataObjectBase::Error update()
+    {
+        DataType dummy;
+
+        return subclassRead(dummy, true, true);
+    }
 
 protected:
 
@@ -115,6 +127,14 @@ protected:
         DataObjectInterface<DataType>(id)
     {
     }
+
+    //--------------------------------------------------------------------------
+    // Protected pure virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual DataObjectBase::Error subclassRead(DataType& data,
+                                               const bool isInternal,
+                                               const bool isForcedUpdate) = 0;
 };
 
 ///
@@ -156,11 +176,16 @@ public:
     // Public pure virtual methods
     //--------------------------------------------------------------------------
 
-    virtual DataObjectBase::Error read(DataType& data) = 0;
 
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    DataObjectBase::Error read(DataType& data)
+    {
+        return subclassRead(data, false, false);
+    }
 
     //--------------------------------------------------------------------------
     DataObjectBase::Error write(const DataType& data)
@@ -175,7 +200,7 @@ public:
         }
         else
         {
-            error = subclassWrite(data);
+            error = subclassWrite(data, false, false);
         }
 
         return error;
@@ -195,6 +220,18 @@ public:
         return write(DataObjectInterface<DataType>::getCurrentData());
     }
 
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    DataObjectBase::Error update()
+    {
+        DataType dummy;
+
+        return subclassRead(dummy, true, true);
+    }
+
 protected:
 
     //--------------------------------------------------------------------------
@@ -212,7 +249,13 @@ protected:
     // Protected pure virtual methods
     //--------------------------------------------------------------------------
 
-    virtual DataObjectBase::Error subclassWrite(const DataType& data) = 0;
+    virtual DataObjectBase::Error subclassRead(DataType& data,
+                                              const bool isInternal,
+                                              const bool isForcedUpdate) = 0;
+
+    virtual DataObjectBase::Error subclassWrite(const DataType& data,
+                                                const bool isInternal,
+                                                const bool isForcedUpdate) = 0;
 
 private:
 
@@ -275,7 +318,7 @@ public:
         }
         else
         {
-            error = subclassWrite(data);
+            error = subclassWrite(data, false, false);
         }
 
         return error;
@@ -312,7 +355,9 @@ protected:
     // Protected pure virtual methods
     //--------------------------------------------------------------------------
 
-    virtual DataObjectBase::Error subclassWrite(const DataType& data) = 0;
+    virtual DataObjectBase::Error subclassWrite(const DataType& data,
+                                                const bool isInternal,
+                                                const bool isForcedUpdate) = 0;
 
 private:
 

@@ -163,23 +163,28 @@ protected:
     }
 
     //--------------------------------------------------------------------------
-    void dataUpdated(const DataType& data)
+    void dataUpdated(const DataType& data,
+                     const bool isInternal,
+                     const bool isForcedUpdate)
     {
-        typename List<DataCallback&>::Iterator iterator =
+        if (isInternal)
+        {
+            typename List<DataCallback&>::Iterator iterator =
                                            myDataUpdatedCallbackList.iterator();
 
-        while (iterator.hasCurrent())
-        {
-            DataCallback& callback = iterator.current();
+            while (iterator.hasCurrent())
+            {
+                DataCallback& callback = iterator.current();
 
-            callback.call(data);
+                callback.call(data);
 
-            iterator.next();
-        }
+                iterator.next();
+            }
 
-        if (data != myCurrentData)
-        {
-            dataChanged(data);
+            if ((data != myCurrentData) || isForcedUpdate)
+            {
+                dataChanged(data);
+            }
         }
 
         myCurrentData = data;
