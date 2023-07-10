@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added ability to internally update DataObjects. [Resolves #134].
 - `[IMPROVEMENT]` Added static casts to resolve MSVS compiler warnings for implicit type conversion. [Resolves #133].
 - `[IMPROVEMENT]` Added ability for List to store reference types. [Resolves 131].
 - `[NEW FEATURE]` Added DataObject class as a data-centric interface for accessing application data. Added DataObjectTopicService as a DataObject implementation that uses Topics and Services to access the data. [Resolves 130]. 
