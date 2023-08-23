@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Added bitMask() and power() constant expression helper functions. [Resolves #140].
 - `[IMPROVEMENT]` Added int return type to Application::run(). [Resolves #135].
 - `[IMPROVEMENT]` Added ability to internally update DataObjects. [Resolves #134].
 - `[IMPROVEMENT]` Added static casts to resolve MSVS compiler warnings for implicit type conversion. [Resolves #133].
