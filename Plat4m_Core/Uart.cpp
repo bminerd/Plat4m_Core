@@ -46,8 +46,7 @@
 #include <Plat4m_Core/Uart.h>
 #include <Plat4m_Core/System.h>
 
-using Plat4m::Uart;
-using Plat4m::ComInterface;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public virtual methods overridden for ComInterface
@@ -66,14 +65,14 @@ ComInterface::Error Uart::transmitBytes(const ByteArray& byteArray,
 }
 
 //------------------------------------------------------------------------------
-uint32_t Uart::getReceivedBytesCount()
+std::uint32_t Uart::getReceivedBytesCount()
 {
     return driverGetReceivedBytesCount();
 }
 
 //------------------------------------------------------------------------------
 ComInterface::Error Uart::getReceivedBytes(ByteArray& byteArray,
-                                           const uint32_t nBytes)
+                                           const std::uint32_t nBytes)
 {
     return driverGetReceivedBytes(byteArray, nBytes);
 }
