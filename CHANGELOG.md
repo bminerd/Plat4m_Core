@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[NEW FEATURE]` Added STM32H7xx drivers for Processor, Interrupt, GpioPort, GpioPin, and Uart. Dma drivers added, but not fully functional. [Resolves #89].
 - `[IMPROVEMENT]` Added bitMask() and power() constant expression helper functions. [Resolves #140].
 - `[IMPROVEMENT]` Added int return type to Application::run(). [Resolves #135].
 - `[IMPROVEMENT]` Added ability to internally update DataObjects. [Resolves #134].
