@@ -323,12 +323,55 @@ void ProcessorSTM32H7xx::reset()
     Plat4m::setBits(RCC->CR, (uint32_t) 0x00000001);
 
     // Reset CFGR register
-    // 0x07803FF3 = ~0xF878FC00C
-    Plat4m::clearBits(RCC->CFGR, (uint32_t) 0x07803FF3);
+    Plat4m::setBits(RCC->CFGR, (uint32_t) 0x00000000);
 
-    // Reset HSEON, CSSON and PLLON bits
-    // 0x01090000 = ~0xFEF6FFFF
-    Plat4m::clearBits(RCC->CR, (uint32_t) 0x01090000);
+    // Reset HSEON, HSECSSON, CSION, HSI48ON, CSIKERON, PLL1ON, PLL2ON and PLL3ON bits
+    // 0x15091280 = ~0xEAF6ED7FU
+    Plat4m::clearBits(RCC->CR, (uint32_t) 0xEAF6ED7FU);
+
+#if defined(D3_SRAM_BASE)
+
+    // Reset D1CFGR register
+    RCC->D1CFGR = 0x00000000;
+
+    // Reset D2CFGR register
+    RCC->D2CFGR = 0x00000000;
+
+    // Reset D3CFGR register
+    RCC->D3CFGR = 0x00000000;
+
+#else
+
+    // Reset CDCFGR1 register
+    RCC->CDCFGR1 = 0x00000000;
+
+    // Reset CDCFGR2 register
+    RCC->CDCFGR2 = 0x00000000;
+
+    // Reset SRDCFGR register
+    RCC->SRDCFGR = 0x00000000;
+
+#endif
+    // Reset PLLCKSELR register
+    RCC->PLLCKSELR = 0x02020200;
+
+    // Reset PLLCFGR register
+    RCC->PLLCFGR = 0x01FF0000;
+
+    // Reset PLL1DIVR register
+    RCC->PLL1DIVR = 0x01010280;
+    // Reset PLL1FRACR register
+    RCC->PLL1FRACR = 0x00000000;
+
+    // Reset PLL2DIVR register
+    RCC->PLL2DIVR = 0x01010280;
+    // Reset PLL2FRACR register
+    RCC->PLL2FRACR = 0x00000000;
+
+    // Reset PLL3DIVR register
+    RCC->PLL3DIVR = 0x01010280;
+    // Reset PLL3FRACR register
+    RCC->PLL3FRACR = 0x00000000;
 
     // Reset HSEBYP bit
     // 0x00040000 = ~0xFFFBFFFF
@@ -336,38 +379,6 @@ void ProcessorSTM32H7xx::reset()
 
     // Disable all clock interrupts
     RCC->CIER = 0x00000000;
-
-    // Enable SYSCFG clock
-    ProcessorSTM32H7xx::setPeripheralClockEnabled(
-                                         ProcessorSTM32H7xx::PERIPHERAL_SYS_CFG,
-                                         true);
-
-    if((DBGMCU->IDCODE & 0xFFFF0000U) < 0x20000000U)
-    {
-        /* if stm32h7 revY*/
-        /* Change  the switch matrix read issuing capability to 1 for the AXI SRAM target (Target 7) */
-        *((__IO uint32_t*)0x51008108) = 0x000000001U;
-    }
-
-    // Plat4m::setBits(RCC->APB4RSTR, 0xFFFFFFFF);
-    // Plat4m::setBits(RCC->APB3RSTR, 0xFFFFFFFF);
-    // Plat4m::setBits(RCC->APB2RSTR, 0xFFFFFFFF);
-    // Plat4m::setBits(RCC->APB1HRSTR, 0xFFFFFFFF);
-    // Plat4m::setBits(RCC->APB1LRSTR, 0xFFFFFFFF);
-    // Plat4m::setBits(RCC->AHB4RSTR,  0xFFFFFFFF);
-    // Plat4m::setBits(RCC->AHB3RSTR,  0xFFFFFFFF);
-    // Plat4m::setBits(RCC->AHB2RSTR,  0xFFFFFFFF);
-    // Plat4m::setBits(RCC->AHB1RSTR,  0xFFFFFFFF);
-
-    // Plat4m::clearBits(RCC->APB4RSTR, 0xFFFFFFFF);
-    // Plat4m::clearBits(RCC->APB3RSTR, 0xFFFFFFFF);
-    // Plat4m::clearBits(RCC->APB2RSTR, 0xFFFFFFFF);
-    // Plat4m::clearBits(RCC->APB1HRSTR, 0xFFFFFFFF);
-    // Plat4m::clearBits(RCC->APB1LRSTR, 0xFFFFFFFF);
-    // Plat4m::clearBits(RCC->AHB4RSTR,  0xFFFFFFFF);
-    // Plat4m::clearBits(RCC->AHB3RSTR,  0xFFFFFFFF);
-    // Plat4m::clearBits(RCC->AHB2RSTR,  0xFFFFFFFF);
-    // Plat4m::clearBits(RCC->AHB1RSTR,  0xFFFFFFFF);
 }
 
 //------------------------------------------------------------------------------
@@ -463,18 +474,12 @@ std::uint32_t ProcessorSTM32H7xx::getSysTickClockFrequencyHz()
 }
 
 //------------------------------------------------------------------------------
-// Public virtual methods
+// Public methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 {
-    // Currently disabled due to hard fault
-    // SCB_EnableICache();
-
-    // Currently disabled due to hard fault
-    // SCB_EnableDCache();
-
     if (config.coreClockFrequencyHz > 480000000)
     {
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
@@ -482,7 +487,9 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 
     // Calculate PLL_M, PLL_N, PLL_P, and PLL_Q factors
 
-    myInternalConfig.pllInputFrequencyRange =
+    InternalConfig internalConfig;
+
+    internalConfig.pllInputFrequencyRange =
                                            PLL_INPUT_FREQUENCY_RANGE_1_TO_2_MHZ;
 
     std::uint32_t vcoInputFrequencyHz;
@@ -490,12 +497,12 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     if (config.coreClockFrequencyHz > 420000000)
     {
         vcoInputFrequencyHz = 2000000;
-        myInternalConfig.pllVcoRange = PLL_VCO_RANGE_WIDE_192_TO_960_MHZ;
+        internalConfig.pllVcoRange = PLL_VCO_RANGE_WIDE_192_TO_960_MHZ;
     }
     else
     {
         vcoInputFrequencyHz = 1000000;
-        myInternalConfig.pllVcoRange = PLL_VCO_RANGE_MEDIUM_150_TO_420_MHZ;
+        internalConfig.pllVcoRange = PLL_VCO_RANGE_MEDIUM_150_TO_420_MHZ;
     }
 
     ///
@@ -514,7 +521,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
 
-    myInternalConfig.pllM = pllM;
+    internalConfig.pllM = pllM;
 
     ///
     /// PLL_N calculation (datasheet pg. ???)
@@ -532,7 +539,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     /// - PLL_P = [0, 2, 4, 6, ... , 128] (even values only)
     ///
     std::uint32_t vcoOutputFrequencyHz;
-    std::uint32_t pllP = 0;
+    std::uint32_t pllP = 1;
 
     while (pllP < 128)
     {
@@ -571,29 +578,13 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
 
-    myInternalConfig.pllN = pllN;
-    myInternalConfig.pllP = pllP;
+    internalConfig.pllN = pllN;
+    internalConfig.pllP = pllP;
 
     // PLL_VCO = (HSE_VALUE or HSI_VALUE / PLL_M) * PLL_N
 
     /// PLL_Q calculation
     /// PLL_R calculation
-
-    setBits(RCC->CR, Registers::CR::HSEON);
-
-    while (!(areBitsSet(RCC->CR, Registers::CR::HSERDY)))
-    {
-    }
-
-    clearAndSetBits(RCC->PLLCKSELR, 0x3F << 4, myInternalConfig.pllM << 4);
-    setBits(RCC->PLLCKSELR, 2);
-    setBits(RCC->PLLCFGR, myInternalConfig.pllInputFrequencyRange << 2);
-    setBits(RCC->PLLCFGR, myInternalConfig.pllVcoRange << 1);
-    clearAndSetBits(RCC->PLL1DIVR, 0xFFFF, myInternalConfig.pllN);
-    clearAndSetBits(RCC->PLL1DIVR, 0x7F << 9, (myInternalConfig.pllP) << 9);
-
-    // Enable PLL1
-    setBit(RCC->PLLCFGR, 16);
 
     std::uint32_t size = 0;
     std::uint32_t i = 0;
@@ -624,9 +615,8 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
 
-    myInternalConfig.d1DomainCorePrescaler =
+    internalConfig.d1DomainCorePrescaler =
                                           static_cast<D1DomainCorePrescaler>(i);
-    setBits(RCC->D1CFGR, myD1DomainCoreClockPrescalerMap[i].bits);
 
     ///
     /// AHB Clock = sys_d1cpre_ck / prescaler
@@ -658,8 +648,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
 
-    myInternalConfig.ahbPrescaler = static_cast<AhbPrescaler>(i);
-    setBits(RCC->D1CFGR, myAhbClockPrescalerMap[i].bits);
+    internalConfig.ahbPrescaler = static_cast<AhbPrescaler>(i);
 
     ///
     /// APB1 Clock = AHB / prescaler
@@ -667,7 +656,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     /// - APB1 <= 240 MHz
     ///
 
-    if (config.apb1ClockFrequencyHz > 240000000)
+    if (config.apb1ClockFrequencyHz > 120000000)
     {
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
@@ -691,8 +680,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
 
-    myInternalConfig.apb1Prescaler = static_cast<Apb1Prescaler>(i);
-    setBits(RCC->D2CFGR, myApb1ClockPrescalerMap[i].bits);
+    internalConfig.apb1Prescaler = static_cast<Apb1Prescaler>(i);
 
     ///
     /// APB2 Clock = AHB / prescaler
@@ -700,7 +688,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     /// - APB2 <= 240 MHz
     ///
 
-    if (config.apb2ClockFrequencyHz > 240000000)
+    if (config.apb2ClockFrequencyHz > 120000000)
     {
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
@@ -724,8 +712,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
 
-    myInternalConfig.apb2Prescaler = static_cast<Apb2Prescaler>(i);
-    setBits(RCC->D2CFGR, myApb2ClockPrescalerMap[i].bits);
+    internalConfig.apb2Prescaler = static_cast<Apb2Prescaler>(i);
 
     ///
     /// APB3 Clock = AHB / prescaler
@@ -733,7 +720,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     /// - APB3 <= 240 MHz
     ///
 
-    if (config.apb3ClockFrequencyHz > 240000000)
+    if (config.apb3ClockFrequencyHz > 120000000)
     {
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
@@ -757,8 +744,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
 
-    myInternalConfig.apb3Prescaler = static_cast<Apb3Prescaler>(i);
-    setBits(RCC->D1CFGR, myApb3ClockPrescalerMap[i].bits);
+    internalConfig.apb3Prescaler = static_cast<Apb3Prescaler>(i);
 
     ///
     /// APB4 Clock = AHB / prescaler
@@ -766,7 +752,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     /// - APB4 <= 240 MHz
     ///
 
-    if (config.apb4ClockFrequencyHz > 240000000)
+    if (config.apb4ClockFrequencyHz > 120000000)
     {
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
@@ -790,37 +776,7 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
         return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
     }
 
-    myInternalConfig.apb4Prescaler = static_cast<Apb4Prescaler>(i);
-    setBits(RCC->D3CFGR, myApb4ClockPrescalerMap[i].bits);
-
-    if (config.clockSource == CLOCK_SOURCE_EXTERNAL)
-    {
-        bool isHseRunning = false;
-        std::uint32_t startUpCounter = 500;
-
-        // Enable HSE
-        setBits(RCC->CR, 1 << 16);
-
-        while (!isHseRunning && startUpCounter--)
-        {
-            isHseRunning = isBitSet(RCC->CR, 17);
-        }
-
-        if (!startUpCounter)
-        {
-            return Error(ERROR_CODE_CLOCK_STARTUP_FAILED);
-        }
-
-        // setBits(RCC->CFGR, RCC_CFGR_PLLSRC_PREDIV1);
-    }
-
-    // Enable PLL
-    setBits(RCC->CR, Registers::CR::PLL1ON);
-
-    // Wait till PLL is ready
-    while (areBitsClear(RCC->CR, Registers::CR::PLL1RDY))
-    {
-    }
+    internalConfig.apb4Prescaler = static_cast<Apb4Prescaler>(i);
 
     size = arraySize(myFlashWaitStatesFrequencyMap[0]);
 
@@ -843,34 +799,23 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 
     if (i < 3)
     {
-        myInternalConfig.flashWaitStates = static_cast<FlashWaitStates>(i);
+        internalConfig.flashWaitStates = static_cast<FlashWaitStates>(i);
     }
     else
     {
-        myInternalConfig.flashWaitStates = static_cast<FlashWaitStates>(i - 1);
+        internalConfig.flashWaitStates = static_cast<FlashWaitStates>(i - 1);
     }
 
-    myInternalConfig.programmingDelay =
+    internalConfig.programmingDelay =
                        myFlashWaitStatesFrequencyMap[scale][i].programmingDelay;
 
-    setBits(FLASH->ACR,
-            static_cast<std::uint32_t>(myInternalConfig.flashWaitStates));
-    setBits(
-           FLASH->ACR,
-           static_cast<std::uint32_t>( myInternalConfig.programmingDelay << 4));
+    internalConfig.clockSource = config.clockSource;
+    internalConfig.coreVoltageScale = config.coreVoltageScale;
+    internalConfig.vectorTableAddress = config.vectorTableAddress;
+    internalConfig.enableICache = config.enableICache;
+    internalConfig.enableDCache = config.enableDCache;
 
-    // Select PLL as system clock source
-    // clearAndSetBits(RCC->CFGR, 7, 3);
-    setBits(RCC->CFGR, 3);
-
-    // Wait till PLL is used as system clock source
-    while (!(areBitsSet(RCC->CFGR, 3 << 3)))
-    {
-    }
-
-    SCB->VTOR = (config.vectorTableAddress & (uint32_t)0x1FFFFF80);
-
-    NVIC_SetPriorityGrouping(3);
+    setInternalConfig(internalConfig);
 
     myConfig = config;
 
@@ -887,6 +832,97 @@ ProcessorSTM32H7xx::ClockSource ProcessorSTM32H7xx::getCoreClockSource()
 void ProcessorSTM32H7xx::setCoreClockSource(const ClockSource coreClockSource)
 {
     // Set clock source
+}
+
+//------------------------------------------------------------------------------
+void ProcessorSTM32H7xx::setInternalConfig(const InternalConfig& config)
+{
+    if (config.enableICache)
+    {
+        SCB_EnableICache();
+    }
+
+    if (config.enableDCache)
+    {
+        SCB_EnableDCache();
+    }
+
+    clearAndSetBits(PWR->CR3, 0x7, 0x2);
+    clearAndSetBits(PWR->D3CR, 0x3 << 14, (3 - config.coreVoltageScale) << 14);
+
+    while (!(isBitSet(PWR->D3CR, 13)))
+    {
+    }
+
+    // Enable SYSCFG clock
+    ProcessorSTM32H7xx::setPeripheralClockEnabled(
+                                         ProcessorSTM32H7xx::PERIPHERAL_SYS_CFG,
+                                         true);
+
+    setBit(SYSCFG->PWRCR, 0);
+
+    while (!(isBitSet(PWR->D3CR, 13)))
+    {
+    }
+
+    if (config.clockSource == CLOCK_SOURCE_EXTERNAL)
+    {
+        setBits(RCC->CR, Registers::CR::HSEON);
+
+        while (!(areBitsSet(RCC->CR, Registers::CR::HSERDY)))
+        {
+        }
+    }
+
+    // Configure PLL1
+    clearAndSetBits(RCC->PLLCKSELR, 0x3F << 4, config.pllM << 4);
+    setBits(RCC->PLLCKSELR, 0x2);
+    setBits(RCC->PLLCFGR, config.pllInputFrequencyRange << 2);
+    setBits(RCC->PLLCFGR, config.pllVcoRange << 1);
+    clearAndSetBits(RCC->PLL1DIVR, 0xFFFF, config.pllN);
+    clearAndSetBits(RCC->PLL1DIVR, 0x7F << 9, (config.pllP) << 9);
+
+    // Enable PLL1 DIVP output
+    setBit(RCC->PLLCFGR, 16);
+
+    // Configure D1, D2, and D3 domain clocks
+    setBits(RCC->D1CFGR,
+            myD1DomainCoreClockPrescalerMap[config.d1DomainCorePrescaler].bits);
+    setBits(RCC->D1CFGR, myAhbClockPrescalerMap[config.ahbPrescaler].bits);
+    setBits(RCC->D2CFGR, myApb1ClockPrescalerMap[config.apb1Prescaler].bits);
+    setBits(RCC->D2CFGR, myApb2ClockPrescalerMap[config.apb2Prescaler].bits);
+    setBits(RCC->D1CFGR, myApb3ClockPrescalerMap[config.apb3Prescaler].bits);
+    setBits(RCC->D3CFGR, myApb4ClockPrescalerMap[config.apb4Prescaler].bits);
+
+    // Enable PLL
+    setBits(RCC->CR, Registers::CR::PLL1ON);
+
+    // Wait till PLL is ready
+    while (areBitsClear(RCC->CR, Registers::CR::PLL1RDY))
+    {
+    }
+
+    setBits(FLASH->ACR, config.flashWaitStates);
+
+    while (!(areBitsSet(FLASH->ACR, config.flashWaitStates)))
+    {
+    }
+
+    setBits(FLASH->ACR, config.programmingDelay << 4);
+
+    // Select PLL as system clock source
+    clearAndSetBits(RCC->CFGR, 0x7, 0x3);
+
+    // Wait till PLL is used as system clock source
+    while (!(areBitsSet(RCC->CFGR, 0x3 << 3)))
+    {
+    }
+
+    SCB->VTOR = (config.vectorTableAddress & (uint32_t)0x1FFFFF80);
+
+    NVIC_SetPriorityGrouping(3);
+
+    myInternalConfig = config;
 }
 
 //------------------------------------------------------------------------------

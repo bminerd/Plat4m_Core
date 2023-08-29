@@ -438,11 +438,6 @@ public:
     struct Config
     {
         ClockSource clockSource;
-        /// NOTE: Only silicon revisions X and V support 480 MHz, others are
-        /// limited to 400 MHz. Because of the allowable intermediate frequency
-        /// ranges for generating the peripheral clocks, if the 400 MHz max
-        /// core clock frequency is desired, the AHBx and APBx clocks must be
-        /// set to 200 MHz.
         std::uint32_t coreClockFrequencyHz;         /// 480 MHz max
         std::uint32_t d1DomainCoreClockFrequencyHz; /// 480 MHz max
         std::uint32_t ahbClockFrequencyHz;          /// 240 MHz max
@@ -452,10 +447,13 @@ public:
         std::uint32_t apb4ClockFrequencyHz;         /// 240 MHz max
         CoreVoltageScale coreVoltageScale;
         std::uint32_t vectorTableAddress;
+        bool enableICache;
+        bool enableDCache;
     };
 
     struct InternalConfig
     {
+        ClockSource clockSource;
         PllInputFrequencyRange pllInputFrequencyRange;
         PllVcoRange pllVcoRange;
         std::uint32_t pllM;
@@ -471,6 +469,10 @@ public:
         Apb4Prescaler apb4Prescaler;
         FlashWaitStates flashWaitStates;
         ProgrammingDelay programmingDelay;
+        CoreVoltageScale coreVoltageScale;
+        std::uint32_t vectorTableAddress;
+        bool enableICache;
+        bool enableDCache;
     };
 
     //--------------------------------------------------------------------------
@@ -499,18 +501,14 @@ public:
     static std::uint32_t getSysTickClockFrequencyHz();
 
     //--------------------------------------------------------------------------
-    // Public virtual methods
+    // Public methods
     //--------------------------------------------------------------------------
 
-    virtual Error setConfig(const Config& config);
+    Error setConfig(const Config& config);
 
-    virtual ClockSource getCoreClockSource();
+    ClockSource getCoreClockSource();
 
-    virtual void setCoreClockSource(const ClockSource coreClockSource);
-
-    //--------------------------------------------------------------------------
-    // Public virtual methods
-    //--------------------------------------------------------------------------
+    void setCoreClockSource(const ClockSource coreClockSource);
 
     void setInternalConfig(const InternalConfig& config);
 
