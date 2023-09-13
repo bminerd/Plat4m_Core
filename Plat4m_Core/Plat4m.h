@@ -310,6 +310,18 @@ namespace Plat4m
     }
 
     //--------------------------------------------------------------------------
+    template <typename TValue, typename TBitMask1, typename TBitMask2>
+    inline void remapBit(const TValue& oldValue,
+                         TValue& newValue,
+                         const TBitMask1 oldBitMask,
+                         const TBitMask2 newBitMask)
+    {
+        setBitsSet(newValue,
+                   static_cast<TValue>(newBitMask),
+                   areBitsSet(oldValue, oldBitMask));
+    }
+
+    //--------------------------------------------------------------------------
     template <typename TValue>
     constexpr TValue power(const TValue value, const int exponent)
     {
@@ -443,18 +455,18 @@ namespace Plat4m
     }
 
     //--------------------------------------------------------------------------
-    template<typename TValue>
+    template<typename TValue, typename TLimit>
     inline void limitValue(TValue& value,
-                           const TValue lowerLimit,
-                           const TValue upperLimit)
+                           const TLimit lowerLimit,
+                           const TLimit upperLimit)
     {
-        if (value < lowerLimit)
+        if (value < static_cast<TValue>(lowerLimit))
         {
-            value = lowerLimit;
+            value = static_cast<TValue>(lowerLimit);
         }
-        else if (value > upperLimit)
+        else if (value > static_cast<TValue>(upperLimit))
         {
-            value = upperLimit;
+            value = static_cast<TValue>(upperLimit);
         }
     }
 
