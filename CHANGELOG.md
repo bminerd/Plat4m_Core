@@ -19,6 +19,7 @@ Released: XXXX-XX-XX
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[IMPROVEMENT]` Updated plat4m_linux_dev container to v2.0.0. [Resolves #145].
 - `[IMPROVEMENT]` Added remapBit() helper function. Added second template parameter to limitValue() for usage clarity. [Resolves #143].
 - `[BUG FIX]` Fixed 480 MHz core clock configuration for STM32H7xx. Also enabled I and D cache now that clock configuration is correct. [Resolves #142].
 - `[NEW FEATURE]` Added STM32H7xx drivers for Processor, Interrupt, GpioPort, GpioPin, and Uart. Dma drivers added, but not fully functional. [Resolves #89].
