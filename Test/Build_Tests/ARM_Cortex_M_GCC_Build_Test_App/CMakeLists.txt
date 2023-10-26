@@ -1,5 +1,8 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.0)
 project (ARM_Cortex_M_GCC_Build_Test_App C CXX ASM)
+
+include(CMakePrintHelpers)
+cmake_print_variables(CMAKE_TOOLCHAIN_FILE)
 
 set(PLAT4M_CORE_DIR ${PROJECT_SOURCE_DIR}/../../../Plat4m_Core)
 set(PLAT4M_MATH_DIR ${PROJECT_SOURCE_DIR}/../../../Dependencies/Plat4m_Math)
@@ -9,11 +12,12 @@ set(EIGEN_DIR ${PROJECT_SOURCE_DIR}/../../../Dependencies/Eigen)
 
 include(${PLAT4M_CMAKE_DIR}/Plat4mMacros.cmake)
 
-set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -g3 -Wall -Wno-comment")
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -g3 -Wall -Wno-comment")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3 -Wall -Wno-comment")
+set(PROJECT_FLAGS "-g -Wno-comment")
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g3 -Wall -Wno-comment")
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${PROJECT_FLAGS}")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${PROJECT_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROJECT_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROJECT_FLAGS}")
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PLAT4M_CORE_DIR})
