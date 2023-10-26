@@ -1,6 +1,6 @@
 # /.gitlab-ci.yml
 
-image: bminerd/plat4m_linux_dev:1.1.0
+image: bminerd/plat4m_linux_dev:2.0.0
 
 variables:
   DOCKER_TLS_CERTDIR: "/certs"
