@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -188,31 +188,31 @@ public:
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
     GpioPinSTM32F4xx(GpioPortSTM32F4xx& gpioPort, const Id id);
 
     //--------------------------------------------------------------------------
-    // Public virtual methods implemented from GpioPin
+    // Public virtual methods overridden for GpioPin
     //--------------------------------------------------------------------------
 
-    void setLevelFast(const Level level);
+    virtual void setLevelFast(const Level level) override;
 
-    Level getLevelFast();
+    virtual Level getLevelFast() override;
 
-    Level readLevelFast();
+    virtual Level readLevelFast() override;
 
-    void toggleLevelFast();
-    
+    virtual void toggleLevelFast() override;
+
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
+
     GpioPortSTM32F4xx& getGpioPort();
-    
+
     Id getId() const;
-    
+
     void setSTM32F4xxConfig(STM32F4xxConfig& config);
-    
+
 private:
 
     //--------------------------------------------------------------------------
@@ -222,7 +222,7 @@ private:
     static const GPIOMode_TypeDef myModeMap[];
 
     static const GPIOPuPd_TypeDef myResistorMap[];
-    
+
     static const OutputSpeed myDefaultOutputSpeed;
 
     //--------------------------------------------------------------------------
@@ -230,39 +230,39 @@ private:
     //--------------------------------------------------------------------------
     
     GpioPortSTM32F4xx& myGpioPort;
-    
+
     const Id myId;
-    
+
     const uint16_t myPinBitMask;
-    
+
     STM32F4xxConfig mySTM32F4xxConfig;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
-    
-    Module::Error driverSetEnabled(const bool enabled);
+
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from GpioPin
+    // Private methods overridden for GpioPin
     //--------------------------------------------------------------------------
-    
-    GpioPin::Error driverConfigure(const Config& config);
-    
-    GpioPin::Error driverSetLevel(const Level level);
-    
-    GpioPin::Error driverGetLevel(Level& level);
-    
-    GpioPin::Error driverReadLevel(Level& level);
-    
-    GpioPin::Error driverToggleLevel();
-    
+
+    virtual GpioPin::Error driverConfigure(const Config& config) override;
+
+    virtual GpioPin::Error driverSetLevel(const Level level) override;
+
+    virtual GpioPin::Error driverGetLevel(Level& level) override;
+
+    virtual GpioPin::Error driverReadLevel(Level& level) override;
+
+    virtual GpioPin::Error driverToggleLevel() override;
+
     //--------------------------------------------------------------------------
     // Private methods
     //--------------------------------------------------------------------------
-    
+
     void setOutputType(const OutputType outputType);
-    
+
     void setOutputSpeed(const OutputSpeed outputSpeed);
 };
 

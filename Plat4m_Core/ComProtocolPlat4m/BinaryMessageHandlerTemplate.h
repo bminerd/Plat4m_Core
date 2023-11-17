@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -53,6 +53,7 @@
 #include <Plat4m_Core/CallbackMethod2Parameters.h>
 #include <Plat4m_Core/ComProtocolPlat4m/BinaryMessage.h>
 #include <Plat4m_Core/ComProtocol.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -218,7 +219,6 @@ private:
     TBinaryMessage myBinaryMessage;
 };
 
-
 //------------------------------------------------------------------------------
 // Namespace functions
 //------------------------------------------------------------------------------
@@ -233,11 +233,13 @@ static BinaryMessageHandler& createMessageHandler(
         TClass* object,
         void (TClass::*callback)(const TMessageRequest&, TMessageResponse&))
 {
-    return *(new BinaryMessageHandlerTemplate<TMessageRequest,
-                                              TMessageResponse,
-                                              TBinaryMessageRequest,
-                                              TBinaryMessageResponse>(
-                                             createCallback(object, callback)));
+    return *(MemoryAllocator::allocate<
+                BinaryMessageHandlerTemplate<TMessageRequest,
+                                            TMessageResponse,
+                                            TBinaryMessageRequest,
+                                            TBinaryMessageResponse>>(
+                                                     createCallback(object,
+                                                                    callback)));
 }
 
 //------------------------------------------------------------------------------
@@ -248,11 +250,12 @@ static BinaryMessageHandler& createMessageHandler(
         TClass* object,
         void (TClass::*callback)(const TMessage&))
 {
-    return *(new BinaryMessageHandlerTemplate<TMessage,
-                                              void*,
-                                              TBinaryMessage,
-                                              void*>(
-                                             createCallback(object, callback)));
+    return *(MemoryAllocator::allocate<
+                BinaryMessageHandlerTemplate<TMessage,
+                                             void*,
+                                             TBinaryMessage,
+                                             void*>>(createCallback(object,
+                                                                    callback)));
 }
 
 }; // namespace Plat4m

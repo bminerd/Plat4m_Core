@@ -50,6 +50,7 @@
 #include <Plat4m_Core/ByteArrayN.h>
 #include <Plat4m_Core/CallbackMethod.h>
 #include <Plat4m_Core/CallbackMethodParameter.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 using Plat4m::ImuLSM6DS3;
 using Plat4m::Imu;
@@ -211,7 +212,7 @@ ImuLSM6DS3::ImuLSM6DS3(Spi& spi,
 					   ExternalInterrupt* int1ExternalInterrupt,
 					   ExternalInterrupt* int2ExternalInterrupt) :
     Imu(),
-	mySlaveDevice(new SpiDeviceSt(spi, chipSelectGpioPin)),
+	mySlaveDevice(0),
 	myInt1ExternalInterrupt(int1ExternalInterrupt),
 	myInt2ExternalInterrupt(int2ExternalInterrupt),
 	myConfig(),
@@ -222,6 +223,9 @@ ImuLSM6DS3::ImuLSM6DS3(Spi& spi,
 	myReceiveByteArray2(),
 	myMailboxArray(true)
 {
+    mySlaveDevice = MemoryAllocator::allocate<SpiDeviceSt>(spi,
+                                                           chipSelectGpioPin);
+
     initialize();
 }
 
@@ -231,8 +235,7 @@ ImuLSM6DS3::ImuLSM6DS3(const PinLevel sa0PinLevel,
 					   ExternalInterrupt* int1ExternalInterrupt,
 					   ExternalInterrupt* int2ExternalInterrupt) :
     Imu(),
-	mySlaveDevice(
-	            new I2cDevice(myI2cBaseAddress | ((uint8_t) sa0PinLevel), i2c)),
+	mySlaveDevice(0),
 	myInt1ExternalInterrupt(int1ExternalInterrupt),
 	myInt2ExternalInterrupt(int2ExternalInterrupt),
 	myConfig(),
@@ -243,6 +246,10 @@ ImuLSM6DS3::ImuLSM6DS3(const PinLevel sa0PinLevel,
     myReceiveByteArray2(),
     myMailboxArray(true)
 {
+    const uint8_t address = myI2cBaseAddress | ((uint8_t) sa0PinLevel);
+
+    mySlaveDevice = MemoryAllocator::allocate<I2cDevice>(address, i2c);
+
     initialize();
 }
 

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -67,32 +67,32 @@ static InterruptSTM32F4xx* interruptObjectMap[6];
 
 const ProcessorSTM32F4xx::Peripheral UartSTM32F4xx::myPeripheralMap[] =
 {
-	ProcessorSTM32F4xx::PERIPHERAL_USART_1, /// ID_1
-	ProcessorSTM32F4xx::PERIPHERAL_USART_2, /// ID_2
-	ProcessorSTM32F4xx::PERIPHERAL_USART_3, /// ID_3
-	ProcessorSTM32F4xx::PERIPHERAL_UART_4,  /// ID_4
-	ProcessorSTM32F4xx::PERIPHERAL_UART_5,  /// ID_5
-	ProcessorSTM32F4xx::PERIPHERAL_USART_6, /// ID_6
+    ProcessorSTM32F4xx::PERIPHERAL_USART_1, /// ID_1
+    ProcessorSTM32F4xx::PERIPHERAL_USART_2, /// ID_2
+    ProcessorSTM32F4xx::PERIPHERAL_USART_3, /// ID_3
+    ProcessorSTM32F4xx::PERIPHERAL_UART_4,  /// ID_4
+    ProcessorSTM32F4xx::PERIPHERAL_UART_5,  /// ID_5
+    ProcessorSTM32F4xx::PERIPHERAL_USART_6, /// ID_6
 };
 
 const InterruptSTM32F4xx::Id UartSTM32F4xx::myInterruptIdMap[] =
 {
-	InterruptSTM32F4xx::ID_USART_1, /// ID_1
-	InterruptSTM32F4xx::ID_USART_2, /// ID_2
-	InterruptSTM32F4xx::ID_USART_3, /// ID_3
-	InterruptSTM32F4xx::ID_UART_4,  /// ID_4
-	InterruptSTM32F4xx::ID_UART_5,  /// ID_5
-	InterruptSTM32F4xx::ID_USART_6  /// ID_6
+    InterruptSTM32F4xx::ID_USART_1, /// ID_1
+    InterruptSTM32F4xx::ID_USART_2, /// ID_2
+    InterruptSTM32F4xx::ID_USART_3, /// ID_3
+    InterruptSTM32F4xx::ID_UART_4,  /// ID_4
+    InterruptSTM32F4xx::ID_UART_5,  /// ID_5
+    InterruptSTM32F4xx::ID_USART_6  /// ID_6
 };
 
 USART_TypeDef* UartSTM32F4xx::myUartMap[] =
 {
-	USART1, /// ID_1
-	USART2, /// ID_2
-	USART3, /// ID_3
-	UART4,  /// ID_4
-	UART5,  /// ID_5
-	USART6  /// ID_6
+    USART1, /// ID_1
+    USART2, /// ID_2
+    USART3, /// ID_3
+    UART4,  /// ID_4
+    UART5,  /// ID_5
+    USART6  /// ID_6
 };
 
 static const uint16_t wordLengthMap[] =
@@ -155,7 +155,7 @@ UartSTM32F4xx::UartSTM32F4xx(const Id id,
 }
 
 //------------------------------------------------------------------------------
-// Public virtual  destructors
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -164,7 +164,17 @@ UartSTM32F4xx::~UartSTM32F4xx()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+UartSTM32F4xx::State UartSTM32F4xx::getState()
+{
+    return myState;
+}
+
+//------------------------------------------------------------------------------
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -174,7 +184,7 @@ Module::Error UartSTM32F4xx::driverSetEnabled(const bool enabled)
     myReceiveGpioPin.setEnabled(enabled);
     
     ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
-    											  enabled);
+                                                  enabled);
     
     if (enabled)
     {
@@ -184,6 +194,13 @@ Module::Error UartSTM32F4xx::driverSetEnabled(const bool enabled)
         
         myTransmitGpioPin.configure(gpioPinConfig);
         myReceiveGpioPin.configure(gpioPinConfig);
+
+        GpioPinSTM32F4xx::STM32F4xxConfig config;
+        config.alternateFunction = GpioPinSTM32F4xx::ALTERNATE_FUNCTION_USART2;
+        config.outputSpeed       = GpioPinSTM32F4xx::OUTPUT_SPEED_100MHZ;
+
+        myTransmitGpioPin.setSTM32F4xxConfig(config);
+        myReceiveGpioPin.setSTM32F4xxConfig(config);
     }
 
     setInterruptFlagEnabled(INTERRUPT_FLAG_RECEIVE_BUFFER_NOT_EMPTY, enabled);
@@ -191,7 +208,7 @@ Module::Error UartSTM32F4xx::driverSetEnabled(const bool enabled)
     USART_Cmd(myUart, (FunctionalState) enabled);
 
     myInterrupt.setEnabled(enabled);
-    
+
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
@@ -218,8 +235,8 @@ Uart::Error UartSTM32F4xx::driverSetConfig(const Config& config)
 
 //------------------------------------------------------------------------------
 ComInterface::Error UartSTM32F4xx::driverTransmitBytes(
-													 const ByteArray& byteArray,
-													 const bool waitUntilDone)
+                                                     const ByteArray& byteArray,
+                                                     const bool waitUntilDone)
 {
     ComInterface::Error error;
 
@@ -270,34 +287,34 @@ uint32_t UartSTM32F4xx::driverGetReceivedBytesCount()
 
 //------------------------------------------------------------------------------
 ComInterface::Error UartSTM32F4xx::driverGetReceivedBytes(ByteArray& byteArray,
-                                                    	  const uint32_t nBytes)
+                                                          const uint32_t nBytes)
 {
-	uint8_t byte;
+    uint8_t byte;
 
     if (nBytes == 0)
     {
         while (getReceiveBuffer()->read(byte))
         {
-        	byteArray.append(byte);
+            byteArray.append(byte);
         }
     }
     else
     {
-    	uint32_t nBytesToRead = nBytes;
+        uint32_t nBytesToRead = nBytes;
 
-		while (nBytesToRead--)
-		{
-			setInterruptFlagEnabled(INTERRUPT_FLAG_RECEIVE_BUFFER_NOT_EMPTY,
-									false);
+        while (nBytesToRead--)
+        {
+            setInterruptFlagEnabled(INTERRUPT_FLAG_RECEIVE_BUFFER_NOT_EMPTY,
+                                    false);
 
-			if (getReceiveBuffer()->read(byte))
-			{
-				byteArray.append(byte);
-			}
+            if (getReceiveBuffer()->read(byte))
+            {
+                byteArray.append(byte);
+            }
 
-			setInterruptFlagEnabled(INTERRUPT_FLAG_RECEIVE_BUFFER_NOT_EMPTY,
-									true);
-		}
+            setInterruptFlagEnabled(INTERRUPT_FLAG_RECEIVE_BUFFER_NOT_EMPTY,
+                                    true);
+        }
     }
 
     return ComInterface::Error(ComInterface::ERROR_CODE_NONE);

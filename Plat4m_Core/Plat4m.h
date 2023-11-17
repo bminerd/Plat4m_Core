@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2012 Benjamin Minerd
+// Copyright (c) 2012-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -54,11 +54,11 @@
 #include <Plat4mCoreConfig.h>
 #endif
 
-using namespace std;
-
 //------------------------------------------------------------------------------
 // Defines
 //------------------------------------------------------------------------------
+
+#define PLAT4M_VERSION "3.0.0"
 
 ///
 /// @brief Returns the number of elements of any given array.
@@ -104,8 +104,31 @@ namespace Plat4m
 
     typedef uint32_t Id;
 
-    typedef uint32_t TimeUs;
+    typedef uint32_t TimeS;
     typedef uint32_t TimeMs;
+    typedef uint32_t TimeUs;
+    typedef uint32_t TimeNs;
+
+    typedef TimeS TimeSeconds;
+    typedef TimeMs TimeMilliseconds;
+    typedef TimeUs TimeMicroseconds;
+    typedef TimeNs TimeNanoSeconds;
+
+    typedef int32_t TimeSSigned;
+    typedef int32_t TimeMsSigned;
+    typedef int32_t TimeUsSigned;
+    typedef int32_t TimeNsSigned;
+
+    typedef TimeSSigned TimeSecondsSigned;
+    typedef TimeMsSigned TimeMillisecondsSigned;
+    typedef TimeUsSigned TimeMicrosecondsSigned;
+    typedef TimeNsSigned TimeNanosecondsSigned;
+
+    typedef float TimeSFloat;
+    typedef TimeSFloat TimeSecondsFloat;
+
+    typedef double TimeSDouble;
+    typedef TimeSDouble TimeSecondsDouble;
 
 #ifndef PLAT4M_CORE_CONFIG
     typedef float RealNumber;
@@ -146,12 +169,6 @@ namespace Plat4m
     typedef RealNumber AngularAccelerationRadPs2;
 
     //--------------------------------------------------------------------------
-    // Variables
-    //--------------------------------------------------------------------------
-
-    static const char* plat4mVersion = "0.0.24";
-
-    //--------------------------------------------------------------------------
     // Inline functions
     //--------------------------------------------------------------------------
 
@@ -164,37 +181,37 @@ namespace Plat4m
 
     //--------------------------------------------------------------------------
     template <typename T>
-	inline bool isValidPointer(const T* pointer)
-	{
-		return (pointer != 0);
-	}
+    inline bool isValidPointer(const T* pointer)
+    {
+        return (pointer != 0);
+    }
 
     //--------------------------------------------------------------------------
     template <typename TValue, typename TMask>
     inline void setBits(TValue& value, const TMask mask)
     {
-    	value |= mask;
+    	value |= static_cast<TValue>(mask);
     }
 
     //--------------------------------------------------------------------------
     template <typename TValue, typename TMask>
     inline void clearBits(TValue& value, const TMask mask)
     {
-        value &= ~mask;
+        value &= ~static_cast<TValue>(mask);
     }
 
     //--------------------------------------------------------------------------
     template <typename TValue>
-    inline void setBit(TValue& value, const uint8_t bitPosition)
+    inline void setBit(TValue& value, const int bitPosition)
     {
-    	setBits(value, (TValue) (((TValue) 1) << bitPosition));
+        setBits(value, static_cast<TValue>(1) << bitPosition);
     }
 
     //--------------------------------------------------------------------------
     template <typename TValue>
-    inline void clearBit(TValue& value, const uint8_t bitPosition)
+    inline void clearBit(TValue& value, const int bitPosition)
     {
-        clearBits(value, (TValue) (((TValue) 1) << bitPosition));
+        clearBits(value, static_cast<TValue>(1) << bitPosition);
     }
 
     //--------------------------------------------------------------------------
@@ -212,20 +229,20 @@ namespace Plat4m
     }
 
     //--------------------------------------------------------------------------
-	template <typename TValue, typename TMask>
-	inline void setBitsSet(TValue& value,
-						   const TMask mask,
-						   const bool set)
-	{
-		if (set)
-		{
-			setBits(value, mask);
-		}
-		else
-		{
-			clearBits(value, mask);
-		}
-	}
+    template <typename TValue, typename TMask>
+    inline void setBitsSet(TValue& value,
+                           const TMask mask,
+                           const bool set)
+    {
+        if (set)
+        {
+            setBits(value, mask);
+        }
+        else
+        {
+            clearBits(value, mask);
+        }
+    }
 
     //--------------------------------------------------------------------------
     template <typename TValue>
@@ -251,10 +268,10 @@ namespace Plat4m
     }
 
     //--------------------------------------------------------------------------
-    template <typename TValue, typename TMask>
-    inline bool isBitSet(const TValue value, const uint8_t bitIndex)
+    template <typename TValue>
+    inline bool isBitSet(const TValue value, const int bitIndex)
     {
-        return areBitsSet(value, (TMask) (((TMask) 1) << bitIndex));
+        return areBitsSet(value, static_cast<TValue>(1) << bitIndex);
     }
 
     //--------------------------------------------------------------------------
@@ -264,32 +281,63 @@ namespace Plat4m
     	return (!areBitsSet(value, mask));
     }
 
-	//--------------------------------------------------------------------------
-	template <typename TValue, typename TMask>
-	inline bool isBitClear(const TValue value, const uint8_t bitIndex)
-	{
-		return areBitsClear(value, (TMask) (((TMask) 1) << bitIndex));
-	}
-
-	//--------------------------------------------------------------------------
-	template <typename TValue, typename TMask>
-	inline void toggleBits(TValue& value, const TMask mask)
-	{
-	    value ^= mask;
-	}
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline bool isBitClear(const TValue value, const int bitIndex)
+    {
+        return areBitsClear(value, static_cast<TValue>(1) << bitIndex);
+    }
 
     //--------------------------------------------------------------------------
     template <typename TValue, typename TMask>
-    inline void toggleBit(TValue& value, const uint8_t bitIndex)
+    inline void toggleBits(TValue& value, const TMask mask)
     {
-        toggleBits(value, (TMask) (((TMask) 1) << bitIndex));
+        value ^= static_cast<TValue>(mask);
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline void toggleBit(TValue& value, const int bitIndex)
+    {
+        toggleBits(value, static_cast<TValue>(1) << bitIndex);
     }
 
     //--------------------------------------------------------------------------
     template <typename TValue, typename TMask>
     inline TValue maskBits(const TValue& value, const TMask& bitMask)
     {
-        return (value & bitMask);
+        return (value & static_cast<TValue>(bitMask));
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue, typename TBitMask1, typename TBitMask2>
+    inline void remapBit(const TValue& oldValue,
+                         TValue& newValue,
+                         const TBitMask1 oldBitMask,
+                         const TBitMask2 newBitMask)
+    {
+        setBitsSet(newValue,
+                   static_cast<TValue>(newBitMask),
+                   areBitsSet(oldValue, oldBitMask));
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    constexpr TValue power(const TValue value, const int exponent)
+    {
+        if (exponent != 1)
+        {
+            return power(value * value, exponent - 1);
+        }
+
+        return value;
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    constexpr TValue bitMask(const int nBits, const int bitIndex)
+    {
+        return ((power(static_cast<TValue>(2), nBits) - 1) << bitIndex);
     }
 
     //--------------------------------------------------------------------------
@@ -407,57 +455,57 @@ namespace Plat4m
     }
 
     //--------------------------------------------------------------------------
-    template<typename TValue>
+    template<typename TValue, typename TLimit>
     inline void limitValue(TValue& value,
-                           const TValue lowerLimit,
-                           const TValue upperLimit)
+                           const TLimit lowerLimit,
+                           const TLimit upperLimit)
     {
-        if (value < lowerLimit)
+        if (value < static_cast<TValue>(lowerLimit))
         {
-            value = lowerLimit;
+            value = static_cast<TValue>(lowerLimit);
         }
-        else if (value > upperLimit)
+        else if (value > static_cast<TValue>(upperLimit))
         {
-            value = upperLimit;
+            value = static_cast<TValue>(upperLimit);
         }
     }
 
     //--------------------------------------------------------------------------
     inline AngleDegrees radiansToDegrees(const AngleRadians angleRadians)
     {
-        return (angleRadians * (180.0 / M_PI));
+        return static_cast<AngleDegrees>(angleRadians * (180.0 / M_PI));
     }
 
     //--------------------------------------------------------------------------
     inline AngleRadians degreesToRadians(const AngleDegrees angleDegrees)
     {
-        return (angleDegrees * (M_PI / 180.0));
+        return static_cast<AngleRadians>(angleDegrees * (M_PI / 180.0));
     }
 
     //--------------------------------------------------------------------------
     inline AngularVelocityDps radPsToDps(const AngularVelocityRadPs radPs)
     {
-        return (radPs * (180.0 / M_PI));
+        return static_cast<AngularVelocityDps>(radPs * (180.0 / M_PI));
     }
 
     //--------------------------------------------------------------------------
     inline AngularVelocityRadPs dpsToRadPs(const AngularVelocityDps dps)
     {
-        return (dps * (M_PI / 180.0));
+        return static_cast<AngularVelocityRadPs>(dps * (M_PI / 180.0));
     }
 
     //--------------------------------------------------------------------------
     inline AngularAccelerationDps2 radPs2ToDps2(
-    									 const AngularAccelerationRadPs2 radPs2)
+                                         const AngularAccelerationRadPs2 radPs2)
     {
-        return (radPs2 * (180.0 / M_PI));
+        return static_cast<AngularAccelerationDps2>(radPs2 * (180.0 / M_PI));
     }
 
     //--------------------------------------------------------------------------
     inline AngularAccelerationRadPs2 dps2ToRadPs2(
-    										 const AngularAccelerationDps2 dps2)
+                                             const AngularAccelerationDps2 dps2)
     {
-        return (dps2 * (M_PI / 180.0));
+        return static_cast<AngularAccelerationRadPs2>(dps2 * (M_PI / 180.0));
     }
 
     //--------------------------------------------------------------------------
@@ -470,19 +518,31 @@ namespace Plat4m
     //--------------------------------------------------------------------------
     template <typename TValue>
     inline void findMinMax(const TValue value,
-    					   TValue& minValue,
-						   TValue& maxValue)
+                           TValue& minValue,
+                           TValue& maxValue)
     {
-    	if (value < minValue)
-    	{
-    		minValue = value;
-    	}
-    	else if (value > maxValue)
-    	{
-    		maxValue = value;
-    	}
+        if (value < minValue)
+        {
+            minValue = value;
+        }
+        else if (value > maxValue)
+        {
+            maxValue = value;
+        }
     }
 
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    inline TValue integerDivideRound(const TValue& dividend,
+                                     const TValue& divisor)
+    {
+        if (dividend < 0)
+        {
+            return ((dividend - (divisor / 2)) / divisor);
+        }
+
+        return ((dividend + (divisor / 2)) / divisor);
+    }
 }; // namespace Plat4m
 
 #endif // PLAT4M_H

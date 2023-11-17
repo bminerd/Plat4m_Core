@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,11 +65,11 @@ namespace Plat4m
 class InterruptSTM32F4xx : public Interrupt
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum Id
     {
         ID_NON_MASKABLE = 0,
@@ -162,7 +162,7 @@ public:
         ID_HASH_RNG,
         ID_FPU
     };
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
@@ -180,20 +180,20 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     Id myId;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from Module
-    //--------------------------------------------------------------------------
-    
-    Module::Error driverSetEnabled(const bool enabled);
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Interrupt
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
-    
-    Error driverConfigure(const Config& config);
+
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
+
+    //--------------------------------------------------------------------------
+    // Private methods overridden for Interrupt
+    //--------------------------------------------------------------------------
+
+    virtual Error driverConfigure(const Config& config) override;
 };
 
 }; // namespace Plat4m

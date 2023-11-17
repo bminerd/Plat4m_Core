@@ -134,7 +134,12 @@ CurrentSensor::Error CurrentSensor::startOffsetCalibration(
 
     Error error = driverStartOffsetCalibration(nSamples);
 
-    return Error(ERROR_CODE_NONE);
+    if (error.getCode() != ERROR_CODE_NONE)
+    {
+        // Handle error
+    }
+
+    return error;
 }
 
 //------------------------------------------------------------------------------

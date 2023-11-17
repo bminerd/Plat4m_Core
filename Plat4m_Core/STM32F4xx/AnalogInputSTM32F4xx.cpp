@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file AnalogInputSTM32F4xx.cpp
 /// @author Ben Minerd
-/// @date 8/9/16
+/// @date 8/9/2016
 /// @brief AnalogInputSTM32F4xx class source file.
 ///
 
@@ -77,7 +77,7 @@ AnalogInputSTM32F4xx::~AnalogInputSTM32F4xx()
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from AnalogInput
+// Public virtual methods overridden for AnalogInput
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ void AnalogInputSTM32F4xx::setSTM32F4xxChannelConfig(
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ Module::Error AnalogInputSTM32F4xx::driverSetEnabled(const bool enabled)
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from AnalogInput
+// Private virtual methods overridden for AnalogInput
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

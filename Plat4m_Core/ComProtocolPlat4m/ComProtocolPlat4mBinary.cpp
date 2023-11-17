@@ -153,8 +153,6 @@ ComProtocol::ParseStatus ComProtocolPlat4mBinary::driverParseData(
         }
         else if (parseStatus == PARSE_STATUS_MID_FRAME)
         {
-            int a = 0;
-
             break;
         }
 

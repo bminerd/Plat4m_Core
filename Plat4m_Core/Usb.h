@@ -46,8 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
+#include <cstdint>
+
 #include <Plat4m_Core/ComInterface.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/ByteArray.h>
 #include <Plat4m_Core/BufferN.h>
 
@@ -67,18 +69,20 @@ class Usb : public ComInterface
 public:
     
     //--------------------------------------------------------------------------
-    // Public enumerations
+    // Public types
     //--------------------------------------------------------------------------
 
-    enum Error
+    enum ErrorCode
     {
-        ERROR_NONE
+        ERROR_CODE_NONE
     };
      
     enum Interrupt
     {
         INTERRUPT_DATA_RX
     };
+
+    typedef ErrorTemplate<ErrorCode> Error;
     
     //--------------------------------------------------------------------------
     // Public virtual methods implemented from ComInterface

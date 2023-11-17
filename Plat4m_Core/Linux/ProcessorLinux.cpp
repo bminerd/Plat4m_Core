@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,7 @@ ProcessorLinux::~ProcessorLinux()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Processor
+// Private virtual methods overridden for Processor
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -78,14 +78,15 @@ Processor::Error ProcessorLinux::driverReset()
 }
 
 //------------------------------------------------------------------------------
-Processor::Error ProcessorLinux::driverConfigure(const Processor::Config& config)
+Processor::Error ProcessorLinux::driverConfigure(
+                                                const Processor::Config& config)
 {
     return Processor::Error(Processor::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
 Processor::Error ProcessorLinux::driverSetPowerMode(
-                                               const Processor::PowerMode powerMode)
+                                           const Processor::PowerMode powerMode)
 {
     return Processor::Error(Processor::ERROR_CODE_NONE);
 }
@@ -94,10 +95,4 @@ Processor::Error ProcessorLinux::driverSetPowerMode(
 uint32_t ProcessorLinux::driverGetCoreClockFrequencyHz()
 {
     return 0;
-}
-
-//------------------------------------------------------------------------------
-Processor::Error ProcessorLinux::driverJumpToAddress(const intptr_t address)
-{
-    return Processor::Error(Processor::ERROR_CODE_NONE);
 }

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,14 +47,12 @@
 #include <Plat4m_Core/SystemLite/MutexLite.h>
 #include <Plat4m_Core/SystemLite/WaitConditionLite.h>
 #include <Plat4m_Core/SystemLite/QueueDriverLite.h>
+#include <Plat4m_Core/SystemLite/SemaphoreLite.h>
 #include <Plat4m_Core/Processor.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::SystemLite;
-using Plat4m::Processor;
-using Plat4m::Thread;
-using Plat4m::Mutex;
-using Plat4m::WaitCondition;
-using Plat4m::QueueDriver;
+using namespace std;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Private static data members
@@ -70,7 +68,8 @@ volatile Plat4m::TimeMs SystemLite::myTimeMs = 0;
 SystemLite::SystemLite() :
     System(),
     myThreadList(),
-    myThreadDepth(0)
+    myThreadDepth(0),
+    myIsRunning(false)
 {
 }
 
@@ -94,15 +93,19 @@ void SystemLite::enableSystemClock(const uint32_t coreClockFrequencyHz)
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from System
+// Private virtual methods overridden for System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Thread& SystemLite::driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
-                                       const uint32_t nStackBytes)
+                                       const uint32_t nStackBytes,
+                                       const bool isSimulated,
+                                       const char* name)
 {
-    ThreadLite* thread = new ThreadLite(callback, periodMs);
+    ThreadLite* thread = MemoryAllocator::allocate<ThreadLite>(callback,
+                                                               periodMs,
+                                                               name);
 
     myThreadList.append(thread);
 
@@ -112,27 +115,36 @@ Thread& SystemLite::driverCreateThread(Thread::RunCallback& callback,
 //------------------------------------------------------------------------------
 Mutex& SystemLite::driverCreateMutex(Thread& thread)
 {
-    return *(new MutexLite);
+    return *(MemoryAllocator::allocate<MutexLite>());
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& SystemLite::driverCreateWaitCondition(Thread& thread)
 {
-    return *(new WaitConditionLite);
+    return *(MemoryAllocator::allocate<WaitConditionLite>());
 }
 
 //------------------------------------------------------------------------------
 QueueDriver& SystemLite::driverCreateQueueDriver(const uint32_t nValues,
-												 const uint32_t valueSizeBytes,
-												 Thread& thread)
+                                                 const uint32_t valueSizeBytes,
+                                                 Thread& thread)
 {
-	return *(new QueueDriverLite<0>);
+    return *(MemoryAllocator::allocate<QueueDriverLite<1>>());
+}
+
+//------------------------------------------------------------------------------
+Semaphore& SystemLite::driverCreateSemaphore(const uint32_t maxValue,
+                                             const uint32_t initialValue)
+{
+    return *(MemoryAllocator::allocate<SemaphoreLite>(maxValue, initialValue));
 }
 
 //------------------------------------------------------------------------------
 void SystemLite::driverRun()
 {
-    while (true) // Loop forever
+    myIsRunning = true;
+
+    while (myIsRunning)
     {
         checkThreads();
     }
@@ -162,6 +174,12 @@ void SystemLite::driverDelayTimeMs(const TimeMs timeMs)
             checkThreads(timeMs);
         }
     }
+}
+
+//------------------------------------------------------------------------------
+void SystemLite::driverExit()
+{
+    myIsRunning = false;
 }
 
 //------------------------------------------------------------------------------

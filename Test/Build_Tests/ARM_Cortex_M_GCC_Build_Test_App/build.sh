@@ -1,6 +1,8 @@
 #! /bin/bash
 
-pushd .
+set -e
+
+pushd . > /dev/null
 
 # Switch current/working directory to here
 cd "${0%/*}"
@@ -11,8 +13,8 @@ fi
 
 cd Build
 
-cmake .. -DCMAKE_TOOLCHAIN_FILE=./GccArmCortexMToolchain.cmake
+cmake -DCMAKE_TOOLCHAIN_FILE=../GccArmCortexM4Toolchain.cmake ..
 
-make -j8
+make -j16
 
-popd
+popd > /dev/null

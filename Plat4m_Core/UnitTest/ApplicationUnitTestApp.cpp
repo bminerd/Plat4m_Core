@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -92,13 +92,13 @@ void ApplicationUnitTestApp::addUnitTest(UnitTest& unitTest)
 }
 
 //------------------------------------------------------------------------------
-void ApplicationUnitTestApp::runParentApplication()
+int ApplicationUnitTestApp::runParentApplication()
 {
-    runTests();
+    return static_cast<int>(!(runTests()));
 }
 
 //------------------------------------------------------------------------------
-void ApplicationUnitTestApp::runTests()
+bool ApplicationUnitTestApp::runTests()
 {
     uint32_t nTotalTests = 0;
     uint32_t nTotalPassedTests = 0;
@@ -118,6 +118,8 @@ void ApplicationUnitTestApp::runTests()
     printf("\nTotal results\n");
     printf("------------------------------\n");
     printf("%d/%d tests passed\n", nTotalPassedTests, nTotalTests);
+
+    return (nTotalPassedTests == nTotalTests);
 }
 
 //------------------------------------------------------------------------------

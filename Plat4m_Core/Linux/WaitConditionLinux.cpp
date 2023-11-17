@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ WaitConditionLinux::WaitConditionLinux() :
     WaitCondition(),
     myConditionHandle(PTHREAD_COND_INITIALIZER),
     myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
-	myThreadHandle(0)
+    myThreadHandle(0)
 {
 }
 
@@ -77,19 +77,23 @@ WaitConditionLinux::~WaitConditionLinux()
 //------------------------------------------------------------------------------
 void WaitConditionLinux::notifyFast()
 {
-    pthread_cond_signal(&myConditionHandle);
+    pthread_mutex_lock(&myMutexHandle);
+    pthread_cond_broadcast(&myConditionHandle);
+    pthread_mutex_unlock(&myMutexHandle);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from WaitCondition
+// Private virtual methods overridden for WaitCondition
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 WaitCondition::Error WaitConditionLinux::driverWait(const TimeMs waitTimeMs)
 {
     myThreadHandle = pthread_self();
+
     pthread_mutex_lock(&myMutexHandle);
     pthread_cond_wait(&myConditionHandle, &myMutexHandle);
+    pthread_mutex_unlock(&myMutexHandle);
 
     return Error(ERROR_CODE_NONE);
 }
@@ -97,7 +101,9 @@ WaitCondition::Error WaitConditionLinux::driverWait(const TimeMs waitTimeMs)
 //------------------------------------------------------------------------------
 WaitCondition::Error WaitConditionLinux::driverNotify()
 {
-    pthread_cond_signal(&myConditionHandle);
+    pthread_mutex_lock(&myMutexHandle);
+    pthread_cond_broadcast(&myConditionHandle);
+    pthread_mutex_unlock(&myMutexHandle);
 
     return Error(ERROR_CODE_NONE);
 }

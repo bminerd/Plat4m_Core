@@ -66,7 +66,9 @@ ApplicationUnitTestLinuxApp::ApplicationUnitTestLinuxApp() :
     myArrayNUnitTest(),
     myBufferUnitTest(),
     myByteArrayUnitTest(),
-    myModuleUnitTest()
+    myModuleUnitTest(),
+    myTimeStampUnitTest(),
+    myListUnitTest()
 {
 }
 
@@ -84,12 +86,12 @@ ApplicationUnitTestLinuxApp::~ApplicationUnitTestLinuxApp()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void ApplicationUnitTestLinuxApp::driverRun()
+int ApplicationUnitTestLinuxApp::driverRun()
 {
     initializeProcessor();
     initializeSystem();
 
-    runParentApplication();
+    return (runParentApplication());
 }
 
 //------------------------------------------------------------------------------
@@ -110,4 +112,6 @@ void ApplicationUnitTestLinuxApp::initializeSystem()
     addUnitTest(myBufferUnitTest);
     addUnitTest(myByteArrayUnitTest);
     addUnitTest(myModuleUnitTest);
+    addUnitTest(myTimeStampUnitTest);
+    addUnitTest(myListUnitTest);
 }

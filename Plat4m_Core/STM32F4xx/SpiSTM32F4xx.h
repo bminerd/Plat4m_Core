@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -70,19 +70,19 @@ namespace Plat4m
 class SpiSTM32F4xx : public Spi
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum Id
     {
         ID_1 = 0,
         ID_2,
         ID_3,
-		ID_4
+        ID_4
     };
-    
+
     enum ClockPrescaler
     {
         CLOCK_PRESCALER_2 = 0,
@@ -94,7 +94,7 @@ public:
         CLOCK_PRESCALER_128,
         CLOCK_PRESCALER_256
     };
-    
+
     enum Event
     {
         EVENT_TRANSMIT_BUFFER_EMPTY    = SPI_I2S_FLAG_TXE,
@@ -117,11 +117,11 @@ public:
         INTERRUPT_RECEIVE_BUFFER_NOT_EMPTY,
         INTERRUPT_ERROR
     };
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
     SpiSTM32F4xx(const Id id,
                  const TransmissionMode transmissionMode,
                  GpioPinSTM32F4xx& sckGpioPin,
@@ -132,7 +132,7 @@ public:
                  const TransmissionMode transmissionMode,
                  GpioPinSTM32F4xx& sckGpioPin,
                  GpioPinSTM32F4xx& dataGpioPin);
-    
+
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
@@ -190,17 +190,17 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const Id myId;
-    
+
     SPI_TypeDef* mySpi;
-    
+
     GpioPinSTM32F4xx& mySckGpioPin;
-    
+
     GpioPinSTM32F4xx* myMisoGpioPin;
-    
+
     GpioPinSTM32F4xx* myMosiGpioPin;
-    
+
     InterruptSTM32F4xx myInterrupt;
 
     ClockPrescaler myClockPrescaler;
@@ -208,29 +208,29 @@ private:
     volatile State myState;
 
     Transfer* myTransfer;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods overridden for Module
+    //--------------------------------------------------------------------------
+
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods overridden for Spi
+    //--------------------------------------------------------------------------
     
-    //--------------------------------------------------------------------------
-    // Private methods implemented from Module
-    //--------------------------------------------------------------------------
+    virtual Error driverSetConfig(const Config& config) override;
 
-	Module::Error driverSetEnabled(const bool enabled);
-
-    //--------------------------------------------------------------------------
-    // Private methods implemented from Spi
-    //--------------------------------------------------------------------------
-    
-    Error driverSetConfig(const Config& config);
-
-    Error driverMasterTransfer(Transfer& transfer);
+    virtual Error driverMasterTransfer(Transfer& transfer) override;
 
     //--------------------------------------------------------------------------
     // Private inline methods
     //--------------------------------------------------------------------------
-    
+
     inline void writeByte(const uint8_t byte);
-    
+
     inline uint8_t readByte();
-    
+
     inline void setInterruptEnabled(const Interrupt interrupt,
                                     const bool enable);
 };

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,7 @@
 /// @author Ben Minerd
 /// @date 7/8/2013
 /// @brief CallbackMethod2Parameters class header file.
+/// @note This class is deprecated. Callback is now a variadic template.
 ///
 
 #ifndef PLAT4M_CALLBACK_METHOD_2_PARAMETERS_H
@@ -46,7 +47,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -56,76 +57,35 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases
 //------------------------------------------------------------------------------
 
 template <class TClass,
           typename TReturn,
           typename TParameter1,
           typename TParameter2>
-class CallbackMethod2Parameters : public Callback<TReturn,
-                                                  TParameter1,
-                                                  TParameter2>
-{
-public:
-    
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
-    
-    typedef TReturn (TClass::*CallbackMethodType)(TParameter1, TParameter2);
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    CallbackMethod2Parameters(TClass* object,
-                              CallbackMethodType callbackMethod) :
-        Callback<TReturn, TParameter1, TParameter2>(),
-        myObject(object),
-        myCallbackMethod(callbackMethod)
-    {
-    }
-    
-    //--------------------------------------------------------------------------
-    // Public methods implemented from Callback
-    //--------------------------------------------------------------------------
-    
-    //--------------------------------------------------------------------------
-    inline TReturn call(TParameter1 parameter1, TParameter2 parameter2)
-    {
-        return (*myObject.*myCallbackMethod)(parameter1, parameter2);
-    }
-    
-private:
-    
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-    
-    TClass* myObject;
-    CallbackMethodType myCallbackMethod;
-};
+using CallbackMethod2Parameters =
+                      CallbackMethod<TClass, TReturn, TParameter1, TParameter2>;
 
-    //--------------------------------------------------------------------------
-    // Namespace functions
-    //--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Namespace functions
+//------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    template <class TClass,
-              typename TReturn,
-              typename TParameter1,
-              typename TParameter2>
-    Callback<TReturn, TParameter1, TParameter2>& createCallback(
+//------------------------------------------------------------------------------
+template <class TClass,
+          typename TReturn,
+          typename TParameter1,
+          typename TParameter2>
+Callback<TReturn, TParameter1, TParameter2>& createCallback(
                           TClass* object,
                           TReturn (TClass::*callback)(TParameter1, TParameter2))
-    {
-        return *(new CallbackMethod2Parameters<TClass,
+{
+    return *(MemoryAllocator::allocate<
+                     CallbackMethod2Parameters<TClass,
                                                TReturn,
                                                TParameter1,
-                                               TParameter2>(object, callback));
-    }
+                                               TParameter2>>(object, callback));
+}
 
 }; // namespace Plat4m
 

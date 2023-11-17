@@ -27,4 +27,8 @@ if [ ! -d "Plat4m_CMake" ]; then
     git clone https://github.com/bminerd/Plat4m_CMake.git
 fi
 
+if [ ! -d "FreeRTOS-Kernel" ]; then
+    git clone https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+fi
+
 popd

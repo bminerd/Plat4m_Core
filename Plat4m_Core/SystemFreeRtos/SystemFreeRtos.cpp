@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,22 +43,20 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <FreeRTOS/Source/include/FreeRTOS.h>
-#include <FreeRTOS/Source/include/task.h>
+#include <FreeRTOS-Kernel/include/FreeRTOS.h>
+#include <FreeRTOS-Kernel/include/task.h>
 
 #include <Plat4m_Core/SystemFreeRtos/SystemFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/ThreadFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/MutexFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/WaitConditionFreeRtos.h>
 #include <Plat4m_Core/SystemFreeRtos/QueueDriverFreeRtos.h>
+#include <Plat4m_Core/SystemFreeRtos/SemaphoreFreeRtos.h>
 #include <Plat4m_Core/Processor.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::SystemFreeRtos;
-using Plat4m::Processor;
-using Plat4m::Thread;
-using Plat4m::Mutex;
-using Plat4m::WaitCondition;
-using Plat4m::QueueDriver;
+using namespace std;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // External functions
@@ -77,9 +75,127 @@ extern "C" void vApplicationIdleHook(void)
 }
 
 //------------------------------------------------------------------------------
-extern "C" void vApplicationStackOverflowHook(void)
+extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask,
+                                              char * pcTaskName)
 {
 
+}
+
+//------------------------------------------------------------------------------
+// Public virtual methods overridden for System
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Thread& SystemFreeRtos::driverCreateThread(Thread::RunCallback& callback,
+                                       	   const TimeMs periodMs,
+                                       	   const uint32_t nStackBytes,
+                                           const bool isSimulated,
+                                           const char* name)
+{
+    return *(MemoryAllocator::allocate<ThreadFreeRtos>(callback,
+                                                       periodMs,
+                                                       nStackBytes,
+                                                       name));
+}
+
+//------------------------------------------------------------------------------
+Mutex& SystemFreeRtos::driverCreateMutex(Thread& thread)
+{
+    return *(MemoryAllocator::allocate<MutexFreeRtos>());
+}
+
+//------------------------------------------------------------------------------
+WaitCondition& SystemFreeRtos::driverCreateWaitCondition(Thread& thread)
+{
+    return *(MemoryAllocator::allocate<WaitConditionFreeRtos>(thread));
+}
+
+//------------------------------------------------------------------------------
+QueueDriver& SystemFreeRtos::driverCreateQueueDriver(
+												  const uint32_t nValues,
+												  const uint32_t valueSizeBytes,
+												  Thread& thread)
+{
+	return *(MemoryAllocator::allocate<QueueDriverFreeRtos<0>>(nValues,
+                                                               valueSizeBytes));
+}
+
+//------------------------------------------------------------------------------
+Semaphore& SystemFreeRtos::driverCreateSemaphore(const uint32_t maxValue,
+                                                 const uint32_t initialValue)
+{
+    return *(MemoryAllocator::allocate<SemaphoreFreeRtos>(maxValue,
+                                                          initialValue));
+}
+
+//------------------------------------------------------------------------------
+void SystemFreeRtos::driverRun()
+{
+    vTaskStartScheduler();
+}
+
+//------------------------------------------------------------------------------
+Plat4m::TimeMs SystemFreeRtos::driverGetTimeMs()
+{
+    TimeMs timeMs = ((TimeMs) xTaskGetTickCount());
+
+    if (timeMs < myLastTimeMs)
+    {
+        // Millisecond timer count has overflowed, approximately every 49.7 days
+        myTimeMsRollOverCounter++;
+    }
+
+    myLastTimeMs = timeMs;
+
+    return myLastTimeMs;
+}
+
+//------------------------------------------------------------------------------
+void SystemFreeRtos::driverDelayTimeMs(const TimeMs timeMs)
+{
+    vTaskDelay((TickType_t) timeMs);
+}
+
+//------------------------------------------------------------------------------
+void SystemFreeRtos::driverExit()
+{
+    vTaskEndScheduler();
+}
+
+//------------------------------------------------------------------------------
+void SystemFreeRtos::driverEnterCriticalSection()
+{
+    if (Processor::isInterruptActive())
+    {
+        mySavedInterruptStatus = taskENTER_CRITICAL_FROM_ISR();
+    }
+    else
+    {
+        taskENTER_CRITICAL();
+    }
+}
+
+//------------------------------------------------------------------------------
+void SystemFreeRtos::driverExitCriticalSection()
+{
+    if (Processor::isInterruptActive())
+    {
+        taskEXIT_CRITICAL_FROM_ISR(mySavedInterruptStatus);
+    }
+    else
+    {
+        taskEXIT_CRITICAL();
+    }
+}
+
+//------------------------------------------------------------------------------
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+std::uint32_t SystemFreeRtos::getTimeMsRollOverCounter()
+{
+    return myTimeMsRollOverCounter;
 }
 
 //------------------------------------------------------------------------------
@@ -88,7 +204,10 @@ extern "C" void vApplicationStackOverflowHook(void)
 
 //------------------------------------------------------------------------------
 SystemFreeRtos::SystemFreeRtos() :
-    System()
+    System(),
+    myLastTimeMs(0),
+    myTimeMsRollOverCounter(0),
+    mySavedInterruptStatus(0)
 {
 }
 
@@ -111,55 +230,4 @@ Plat4m::TimeUs SystemFreeRtos::driverGetTimeUs()
 	// Default if not implemented by subclass
 
     return (driverGetTimeMs() * 1000);
-}
-
-//------------------------------------------------------------------------------
-// Private methods implemented from System
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-Thread& SystemFreeRtos::driverCreateThread(Thread::RunCallback& callback,
-                                       	   const TimeMs periodMs,
-                                       	   const uint32_t nStackBytes)
-{
-    return *(new ThreadFreeRtos(callback, periodMs, nStackBytes));
-}
-
-//------------------------------------------------------------------------------
-Mutex& SystemFreeRtos::driverCreateMutex(Thread& thread)
-{
-    return *(new MutexFreeRtos);
-}
-
-//------------------------------------------------------------------------------
-WaitCondition& SystemFreeRtos::driverCreateWaitCondition(Thread& thread)
-{
-    return *(new WaitConditionFreeRtos(thread));
-}
-
-//------------------------------------------------------------------------------
-QueueDriver& SystemFreeRtos::driverCreateQueueDriver(
-												  const uint32_t nValues,
-												  const uint32_t valueSizeBytes,
-												  Thread& thread)
-{
-	return *(new QueueDriverFreeRtos<0>(nValues, valueSizeBytes));
-}
-
-//------------------------------------------------------------------------------
-void SystemFreeRtos::driverRun()
-{
-    vTaskStartScheduler();
-}
-
-//------------------------------------------------------------------------------
-Plat4m::TimeMs SystemFreeRtos::driverGetTimeMs()
-{
-    return ((TimeMs) xTaskGetTickCount());
-}
-
-//------------------------------------------------------------------------------
-void SystemFreeRtos::driverDelayTimeMs(const TimeMs timeMs)
-{
-    vTaskDelay((TickType_t) timeMs);
 }

@@ -437,7 +437,8 @@ bool ArrayUnitTest::append2Test1()
 
     // Operation
 
-    bool returnValue = array.append(appendItems, arraySize(appendItems));
+    bool returnValue =
+                   array.append((uint8_t*) appendItems, arraySize(appendItems));
 
     // Test
 
@@ -483,7 +484,8 @@ bool ArrayUnitTest::append2Test2()
 
     // Operation
 
-    bool returnValue = array.append(appendItems, arraySize(appendItems));
+    bool returnValue =
+                   array.append((uint8_t*) appendItems, arraySize(appendItems));
 
     // Test
 
@@ -542,7 +544,8 @@ bool ArrayUnitTest::append2Test3()
 
     // Operation
 
-    bool returnValue = array.append(appendItems, arraySize(appendItems));
+    bool returnValue =
+                   array.append((uint8_t*) appendItems, arraySize(appendItems));
 
     // Test
 

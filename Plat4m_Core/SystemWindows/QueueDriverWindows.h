@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -81,22 +81,22 @@ public:
     virtual ~QueueDriverWindows();
 
     //--------------------------------------------------------------------------
-    // Public methods implemented from QueueDriver
+    // Public virtual methods overridden for QueueDriver
     //--------------------------------------------------------------------------
 
-	uint32_t driverGetSize();
+    virtual uint32_t driverGetSize() override;
 
-	uint32_t driverGetSizeFast();
+    virtual uint32_t driverGetSizeFast() override;
 
-	bool driverEnqueue(const void* value);
+    virtual bool driverEnqueue(const void* value) override;
 
-	bool driverEnqueueFast(const void* value);
+    virtual bool driverEnqueueFast(const void* value) override;
 
-	bool driverDequeue(void* value);
+    virtual bool driverDequeue(void* value) override;
 
-	bool driverDequeueFast(void* value);
+    virtual bool driverDequeueFast(void* value) override;
 
-	void driverClear();
+    virtual void driverClear() override;
 
 private:
 
@@ -104,7 +104,7 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-	DWORD myThreadId;
+    DWORD myThreadId;
 };
 
 }; // namespace Plat4m

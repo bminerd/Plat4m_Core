@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,11 +64,11 @@ namespace Plat4m
 class Uart : public ComInterface
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -98,13 +98,9 @@ public:
 
     enum HardwareFlowControl
     {
-        HARDWARE_FLOW_CONTROL_NONE = 0
-    };
-
-    enum Interrupt
-    {
-        INTERRUPT_TX = 0,   /// Transmit interrupt.
-        INTERRUPT_RX        /// Receive interrupt.
+        HARDWARE_FLOW_CONTROL_NONE = 0,
+        HARDWARE_FLOW_CONTROL_DISABLED = HARDWARE_FLOW_CONTROL_NONE,
+        HARDWARE_FLOW_CONTROL_ENABLED
     };
 
     //--------------------------------------------------------------------------
@@ -112,11 +108,11 @@ public:
     //--------------------------------------------------------------------------
 
     typedef ErrorTemplate<ErrorCode> Error;
-    
+
     //--------------------------------------------------------------------------
     // Public structures
     //--------------------------------------------------------------------------
-    
+
     struct Config
     {
         uint32_t baudRate;
@@ -125,35 +121,37 @@ public:
         Parity parity;
         HardwareFlowControl hardwareFlowControl;
     };
-    
+
     //--------------------------------------------------------------------------
-    // Public methods implemented from ComInterface
+    // Public virtual methods overridden for ComInterface
     //--------------------------------------------------------------------------
-    
-    ComInterface::Error transmitBytes(const ByteArray& byteArray,
-                                              const bool waitUntilDone = false);
-    
-    uint32_t getReceivedBytesCount();
-    
-    ComInterface::Error getReceivedBytes(ByteArray& byteArray,
-                                                 const uint32_t nBytes = 0);
-    
+
+    virtual ComInterface::Error transmitBytes(
+                                     const ByteArray& byteArray,
+                                     const bool waitUntilDone = false) override;
+
+    virtual uint32_t getReceivedBytesCount() override;
+
+    virtual ComInterface::Error getReceivedBytes(
+                                            ByteArray& byteArray,
+                                            const uint32_t nBytes = 0) override;
+
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
+
     Config getConfig() const;
 
     Error setConfig(const Config& config);
-    
+
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
+
     Uart();
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
@@ -167,13 +165,13 @@ private:
     //--------------------------------------------------------------------------
 
     Config myConfig;
-    
+
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Error driverSetConfig(const Config& config) = 0;
-    
+
     virtual ComInterface::Error driverTransmitBytes(
                                                   const ByteArray& byteArray,
                                                   const bool waitUntilDone) = 0;

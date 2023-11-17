@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,18 +65,18 @@ static InterruptSTM32F4xx* interruptObjectMap[3];
 
 const ProcessorSTM32F4xx::Peripheral SpiSTM32F4xx::myPeripheralMap[] =
 {
-	ProcessorSTM32F4xx::PERIPHERAL_SPI_1, /// ID_1
-	ProcessorSTM32F4xx::PERIPHERAL_SPI_2, /// ID_2
-	ProcessorSTM32F4xx::PERIPHERAL_SPI_3, /// ID_3
-	ProcessorSTM32F4xx::PERIPHERAL_SPI_4  /// ID_4
+    ProcessorSTM32F4xx::PERIPHERAL_SPI_1, /// ID_1
+    ProcessorSTM32F4xx::PERIPHERAL_SPI_2, /// ID_2
+    ProcessorSTM32F4xx::PERIPHERAL_SPI_3, /// ID_3
+    ProcessorSTM32F4xx::PERIPHERAL_SPI_4  /// ID_4
 };
 
 const InterruptSTM32F4xx::Id SpiSTM32F4xx::myInterruptIdMap[] =
 {
-	InterruptSTM32F4xx::ID_SPI_1, /// ID_1
-	InterruptSTM32F4xx::ID_SPI_2, /// ID_2
-	InterruptSTM32F4xx::ID_SPI_3, /// ID_3
-//	InterruptSTM32F4xx::ID_SPI_4  /// ID_4
+    InterruptSTM32F4xx::ID_SPI_1, /// ID_1
+    InterruptSTM32F4xx::ID_SPI_2, /// ID_2
+    InterruptSTM32F4xx::ID_SPI_3, /// ID_3
+//    InterruptSTM32F4xx::ID_SPI_4  /// ID_4
 };
 
 const uint16_t SpiSTM32F4xx::myModeMap[] =
@@ -151,8 +151,8 @@ SpiSTM32F4xx::SpiSTM32F4xx(const Id id,
     mySckGpioPin(sckGpioPin),
     myMisoGpioPin(&misoGpioPin),
     myMosiGpioPin(&mosiGpioPin),
-	myInterrupt(myInterruptIdMap[myId],
-				createCallback(this, &SpiSTM32F4xx::interruptHandler)),
+    myInterrupt(myInterruptIdMap[myId],
+                createCallback(this, &SpiSTM32F4xx::interruptHandler)),
     myClockPrescaler(),
     myState(STATE_IDLE),
     myTransfer(0)
@@ -170,8 +170,8 @@ SpiSTM32F4xx::SpiSTM32F4xx(const Id id,
     mySckGpioPin(sckGpioPin),
     myMisoGpioPin(0),
     myMosiGpioPin(0),
-	myInterrupt(myInterruptIdMap[myId],
-				createCallback(this, &SpiSTM32F4xx::interruptHandler)),
+    myInterrupt(myInterruptIdMap[myId],
+                createCallback(this, &SpiSTM32F4xx::interruptHandler)),
     myClockPrescaler(),
     myState(STATE_IDLE),
     myTransfer(0)
@@ -181,18 +181,18 @@ SpiSTM32F4xx::SpiSTM32F4xx(const Id id,
         case TRANSMISSION_MODE_RX:
         {
             myMisoGpioPin = &dataGpioPin;
-            
+
             break;
         }
         case TRANSMISSION_MODE_TX:
         {
             myMosiGpioPin = &dataGpioPin;
-            
+
             break;
         }
         default:
         {
-        	break;
+            break;
         }
     }
 }
@@ -314,14 +314,14 @@ void SpiSTM32F4xx::interruptHandler()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error SpiSTM32F4xx::driverSetEnabled(const bool enabled)
 {
     mySckGpioPin.enable(enabled);
-    
+
     if (isValidPointer(myMisoGpioPin))
     {
         myMisoGpioPin->enable(enabled);
@@ -331,19 +331,19 @@ Module::Error SpiSTM32F4xx::driverSetEnabled(const bool enabled)
     {
         myMosiGpioPin->enable(enabled);
     }
-    
+
     ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
-    											  enabled);
-    
+                                                  enabled);
+
     SPI_Cmd(mySpi, (FunctionalState) enabled);
 
     myInterrupt.setEnabled(enabled);
-    
+
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Spi
+// Private virtual methods overridden Spi
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -357,18 +357,18 @@ Spi::Error SpiSTM32F4xx::driverSetConfig(const Config& config)
     {
         myMisoGpioPin->configure(gpioConfig);
     }
-    
+
     if (isValidPointer(myMosiGpioPin))
     {
         gpioConfig.resistor = GpioPin::RESISTOR_NONE;
         myMosiGpioPin->configure(gpioConfig);
     }
-    
+
     if ((config.clockPolarity) == CLOCK_POLARITY_HIGH)
     {
         gpioConfig.resistor = GpioPin::RESISTOR_PULL_UP;
     }
-    
+
     mySckGpioPin.configure(gpioConfig);
 
     uint32_t i;
@@ -416,7 +416,7 @@ Spi::Error SpiSTM32F4xx::driverSetConfig(const Config& config)
     spiInit.SPI_CRCPolynomial     = 7;
 
     SPI_Init(mySpi, &spiInit);
-    
+
     return Spi::Error(Spi::ERROR_CODE_NONE);
 }
 
@@ -432,7 +432,7 @@ Spi::Error SpiSTM32F4xx::driverMasterTransfer(Transfer& transfer)
 
 //------------------------------------------------------------------------------
 void SpiSTM32F4xx::writeByte(const uint8_t byte)
-{   
+{
     // Direct register access to improve speed
     mySpi->DR = (uint16_t) byte;
 }

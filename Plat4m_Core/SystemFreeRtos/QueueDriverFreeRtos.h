@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +48,8 @@
 
 #include <stdint.h>
 
-#include <FreeRTOS/Source/include/FreeRTOS.h>
-#include <FreeRTOS/Source/include/queue.h>
+#include <FreeRTOS-Kernel/include/FreeRTOS.h>
+#include <FreeRTOS-Kernel/include/queue.h>
 
 #include <Plat4m_Core/QueueDriver.h>
 
@@ -73,12 +73,12 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     QueueDriverFreeRtos(const uint32_t nValues, const uint32_t valueSizeBytes) :
-    	QueueDriver(),
-		myQueueHandle(xQueueCreate(nValues, valueSizeBytes))
-	{
-	}
+        QueueDriver(),
+        myQueueHandle(xQueueCreate(nValues, valueSizeBytes))
+    {
+    }
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
@@ -90,54 +90,54 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    // Public methods implemented from QueueDriver
+    // Public virtual methods overriden for QueueDriver
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-	uint32_t driverGetSize()
-	{
-		return ((uint32_t) uxQueueMessagesWaiting(myQueueHandle));
-	}
+    virtual uint32_t driverGetSize() override
+    {
+        return ((uint32_t) uxQueueMessagesWaiting(myQueueHandle));
+    }
 
-	//--------------------------------------------------------------------------
-	uint32_t driverGetSizeFast()
-	{
-		return ((uint32_t) uxQueueMessagesWaitingFromISR(myQueueHandle));
-	}
+    //--------------------------------------------------------------------------
+    virtual uint32_t driverGetSizeFast() override
+    {
+        return ((uint32_t) uxQueueMessagesWaitingFromISR(myQueueHandle));
+    }
 
-	//--------------------------------------------------------------------------
-	bool driverEnqueue(const void* value)
-	{
-		return ((bool) xQueueSendToBack(myQueueHandle, value, 0));
-	}
+    //--------------------------------------------------------------------------
+    virtual bool driverEnqueue(const void* value) override
+    {
+        return ((bool) xQueueSendToBack(myQueueHandle, value, 0));
+    }
 
-	//--------------------------------------------------------------------------
-	bool driverEnqueueFast(const void* value)
-	{
-		return ((bool) xQueueSendToBackFromISR(myQueueHandle, value, 0));
-	}
+    //--------------------------------------------------------------------------
+    virtual bool driverEnqueueFast(const void* value) override
+    {
+        return ((bool) xQueueSendToBackFromISR(myQueueHandle, value, 0));
+    }
 
-	//--------------------------------------------------------------------------
-	bool driverDequeue(void* value)
-	{
-		return ((bool) xQueueReceive(myQueueHandle, value, 0xFFFFFFFF));
-	}
+    //--------------------------------------------------------------------------
+    virtual bool driverDequeue(void* value) override
+    {
+        return ((bool) xQueueReceive(myQueueHandle, value, 0xFFFFFFFF));
+    }
 
-	//--------------------------------------------------------------------------
-	bool driverDequeueFast(void* value)
-	{
-		BaseType_t xTaskWokenByReceive = pdFALSE;
+    //--------------------------------------------------------------------------
+    virtual bool driverDequeueFast(void* value) override
+    {
+        BaseType_t xTaskWokenByReceive = pdFALSE;
 
-		return ((bool) xQueueReceiveFromISR(myQueueHandle,
-											value,
-											&xTaskWokenByReceive));
-	}
+        return ((bool) xQueueReceiveFromISR(myQueueHandle,
+                                            value,
+                                            &xTaskWokenByReceive));
+    }
 
-	//--------------------------------------------------------------------------
-	void driverClear()
-	{
-		xQueueReset(myQueueHandle);
-	}
+    //--------------------------------------------------------------------------
+    virtual void driverClear() override
+    {
+        xQueueReset(myQueueHandle);
+    }
 
 private:
 
@@ -145,7 +145,7 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-	QueueHandle_t myQueueHandle;
+    QueueHandle_t myQueueHandle;
 };
 
 }; // namespace Plat4m

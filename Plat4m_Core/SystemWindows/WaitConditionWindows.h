@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,42 +65,42 @@ namespace Plat4m
 class WaitConditionWindows : public WaitCondition
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
     WaitConditionWindows();
-    
+
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
-    
+
     virtual ~WaitConditionWindows();
-    
+
     //--------------------------------------------------------------------------
-    // Public methods implemented from WaitCondition
+    // Public virtual methods overridden for WaitCondition
     //--------------------------------------------------------------------------
 
-    void waitFast();
+    virtual void waitFast() override;
 
-    void notifyFast();
+    virtual void notifyFast() override;
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
-    HANDLE myThreadHandle;
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from WaitCondition
-    //--------------------------------------------------------------------------
-    
-    Error driverWait(const TimeMs waitTimeMs);
 
-    Error driverNotify();
+    HANDLE myThreadHandle;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods overridden for WaitCondition
+    //--------------------------------------------------------------------------
+
+    virtual Error driverWait(const TimeMs waitTimeMs) override;
+
+    virtual Error driverNotify() override;
 };
 
 }; // namespace Plat4m

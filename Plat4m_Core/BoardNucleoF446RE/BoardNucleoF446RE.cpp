@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2015-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,81 +36,74 @@
 /// @file BoardNucleoF446RE.cpp
 /// @author Ben Minerd
 /// @date 11/18/2015
-/// @brief BoardNucleoF446RE class.
+/// @brief BoardNucleoF446RE class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <BoardNucleoF446RE.h>
+#include <Plat4m_Core/BoardNucleoF446RE/BoardNucleoF446RE.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::BoardNucleoF446RE;
-using Plat4m::GpioPin;
-using Plat4m::GpioSTM32F4xx;
-using Plat4m::GpioPinSTM32F4xx;
-using Plat4m::Button;
-using Plat4m::EnableLine;
-using Plat4m::ProcessorSTM32F4xx;
-using Plat4m::I2cSTM32F4xx;
-using Plat4m::UartSTM32F4xx;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Private static data member initialization
 //------------------------------------------------------------------------------
 
 const float BoardNucleoF446RE::myProcessorCoreVoltage                 = 3.3;
-const uint32_t BoardNucleoF446RE::myProcessorExternalClockFrequencyHz
-                                                             = 8000000; // 8 MHz
+const uint32_t BoardNucleoF446RE::myProcessorExternalClockFrequencyHz =
+                                                               8000000; // 8 MHz
 
 const GpioPin::Id BoardNucleoF446RE::myGpioPinIdMap[] =
 {
     /// GPIO_PIN_ID_ARDUINO_A0
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_0},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_0},
     /// GPIO_PIN_ID_ARDUINO_A1
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_1},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_1},
     /// GPIO_PIN_ID_ARDUINO_A2
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_4},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_4},
     /// GPIO_PIN_ID_ARDUINO_A3
-    {GpioSTM32F4xx::PORT_ID_B, GpioSTM32F4xx::PIN_ID_0},
+    {GpioPortSTM32F4xx::ID_B, GpioPinSTM32F4xx::ID_0},
     /// GPIO_PIN_ID_ARDUINO_A4
-    {GpioSTM32F4xx::PORT_ID_C, GpioSTM32F4xx::PIN_ID_1},
+    {GpioPortSTM32F4xx::ID_C, GpioPinSTM32F4xx::ID_1},
     /// GPIO_PIN_ID_ARDUINO_A5
-    {GpioSTM32F4xx::PORT_ID_C, GpioSTM32F4xx::PIN_ID_0},
+    {GpioPortSTM32F4xx::ID_C, GpioPinSTM32F4xx::ID_0},
     /// GPIO_PIN_ID_ARDUINO_D0, GPIO_PIN_ID_UART_RX
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_3},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_3},
     /// GPIO_PIN_ID_ARDUINO_D1, GPIO_PIN_ID_UART_TX
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_2},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_2},
     /// GPIO_PIN_ID_ARDUINO_D2
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_10},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_10},
     /// GPIO_PIN_ID_ARDUINO_D3
-    {GpioSTM32F4xx::PORT_ID_B, GpioSTM32F4xx::PIN_ID_3},
+    {GpioPortSTM32F4xx::ID_B, GpioPinSTM32F4xx::ID_3},
     /// GPIO_PIN_ID_ARDUINO_D4
-    {GpioSTM32F4xx::PORT_ID_B, GpioSTM32F4xx::PIN_ID_5},
+    {GpioPortSTM32F4xx::ID_B, GpioPinSTM32F4xx::ID_5},
     /// GPIO_PIN_ID_ARDUINO_D5
-    {GpioSTM32F4xx::PORT_ID_B, GpioSTM32F4xx::PIN_ID_4},
+    {GpioPortSTM32F4xx::ID_B, GpioPinSTM32F4xx::ID_4},
     /// GPIO_PIN_ID_ARDUINO_D6
-    {GpioSTM32F4xx::PORT_ID_B, GpioSTM32F4xx::PIN_ID_10},
+    {GpioPortSTM32F4xx::ID_B, GpioPinSTM32F4xx::ID_10},
     /// GPIO_PIN_ID_ARDUINO_D7
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_8},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_8},
     /// GPIO_PIN_ID_ARDUINO_D8
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_9},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_9},
     /// GPIO_PIN_ID_ARDUINO_D9
-    {GpioSTM32F4xx::PORT_ID_C, GpioSTM32F4xx::PIN_ID_7},
+    {GpioPortSTM32F4xx::ID_C, GpioPinSTM32F4xx::ID_7},
     /// GPIO_PIN_ID_ARDUINO_D10
-    {GpioSTM32F4xx::PORT_ID_B, GpioSTM32F4xx::PIN_ID_6},
+    {GpioPortSTM32F4xx::ID_B, GpioPinSTM32F4xx::ID_6},
     /// GPIO_PIN_ID_ARDUINO_D11
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_7},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_7},
     /// GPIO_PIN_ID_ARDUINO_D12
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_6},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_6},
     /// GPIO_PIN_ID_ARDUINO_D13, GPIO_PIN_ID_USER_LED
-    {GpioSTM32F4xx::PORT_ID_A, GpioSTM32F4xx::PIN_ID_5},
+    {GpioPortSTM32F4xx::ID_A, GpioPinSTM32F4xx::ID_5},
     /// GPIO_PIN_ID_ARDUINO_D14, GPIO_PIN_ID_I2C_SDA
-    {GpioSTM32F4xx::PORT_ID_B, GpioSTM32F4xx::PIN_ID_9},
+    {GpioPortSTM32F4xx::ID_B, GpioPinSTM32F4xx::ID_9},
     /// GPIO_PIN_ID_ARDUINO_D15
-    {GpioSTM32F4xx::PORT_ID_B, GpioSTM32F4xx::PIN_ID_8},
+    {GpioPortSTM32F4xx::ID_B, GpioPinSTM32F4xx::ID_8},
     /// GPIO_PIN_ID_USER_BUTTON
-    {GpioSTM32F4xx::PORT_ID_C, GpioSTM32F4xx::PIN_ID_13},
+    {GpioPortSTM32F4xx::ID_C, GpioPinSTM32F4xx::ID_13},
 };
 
 //------------------------------------------------------------------------------
@@ -122,6 +115,7 @@ BoardNucleoF446RE::BoardNucleoF446RE() :
     Board(),
     myUserButton(0),
 	myUserButtonEnableLine(0),
+    myGpioPorts(),
 	myGpioPins(),
 	myI2c(0),
 	myProcessor(0),
@@ -130,7 +124,7 @@ BoardNucleoF446RE::BoardNucleoF446RE() :
 }
 
 //------------------------------------------------------------------------------
-// Public destructors
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -147,7 +141,7 @@ Button& BoardNucleoF446RE::getButton()
 {
     if (isNullPointer(myUserButton))
     {
-        myUserButton = new Button(getEnableLine());
+        myUserButton = MemoryAllocator::allocate<Button>(getEnableLine());
     }
 
     return (*myUserButton);
@@ -158,8 +152,8 @@ EnableLine& BoardNucleoF446RE::getEnableLine()
 {
     if (isNullPointer(myUserButtonEnableLine))
     {
-        myUserButtonEnableLine =
-                             new EnableLine(EnableLine::MODE_INPUT,
+        myUserButtonEnableLine = MemoryAllocator::allocate<EnableLine>(
+                                            EnableLine::MODE_INPUT,
                                             EnableLine::ACTIVE_LEVEL_HIGH,
                                             getGpioPin(GPIO_PIN_ID_USER_BUTTON),
                                             false);
@@ -169,11 +163,26 @@ EnableLine& BoardNucleoF446RE::getEnableLine()
 }
 
 //------------------------------------------------------------------------------
+GpioPortSTM32F4xx& BoardNucleoF446RE::getGpioPort(
+                                             const GpioPortSTM32F4xx::Id portId)
+{
+    if (isNullPointer(myGpioPorts[portId]))
+    {
+        myGpioPorts[portId] = new GpioPortSTM32F4xx(portId);
+    }
+
+    return (*(myGpioPorts[portId]));
+}
+
+//------------------------------------------------------------------------------
 GpioPinSTM32F4xx& BoardNucleoF446RE::getGpioPin(const GpioPinId gpioPinId)
 {
     if (isNullPointer(myGpioPins[gpioPinId]))
     {
-        myGpioPins[gpioPinId] = new GpioPinSTM32F4xx(myGpioPinIdMap[gpioPinId]);
+        myGpioPins[gpioPinId] = MemoryAllocator::allocate<GpioPinSTM32F4xx>(
+            getGpioPort(static_cast<GpioPortSTM32F4xx::Id>(
+                                             myGpioPinIdMap[gpioPinId].portId)),
+            static_cast<GpioPinSTM32F4xx::Id>(myGpioPinIdMap[gpioPinId].pinId));
     }
 
     return (*(myGpioPins[gpioPinId]));
@@ -184,8 +193,8 @@ ProcessorSTM32F4xx& BoardNucleoF446RE::getProcessor()
 {
     if (isNullPointer(myProcessor))
     {
-        myProcessor =
-                    new ProcessorSTM32F4xx(myProcessorCoreVoltage,
+        myProcessor = MemoryAllocator::allocate<ProcessorSTM32F4xx>(
+                                           myProcessorCoreVoltage,
                                            myProcessorExternalClockFrequencyHz);
     }
 
@@ -197,10 +206,10 @@ I2cSTM32F4xx& BoardNucleoF446RE::getI2c()
 {
     if (isNullPointer(myI2c))
     {
-        GpioPinSTM32F4xx& i2c1Scl = getGpioPin(GPIO_PIN_ID_I2C_SCL);
-        GpioPinSTM32F4xx& i2c1Sda = getGpioPin(GPIO_PIN_ID_I2C_SDA);
-
-        myI2c = new I2cSTM32F4xx(I2cSTM32F4xx::ID_1, i2c1Scl, i2c1Sda);
+        myI2c = MemoryAllocator::allocate<I2cSTM32F4xx>(
+                                               I2cSTM32F4xx::ID_1,
+                                               getGpioPin(GPIO_PIN_ID_I2C_SCL),
+                                               getGpioPin(GPIO_PIN_ID_I2C_SDA));
     }
 
     return (*myI2c);
@@ -211,10 +220,10 @@ UartSTM32F4xx& BoardNucleoF446RE::getUart()
 {
     if (isNullPointer(myUart))
     {
-        GpioPinSTM32F4xx& uart2Tx = getGpioPin(GPIO_PIN_ID_UART_TX);
-        GpioPinSTM32F4xx& uart2Rx = getGpioPin(GPIO_PIN_ID_UART_RX);
-
-        myUart = new UartSTM32F4xx(UartSTM32F4xx::ID_2, uart2Tx, uart2Rx);
+        myUart = MemoryAllocator::allocate<UartSTM32F4xx>(
+                                               UartSTM32F4xx::ID_2,
+                                               getGpioPin(GPIO_PIN_ID_UART_TX),
+                                               getGpioPin(GPIO_PIN_ID_UART_RX));
     }
 
 	return (*myUart);

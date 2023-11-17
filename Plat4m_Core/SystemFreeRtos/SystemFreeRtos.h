@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/List.h>
@@ -53,6 +55,7 @@
 #include <Plat4m_Core/Mutex.h>
 #include <Plat4m_Core/WaitCondition.h>
 #include <Plat4m_Core/QueueDriver.h>
+#include <Plat4m_Core/Semaphore.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -67,6 +70,51 @@ namespace Plat4m
 
 class SystemFreeRtos : public System
 {
+public:
+
+    //--------------------------------------------------------------------------
+    // Public virtual methods overridden for System
+    //--------------------------------------------------------------------------
+
+    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
+                                       const TimeMs periodMs,
+                                       const std::uint32_t nStackBytes,
+                                       const bool isSimulated,
+                                       const char* name) override;
+
+    virtual Mutex& driverCreateMutex(Thread& thread) override;
+
+    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
+
+    virtual QueueDriver& driverCreateQueueDriver(
+                                             const std::uint32_t nValues,
+                                             const std::uint32_t valueSizeBytes,
+                                             Thread& thread) override;
+
+    virtual Semaphore& driverCreateSemaphore(
+                                     const std::uint32_t maxValue,
+                                     const std::uint32_t initialValue) override;
+
+    virtual void driverRun() override;
+
+    virtual TimeMs driverGetTimeMs() override;
+
+    virtual TimeUs driverGetTimeUs() override;
+
+    virtual void driverDelayTimeMs(const TimeMs timeMs) override;
+
+    virtual void driverExit() override;
+
+    virtual void driverEnterCriticalSection() override;
+
+    virtual void driverExitCriticalSection() override;
+
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    std::uint32_t getTimeMsRollOverCounter();
+
 protected:
 
     //--------------------------------------------------------------------------
@@ -84,32 +132,14 @@ protected:
 private:
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from System
+    // Private data members
     //--------------------------------------------------------------------------
 
-    virtual TimeUs driverGetTimeUs();
+    TimeMs myLastTimeMs;
 
-    //--------------------------------------------------------------------------
-    // Private methods implemented from System
-    //--------------------------------------------------------------------------
+    std::uint32_t myTimeMsRollOverCounter;
 
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes);
-
-    Mutex& driverCreateMutex(Thread& thread);
-
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
-
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									 const uint32_t valueSizeBytes,
-    									 Thread& thread);
-
-    void driverRun();
-
-    TimeMs driverGetTimeMs();
-
-    void driverDelayTimeMs(const TimeMs timeMs);
+    std::uint32_t mySavedInterruptStatus;
 };
 
 }; // namespace Plat4m

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2036 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,9 @@
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/List.h>
 
+using namespace std;
+using namespace Plat4m;
+
 using Plat4m::System;
 using Plat4m::Thread;
 using Plat4m::Mutex;
@@ -65,9 +68,15 @@ bool System::myIsRunning = false;
 //------------------------------------------------------------------------------
 Thread& System::createThread(Thread::RunCallback& callback,
                              const TimeMs periodMs,
-                             const uint32_t nStackBytes)
+                             const uint32_t nStackBytes,
+                             const bool isSimulated,
+                             const char* name)
 {
-    return (myDriver->driverCreateThread(callback, periodMs, nStackBytes));
+    return (myDriver->driverCreateThread(callback,
+                                         periodMs,
+                                         nStackBytes,
+                                         isSimulated,
+                                         name));
 }
 
 //------------------------------------------------------------------------------
@@ -83,9 +92,16 @@ WaitCondition& System::createWaitCondition(Thread& thread)
 }
 
 //------------------------------------------------------------------------------
+Semaphore& System::createSemaphore(const uint32_t maxValue,
+                                   const uint32_t initialValue)
+{
+    return (myDriver->driverCreateSemaphore(maxValue, initialValue));
+}
+
+//------------------------------------------------------------------------------
 void System::run()
 {
-	myIsRunning = true;
+    myIsRunning = true;
     myDriver->driverRun();
 }
 
@@ -99,6 +115,18 @@ bool System::isRunning()
 uint32_t System::getTimeMs()
 {
     return (myDriver->driverGetTimeMs());
+}
+
+//------------------------------------------------------------------------------
+TimeStamp System::getTimeStamp()
+{
+    return (myDriver->driverGetTimeStamp());
+}
+
+//------------------------------------------------------------------------------
+TimeStamp System::getWallTimeStamp()
+{
+    return (myDriver->driverGetWallTimeStamp());
 }
 
 //------------------------------------------------------------------------------
@@ -117,6 +145,125 @@ void System::delayTimeMs(const uint32_t timeMs)
 bool System::checkTimeMs(const uint32_t timeMs)
 {
     return (timeMs <= getTimeMs());
+}
+
+//------------------------------------------------------------------------------
+void System::exit()
+{
+    myDriver->driverExit();
+}
+
+//------------------------------------------------------------------------------
+void System::startTime()
+{
+    myDriver->driverStartTime();
+}
+
+//------------------------------------------------------------------------------
+void System::stopTime()
+{
+    myDriver->driverStopTime();
+}
+
+//------------------------------------------------------------------------------
+void System::resetTime()
+{
+    myDriver->driverResetTime();
+}
+
+//------------------------------------------------------------------------------
+System::Error System::setTime(const TimeStamp& timeStamp)
+{
+    return (myDriver->driverSetTime(timeStamp));
+}
+
+//------------------------------------------------------------------------------
+void System::enterCriticalSection()
+{
+    myDriver->driverEnterCriticalSection();
+}
+
+//------------------------------------------------------------------------------
+void System::exitCriticalSection()
+{
+    myDriver->driverExitCriticalSection();
+}
+
+//------------------------------------------------------------------------------
+// Public virtual methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Plat4m::TimeStamp System::driverGetTimeStamp()
+{
+    // Not implemented by subclass, default implementation
+    //
+    // Note: This will wrap after ~1.2hr!
+
+    TimeUs timeUs = getTimeUs();
+
+    TimeStamp timeStamp;
+    timeStamp.fromTimeUs(timeUs);
+
+    return timeStamp;
+}
+
+//------------------------------------------------------------------------------
+Plat4m::TimeStamp System::driverGetWallTimeStamp()
+{
+    // Not implemented by subclass, default implementation
+
+    return driverGetTimeStamp();
+}
+
+//------------------------------------------------------------------------------
+void System::driverStartTime()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
+}
+
+//------------------------------------------------------------------------------
+void System::driverStopTime()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
+}
+
+//------------------------------------------------------------------------------
+void System::driverResetTime()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
+}
+
+//------------------------------------------------------------------------------
+System::Error System::driverSetTime(const TimeStamp& timeStamp)
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
+
+    return Error(ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+void System::driverEnterCriticalSection()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
+}
+
+//------------------------------------------------------------------------------
+void System::driverExitCriticalSection()
+{
+    // Not implemented by subclass, default implementation
+
+    // Do nothing
 }
 
 //------------------------------------------------------------------------------
@@ -146,4 +293,5 @@ System::System()
 //------------------------------------------------------------------------------
 System::~System()
 {
+    myDriver = 0;
 }

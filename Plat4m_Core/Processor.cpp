@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,9 +57,10 @@ Plat4m::VoltageV Processor::myCoreVoltageV   = 0.0;
 uint32_t Processor::myClockSourceFrequencyHz = 0;
 Processor::Config Processor::myConfig;
 
+//------------------------------------------------------------------------------
 extern "C" uint32_t processorGetCoreClockFrequencyHz(void)
 {
-	return Processor::getCoreClockFrequencyHz();
+    return Processor::getCoreClockFrequencyHz();
 }
 
 //------------------------------------------------------------------------------
@@ -93,7 +94,7 @@ Processor::Error Processor::configure(const Config& config)
     {
         myConfig = config;
     }
-    
+
     return error;
 }
 
@@ -116,13 +117,19 @@ Plat4m::Endian Processor::getEndian()
 }
 
 //------------------------------------------------------------------------------
+bool Processor::isInterruptActive()
+{
+    return (myDriver->driverIsInterruptActive());
+}
+
+//------------------------------------------------------------------------------
 // Protected constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Processor::Processor(const Endian endian,
                      const VoltageV coreVoltageV,
-					 const uint32_t clockSourceFrequencyHz)
+                     const uint32_t clockSourceFrequencyHz)
 {
     if (isNullPointer(myDriver))
     {
@@ -140,4 +147,17 @@ Processor::Processor(const Endian endian,
 //------------------------------------------------------------------------------
 Processor::~Processor()
 {
+    myDriver = 0;
+}
+
+//------------------------------------------------------------------------------
+// Private virtual methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+bool Processor::driverIsInterruptActive()
+{
+    // Not implemented by subclass, default implementation
+
+    return false;
 }

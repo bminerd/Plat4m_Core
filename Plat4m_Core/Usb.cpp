@@ -63,6 +63,11 @@ ComInterface::Error Usb::transmitBytes(const ByteArray& byteArray,
 
     Error error = driverTransmitBytes(byteArray, waitUntilDone);
 
+    if (error.getCode() != ERROR_CODE_NONE)
+    {
+        // Handle error
+    }
+
     return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
 }
 

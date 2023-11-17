@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file I2cSTM32F4xx.cpp
 /// @author Ben Minerd
-/// @date 3/25/13
+/// @date 3/25/2013
 /// @brief I2cSTM32F4xx class source file.
 ///
 
@@ -66,8 +66,8 @@ static InterruptSTM32F4xx* interruptObjectMap[3][2];
 
 const ProcessorSTM32F4xx::Peripheral I2cSTM32F4xx::myPeripheralMap[] =
 {
-	ProcessorSTM32F4xx::PERIPHERAL_I2C_1, /// ID_1
-	ProcessorSTM32F4xx::PERIPHERAL_I2C_2  /// ID_2
+    ProcessorSTM32F4xx::PERIPHERAL_I2C_1, /// ID_1
+    ProcessorSTM32F4xx::PERIPHERAL_I2C_2  /// ID_2
 };
 
 const InterruptSTM32F4xx::Id I2cSTM32F4xx::myInterruptIdMap[][2] =
@@ -96,7 +96,7 @@ const uint16_t I2cSTM32F4xx::myAddressBitsMap[] =
 };
 
 const GpioPinSTM32F4xx::OutputSpeed I2cSTM32F4xx::myDefaultOutputSpeed =
-										   GpioPinSTM32F4xx::OUTPUT_SPEED_50MHZ;
+                                           GpioPinSTM32F4xx::OUTPUT_SPEED_50MHZ;
 
 const uint16_t I2cSTM32F4xx::myInterruptMap[] =
 {
@@ -133,8 +133,8 @@ I2cSTM32F4xx::I2cSTM32F4xx(const Id id,
     myErrorInterrupt(
                     myInterruptIdMap[myId][1],
                     createCallback(this, &I2cSTM32F4xx::errorInterruptHandler)),
-	myState(STATE_IDLE),
-	myCurrentTransfer(0)
+    myState(STATE_IDLE),
+    myCurrentTransfer(0)
 {
     // If this entry in the table is null, the peripheral hasn't been
     // initialized yet
@@ -153,7 +153,7 @@ I2cSTM32F4xx::I2cSTM32F4xx(const Id id,
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ Module::Error I2cSTM32F4xx::driverSetEnabled(const bool enabled)
     mySdaGpioPin.setEnabled(enabled);
 
     ProcessorSTM32F4xx::setPeripheralClockEnabled(myPeripheralMap[myId],
-    											  enabled);
+                                                  enabled);
 
     if (enabled)
     {
@@ -189,7 +189,7 @@ Module::Error I2cSTM32F4xx::driverSetEnabled(const bool enabled)
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from I2c
+// Private virtual methods overridden for I2c
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -248,9 +248,9 @@ I2c::Error I2cSTM32F4xx::driverMasterTransfer(Transfer& transfer)
         reset();
     }
 
-	myCurrentTransfer = 0;
+    myCurrentTransfer = 0;
 
-	return Error(ERROR_CODE_NONE);
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ uint8_t I2cSTM32F4xx::readByte()
 //------------------------------------------------------------------------------
 void I2cSTM32F4xx::enableAcknowledge(const bool enable)
 {
-	setBitsSet(myI2c->CR1,
+    setBitsSet(myI2c->CR1,
                Register::Cr1::BIT_ACKNOWLEDGE_ENABLE,
                enable);
 }
@@ -300,7 +300,7 @@ void I2cSTM32F4xx::enableAcknowledge(const bool enable)
 //------------------------------------------------------------------------------
 void I2cSTM32F4xx::enableAcknowledgePec(const bool enable)
 {
-	setBitsSet(myI2c->CR1,
+    setBitsSet(myI2c->CR1,
                Register::Cr1::BIT_ACKNOWLEDGE_PEC_POSITION,
                enable);
 }
@@ -309,7 +309,7 @@ void I2cSTM32F4xx::enableAcknowledgePec(const bool enable)
 void I2cSTM32F4xx::setInterruptEnabled(const Interrupt interrupt,
                                        const bool enable)
 {
-	setBitsSet(myI2c->CR2, myInterruptMap[interrupt], enable);
+    setBitsSet(myI2c->CR2, myInterruptMap[interrupt], enable);
 }
 
 //------------------------------------------------------------------------------
@@ -549,8 +549,8 @@ void I2cSTM32F4xx::handleMasterByteReceivedEvent()
 //------------------------------------------------------------------------------
 void I2cSTM32F4xx::softwareReset()
 {
-	setBits(myI2c->CR1, Register::Cr1::BIT_SOFTWARE_RESET);
-	clearBits(myI2c->CR1, Register::Cr1::BIT_SOFTWARE_RESET);
+    setBits(myI2c->CR1, Register::Cr1::BIT_SOFTWARE_RESET);
+    clearBits(myI2c->CR1, Register::Cr1::BIT_SOFTWARE_RESET);
 }
 
 //------------------------------------------------------------------------------

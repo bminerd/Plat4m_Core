@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,7 @@ using Plat4m::WaitCondition;
 //------------------------------------------------------------------------------
 WaitConditionFreeRtos::WaitConditionFreeRtos(Thread& thread) :
     WaitCondition(),
-	myTaskHandle(0)
+    myTaskHandle(0)
 {
     ThreadFreeRtos& threadFreeRtos = static_cast<ThreadFreeRtos&>(thread);
     myTaskHandle = threadFreeRtos.getTaskHandle();
@@ -78,14 +78,14 @@ WaitConditionFreeRtos::~WaitConditionFreeRtos()
 //------------------------------------------------------------------------------
 void WaitConditionFreeRtos::notifyFast()
 {
-	BaseType_t higherPriorityTaskWasWoken = pdFALSE;
-	vTaskNotifyGiveFromISR(myTaskHandle, &higherPriorityTaskWasWoken);
+    BaseType_t higherPriorityTaskWasWoken = pdFALSE;
+    vTaskNotifyGiveFromISR(myTaskHandle, &higherPriorityTaskWasWoken);
 
-	portYIELD_FROM_ISR(higherPriorityTaskWasWoken);
+    portYIELD_FROM_ISR(higherPriorityTaskWasWoken);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from WaitCondition
+// Private virtual methods overridden for WaitCondition
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ WaitCondition::Error WaitConditionFreeRtos::driverWait(const TimeMs waitTimeMs)
 //------------------------------------------------------------------------------
 WaitCondition::Error WaitConditionFreeRtos::driverNotify()
 {
-	xTaskNotifyGive(myTaskHandle);
+    xTaskNotifyGive(myTaskHandle);
 
     return Error(ERROR_CODE_NONE);
 }

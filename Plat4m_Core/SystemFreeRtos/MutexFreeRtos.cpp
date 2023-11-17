@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ using Plat4m::Mutex;
 //------------------------------------------------------------------------------
 MutexFreeRtos::MutexFreeRtos() :
     Mutex(),
-	mySemaphoreHandle(xSemaphoreCreateMutex())
+    mySemaphoreHandle(xSemaphoreCreateMutex())
 {
 }
 
@@ -69,20 +69,20 @@ MutexFreeRtos::~MutexFreeRtos()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Mutex
+// Private virtual methods overridden for Mutex
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Mutex::Error MutexFreeRtos::driverSetLocked(const bool locked)
 {
-	if (locked)
-	{
-		xSemaphoreTake(mySemaphoreHandle, portMAX_DELAY);
-	}
-	else
-	{
-		xSemaphoreGive(mySemaphoreHandle);
-	}
+    if (locked)
+    {
+        xSemaphoreTake(mySemaphoreHandle, portMAX_DELAY);
+    }
+    else
+    {
+        xSemaphoreGive(mySemaphoreHandle);
+    }
 
     return ERROR_NONE;
 }

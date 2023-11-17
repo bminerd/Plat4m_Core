@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file ThreadFreeRtos.h
 /// @author Ben Minerd
-/// @date 7/1/2016
+/// @date 12/23/2017
 /// @brief ThreadFreeRtos class header file.
 ///
 
@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <FreeRTOS/Source/include/FreeRTOS.h>
-#include <FreeRTOS/Source/include/task.h>
+#include <FreeRTOS-Kernel/include/FreeRTOS.h>
+#include <FreeRTOS-Kernel/include/task.h>
 
 #include <Plat4m_Core/Thread.h>
 #include <Plat4m_Core/Plat4m.h>
@@ -71,9 +71,10 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-	ThreadFreeRtos(RunCallback& callback,
-	               const TimeMs periodMs = 0,
-	               const uint32_t nStackBytes = 0);
+    ThreadFreeRtos(RunCallback& callback,
+                   const TimeMs periodMs = 0,
+                   const uint32_t nStackBytes = 0,
+                   const char* name = 0);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
@@ -102,18 +103,18 @@ private:
     static void taskCallback(void* parameter);
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverSetEnabled(const bool enabled);
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Thread
+    // Private virtual methods override for Thread
     //--------------------------------------------------------------------------
 
-    void driverSetPeriodMs(const TimeMs periodMs);
+    virtual void driverSetPeriodMs(const TimeMs periodMs) override;
 
-    uint32_t driverSetPriority(const uint32_t priority);
+    virtual uint32_t driverSetPriority(const uint32_t priority) override;
 };
 
 }; // namespace Plat4m

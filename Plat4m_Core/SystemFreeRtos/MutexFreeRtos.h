@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <FreeRTOS/Source/include/FreeRTOS.h>
-#include <FreeRTOS/Source/include/semphr.h>
+#include <FreeRTOS-Kernel/include/FreeRTOS.h>
+#include <FreeRTOS-Kernel/include/semphr.h>
 
 #include <Plat4m_Core/Mutex.h>
 
@@ -73,10 +73,10 @@ public:
     MutexFreeRtos();
 
     //--------------------------------------------------------------------------
-    // Public destructors
+    // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    ~MutexFreeRtos();
+    virtual ~MutexFreeRtos();
 
 private:
 
@@ -87,10 +87,10 @@ private:
     SemaphoreHandle_t mySemaphoreHandle;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Mutex
+    // Private virtual methods overridden for Mutex
     //--------------------------------------------------------------------------
-    
-    Error driverSetLocked(const bool locked);
+
+    virtual Error driverSetLocked(const bool locked) override;
 };
 
 }; // namespace Plat4m

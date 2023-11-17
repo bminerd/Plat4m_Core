@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,7 @@ using Plat4m::Module;
 //------------------------------------------------------------------------------
 // Local variables
 //------------------------------------------------------------------------------
-    
+
 static const Plat4m::TimeMs debounceTimeMs = 10;
 
 static const Button::Sequence::State pressSequenceStates[] =
@@ -208,7 +208,7 @@ Button::Button(EnableLine& enableLine) :
         myStateLog[i].isActive      = false;
         myStateLog[i].timeStampMs   = 0;
     }
-    
+
     // Initialize event behavior map
     for (uint32_t i = 0; i < ARRAY_SIZE(myEventBehaviorMap); i++)
     {
@@ -233,20 +233,20 @@ Button::~Button()
 }
 
 //------------------------------------------------------------------------------
-// Public virtual methods implemented from UiInput
+// Public virtual methods overridden for UiInput
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 void Button::poll(const TimeMs timeMs, Array<UiInput::Event>& events)
 {
     bool isActive;
-    
+
     if (myEnableLine.isActive(isActive).getCode() !=
-    												EnableLine::ERROR_CODE_NONE)
+                                                    EnableLine::ERROR_CODE_NONE)
     {
         // Error
     }
-    
+
     if (((isActive != myStateLog[0].isActive) &&
         ((timeMs - myStateLog[0].timeStampMs) >= debounceTimeMs))   ||
          (myStateLog[0].timeStampMs == 0))
@@ -259,13 +259,13 @@ void Button::poll(const TimeMs timeMs, Array<UiInput::Event>& events)
 
         myStateLog[0].isActive      = isActive;
         myStateLog[0].timeStampMs   = timeMs;
-        
+
         for (uint32_t i = 0; i < ARRAY_SIZE(myEventBehaviorMap); i++)
         {
             myEventBehaviorMap[i].nStatesSinceEvent++;
         }
     }
-    
+
     matchSequence(timeMs, events);
 }
 
@@ -275,13 +275,13 @@ void Button::poll(const TimeMs timeMs, Array<UiInput::Event>& events)
 
 //------------------------------------------------------------------------------
 Button::Error Button::isActive(bool& isActive)
-{    
+{
     if (myEnableLine.isActive(isActive).getCode() !=
-    											    EnableLine::ERROR_CODE_NONE)
+                                                    EnableLine::ERROR_CODE_NONE)
     {
         // Error
     }
-    
+
     return ERROR_NONE;
 }
 
@@ -289,7 +289,7 @@ Button::Error Button::isActive(bool& isActive)
 Button::Error Button::setEventEnabled(const Event::Id id, const bool enabled)
 {
     myEventBehaviorMap[id].isEnabled = enabled;
-    
+
     return ERROR_NONE;
 }
 
@@ -297,24 +297,24 @@ Button::Error Button::setEventEnabled(const Event::Id id, const bool enabled)
 Button::Error Button::setEventMode(const Event::Id id, const Event::Mode mode)
 {
     myEventBehaviorMap[id].mode = mode;
-    
+
     return ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error Button::driverEnable(const bool enable)
 {
-	Module::Error error = myEnableLine.enable(enable);
+    Module::Error error = myEnableLine.enable(enable);
 
     if (error.getCode() != Module::ERROR_CODE_NONE)
     {
-    	return error;
+        return error;
     }
-    
+
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
@@ -330,7 +330,7 @@ void Button::matchSequence(const TimeMs timeMs, Array<UiInput::Event>& events)
         const Sequence& sequence = sequences[i];
         int32_t logIndex = 0;
         int32_t j;
-        
+
         if ((myEventBehaviorMap[i].nStatesSinceEvent >= sequence.nStates) ||
             ((myEventBehaviorMap[i].mode == Event::MODE_PERSISTENT) &&
              ((timeMs - myEventBehaviorMap[i].lastPersistentTimestampMs) >=
@@ -376,7 +376,7 @@ void Button::matchSequence(const TimeMs timeMs, Array<UiInput::Event>& events)
 
                 logIndex++;
             }
-            
+
             // If reached last state of sequence, the log pattern matches the
             // sequence
             if (j == -1)
@@ -384,15 +384,15 @@ void Button::matchSequence(const TimeMs timeMs, Array<UiInput::Event>& events)
                 UiInput::Event event;
                 event.id     = (Event::Id) i;
                 event.timeMs = timeMs;
-                
+
                 events.append(event);
-                
+
                 if ((myEventBehaviorMap[i].nStatesSinceEvent == 0) &&
                     (myEventBehaviorMap[i].mode == Event::MODE_PERSISTENT))
                 {
                     myEventBehaviorMap[i].lastPersistentTimestampMs = timeMs;
                 }
-                
+
                 if (sequence.isRepeatable)
                 {
                     myEventBehaviorMap[i].nStatesSinceEvent = 1;

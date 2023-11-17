@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,12 +45,12 @@
 
 #include <Plat4m_Core/Interrupt.h>
 #include <Plat4m_Core/System.h>
+#include <Plat4m_Core/InterruptPolicyManager.h>
 
-using Plat4m::Interrupt;
-using Plat4m::Module;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
-// Public virtual methods
+// Public methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -80,6 +80,12 @@ void Interrupt::setPolicy(InterruptPolicy* interruptPolicy)
 }
 
 //------------------------------------------------------------------------------
+InterruptPolicy* Interrupt::getPolicy()
+{
+    return myInterruptPolicy;
+}
+
+//------------------------------------------------------------------------------
 // Protected constructors
 //------------------------------------------------------------------------------
 
@@ -87,7 +93,7 @@ void Interrupt::setPolicy(InterruptPolicy* interruptPolicy)
 Interrupt::Interrupt(HandlerCallback& handlerCallback) :
     Module(),
     myHandlerCallback(&handlerCallback),
-    myInterruptPolicy(InterruptPolicy::get())
+    myInterruptPolicy(InterruptPolicyManager::getInterruptPolicy())
 {
 }
 

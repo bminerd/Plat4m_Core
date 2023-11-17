@@ -124,13 +124,13 @@ ComProtocol::ParseStatus PacketFrameHandler::driverHandleFrame(
         return parseStatus;
     }
 
-    uint8_t packetNumber   = frameData[0];
+    // uint8_t packetNumber   = frameData[0];
     uint16_t dataByteCount = (((uint16_t) frameData[1]) << 8) |
                               ((uint16_t) frameData[2]);
     uint16_t crc           = (((uint16_t) frameData[3]) << 8) |
                               ((uint16_t) frameData[4]);
 
-    if (frameData.getSize() < (5 + dataByteCount))
+    if (frameData.getSize() < (uint32_t) (5 + dataByteCount))
     {
         parseStatus = ComProtocol::PARSE_STATUS_MID_FRAME;
 

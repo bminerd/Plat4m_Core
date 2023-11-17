@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -78,11 +78,11 @@ public:
 private:
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from SystemLite
+    // Private virtual methods overridden for SystemLite
     //--------------------------------------------------------------------------
 
-    void driverEnableSystemClock(const uint32_t coreClockFrequencyHz);
-
+    virtual void driverEnableSystemClock(
+                                  const uint32_t coreClockFrequencyHz) override;
 };
 
 }; // namespace Plat4m

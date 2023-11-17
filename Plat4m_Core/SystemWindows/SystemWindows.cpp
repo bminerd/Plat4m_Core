@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Benjamin Minerd
+// Copyright (c) 2015-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -50,12 +50,11 @@
 #include <Plat4m_Core/SystemWindows/MutexWindows.h>
 #include <Plat4m_Core/SystemWindows/WaitConditionWindows.h>
 #include <Plat4m_Core/SystemWindows/QueueDriverWindows.h>
+#include <Plat4m_Core/SystemWindows/SemaphoreWindows.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::SystemWindows;
-using Plat4m::Thread;
-using Plat4m::Mutex;
-using Plat4m::WaitCondition;
-using Plat4m::QueueDriver;
+using namespace std;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -63,7 +62,8 @@ using Plat4m::QueueDriver;
 
 //------------------------------------------------------------------------------
 SystemWindows::SystemWindows() :
-    System()
+    System(),
+    myIsRunning(false)
 {
 }
 
@@ -77,7 +77,7 @@ SystemWindows::~SystemWindows()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from System
+// Public virtual methods overridden for System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -91,21 +91,25 @@ Plat4m::TimeUs SystemWindows::driverGetTimeUs()
 //------------------------------------------------------------------------------
 Thread& SystemWindows::driverCreateThread(Thread::RunCallback& callback,
                                           const TimeMs periodMs,
-                                          const uint32_t nStackBytes)
+                                          const uint32_t nStackBytes,
+                                          const bool isSimulated,
+                                          const char* name)
 {
-    return *(new ThreadWindows(callback, periodMs));
+    return *(MemoryAllocator::allocate<ThreadWindows>(callback,
+                                                      periodMs,
+                                                      name));
 }
 
 //------------------------------------------------------------------------------
 Mutex& SystemWindows::driverCreateMutex(Thread& thread)
 {
-    return *(new MutexWindows);
+    return *(MemoryAllocator::allocate<MutexWindows>());
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& SystemWindows::driverCreateWaitCondition(Thread& thread)
 {
-    return *(new WaitConditionWindows);
+    return *(MemoryAllocator::allocate<WaitConditionWindows>());
 }
 
 //------------------------------------------------------------------------------
@@ -114,15 +118,25 @@ QueueDriver& SystemWindows::driverCreateQueueDriver(
                                                   const uint32_t valueSizeBytes,
                                                   Thread& thread)
 {
-    return *(new QueueDriverWindows(thread));
+    return *(MemoryAllocator::allocate<QueueDriverWindows>(thread));
+}
+
+//------------------------------------------------------------------------------
+Semaphore& SystemWindows::driverCreateSemaphore(const uint32_t maxValue,
+                                                const uint32_t initialValue)
+{
+    return *(MemoryAllocator::allocate<SemaphoreWindows>(maxValue,
+                                                         initialValue));
 }
 
 //------------------------------------------------------------------------------
 void SystemWindows::driverRun()
 {
-    while (true)
+    myIsRunning = true;
+
+    while (myIsRunning)
     {
-        // Do nothing
+        driverDelayTimeMs(1);
     }
 }
 
@@ -136,4 +150,10 @@ Plat4m::TimeMs SystemWindows::driverGetTimeMs()
 void SystemWindows::driverDelayTimeMs(const TimeMs timeMs)
 {
     Sleep((DWORD) timeMs);
+}
+
+//------------------------------------------------------------------------------
+void SystemWindows::driverExit()
+{
+    myIsRunning = false;
 }
