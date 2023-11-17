@@ -15,9 +15,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Unreleased Changes
 
-Released: XXXX-XX-XX
-
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
+
+### 3.0.0
+
+Released: 2023-11-17
 
 - `[IMPROVEMENT]` Updated plat4m_linux_dev container to v2.0.0.
 - `[IMPROVEMENT]` Added remapBit() helper function. Added second template parameter to limitValue() for usage clarity.

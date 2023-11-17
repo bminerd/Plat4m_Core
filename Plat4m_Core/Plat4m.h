@@ -58,7 +58,7 @@
 // Defines
 //------------------------------------------------------------------------------
 
-#define PLAT4M_VERSION "0.0.24"
+#define PLAT4M_VERSION "3.0.0"
 
 ///
 /// @brief Returns the number of elements of any given array.
