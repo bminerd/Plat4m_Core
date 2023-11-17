@@ -63,6 +63,11 @@ MasterSlaveBus::Error MasterSlaveBus::masterTransfer(Transfer& transfer)
 
     Error error = driverMasterTransfer(transfer);
 
+    if (error.getCode() != ERROR_CODE_NONE)
+    {
+        // Handle error
+    }
+
     return transfer.error;
 }
 

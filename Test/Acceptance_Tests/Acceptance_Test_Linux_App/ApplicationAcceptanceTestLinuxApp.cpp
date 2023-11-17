@@ -62,11 +62,15 @@ ApplicationAcceptanceTestLinuxApp::ApplicationAcceptanceTestLinuxApp() :
     ApplicationUnitTestApp("ACCEPTANCE_TEST_LINUX_APP",
                            "UNIT_TEST_LINUX",
                            "0.1.0"),
+    myAllocationMemory(),
     mySystem(),
     myProcessor(),
     myTopicTest(),
     myTopicSubscriberTest(),
-    myTopicSubscriberThreadTest()
+    myTopicSubscriberThreadTest(),
+    myServiceTest(),
+    myServiceClientTest(),
+    myDataObjectTopicServiceTest()
 {
 }
 
@@ -84,12 +88,12 @@ ApplicationAcceptanceTestLinuxApp::~ApplicationAcceptanceTestLinuxApp()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void ApplicationAcceptanceTestLinuxApp::driverRun()
+int ApplicationAcceptanceTestLinuxApp::driverRun()
 {
     initializeProcessor();
     initializeSystem();
 
-    runParentApplication();
+    return (runParentApplication());
 }
 
 //------------------------------------------------------------------------------
@@ -108,4 +112,7 @@ void ApplicationAcceptanceTestLinuxApp::initializeSystem()
     addUnitTest(myTopicTest);
     addUnitTest(myTopicSubscriberTest);
     addUnitTest(myTopicSubscriberThreadTest);
+    addUnitTest(myServiceTest);
+    addUnitTest(myServiceClientTest);
+    addUnitTest(myDataObjectTopicServiceTest);
 }

@@ -73,9 +73,9 @@ ImuServer::ImuServer(ComProtocolPlat4mBinary& comProtocolPlat4mBinary,
                         comProtocolPlat4mBinary,
                         binaryMessageFrameHandler),
     myConfig(),
+    myImuList(),
     myOutputThread(System::createThread(
 					   createCallback(this, &ImuServer::outputThreadCallback))),
-	myImuList(),
 	myTempC(0.0),
 	myAccelMeasurement(),
 	myGyroMeasurement(),
@@ -224,7 +224,7 @@ void ImuServer::outputThreadCallback()
     	Imu* imu = iterator.current();
 
     	Imu::Measurement measurement;
-    	Imu::Error error = imu->getMeasurement(measurement);
+    	imu->getMeasurement(measurement);
 
         ImuMeasurementMessage message;
         message.index  = i;
@@ -270,8 +270,6 @@ void ImuServer::imuGetMeasurementMessageCallback(
     {
         // Error
     }
-
-    Imu* imu = iterator.current();
 
     response.index  = request.index;
     response.timeUs = System::getTimeUs();

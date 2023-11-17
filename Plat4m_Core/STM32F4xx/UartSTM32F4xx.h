@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,11 +69,11 @@ namespace Plat4m
 class UartSTM32F4xx : public Uart
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum Id
     {
         ID_1 = 0,
@@ -83,7 +83,7 @@ public:
         ID_5,
         ID_6
     };
-    
+
     enum InterruptFlag
     {
         INTERRUPT_FLAG_TRANSMIT_BUFFER_EMPTY = 0,
@@ -103,12 +103,14 @@ public:
     UartSTM32F4xx(const Id id,
                   GpioPinSTM32F4xx& transmitGpioPin,
                   GpioPinSTM32F4xx& receiveGpioPin);
-    
+
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
 
     virtual ~UartSTM32F4xx();
+
+    State getState();
 
 private:
 
@@ -123,44 +125,46 @@ private:
     static const InterruptSTM32F4xx::Id myInterruptIdMap[];
 
     // Variables
-    
+
     static USART_TypeDef* myUartMap[];
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const Id myId;
-    
+
     USART_TypeDef* myUart;
-    
+
     GpioPinSTM32F4xx& myTransmitGpioPin;
-    
+
     GpioPinSTM32F4xx& myReceiveGpioPin;
-    
+
     InterruptSTM32F4xx myInterrupt;
 
     volatile State myState;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverSetEnabled(const bool enable);
+    virtual Module::Error driverSetEnabled(const bool enable) override;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Uart
+    // Private virtual methods overridden for Uart
     //--------------------------------------------------------------------------
-    
-    Error driverSetConfig(const Config& config);
-    
-    ComInterface::Error driverTransmitBytes(const ByteArray& byteArray,
-                                            const bool waitUntilDone);
 
-    uint32_t driverGetReceivedBytesCount();
+    virtual Error driverSetConfig(const Config& config) override;
 
-    ComInterface::Error driverGetReceivedBytes(ByteArray& byteArray,
-                                               const uint32_t nBytes);
+    virtual ComInterface::Error driverTransmitBytes(
+                                             const ByteArray& byteArray,
+                                             const bool waitUntilDone) override;
+
+    virtual uint32_t driverGetReceivedBytesCount() override;
+
+    virtual ComInterface::Error driverGetReceivedBytes(
+                                                ByteArray& byteArray,
+                                                const uint32_t nBytes) override;
 
     //--------------------------------------------------------------------------
     // Private inline methods

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -118,9 +118,8 @@ DMA_Stream_TypeDef* DmaStreamSTM32F4xx::myDmaStreamMap[][8] =
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-DmaStreamSTM32F4xx::DmaStreamSTM32F4xx(
-                                      DmaSTM32F4xx& dma,
-                                      const DmaSTM32F4xx::StreamId channelId) :
+DmaStreamSTM32F4xx::DmaStreamSTM32F4xx(DmaSTM32F4xx& dma,
+                                       const DmaSTM32F4xx::StreamId channelId) :
     Module(),
     myDma(dma),
     myStreamId(channelId),
@@ -203,7 +202,7 @@ void DmaStreamSTM32F4xx::setTransferCompleteCallback(
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virutal methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

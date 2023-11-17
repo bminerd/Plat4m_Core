@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ namespace Plat4m
 class ExternalInterruptSTM32F4xx : public ExternalInterrupt
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ public:
         ID_14,
         ID_15
     };
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
@@ -109,7 +109,7 @@ public:
     static inline void clear(const Id id);
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
@@ -125,32 +125,32 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const Id myId;
-    
+
     const GpioPortSTM32F4xx::Id myGpioPortId;
-    
+
     InterruptSTM32F4xx myInterrupt;
-    
-    //------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
     // Private static methods
-    //------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
 
     static void exti5To9Interrupt();
 
     static void exti10To15Interrupt();
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
-    
-    Module::Error driverEnable(const bool enable);
+
+    virtual Module::Error driverEnable(const bool enable) override;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from ExternalInterrupt
+    // Private virtual methods overridden for ExternalInterrupt
     //--------------------------------------------------------------------------
-    
-    Error driverConfigure(const Config& config);
+
+    virtual Error driverConfigure(const Config& config) override;
 
     //--------------------------------------------------------------------------
     // Private methods

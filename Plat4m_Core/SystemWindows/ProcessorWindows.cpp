@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,7 @@ ProcessorWindows::~ProcessorWindows()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Processor
+// Private virtual methods overridden for Processor
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -94,10 +94,4 @@ Processor::Error ProcessorWindows::driverSetPowerMode(
 uint32_t ProcessorWindows::driverGetCoreClockFrequencyHz()
 {
     return 0;
-}
-
-//------------------------------------------------------------------------------
-Processor::Error ProcessorWindows::driverJumpToAddress(const intptr_t address)
-{
-    return Processor::Error(Processor::ERROR_CODE_NONE);
 }

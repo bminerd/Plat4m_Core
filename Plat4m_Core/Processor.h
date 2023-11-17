@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ public:
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -81,48 +81,50 @@ public:
     {
         INTERRUPT_OUTPUT_COMPARE
     };
-    
+
     enum PowerMode
     {
         POWER_MODE_RUN,
         POWER_MODE_SLEEP
     };
-    
+
     typedef ErrorTemplate<ErrorCode> Error;
-    
+
     struct Config
     {
         int a; // Placeholder
     };
-    
+
     //--------------------------------------------------------------------------
     // Public static methods
     //--------------------------------------------------------------------------
 
     static VoltageV getCoreVoltageV();
-    
+
     static uint32_t getClockSourceFrequencyHz();
-    
+
     static Error reset();
-    
+
     static Error configure(const Config& config);
-    
+
     static Error setPowerMode(const PowerMode powerMode);
-    
+
     static uint32_t getCoreClockFrequencyHz();
 
     static Endian getEndian();
 
+    static bool isInterruptActive();
+
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
+
     Processor(const Endian endian,
               const VoltageV coreVoltageV,
               const uint32_t clockSourceFrequencyHz);
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
@@ -136,28 +138,34 @@ private:
     //--------------------------------------------------------------------------
 
     static Processor* myDriver;
-    
+
     static Endian myEndian;
-    
+
     static VoltageV myCoreVoltageV;
-    
+
     static uint32_t myClockSourceFrequencyHz;
-    
+
     static Config myConfig;
 
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Processor::Error driverReset() = 0;
-    
+
     virtual Processor::Error driverConfigure(
                                            const Processor::Config& config) = 0;
-    
+
     virtual Processor::Error driverSetPowerMode(
                                       const Processor::PowerMode powerMode) = 0;
 
     virtual uint32_t driverGetCoreClockFrequencyHz() = 0;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual bool driverIsInterruptActive();
 };
 
 }; // namespace Plat4m

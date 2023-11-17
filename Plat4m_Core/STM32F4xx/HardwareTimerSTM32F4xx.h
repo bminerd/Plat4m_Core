@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,7 @@ public:
     HardwareTimerSTM32F4xx(const TimerSTM32F4xx::Id id);
 
     HardwareTimerSTM32F4xx(const TimerSTM32F4xx::Id id,
-    					   InterruptHandlerCallback& interruptHandlerCallback);
+                           InterruptHandlerCallback& interruptHandlerCallback);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
@@ -89,28 +89,28 @@ public:
     TimerSTM32F4xx& getTimer();
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     InterruptSTM32F4xx* myUpdateInterrupt;
 
     TimerSTM32F4xx myTimer;
 
     uint32_t myPeriod;
-    
+
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
-    //--------------------------------------------------------------------------
-    
-    Module::Error driverSetEnabled(const bool enable);
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from HardwareTimer
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Error driverSetConfig(const HardwareTimer::Config& config);
+    virtual Module::Error driverSetEnabled(const bool enable) override;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods overridden for HardwareTimer
+    //--------------------------------------------------------------------------
+
+    virtual Error driverSetConfig(const HardwareTimer::Config& config) override;
 };
 
 }; // namespace Plat4m

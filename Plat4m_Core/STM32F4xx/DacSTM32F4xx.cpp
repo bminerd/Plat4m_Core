@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -90,7 +90,7 @@ DacSTM32F4xx& DacSTM32F4xx::get(const ChannelId channelId,
     {
         // Error?
     }
-    
+
     return *(objectMap[channelId]);
 }
 
@@ -108,14 +108,14 @@ DacSTM32F4xx::DacSTM32F4xx(const ChannelId channelId,
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error DacSTM32F4xx::driverEnable(const bool enable)
 {
     myGpioPin.enable(enable);
-    
+
     if (enable)
     {
         GpioPin::Config gpioConfig;
@@ -124,15 +124,15 @@ Module::Error DacSTM32F4xx::driverEnable(const bool enable)
         
         myGpioPin.configure(gpioConfig);
     }
-    
+
     RCC_APB1PeriphClockCmd(clockMap[0], (FunctionalState) enable);
     DAC_Cmd(channelMap[myChannelId], (FunctionalState) enable);
-    
+
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Dac
+// Private virtual methods overridden for Dac
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -143,32 +143,32 @@ Dac::Error DacSTM32F4xx::driverConfigure(const Config& config)
     dacInit.DAC_WaveGeneration  = DAC_WaveGeneration_None;
 //    dacInit.DAC_LFSRUnmask_TriangleAmplitude   =
     dacInit.DAC_OutputBuffer    = DAC_OutputBuffer_Enable;
-    
+
     DAC_Init(channelMap[myChannelId], &dacInit);
-    
+
     return ERROR_NONE;
 }
 
 //------------------------------------------------------------------------------
 Dac::Error DacSTM32F4xx::driverSetVoltage(const float voltage)
-{    
+{
     uint16_t dacValue = computeDacValue(voltage);
-    
+
     switch (myChannelId)
     {
         case CHANNEL_ID_1:
         {
             DAC_SetChannel1Data(DAC_Align_8b_R, dacValue);
-            
+
             break;
         }
         case CHANNEL_ID_2:
         {
             DAC_SetChannel2Data(DAC_Align_8b_R, dacValue);
-            
+
             break;
         }
     }
-    
+
     return ERROR_NONE;
 }

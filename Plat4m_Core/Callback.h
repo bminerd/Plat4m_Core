@@ -53,9 +53,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename TReturn = void,
-          typename TParameter1 = void*,
-          typename TParameter2 = void*>
+template <typename TReturn = void, typename... TParameters>
 class Callback
 {
 public:
@@ -72,8 +70,7 @@ public:
     // Public virtual methods
     //--------------------------------------------------------------------------
     
-    virtual inline TReturn call(TParameter1 parameter1 = 0,
-                                TParameter2 parameter2 = 0) = 0;
+    virtual TReturn call(TParameters... parameters) = 0;
 };
 
 }; // namespace Plat4m

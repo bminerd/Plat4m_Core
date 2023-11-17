@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -58,20 +58,20 @@ using Plat4m::TimerSTM32F4xx;
 //------------------------------------------------------------------------------
 HardwareTimerSTM32F4xx::HardwareTimerSTM32F4xx(const TimerSTM32F4xx::Id id) :
     HardwareTimer(),
-	myUpdateInterrupt(0),
-	myTimer(id),
-	myPeriod(0)
+    myUpdateInterrupt(0),
+    myTimer(id),
+    myPeriod(0)
 {
 }
 
 //------------------------------------------------------------------------------
 HardwareTimerSTM32F4xx::HardwareTimerSTM32F4xx(
-						   const TimerSTM32F4xx::Id id,
-		   	   	   	   	   InterruptHandlerCallback& interruptHandlerCallback) :
+                           const TimerSTM32F4xx::Id id,
+                           InterruptHandlerCallback& interruptHandlerCallback) :
     HardwareTimer(),
-	myUpdateInterrupt(),
-	myTimer(id, interruptHandlerCallback),
-	myPeriod(0)
+    myUpdateInterrupt(),
+    myTimer(id, interruptHandlerCallback),
+    myPeriod(0)
 {
 }
 
@@ -91,28 +91,28 @@ HardwareTimerSTM32F4xx::~HardwareTimerSTM32F4xx()
 //------------------------------------------------------------------------------
 TimerSTM32F4xx& HardwareTimerSTM32F4xx::getTimer()
 {
-	return myTimer;
+    return myTimer;
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error HardwareTimerSTM32F4xx::driverSetEnabled(const bool enabled)
 {
-	myTimer.setEnabled(enabled);
+    myTimer.setEnabled(enabled);
 
-	return Module::Error(Module::ERROR_CODE_NONE);
+    return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from HardwareTimer
+// Private virtual methods overridden for HardwareTimer
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 HardwareTimer::Error HardwareTimerSTM32F4xx::driverSetConfig(
-														   const Config& config)
+                                                           const Config& config)
 {
     TimerSTM32F4xx::Config timerConfig;
     timerConfig.mode        = TimerSTM32F4xx::MODE_COUNTING_UP;
@@ -123,6 +123,6 @@ HardwareTimer::Error HardwareTimerSTM32F4xx::driverSetConfig(
     timerConfig.autoReloadPreloadEnabled = true;
 
     myTimer.setConfig(timerConfig);
-    
+
     return Error(ERROR_CODE_NONE);
 }

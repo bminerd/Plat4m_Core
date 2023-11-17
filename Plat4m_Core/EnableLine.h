@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,11 +64,11 @@ namespace Plat4m
 class EnableLine : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -77,13 +77,13 @@ public:
         ERROR_CODE_MODE_NOT_OUTPUT,
         ERROR_CODE_COMMUNICATION
     };
-    
+
     enum Mode
     {
         MODE_INPUT,
         MODE_OUTPUT
     };
-    
+
     enum ActiveLevel
     {
         ACTIVE_LEVEL_HIGH = 0,
@@ -95,55 +95,55 @@ public:
     //--------------------------------------------------------------------------
 
     typedef ErrorTemplate<ErrorCode> Error;
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
     EnableLine(const Mode mode,
                const ActiveLevel activeLevel,
                GpioPin& gpioPin,
                const bool usePullResistor);
-    
+
     //--------------------------------------------------------------------------
-    // Public destructors
+    // Public virtual destructors
     //--------------------------------------------------------------------------
-    
-    ~EnableLine();
-    
+
+    virtual ~EnableLine();
+
     //--------------------------------------------------------------------------
     // Public virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual GpioPin& getGpioPin();
 
     virtual Error setActive(const bool active);
-    
+
     virtual Error isActive(bool& isActive);
-    
+
     virtual Error toggleActive();
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const Mode myMode;
-    
+
     const ActiveLevel myActiveLevel;
-    
+
     const bool myUsePullResistor;
-    
+
     bool myIsActive;
-    
+
     GpioPin& myGpioPin;
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Module
+    // Private virtual methods override for Module
     //--------------------------------------------------------------------------
 
-    virtual Module::Error driverEnable(const bool enable);
+    virtual Module::Error driverEnable(const bool enable) override;
 };
 
 }; // namespace Plat4m

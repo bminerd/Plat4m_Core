@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,13 +52,6 @@ using Plat4m::GpioPin;
 //------------------------------------------------------------------------------
 // Local variables
 //------------------------------------------------------------------------------
-
-static const GpioPin::Mode gpioModeMap[] =
-{
-	GpioPin::MODE_DIGITAL_INPUT, /// EnableLine::MODE_INPUT
-	GpioPin::MODE_DIGITAL_INPUT, /// EnableLine::MODE_OUTPUT_PUSH_PULL
-	GpioPin::MODE_DIGITAL_INPUT  /// EnableLine::MODE_OUTPUT_OPEN_DRAIN
-};
 
 static const GpioPin::Resistor gpioResistorMap[] =
 {
@@ -138,8 +131,8 @@ EnableLine::Error EnableLine::setActive(const bool active)
         return Error(ERROR_CODE_NONE);
     }
     
-    GpioPin::Error error = myGpioPin.
-                           setLevel(gpioLevelMap[myActiveLevel][active]);
+    GpioPin::Error error =
+                        myGpioPin.setLevel(gpioLevelMap[myActiveLevel][active]);
     
     if (error.getCode() == GpioPin::ERROR_CODE_NONE)
     {
@@ -158,6 +151,8 @@ EnableLine::Error EnableLine::isActive(bool& isActive)
         isActive = false;
     }
     
+    Error error(ERROR_CODE_NONE);
+
     if (myMode == MODE_OUTPUT)
     {
         isActive = myIsActive;
@@ -165,7 +160,8 @@ EnableLine::Error EnableLine::isActive(bool& isActive)
     else
     {
         GpioPin::Level level;
-        GpioPin::Error error = myGpioPin.readLevel(level);
+        myGpioPin.readLevel(level);
+        
         isActive = activeLevelMap[myActiveLevel][level];
     }
     
@@ -179,7 +175,7 @@ EnableLine::Error EnableLine::toggleActive()
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

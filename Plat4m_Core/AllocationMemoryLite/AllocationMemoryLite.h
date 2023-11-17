@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Benjamin Minerd
+// Copyright (c) 2014-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -78,7 +78,7 @@ public:
         myIsLocked(false)
     {
     }
-    
+
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
@@ -91,15 +91,15 @@ public:
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
     void setLocked(const bool locked)
     {
         myIsLocked = locked;
     }
-    
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
@@ -111,14 +111,14 @@ private:
     bool myIsLocked;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from AllocationMemory
+    // Private virtual methods overridden for AllocationMemory
     //--------------------------------------------------------------------------
     
     //--------------------------------------------------------------------------
-    void* driverAllocate(size_t count)
+    virtual void* driverAllocate(size_t count) override
     {
         void* memory = 0;
-    
+
         if ((myMemoryIndex + count) > N)
         {
             // Overflow error
@@ -135,30 +135,30 @@ private:
             memory = &(myMemory[myMemoryIndex]);
             myMemoryIndex += count;
         }
-        
+
         return memory;
     }
-    
+
     //--------------------------------------------------------------------------
-    void* driverAllocateArray(size_t count)
+    virtual void* driverAllocateArray(size_t count) override
     {
         return driverAllocate(count); // Does this work?
     }
-    
+
     //--------------------------------------------------------------------------
-    void driverDeallocate(void* pointer)
-    {
-        // Intentionally blank
-    }
-    
-    //--------------------------------------------------------------------------
-    void driverDeallocateArray(void* pointer)
+    virtual void driverDeallocate(void* pointer) override
     {
         // Intentionally blank
     }
 
     //--------------------------------------------------------------------------
-    size_t driverGetFreeMemorySize()
+    virtual void driverDeallocateArray(void* pointer) override
+    {
+        // Intentionally blank
+    }
+
+    //--------------------------------------------------------------------------
+    virtual size_t driverGetFreeMemorySize() override
     {
         return (N - myMemoryIndex);
     }

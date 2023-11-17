@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/ErrorTemplate.h>
@@ -54,6 +54,9 @@
 #include <Plat4m_Core/Mutex.h>
 #include <Plat4m_Core/WaitCondition.h>
 #include <Plat4m_Core/Queue.h>
+#include <Plat4m_Core/Semaphore.h>
+#include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/TimeStamp.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -71,7 +74,7 @@ class System
 public:
 
     //--------------------------------------------------------------------------
-    // Public enumerations
+    // Public types
     //--------------------------------------------------------------------------
 
     enum ErrorCode
@@ -82,10 +85,6 @@ public:
         ERROR_CODE_NOT_ENABLED
     };
 
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
-
     typedef ErrorTemplate<ErrorCode> Error;
     
     //--------------------------------------------------------------------------
@@ -94,7 +93,9 @@ public:
 
     static Thread& createThread(Thread::RunCallback& callback,
                                 const TimeMs periodMs = 0,
-                                const uint32_t nStackBytes = 0);
+                                const std::uint32_t nStackBytes = 0,
+                                const bool isSimulated = false,
+                                const char* name = 0);
 
     static Mutex& createMutex(Thread& thread);
 
@@ -102,13 +103,17 @@ public:
 
     //--------------------------------------------------------------------------
     template <typename T>
-    static Queue<T>& createQueue(const uint32_t nValues,
+    static Queue<T>& createQueue(const std::uint32_t nValues,
                                  Thread& thread)
 	{
-    	return *(new Queue<T>(myDriver->driverCreateQueueDriver(nValues,
-    														    sizeof(T),
-    														    thread)));
+    	return *(MemoryAllocator::allocate<Queue<T>>(
+                                    myDriver->driverCreateQueueDriver(nValues,
+                                                                      sizeof(T),
+                                                                      thread)));
 	}
+
+    static Semaphore& createSemaphore(const std::uint32_t maxValue = 0,
+                                      const std::uint32_t initialValue = 0);
 
     static void run();
     
@@ -118,10 +123,81 @@ public:
 
     static TimeUs getTimeUs();
 
+    static TimeStamp getTimeStamp();
+
+    static TimeStamp getWallTimeStamp();
+
     static void delayTimeMs(const TimeMs timeMs);
 
     static bool checkTimeMs(const TimeMs timeMs);
-    
+
+    static void exit();
+
+    static void startTime();
+
+    static void stopTime();
+
+    static void resetTime();
+
+    static Error setTime(const TimeStamp& timeStamp);
+
+    static void enterCriticalSection();
+
+    static void exitCriticalSection();
+
+    //--------------------------------------------------------------------------
+    // Public pure virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
+                                       const TimeMs periodMs,
+                                       const std::uint32_t nStackBytes,
+                                       const bool isSimulated,
+                                       const char* name) = 0;
+
+    virtual Mutex& driverCreateMutex(Thread& thread) = 0;
+
+    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) = 0;
+
+    virtual QueueDriver& driverCreateQueueDriver(
+                                             const std::uint32_t nValues,
+    									     const std::uint32_t valueSizeBytes,
+    									     Thread& thread) = 0;
+
+    virtual Semaphore& driverCreateSemaphore(
+                                          const std::uint32_t maxValue,
+                                          const std::uint32_t initialValue) = 0;
+
+    virtual void driverRun() = 0;
+
+    virtual TimeMs driverGetTimeMs() = 0;
+
+    virtual TimeUs driverGetTimeUs() = 0;
+
+    virtual void driverDelayTimeMs(const TimeMs timeMs) = 0;
+
+    virtual void driverExit() = 0;
+
+    //--------------------------------------------------------------------------
+    // Public virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual TimeStamp driverGetTimeStamp();
+
+    virtual TimeStamp driverGetWallTimeStamp();
+
+    virtual void driverStartTime();
+
+    virtual void driverStopTime();
+
+    virtual void driverResetTime();
+
+    virtual Error driverSetTime(const TimeStamp& timeStamp);
+
+    virtual void driverEnterCriticalSection();
+
+    virtual void driverExitCriticalSection();
+
 protected:
     
     //--------------------------------------------------------------------------
@@ -145,30 +221,6 @@ private:
     static System* myDriver;
     
     static bool myIsRunning;
-    
-    //--------------------------------------------------------------------------
-    // Private pure virtual methods
-    //--------------------------------------------------------------------------
-
-    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
-                                       const TimeMs periodMs,
-                                       const uint32_t nStackBytes) = 0;
-
-    virtual Mutex& driverCreateMutex(Thread& thread) = 0;
-
-    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) = 0;
-
-    virtual QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-    									         const uint32_t valueSizeBytes,
-    									         Thread& thread) = 0;
-
-    virtual void driverRun() = 0;
-
-    virtual TimeMs driverGetTimeMs() = 0;
-
-    virtual TimeUs driverGetTimeUs() = 0;
-
-    virtual void driverDelayTimeMs(const TimeMs timeMs) = 0;
 };
 
 }; // namespace Plat4m

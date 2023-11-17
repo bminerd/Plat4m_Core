@@ -46,7 +46,5 @@ static Plat4m::ApplicationUnitTestLinuxApp applicationUnitTestLinuxApp;
 //------------------------------------------------------------------------------
 int main()
 {
-    applicationUnitTestLinuxApp.run();
-
-    return 0;
+    return applicationUnitTestLinuxApp.run();
 }

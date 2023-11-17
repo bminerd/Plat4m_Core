@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,11 +68,11 @@ namespace Plat4m
 class DmaSTM32F4xx : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE = 0
@@ -97,11 +97,11 @@ public:
 
     enum InterruptEvent
     {
-    	INTERRUPT_EVENT_DIRECT_MODE_ERROR = 0,
-		INTERRUPT_EVENT_TRANSFER_ERROR,
-		INTERRUPT_EVENT_HALF_TRANSFER,
+        INTERRUPT_EVENT_DIRECT_MODE_ERROR = 0,
+        INTERRUPT_EVENT_TRANSFER_ERROR,
+        INTERRUPT_EVENT_HALF_TRANSFER,
         INTERRUPT_EVENT_TRANSFER_COMPLETE,
-		INTERRUPT_EVENT_FIFO_OVERRUN_UNDERRUN
+        INTERRUPT_EVENT_FIFO_OVERRUN_UNDERRUN
     };
 
     typedef ErrorTemplate<ErrorCode> Error;
@@ -142,7 +142,7 @@ private:
     // Constants
 
     static const ProcessorSTM32F4xx::Peripheral myPeripheralMap[];
-    
+
     // Variables
 
     static DMA_TypeDef* myDmaMap[];
@@ -150,16 +150,16 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const Id myId;
-    
+
     DMA_TypeDef* myDma;
-    
+
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
-    
-    Module::Error driverSetEnabled(const bool enabled);
+
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 };
 
 }; // namespace Plat4m

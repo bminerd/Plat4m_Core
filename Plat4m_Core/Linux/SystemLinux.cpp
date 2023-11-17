@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -53,12 +53,33 @@
 #include <Plat4m_Core/Linux/MutexLinux.h>
 #include <Plat4m_Core/Linux/WaitConditionLinux.h>
 #include <Plat4m_Core/Linux/QueueDriverLinux.h>
+#include <Plat4m_Core/Linux/SemaphoreLinux.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::SystemLinux;
-using Plat4m::Thread;
-using Plat4m::Mutex;
-using Plat4m::WaitCondition;
-using Plat4m::QueueDriver;
+using namespace std;
+using namespace Plat4m;
+
+//------------------------------------------------------------------------------
+// Public static methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+inline TimeMs SystemLinux::getCurrentLinuxTimeMs()
+{
+    struct timespec timeSpec;
+    clock_gettime(CLOCK_REALTIME, &timeSpec);
+
+    return (timeSpec.tv_sec * 1000 + timeSpec.tv_nsec / 1000000);
+}
+
+//------------------------------------------------------------------------------
+inline TimeUs SystemLinux::getCurrentLinuxTimeUs()
+{
+    struct timespec timeSpec;
+    clock_gettime(CLOCK_REALTIME, &timeSpec);
+
+    return (timeSpec.tv_sec * 1000000 + timeSpec.tv_nsec / 1000);
+}
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -67,7 +88,8 @@ using Plat4m::QueueDriver;
 //------------------------------------------------------------------------------
 SystemLinux::SystemLinux() :
     System(),
-    myFirstTimeSpec()
+    myFirstTimeSpec(),
+    myIsRunning(false)
 {
     clock_gettime(CLOCK_REALTIME, &myFirstTimeSpec);
 
@@ -85,36 +107,15 @@ SystemLinux::SystemLinux() :
 //------------------------------------------------------------------------------
 SystemLinux::~SystemLinux()
 {
+    myIsRunning = false;
 }
 
 //------------------------------------------------------------------------------
-// Public static inline methods
+// Public virtual methods overridden for System
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-inline Plat4m::TimeMs SystemLinux::getCurrentLinuxTimeMs()
-{
-    struct timespec timeSpec;
-    clock_gettime(CLOCK_REALTIME, &timeSpec);
-
-    return (timeSpec.tv_sec * 1000 + timeSpec.tv_nsec / 1000000);
-}
-
-//------------------------------------------------------------------------------
-inline Plat4m::TimeUs SystemLinux::getCurrentLinuxTimeUs()
-{
-    struct timespec timeSpec;
-    clock_gettime(CLOCK_REALTIME, &timeSpec);
-
-    return (timeSpec.tv_sec * 1000000 + timeSpec.tv_nsec / 1000);
-}
-
-//------------------------------------------------------------------------------
-// Private methods implemented from System
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-Plat4m::TimeUs SystemLinux::driverGetTimeUs()
+TimeUs SystemLinux::driverGetTimeUs()
 {
     Plat4m::TimeUs timeUs = getCurrentLinuxTimeUs() - myFirstTimeUs;
 
@@ -124,43 +125,53 @@ Plat4m::TimeUs SystemLinux::driverGetTimeUs()
 //------------------------------------------------------------------------------
 Thread& SystemLinux::driverCreateThread(Thread::RunCallback& callback,
                                         const TimeMs periodMs,
-                                        const uint32_t nStackBytes)
+                                        const uint32_t nStackBytes,
+                                        const bool isSimulated,
+                                        const char* name)
 {
-    return *(new ThreadLinux(callback, periodMs));
+    return *(MemoryAllocator::allocate<ThreadLinux>(callback, periodMs, name));
 }
 
 //------------------------------------------------------------------------------
 Mutex& SystemLinux::driverCreateMutex(Thread& thread)
 {
-    return *(new MutexLinux);
+    return *(MemoryAllocator::allocate<MutexLinux>());
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& SystemLinux::driverCreateWaitCondition(Thread& thread)
 {
-    return *(new WaitConditionLinux);
+    return *(MemoryAllocator::allocate<WaitConditionLinux>());
 }
 
 //------------------------------------------------------------------------------
-QueueDriver& SystemLinux::driverCreateQueueDriver(
-                                                  const uint32_t nValues,
+QueueDriver& SystemLinux::driverCreateQueueDriver(const uint32_t nValues,
                                                   const uint32_t valueSizeBytes,
                                                   Thread& thread)
 {
-    return *(new QueueDriverLinux(valueSizeBytes));
+    return *(MemoryAllocator::allocate<QueueDriverLinux>(valueSizeBytes));
+}
+
+//------------------------------------------------------------------------------
+Semaphore& SystemLinux::driverCreateSemaphore(const uint32_t maxValue,
+                                              const uint32_t initialValue)
+{
+    return *(MemoryAllocator::allocate<SemaphoreLinux>(maxValue, initialValue));
 }
 
 //------------------------------------------------------------------------------
 void SystemLinux::driverRun()
 {
-    while (true)
+    myIsRunning = true;
+
+    while (myIsRunning)
     {
-        driverDelayTimeMs(100);
+        driverDelayTimeMs(1);
     }
 }
 
 //------------------------------------------------------------------------------
-Plat4m::TimeMs SystemLinux::driverGetTimeMs()
+TimeMs SystemLinux::driverGetTimeMs()
 {
     TimeMs timeMs = getCurrentLinuxTimeMs() - myFirstTimeMs;
 
@@ -174,4 +185,29 @@ void SystemLinux::driverDelayTimeMs(const TimeMs timeMs)
     timeSpec.tv_sec = timeMs / 1000;
     timeSpec.tv_nsec = (timeMs % 1000) * 1000000;
     nanosleep(&timeSpec, NULL);
+}
+
+//------------------------------------------------------------------------------
+void SystemLinux::driverExit()
+{
+    myIsRunning = false;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp SystemLinux::driverGetTimeStamp()
+{
+    struct timespec timeSpec;
+    clock_gettime(CLOCK_REALTIME, &timeSpec);
+
+    TimeStamp timeStamp;
+    timeStamp.timeS  = timeSpec.tv_sec - myFirstTimeSpec.tv_sec;
+    timeStamp.timeNs = timeSpec.tv_nsec - myFirstTimeSpec.tv_nsec;
+
+    return timeStamp;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp SystemLinux::driverGetWallTimeStamp()
+{
+    return (driverGetTimeStamp());
 }

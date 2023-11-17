@@ -66,7 +66,7 @@ namespace Plat4m
 class PwmOutputSTM32F4xx : public PwmOutput
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Private constructors
     //--------------------------------------------------------------------------
@@ -89,13 +89,13 @@ private:
     // Constants
 
 //    static const GpioSTM32F4xx::AlternateFunction myAlternateFunctionMap
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     TimerSTM32F4xx& myTimer;
-    
+
     const TimerSTM32F4xx::ChannelId myChannelId;
 
     GpioPinSTM32F4xx& myGpioPin;
@@ -103,18 +103,19 @@ private:
     GpioPinSTM32F4xx* myComplementaryGpioPin;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
-    //--------------------------------------------------------------------------
-    
-    Module::Error driverSetEnabled(const bool enabled);
-    
-    //--------------------------------------------------------------------------
-    // Private methods implemented from PwmOutput
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Error driverSetConfig(const Config& config);
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
-    Error driverSetDutyCyclePercent(const float dutyCyclePercent);
+    //--------------------------------------------------------------------------
+    // Private methods overridden for PwmOutput
+    //--------------------------------------------------------------------------
+
+    virtual Error driverSetConfig(const Config& config) override;
+
+    virtual Error driverSetDutyCyclePercent(
+                                         const float dutyCyclePercent) override;
 };
 
 }; // namespace Plat4m

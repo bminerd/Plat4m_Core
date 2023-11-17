@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -60,55 +60,59 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename TReturn>
-class CallbackFunction : public Callback<TReturn>
+template <typename TReturn, typename... TParameters>
+class CallbackFunction : public Callback<TReturn, TParameters...>
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public typedefs
     //--------------------------------------------------------------------------
-    
-    typedef TReturn (*CallbackFunctionType)();
+
+    typedef TReturn (*CallbackFunctionType)(TParameters...);
     
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
+    //--------------------------------------------------------------------------
     CallbackFunction(CallbackFunctionType callbackFunction) :
-        Callback<TReturn>(),
+        Callback<TReturn, TParameters...>(),
         myCallbackFunction(callbackFunction)
     {
     }
-    
+
     //--------------------------------------------------------------------------
-    // Public methods implemented from Callback
+    // Public virtual methods overridden for Callback
     //--------------------------------------------------------------------------
-    
-    inline TReturn call(void* dummyParameter1 = 0, void* dummyParameter2 = 0)
+
+    //--------------------------------------------------------------------------
+    virtual inline TReturn call(TParameters... parameters) override
     {
-        return (*myCallbackFunction)();
+        return (*myCallbackFunction)(parameters...);
     }
 
 private:
-    
-    /*--------------------------------------------------------------------------
-     * Private data members
-     *------------------------------------------------------------------------*/
-    
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
     CallbackFunctionType myCallbackFunction;
 };
 
-    //--------------------------------------------------------------------------
-    // Namespace functions
-    //--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// Namespace functions
+//------------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    template <typename TReturn>
-    Callback<TReturn>& createCallback(TReturn (*callback)())
-    {
-        return *(new CallbackFunction<TReturn>(callback));
-    }
+//------------------------------------------------------------------------------
+template <typename TReturn, typename... TParameters>
+Callback<TReturn, TParameters...>& createCallback(
+                                            TReturn (*callback)(TParameters...))
+{
+    return *(MemoryAllocator::allocate<
+                          CallbackFunction<TReturn, TParameters...>>(callback));
+}
 
 }; // namespace Plat4m
 

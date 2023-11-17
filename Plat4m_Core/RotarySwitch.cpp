@@ -83,7 +83,7 @@ RotarySwitch::RotarySwitch(EnableLine* enableLine1,
     myEnableLines[8] = enableLine9;
     myEnableLines[9] = enableLine10;
     
-    for (int i = 0; i < ARRAY_SIZE(myStateLog); i++)
+    for (uint32_t i = 0; i < arraySize(myStateLog); i++)
     {
         myStateLog[i].isActive      = false;
         myStateLog[i].timeStampMs   = 0;
@@ -134,7 +134,7 @@ void RotarySwitch::poll(const uint32_t timeMs, Array<UiInput::Event>& events)
 //------------------------------------------------------------------------------
 Module::Error RotarySwitch::driverEnable(const bool enable)
 {
-    for (int i = 0; i < arraySize(myEnableLines); i++)
+    for (uint32_t i = 0; i < arraySize(myEnableLines); i++)
     {
         EnableLine* enableLine = myEnableLines[i];
         

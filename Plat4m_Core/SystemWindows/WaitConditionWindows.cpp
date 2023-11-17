@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ using Plat4m::WaitCondition;
 //------------------------------------------------------------------------------
 WaitConditionWindows::WaitConditionWindows() :
     WaitCondition(),
-	myThreadHandle(0)
+    myThreadHandle(0)
 {
 }
 
@@ -75,12 +75,10 @@ WaitConditionWindows::~WaitConditionWindows()
 //------------------------------------------------------------------------------
 void WaitConditionWindows::notifyFast()
 {
-//	BaseType_t higherPriorityTaskWasWoken = pdFALSE;
-//	vTaskNotifyGiveFromISR(myTaskHandle, &higherPriorityTaskWasWoken);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from WaitCondition
+// Private virtual methods overridden for WaitCondition
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

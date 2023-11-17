@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -53,8 +53,10 @@ using Plat4m::ThreadLite;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadLite::ThreadLite(RunCallback& callback, const TimeMs periodMs) :
-    Thread(callback, periodMs),
+ThreadLite::ThreadLite(RunCallback& callback,
+                       const TimeMs periodMs,
+                       const char* name) :
+    Thread(callback, periodMs, name),
     myIsActive(false),
     myCallTimeMs(0),
     myWorstCaseRunTimeMs(0xFFFFFFFF)
@@ -125,33 +127,33 @@ bool ThreadLite::canRunInTimeWindow(const TimeMs timeWindowMs)
 }
 
 //------------------------------------------------------------------------------
-// Public methods overloaded from Thread
+// Public virtual methods overridden for Thread
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void ThreadLite::run()
-{
-    myIsActive = true;
+// void ThreadLite::run()
+// {
+//     myIsActive = true;
 
-    TimeMs startTimeMs = System::getTimeMs();
+//     TimeMs startTimeMs = System::getTimeMs();
 
-    Thread::run();
+//     Thread::run();
 
-    TimeMs dTimeMs = System::getTimeMs() - startTimeMs;
+//     TimeMs dTimeMs = System::getTimeMs() - startTimeMs;
 
-    if ((myWorstCaseRunTimeMs == 0xFFFFFFFF) ||
-        (dTimeMs > myWorstCaseRunTimeMs))
-    {
-        myWorstCaseRunTimeMs = dTimeMs;
-    }
+//     if ((myWorstCaseRunTimeMs == 0xFFFFFFFF) ||
+//         (dTimeMs > myWorstCaseRunTimeMs))
+//     {
+//         myWorstCaseRunTimeMs = dTimeMs;
+//     }
 
-    myCallTimeMs = startTimeMs + getPeriodMs();
+//     myCallTimeMs = startTimeMs + getPeriodMs();
 
-    myIsActive = false;
-}
+//     myIsActive = false;
+// }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Thread
+// Private virtual methods overridden for Thread
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -619,7 +619,7 @@ void ProcessorSTM32F30x::setCoreClockSource(const ClockSource coreClockSource)
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented from Processor
+// Private virtual methods overridden for Processor
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -710,6 +710,12 @@ Processor::Error ProcessorSTM32F30x::driverJumpToAddress(const intptr_t address)
     }
 
     return Processor::Error(Processor::ERROR_CODE_NONE);
+}
+
+//------------------------------------------------------------------------------
+bool ProcessorNRF5340::driverIsInterruptActive()
+{
+    return ((SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0);
 }
 
 //------------------------------------------------------------------------------

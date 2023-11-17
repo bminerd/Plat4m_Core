@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -88,9 +88,9 @@ protected:
 
     void addUnitTest(UnitTest& unitTest);
 
-    void runParentApplication();
+    int runParentApplication();
 
-    void runTests();
+    bool runTests();
 
     UnitTest::Error runTest(const uint32_t moduleIndex,
                             const uint32_t testIndex,

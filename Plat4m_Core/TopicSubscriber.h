@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,9 +46,14 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
+#include <Plat4m_Core/Module.h>
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/CallbackMethodParameter.h>
+#include <Plat4m_Core/TopicBase.h>
 #include <Plat4m_Core/Topic.h>
+#include <Plat4m_Core/TopicSample.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -61,8 +66,8 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template<typename SampleType>
-class TopicSubscriber
+template<typename DataType>
+class TopicSubscriber : public Module
 {
 public:
 
@@ -72,7 +77,7 @@ public:
 
     struct Config
     {
-        uint32_t downsampleFactor;
+        std::uint32_t downsampleFactor;
     };
 
     //--------------------------------------------------------------------------
@@ -81,33 +86,77 @@ public:
 
     //--------------------------------------------------------------------------
     TopicSubscriber(
-                   const uint32_t id,
+                   const TopicBase::Id id,
                    const Config config,
-                   typename Topic<SampleType>::SampleCallback& sampleCallback) :
+                   typename Topic<DataType>::SampleCallback& sampleCallback) :
+        Module(),
+        myTopicId(id),
         myConfig(),
-        mySampleCallback(sampleCallback),
+        mySampleCallback(&sampleCallback),
+        myPrivateSampleCallback(
+                        createCallback(this, &TopicSubscriber::sampleCallback)),
         myDownsampleCounter(1)
     {
         setConfig(config);
 
-        Topic<SampleType>::subscribe(
-            id,
-            createCallback(this, &TopicSubscriber::sampleCallback));
+        Topic<DataType>::subscribe(id, myPrivateSampleCallback);
     }
 
     //--------------------------------------------------------------------------
     TopicSubscriber(
-                   const uint32_t id,
-                   typename Topic<SampleType>::SampleCallback& sampleCallback) :
+                   const TopicBase::Id id,
+                   typename Topic<DataType>::SampleCallback& sampleCallback) :
+        Module(),
+        myTopicId(id),
         myConfig(),
-        mySampleCallback(sampleCallback),
+        mySampleCallback(&sampleCallback),
+        myPrivateSampleCallback(
+                        createCallback(this, &TopicSubscriber::sampleCallback)),
         myDownsampleCounter(1)
     {
         myConfig.downsampleFactor = 1;
 
-        Topic<SampleType>::subscribe(
-            id,
-            createCallback(this, &TopicSubscriber::sampleCallback));
+        Topic<DataType>::subscribe(id, myPrivateSampleCallback);
+    }
+
+    //--------------------------------------------------------------------------
+    TopicSubscriber(const Config config, const TopicBase::Id id) :
+        Module(),
+        myTopicId(id),
+        myConfig(),
+        mySampleCallback(0),
+        myPrivateSampleCallback(
+                        createCallback(this, &TopicSubscriber::sampleCallback)),
+        myDownsampleCounter(1)
+    {
+        setConfig(config);
+
+        Topic<DataType>::subscribe(id, myPrivateSampleCallback);
+    }
+
+    //--------------------------------------------------------------------------
+    TopicSubscriber(const TopicBase::Id id) :
+        Module(),
+        myTopicId(id),
+        myConfig(),
+        mySampleCallback(0),
+        myPrivateSampleCallback(
+                        createCallback(this, &TopicSubscriber::sampleCallback)),
+        myDownsampleCounter(1)
+    {
+        myConfig.downsampleFactor = 1;
+
+        Topic<DataType>::subscribe(id, myPrivateSampleCallback);
+    }
+
+    //--------------------------------------------------------------------------
+    TopicSubscriber(const TopicSubscriber<DataType>& topicSubscriber) :
+        Module(),
+        myConfig(topicSubscriber.myConfig),
+        mySampleCallback(topicSubscriber.mySampleCallback),
+        myPrivateSampleCallback(topicSubscriber.myPrivateSampleCallback),
+        myDownsampleCounter(topicSubscriber.myDownsampleCounter)
+    {
     }
 
     //--------------------------------------------------------------------------
@@ -117,6 +166,22 @@ public:
     //--------------------------------------------------------------------------
     virtual ~TopicSubscriber()
     {
+        Topic<DataType>::unsubscribe(myTopicId, myPrivateSampleCallback);
+    }
+
+    //--------------------------------------------------------------------------
+    // Public operator overloads
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    TopicSubscriber<DataType>& operator=(
+                             const TopicSubscriber<DataType>& topicSubscriber)
+    {
+        myConfig = topicSubscriber.myConfig;
+        mySampleCallback = topicSubscriber.mySampleCallback;
+        myDownsampleCounter = topicSubscriber.myDownsampleCounter;
+
+        return (*this);
     }
 
     //--------------------------------------------------------------------------
@@ -134,36 +199,81 @@ public:
         }
     }
 
+    //--------------------------------------------------------------------------
+    void resubscribe()
+    {
+        myConfig.downsampleFactor = 1;
+
+        Topic<DataType>::subscribe(
+                        myTopicId,
+                        createCallback(this, &TopicSubscriber::sampleCallback));
+    }
+
+protected:
+
+    //--------------------------------------------------------------------------
+    // Protected methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    typename Topic<DataType>::SampleCallback* getSampleCallback()
+    {
+        return mySampleCallback;
+    }
+
 private:
 
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
+    TopicBase::Id myTopicId;
+
     Config myConfig;
 
-    typename Topic<SampleType>::SampleCallback& mySampleCallback;
+    typename Topic<DataType>::SampleCallback* mySampleCallback;
 
-    uint32_t myDownsampleCounter;
+    typename Topic<DataType>::SampleCallback& myPrivateSampleCallback;
+
+    std::uint32_t myDownsampleCounter;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    virtual void sampleCallbackInternal(const TopicSample<DataType>& sample)
+    {
+        // Not implemented by subclass, default implementation
+
+        if (isValidPointer(mySampleCallback))
+        {
+            mySampleCallback->call(sample);
+        }
+    }
 
     //--------------------------------------------------------------------------
     // Private methods
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    void sampleCallback(const SampleType& sample)
+    void sampleCallback(const TopicSample<DataType>& sample)
     {
-        if (myDownsampleCounter >= myConfig.downsampleFactor)
+        if (isEnabled())
         {
-            mySampleCallback.call(sample);
+            if (myDownsampleCounter >= myConfig.downsampleFactor)
+            {
+                sampleCallbackInternal(sample);
 
-            myDownsampleCounter = 1;
-        }
-        else
-        {
-            myDownsampleCounter++;
+                myDownsampleCounter = 1;
+            }
+            else
+            {
+                myDownsampleCounter++;
+            }
         }
     }
+
 };
 
 }; // namespace Plat4m

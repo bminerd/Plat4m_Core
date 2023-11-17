@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -82,7 +82,7 @@ QueueDriverLinux::~QueueDriverLinux()
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from QueueDriver
+// Public virtual methods overridden for QueueDriver
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ uint32_t QueueDriverLinux::driverGetSize()
 {
     struct msqid_ds messageQueueInfo;
 
-    int returnValue = msgctl(myMessageQueueId, IPC_STAT, &messageQueueInfo);
+    msgctl(myMessageQueueId, IPC_STAT, &messageQueueInfo);
 
     return (messageQueueInfo.msg_qnum);
 }

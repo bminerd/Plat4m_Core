@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -72,7 +72,7 @@ const GPIOPuPd_TypeDef GpioPinSTM32F4xx::myResistorMap[] =
 };
 
 const GpioPinSTM32F4xx::OutputSpeed GpioPinSTM32F4xx::myDefaultOutputSpeed =
-															 OUTPUT_SPEED_50MHZ;
+                                                             OUTPUT_SPEED_50MHZ;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -84,12 +84,12 @@ GpioPinSTM32F4xx::GpioPinSTM32F4xx(GpioPortSTM32F4xx& gpioPort, const Id id) :
     myGpioPort(gpioPort),
     myId(id),
     myPinBitMask(1 << myId),
-	mySTM32F4xxConfig()
+    mySTM32F4xxConfig()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public methods implemented from GpioPin
+// Public virtual methods overridden for GpioPin
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -158,25 +158,25 @@ void GpioPinSTM32F4xx::setSTM32F4xxConfig(STM32F4xxConfig& config)
             break;
         }
     }
-    
+
     setOutputSpeed(config.outputSpeed);
     GPIO_PinAFConfig(myGpioPort.getPort(), myId, config.alternateFunction);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error GpioPinSTM32F4xx::driverSetEnabled(const bool enabled)
 {
     myGpioPort.setEnabled(enabled);
-    
+
     return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from GpioPin
+// Private virtual methods overridden for GpioPin
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -184,21 +184,21 @@ GpioPin::Error GpioPinSTM32F4xx::driverConfigure(const Config& config)
 {
     // Set mode
     clearAndSetBits(myGpioPort.getPort()->MODER,
-    				(GPIO_MODER_MODER0 << (myId * 2)),
-					(((uint32_t) myModeMap[config.mode]) << (myId * 2)));
+                    (GPIO_MODER_MODER0 << (myId * 2)),
+                    (((uint32_t) myModeMap[config.mode]) << (myId * 2)));
     
     // Set resistor
     clearAndSetBits(
-    			   myGpioPort.getPort()->PUPDR,
-    			   (GPIO_PUPDR_PUPDR0 << (myId * 2)),
-				   (((uint32_t) myResistorMap[config.resistor]) << (myId * 2)));
-    
+                   myGpioPort.getPort()->PUPDR,
+                   (GPIO_PUPDR_PUPDR0 << (myId * 2)),
+                   (((uint32_t) myResistorMap[config.resistor]) << (myId * 2)));
+
     if (config.mode == MODE_DIGITAL_OUTPUT_PUSH_PULL)
     {
         setOutputSpeed(myDefaultOutputSpeed);
         setOutputType(GpioPinSTM32F4xx::OUTPUT_TYPE_PUSH_PULL);
     }
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -213,7 +213,7 @@ GpioPin::Error GpioPinSTM32F4xx::driverSetLevel(const Level level)
     {
         myGpioPort.getPort()->BSRRL = myPinBitMask;
     }
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -221,7 +221,7 @@ GpioPin::Error GpioPinSTM32F4xx::driverSetLevel(const Level level)
 GpioPin::Error GpioPinSTM32F4xx::driverGetLevel(Level& level)
 {
     level = (Level) areBitsSet(myGpioPort.getPort()->ODR, myPinBitMask);
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -229,7 +229,7 @@ GpioPin::Error GpioPinSTM32F4xx::driverGetLevel(Level& level)
 GpioPin::Error GpioPinSTM32F4xx::driverReadLevel(Level& level)
 {
     level = (Level) areBitsSet(myGpioPort.getPort()->IDR, myPinBitMask);
-    
+
     return Error(ERROR_CODE_NONE);
 }
 
@@ -237,7 +237,7 @@ GpioPin::Error GpioPinSTM32F4xx::driverReadLevel(Level& level)
 GpioPin::Error GpioPinSTM32F4xx::driverToggleLevel()
 {
     toggleBits(myGpioPort.getPort()->ODR, myPinBitMask);
-    
+
     return Error(ERROR_CODE_NONE);
 }
 

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Benjamin Minerd
+// Copyright (c) 2015-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -53,29 +53,29 @@ using Plat4m::SerialPort;
 using Plat4m::Module;
 using Plat4m::ComInterface;
 
-/*------------------------------------------------------------------------------
- * Local variables
- *----------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------
+// Local variables
+//------------------------------------------------------------------------------
 
 const uint8_t SerialPortWindows::myWordBitsMap[] =
 {
-	8, /// SerialPort::WORD_BITS_8
-	9  /// SerialPort::WORD_BITS_9
+    8, /// SerialPort::WORD_BITS_8
+    9  /// SerialPort::WORD_BITS_9
 };
 
 const uint8_t SerialPortWindows::myStopBitsMap[] =
 {
-	1, /// SerialPort::STOP_BITS_1
-	2  /// SerialPort::STOP_BITS_2
+    1, /// SerialPort::STOP_BITS_1
+    2  /// SerialPort::STOP_BITS_2
 };
 
 const uint8_t SerialPortWindows::myParityMap[] =
 {
-	0, /// SerialPort::PARITY_NONE
-	2, /// SerialPort::PARITY_EVEN
-	1, /// SerialPort::PARITY_ODD
-	3, /// SerialPort::PARITY_MARK
-	4, /// SerialPort::PARITY_SPACE
+    0, /// SerialPort::PARITY_NONE
+    2, /// SerialPort::PARITY_EVEN
+    1, /// SerialPort::PARITY_ODD
+    3, /// SerialPort::PARITY_MARK
+    4  /// SerialPort::PARITY_SPACE
 };
 
 //------------------------------------------------------------------------------
@@ -85,10 +85,10 @@ const uint8_t SerialPortWindows::myParityMap[] =
 //------------------------------------------------------------------------------
 SerialPortWindows::SerialPortWindows(const char* comPort) :
     SerialPort(comPort),
-	mySerialHandle(0),
-	myReceiveThread(System::createThread(
-	          createCallback(this, &SerialPortWindows::receiveThreadCallback))),
-	myMutex(System::createMutex(myReceiveThread))
+    mySerialHandle(0),
+    myReceiveThread(System::createThread(
+              createCallback(this, &SerialPortWindows::receiveThreadCallback))),
+    myMutex(System::createMutex(myReceiveThread))
 {
 }
 
@@ -102,88 +102,88 @@ SerialPortWindows::~SerialPortWindows()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Private virtual methods overridden for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error SerialPortWindows::driverSetEnabled(const bool enabled)
 {
-	if (enabled)
-	{
-		if (isNullPointer(mySerialHandle))
-		{
+    if (enabled)
+    {
+        if (isNullPointer(mySerialHandle))
+        {
             mySerialHandle = CreateFileA(getName(),
-										GENERIC_READ | GENERIC_WRITE,
-										0,
-										0,
-										OPEN_EXISTING,
-										FILE_ATTRIBUTE_NORMAL,
-										0);
+                                         GENERIC_READ | GENERIC_WRITE,
+                                         0,
+                                         0,
+                                         OPEN_EXISTING,
+                                         FILE_ATTRIBUTE_NORMAL,
+                                         0);
 
-			if (mySerialHandle == INVALID_HANDLE_VALUE)
-			{
-				if (GetLastError() == ERROR_FILE_NOT_FOUND)
-				{
-					return Module::Error(Module::ERROR_CODE_ENABLE_FAILED);
-				}
-			}
-		}
-	}
-	else
-	{
-		if (isValidPointer(mySerialHandle))
-		{
-			CloseHandle(mySerialHandle);
-		}
+            if (mySerialHandle == INVALID_HANDLE_VALUE)
+            {
+                if (GetLastError() == ERROR_FILE_NOT_FOUND)
+                {
+                    return Module::Error(Module::ERROR_CODE_ENABLE_FAILED);
+                }
+            }
+        }
+    }
+    else
+    {
+        if (isValidPointer(mySerialHandle))
+        {
+            CloseHandle(mySerialHandle);
+        }
 
-		myReceiveThread.setEnabled(false);
-	}
+        myReceiveThread.setEnabled(false);
+    }
 
-	return Module::Error(Module::ERROR_CODE_NONE);
+    return Module::Error(Module::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from SerialPort
+// Private virtual methods overridden for SerialPort
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 SerialPort::Error SerialPortWindows::driverSetConfig(const Config& config)
 {
-	DCB serialParametersDcb;
+    DCB serialParametersDcb;
 
-	serialParametersDcb.DCBlength = sizeof(serialParametersDcb);
+    serialParametersDcb.DCBlength = sizeof(serialParametersDcb);
 
-	if (!GetCommState(mySerialHandle, &serialParametersDcb))
-	{
-		// Error
-	}
+    if (!GetCommState(mySerialHandle, &serialParametersDcb))
+    {
+        // Error
+    }
 
-	serialParametersDcb.BaudRate = config.baudRate;
-	serialParametersDcb.ByteSize = myWordBitsMap[config.wordBits];
-	serialParametersDcb.StopBits = myStopBitsMap[config.stopBits];
-	serialParametersDcb.Parity   = myParityMap[config.parityBit];
+    serialParametersDcb.BaudRate = config.baudRate;
+    serialParametersDcb.ByteSize = myWordBitsMap[config.wordBits];
+    serialParametersDcb.StopBits = myStopBitsMap[config.stopBits];
+    serialParametersDcb.Parity   = myParityMap[config.parityBit];
 
-	if (!SetCommState(mySerialHandle, &serialParametersDcb))
-	{
-		return Error(ERROR_CODE_SET_CONFIG_FAILED);
-	}
+    if (!SetCommState(mySerialHandle, &serialParametersDcb))
+    {
+        return Error(ERROR_CODE_SET_CONFIG_FAILED);
+    }
 
-	// TODO Make this part of Config?
-	COMMTIMEOUTS timeouts = {0};
-	timeouts.ReadIntervalTimeout 		 = 50;
-	timeouts.ReadTotalTimeoutConstant    = 50;
-	timeouts.ReadTotalTimeoutMultiplier  = 10;
-	timeouts.WriteTotalTimeoutConstant   = 50;
-	timeouts.WriteTotalTimeoutMultiplier = 10;
+    // TODO Make this part of Config?
+    COMMTIMEOUTS timeouts = {0};
+    timeouts.ReadIntervalTimeout         = 50;
+    timeouts.ReadTotalTimeoutConstant    = 50;
+    timeouts.ReadTotalTimeoutMultiplier  = 10;
+    timeouts.WriteTotalTimeoutConstant   = 50;
+    timeouts.WriteTotalTimeoutMultiplier = 10;
 
-	if (!SetCommTimeouts(mySerialHandle, &timeouts))
-	{
-		return Error(ERROR_CODE_SET_CONFIG_FAILED);
-	}
+    if (!SetCommTimeouts(mySerialHandle, &timeouts))
+    {
+        return Error(ERROR_CODE_SET_CONFIG_FAILED);
+    }
 
-	myReceiveThread.setEnabled(true);
+    myReceiveThread.setEnabled(true);
 
-	return Error(ERROR_CODE_NONE);
+    return Error(ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -191,19 +191,19 @@ ComInterface::Error SerialPortWindows::driverTransmitBytes(
                                                      const ByteArray& byteArray,
                                                      const bool waitUntilDone)
 {
-	DWORD bytesWritten = 0;
+    DWORD bytesWritten = 0;
 
-	if (!WriteFile(mySerialHandle,
-				   byteArray.getItems(),
-				   byteArray.getSize(),
-				   &bytesWritten,
-				   NULL))
-	{
-		return ComInterface::Error(
-		                         ComInterface::ERROR_CODE_TRANSMIT_BUFFER_FULL);
-	}
+    if (!WriteFile(mySerialHandle,
+                   byteArray.getItems(),
+                   byteArray.getSize(),
+                   &bytesWritten,
+                   NULL))
+    {
+        return ComInterface::Error(
+                                 ComInterface::ERROR_CODE_TRANSMIT_BUFFER_FULL);
+    }
 
-	return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
+    return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -241,7 +241,7 @@ ComInterface::Error SerialPortWindows::driverGetReceivedBytes(
         }
     }
 
-	return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
+    return ComInterface::Error(ComInterface::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,11 +64,11 @@ namespace Plat4m
 class ProcessorSTM32F4xx : public Processor
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum Error
     {
         ERROR_CLOCK_FREQUENCY_INVALID,
@@ -76,13 +76,13 @@ public:
         ERROR_CLOCK_STARTUP_FAILED,
         ERROR_NONE
     };
-    
+
     enum ClockSource
     {
         CLOCK_SOURCE_INTERNAL,
         CLOCK_SOURCE_EXTERNAL
     };
-    
+
     enum AhbClockPrescaler
     {
         AHB_CLOCK_PRESCALER_1 = 0,
@@ -95,7 +95,7 @@ public:
         AHB_CLOCK_PRESCALER_256,
         AHB_CLOCK_PRESCALER_512
     };
-    
+
     enum Apb1ClockPrescaler
     {
         APB1_CLOCK_PRESCALER_1 = 0,
@@ -104,7 +104,7 @@ public:
         APB1_CLOCK_PRESCALER_8,
         APB1_CLOCK_PRESCALER_16
     };
-    
+
     enum Apb2ClockPrescaler
     {
         APB2_CLOCK_PRESCALER_1 = 0,
@@ -113,7 +113,7 @@ public:
         APB2_CLOCK_PRESCALER_8,
         APB2_CLOCK_PRESCALER_16
     };
-    
+
     enum CoreVoltage
     {
         CORE_VOLTAGE_V1R8_TO_V2R1 = 0,
@@ -121,7 +121,7 @@ public:
         CORE_VOLTAGE_V2R4_TO_V2R7,
         CORE_VOLTAGE_V2R7_TO_V3R6
     };
-    
+
     // Move this to FlashSTM32F4xx?
     enum FlashWaitStates
     {
@@ -133,9 +133,9 @@ public:
         FLASH_WAIT_STATES_5,
         FLASH_WAIT_STATES_6,
         FLASH_WAIT_STATES_7,
-		FLASH_WAIT_STATES_8
+        FLASH_WAIT_STATES_8
     };
-    
+
     enum Peripheral
     {
         // AHB1 peripherals
@@ -221,7 +221,7 @@ public:
         bool isEthernet;
         uint32_t vectorTableAddress;
     };
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
@@ -232,21 +232,21 @@ public:
     //--------------------------------------------------------------------------
     // Public static methods
     //--------------------------------------------------------------------------
-    
+
     static uint32_t getCoreClockFrequencyHz();
-    
+
     static void setCoreClockFrequencyHz(const uint32_t coreClockFrequencyHz);
-    
+
     static uint32_t getAhbClockFrequencyHz();
-    
+
     static AhbClockPrescaler getAhbClockPrescaler();
-    
+
     static uint32_t getApb1ClockFrequencyHz();
-    
+
     static Apb1ClockPrescaler getApb1ClockPrescaler();
-    
+
     static uint32_t getApb2ClockFrequencyHz();
-    
+
     static Apb2ClockPrescaler getApb2ClockPrescaler();
 
     static void setPeripheralClockEnabled(const Peripheral peripheral,
@@ -258,13 +258,13 @@ public:
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
+
     Error setConfig(const Config& config);
-    
+
     ClockSource getCoreClockSource();
-    
+
     void setCoreClockSource(const ClockSource coreClockSource);
-    
+
 private:
 
     //--------------------------------------------------------------------------
@@ -276,11 +276,11 @@ private:
         uint32_t value;
         uint32_t bits;
     };
-    
+
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
-    
+
     // Constants
 
     static const Prescaler myAhbClockPrescalerMap[];
@@ -300,24 +300,28 @@ private:
     // Variables
 
     static Config myConfig;
-    
+
     static AhbClockPrescaler myAhbClockPrescaler;
-    
+
     static Apb1ClockPrescaler myApb1ClockPrescaler;
-    
+
     static Apb2ClockPrescaler myApb2ClockPrescaler;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Processor
+    // Private virtual methods overridden for Processor
     //--------------------------------------------------------------------------
-    
-    Processor::Error driverReset();
-    
-    Processor::Error driverConfigure(const Processor::Config& config);
-    
-    Processor::Error driverSetPowerMode(const Processor::PowerMode powerMode);
 
-    uint32_t driverGetCoreClockFrequencyHz();
+    virtual Processor::Error driverReset() override;
+    
+    virtual Processor::Error driverConfigure(
+                                      const Processor::Config& config) override;
+
+    virtual Processor::Error driverSetPowerMode(
+                                 const Processor::PowerMode powerMode) override;
+
+    virtual uint32_t driverGetCoreClockFrequencyHz() override;
+
+    virtual bool driverIsInterruptActive() override;
 };
 
 }; // namespace Plat4m

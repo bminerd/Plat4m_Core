@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -60,27 +60,27 @@ public:
     //--------------------------------------------------------------------------
     // Public static methods
     //--------------------------------------------------------------------------
-    
+
     static const char* getName();
-    
+
     static const char* getProductName();
-    
+
     static const char* getVersion();
-    
+
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
 
-    void run();
+    int run();
 
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
+
     Application(const char* name, const char* productName, const char* version);
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
@@ -88,24 +88,24 @@ protected:
     virtual ~Application();
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
 
     static const char* myName;
-    
+
     static const char* myProductName;
-    
+
     static const char* myVersion;
-    
+
     static Application* myDriver;
 
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
-    
-    virtual void driverRun() = 0;
+
+    virtual int driverRun() = 0;
 };
 
 }; // namespace Plat4m

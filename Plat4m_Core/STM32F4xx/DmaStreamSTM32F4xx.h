@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -70,11 +70,11 @@ namespace Plat4m
 class DmaStreamSTM32F4xx : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE = 0
@@ -160,17 +160,17 @@ private:
     // Variables
 
     static DMA_Stream_TypeDef* myDmaStreamMap[][8];
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     DmaSTM32F4xx& myDma;
 
     const DmaSTM32F4xx::StreamId myStreamId;
 
     DMA_Stream_TypeDef* myDmaStream;
-    
+
     InterruptSTM32F4xx myInterrupt;
 
     Config myConfig;
@@ -178,10 +178,10 @@ private:
     TransferCompleteCallback* myTransferCompleteCallback;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
-    
-    Module::Error driverSetEnabled(const bool enabled);
+
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
     // Private inline methods

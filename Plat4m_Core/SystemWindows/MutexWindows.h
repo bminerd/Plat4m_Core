@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Benjamin Minerd
+// Copyright (c) 2018-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -86,10 +86,10 @@ private:
     HANDLE myMutexHandle;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Mutex
+    // Private virtual methods overridden for Mutex
     //--------------------------------------------------------------------------
-    
-    Error driverSetLocked(const bool locked);
+
+    virtual Error driverSetLocked(const bool locked) override;
 };
 
 }; // namespace Plat4m

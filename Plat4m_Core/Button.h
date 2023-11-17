@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -72,11 +72,11 @@ namespace Plat4m
 class Button : public UiInput
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-         
+
     struct Event
     {
         enum Id
@@ -87,7 +87,7 @@ public:
             ID_SINGLE_TAP,
             ID_DOUBLE_TAP
         };
-        
+
         enum Mode
         {
             MODE_SINGLE,
@@ -103,7 +103,7 @@ public:
             uint32_t nStatesSinceEvent;
         };
     };
-    
+
     struct Sequence
     {
         struct State
@@ -112,25 +112,25 @@ public:
             TimeMs minDurationMs;
             TimeMs maxDurationMs;
         };
-        
+
         const State* states;
         const uint32_t nStates;
         const bool isRepeatable;
     };
-    
+
     struct ActionMap
     {
         
     };
-    
+
     typedef Callback<> ButtonEventCallback;
 
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
     Button(EnableLine& enableLine);
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
@@ -138,45 +138,46 @@ public:
     virtual ~Button();
 
     //--------------------------------------------------------------------------
-    // Public virtual methods implemented from UiInput
+    // Public virtual methods overridden for UiInput
     //--------------------------------------------------------------------------
-    
-    virtual void poll(const TimeMs timeMs, Array<UiInput::Event>& events);
-    
+
+    virtual void poll(const TimeMs timeMs,
+                      Array<UiInput::Event>& events) override;
+
     //--------------------------------------------------------------------------
     // Public virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Error isActive(bool& isActive);
-    
+
     virtual Error setEventEnabled(const Event::Id id, const bool enabled);
-    
+
     virtual Error setEventMode(const Event::Id id, const Event::Mode mode);
-    
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     UiInput::Event::Behavior myEventBehaviors[BUTTON_EVENT_COUNT];
-    
+
     State myStateLog[BUTTON_STATE_LOG_COUNT];
-    
+
     Event::Behavior myEventBehaviorMap[BUTTON_EVENT_COUNT];
-    
+
     EnableLine& myEnableLine;
-    
+
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
-    
-    Module::Error driverEnable(const bool enable);
-    
+
+    virtual Module::Error driverEnable(const bool enable) override;
+
     //--------------------------------------------------------------------------
     // Private methods
     //--------------------------------------------------------------------------
-    
+
     void matchSequence(const TimeMs timeMs, Array<UiInput::Event>& events);
 };
 

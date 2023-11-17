@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,11 +46,10 @@
 #include <Plat4m_Core/Uart.h>
 #include <Plat4m_Core/System.h>
 
-using Plat4m::Uart;
-using Plat4m::ComInterface;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
-// Public methods implemented from ComInterface
+// Public virtual methods overridden for ComInterface
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -66,14 +65,14 @@ ComInterface::Error Uart::transmitBytes(const ByteArray& byteArray,
 }
 
 //------------------------------------------------------------------------------
-uint32_t Uart::getReceivedBytesCount()
+std::uint32_t Uart::getReceivedBytesCount()
 {
     return driverGetReceivedBytesCount();
 }
 
 //------------------------------------------------------------------------------
 ComInterface::Error Uart::getReceivedBytes(ByteArray& byteArray,
-                                           const uint32_t nBytes)
+                                           const std::uint32_t nBytes)
 {
     return driverGetReceivedBytes(byteArray, nBytes);
 }

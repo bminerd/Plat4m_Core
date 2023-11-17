@@ -1,0 +1,31 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Acceptance_Test_Linux_App - Container build",
+            "type": "shell",
+            "linux": {
+                "command": "${workspaceRoot}/Test/Acceptance_Tests/Acceptance_Test_Linux_App/build.sh",
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Acceptance_Test_Linux_App - Container clean",
+            "type": "shell",
+            "linux": {
+                "command": "rm -rf ${workspaceRoot}/Test/Acceptance_Tests/Acceptance_Test_Linux_App/Build",
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

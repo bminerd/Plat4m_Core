@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -71,12 +71,12 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     QueueDriverLite() :
-    	QueueDriver(),
-		myValues()
-	{
-	}
+        QueueDriver(),
+        myValues()
+    {
+    }
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
@@ -88,50 +88,50 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    // Public methods implemented from QueueDriver
+    // Public virtual methods overridden for QueueDriver
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-	uint32_t driverGetSize()
-	{
-		return 0;
-	}
+    uint32_t driverGetSize()
+    {
+        return 0;
+    }
 
-	//--------------------------------------------------------------------------
-	uint32_t driverGetSizeFast()
-	{
-		return 0;
-	}
+    //--------------------------------------------------------------------------
+    uint32_t driverGetSizeFast()
+    {
+        return 0;
+    }
 
-	//--------------------------------------------------------------------------
-	bool driverEnqueue(const void* value)
-	{
-		return true;
-	}
+    //--------------------------------------------------------------------------
+    bool driverEnqueue(const void* value)
+    {
+        return true;
+    }
 
-	//--------------------------------------------------------------------------
-	bool driverEnqueueFast(const void* value)
-	{
-		return true;
-	}
+    //--------------------------------------------------------------------------
+    bool driverEnqueueFast(const void* value)
+    {
+        return true;
+    }
 
-	//--------------------------------------------------------------------------
-	bool driverDequeue(void* value)
-	{
-		return true;
-	}
+    //--------------------------------------------------------------------------
+    bool driverDequeue(void* value)
+    {
+        return true;
+    }
 
-	//--------------------------------------------------------------------------
-	bool driverDequeueFast(void* value)
-	{
-		return true;
-	}
+    //--------------------------------------------------------------------------
+    bool driverDequeueFast(void* value)
+    {
+        return true;
+    }
 
-	//--------------------------------------------------------------------------
-	void driverClear()
-	{
+    //--------------------------------------------------------------------------
+    void driverClear()
+    {
 
-	}
+    }
 
 private:
 
@@ -139,7 +139,7 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-	ArrayN<uint8_t, nValues> myValues;
+    ArrayN<uint8_t, nValues> myValues;
 };
 
 }; // namespace Plat4m

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -67,7 +67,7 @@ namespace Plat4m
 class GpioPortSTM32F4xx : public GpioPort<uint16_t>
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
@@ -88,9 +88,9 @@ public:
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
     GpioPortSTM32F4xx(const Id id);
-    
+
     //--------------------------------------------------------------------------
     // Public virtual destructors
     //--------------------------------------------------------------------------
@@ -106,14 +106,14 @@ public:
     GPIO_TypeDef* getPort();
 
     //--------------------------------------------------------------------------
-    // Public methods implemented from GpioPort
+    // Public virtual methods overridden for GpioPort
     //--------------------------------------------------------------------------
 
-    void setValueFast(const uint16_t value);
+    virtual void setValueFast(const uint16_t value) override;
 
-    uint16_t getValueFast();
+    virtual uint16_t getValueFast() override;
 
-    uint16_t readValueFast();
+    virtual uint16_t readValueFast() override;
 
 private:
 
@@ -134,28 +134,30 @@ private:
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     const Id myId;
-    
+
     GPIO_TypeDef* myPort;
-    
+
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverSetEnabled(const bool enable);
-    
+    virtual Module::Error driverSetEnabled(const bool enable) override;
+
     //--------------------------------------------------------------------------
-    // Private methods implemented from GpioPort
+    // Private virtual methods overridden for GpioPort
     //--------------------------------------------------------------------------
-    
-    GpioPort<uint16_t>::Error driverConfigure(const Config& config);
-    
-    GpioPort<uint16_t>::Error driverSetValue(const uint16_t value);
-    
-    GpioPort<uint16_t>::Error driverGetValue(uint16_t& value);
-    
-    GpioPort<uint16_t>::Error driverReadValue(uint16_t& value);
+
+    virtual GpioPort<uint16_t>::Error driverConfigure(
+                                                 const Config& config) override;
+
+    virtual GpioPort<uint16_t>::Error driverSetValue(
+                                                 const uint16_t value) override;
+
+    virtual GpioPort<uint16_t>::Error driverGetValue(uint16_t& value) override;
+
+    virtual GpioPort<uint16_t>::Error driverReadValue(uint16_t& value) override;
 };
 
 }; // namespace Plat4m

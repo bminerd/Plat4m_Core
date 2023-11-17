@@ -1,13 +1,10 @@
 # /.gitlab-ci.yml
 
-image: docker:19.03.1
+image: bminerd/plat4m_linux_dev:2.0.0
 
 variables:
   DOCKER_TLS_CERTDIR: "/certs"
-  GIT_SUBMODULE_STRATEGY: recursive
-
-services:
-  - name: docker:19.03.1-dind
+  GIT_SUBMODULE_STRATEGY: normal
 
 stages:
   - build
@@ -17,22 +14,31 @@ build:Linux_GCC_Build_Test_App:
   stage: build
   tags:
     - docker
+  before_script:
+  - ./git_clone_dependencies.sh
+  - cd Test/Build_Tests/Linux_GCC_Build_Test_App
   script:
-  - sh docker_bash.sh "./git_clone_dependencies.sh && Test/Build_Tests/Linux_GCC_Build_Test_App/build.sh"
+  - ./build.sh
 
 build:ARM_Cortex_M_GCC_Build_Test_App:
   stage: build
   tags:
     - docker
+  before_script:
+  - ./git_clone_dependencies.sh
+  - cd Test/Build_Tests/ARM_Cortex_M_GCC_Build_Test_App
   script:
-  - sh docker_bash.sh "./git_clone_dependencies.sh && Test/Build_Tests/ARM_Cortex_M_GCC_Build_Test_App/build.sh"
+  - ./build.sh
 
 build:Unit_Test_Linux_App:
   stage: build
   tags:
     - docker
+  before_script:
+  - ./git_clone_dependencies.sh
+  - cd Plat4m_Core/UnitTest/Unit_Test_Linux_App
   script:
-  - sh docker_bash.sh "./git_clone_dependencies.sh && Plat4m_Core/UnitTest/Unit_Test_Linux_App/build.sh"
+  - ./build.sh
   artifacts:
     paths:
       - Plat4m_Core/UnitTest/Unit_Test_Linux_App/Build/
@@ -41,18 +47,24 @@ build:Acceptance_Test_Linux_App:
   stage: build
   tags:
     - docker
+  before_script:
+  - ./git_clone_dependencies.sh
+  - cd Test/Acceptance_Tests/Acceptance_Test_Linux_App
   script:
-  - sh docker_bash.sh "./git_clone_dependencies.sh && Test/Acceptance_Tests/Acceptance_Test_Linux_App/build.sh"
+  - ./build.sh
   artifacts:
     paths:
       - Test/Acceptance_Tests/Acceptance_Test_Linux_App/Build/
-  
+
 test:Unit_Test_Linux_App:
   stage: test
   tags:
     - docker
+  before_script:
+  - ./git_clone_dependencies.sh
+  - cd Plat4m_Core/UnitTest/Unit_Test_Linux_App
   script:
-  - sh docker_bash.sh Plat4m_Core/UnitTest/Unit_Test_Linux_App/test.sh
+  - ./test.sh
   dependencies:
     - build:Unit_Test_Linux_App
 
@@ -60,7 +72,10 @@ test:Acceptance_Test_Linux_App:
   stage: test
   tags:
     - docker
+  before_script:
+  - ./git_clone_dependencies.sh
+  - cd Test/Acceptance_Tests/Acceptance_Test_Linux_App
   script:
-  - sh docker_bash.sh Test/Acceptance_Tests/Acceptance_Test_Linux_App/test.sh
+  - ./test.sh
   dependencies:
     - build:Acceptance_Test_Linux_App

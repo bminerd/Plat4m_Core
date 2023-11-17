@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -70,7 +70,9 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-	ThreadLinux(RunCallback& callback, const TimeMs periodMs = 0);
+    ThreadLinux(RunCallback& callback,
+                const TimeMs periodMs = 0,
+                const char* name = 0);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
@@ -88,6 +90,8 @@ private:
     pthread_mutex_t myMutexHandle;
     pthread_cond_t myConditionHandle;
     TimeMs myNextCallTimeMs;
+    bool myIsEnabled;
+    bool myShouldExit;
 
     //--------------------------------------------------------------------------
     // Private static methods
@@ -96,18 +100,18 @@ private:
     static void* threadCallback(void* arg);
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverSetEnabled(const bool enabled);
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Thread
+    // Private virtual methods overridden for Thread
     //--------------------------------------------------------------------------
 
-    void driverSetPeriodMs(const TimeMs periodMs);
+    virtual void driverSetPeriodMs(const TimeMs periodMs) override;
 
-    uint32_t driverSetPriority(const uint32_t priority);
+    virtual uint32_t driverSetPriority(const uint32_t priority) override;
 };
 
 }; // namespace Plat4m

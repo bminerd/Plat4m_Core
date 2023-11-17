@@ -72,7 +72,7 @@ uint32_t UnitTest::runTests()
     printf("%s\n", myName);
     printf("------------------------------\n");
 
-    for (int i = 0; i < nTests; i++)
+    for (uint32_t i = 0; i < nTests; i++)
     {
         printf("Test %d/%d: ", (i + 1), nTests);
 

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Benjamin Minerd
+// Copyright (c) 2019-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,11 +46,16 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
 #include <ctime>
-#include <time.h>
 
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/System.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/Mutex.h>
+#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/QueueDriver.h>
+#include <Plat4m_Core/Semaphore.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -68,6 +73,14 @@ class SystemLinux : public System
 public:
 
     //--------------------------------------------------------------------------
+    // Public static inline methods
+    //--------------------------------------------------------------------------
+
+    static inline TimeMs getCurrentLinuxTimeMs();
+
+    static inline TimeUs getCurrentLinuxTimeUs();
+
+    //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
@@ -80,12 +93,41 @@ public:
     virtual ~SystemLinux();
 
     //--------------------------------------------------------------------------
-    // Private inline methods
+    // Public virtual methods overridden for System
     //--------------------------------------------------------------------------
 
-    static inline TimeMs getCurrentLinuxTimeMs();
+    virtual Thread& driverCreateThread(Thread::RunCallback& callback,
+                                       const TimeMs periodMs,
+                                       const std::uint32_t nStackBytes,
+                                       const bool isSimulated,
+                                       const char* name) override;
 
-    static inline TimeUs getCurrentLinuxTimeUs();
+    virtual Mutex& driverCreateMutex(Thread& thread) override;
+
+    virtual WaitCondition& driverCreateWaitCondition(Thread& thread) override;
+
+    virtual QueueDriver& driverCreateQueueDriver(
+                                             const std::uint32_t nValues,                                         
+                                             const std::uint32_t valueSizeBytes,
+                                             Thread& thread) override;
+
+    virtual Semaphore& driverCreateSemaphore(
+                                     const std::uint32_t maxValue,
+                                     const std::uint32_t initialValue) override;
+
+    virtual void driverRun() override;
+
+    virtual TimeUs driverGetTimeUs() override;
+
+    virtual TimeMs driverGetTimeMs() override;
+
+    virtual void driverDelayTimeMs(const TimeMs timeMs) override;
+
+    virtual void driverExit() override;
+
+    virtual TimeStamp driverGetTimeStamp() override;
+
+    virtual TimeStamp driverGetWallTimeStamp() override;
 
 private:
 
@@ -99,29 +141,7 @@ private:
 
     TimeUs myFirstTimeUs;
 
-    //--------------------------------------------------------------------------
-    // Private methods implemented from System
-    //--------------------------------------------------------------------------
-
-    TimeUs driverGetTimeUs();
-
-    Thread& driverCreateThread(Thread::RunCallback& callback,
-                               const TimeMs periodMs,
-                               const uint32_t nStackBytes);
-
-    Mutex& driverCreateMutex(Thread& thread);
-
-    WaitCondition& driverCreateWaitCondition(Thread& thread);
-
-    QueueDriver& driverCreateQueueDriver(const uint32_t nValues,
-                                         const uint32_t valueSizeBytes,
-                                         Thread& thread);
-
-    void driverRun();
-
-    TimeMs driverGetTimeMs();
-
-    void driverDelayTimeMs(const TimeMs timeMs);
+    bool myIsRunning;
 };
 
 }; // namespace Plat4m

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2021 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,7 @@
 /// @author Ben Minerd
 /// @date 8/13/2013
 /// @brief CallbackFunctionParameter class header file.
+/// @note This class is deprecated. Callback is now a variadic template.
 ///
 
 #ifndef PLAT4M_CALLBACK_FUNCTION_PARAMETER_H
@@ -46,7 +47,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Callback.h>
+#include <Plat4m_Core/CallbackFunction.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -56,59 +57,23 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases
 //------------------------------------------------------------------------------
 
 template <typename TReturn, typename TParameter>
-class CallbackFunctionParameter : public Callback<TReturn, TParameter>
+using CallbackFunctionParameter = CallbackFunction<TReturn, TParameter>;
+
+//------------------------------------------------------------------------------
+// Namespace functions
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+template <typename TReturn, typename TParameter>
+Callback<TReturn, TParameter>& createCallback(TReturn (*callback)(TParameter))
 {
-public:
-    
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
-    
-    typedef TReturn (*CallbackFunctionParameterType)(TParameter);
-    
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-    
-    CallbackFunctionParameter(CallbackFunctionParameterType callbackFunction) :
-        Callback<TReturn, TParameter>(),
-        myCallbackFunctionParameter(callbackFunction)
-    {
-    }
-    
-    //--------------------------------------------------------------------------
-    // Public methods implemented from Callback
-    //--------------------------------------------------------------------------
-    
-    inline TReturn call(TParameter parameter, void* dummyParameter2 = 0)
-    {
-        return (*myCallbackFunctionParameter)(parameter);
-    }
-
-private:
-    
-    //--------------------------------------------------------------------------
-    // Public data members
-    //--------------------------------------------------------------------------
-    
-    CallbackFunctionParameterType myCallbackFunctionParameter;
-};
-
-    //--------------------------------------------------------------------------
-    // Namespace functions
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    template <typename TReturn, typename TParameter>
-    Callback<TReturn, TParameter>& createCallback(
-                                                TReturn (*callback)(TParameter))
-    {
-        return *(new CallbackFunctionParameter<TReturn, TParameter>(callback));
-    }
+    return *(MemoryAllocator::allocate<
+                     CallbackFunctionParameter<TReturn, TParameter>>(callback));
+}
 
 }; // namespace Plat4m
 

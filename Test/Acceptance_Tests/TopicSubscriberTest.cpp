@@ -11,9 +11,9 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Benjamin Minerd
+// Copyright (c) 2020-2023 Benjamin Minerd
 //
-// Permission is hereby granted, free of uint8_tge, to any person obtaining a copy
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -44,11 +44,13 @@
 //------------------------------------------------------------------------------
 
 #include <Test/Acceptance_Tests/TopicSubscriberTest.h>
+#include <Plat4m_Core/TopicBase.h>
+#include <Plat4m_Core/Topic.h>
 #include <Plat4m_Core/TopicSubscriber.h>
 #include <Plat4m_Core/CallbackFunctionParameter.h>
+#include <Plat4m_Core/TopicManager.h>
 
-using Plat4m::TopicSubscriberTest;
-using Plat4m::UnitTest;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Private static data members
@@ -60,13 +62,13 @@ const UnitTest::TestCallbackFunction
     &TopicSubscriberTest::acceptanceTest1
 };
 
-uint8_t TopicSubscriberTest::acceptanceTest1Sample;
+TopicSubscriberTest::TestSample TopicSubscriberTest::acceptanceTest1Sample;
 
-uint8_t TopicSubscriberTest::acceptanceTest1SampleCount = 0;
+std::uint32_t TopicSubscriberTest::acceptanceTest1SampleCount = 0;
 
-uint8_t TopicSubscriberTest::acceptanceTest1Sample2;
+TopicSubscriberTest::TestSample TopicSubscriberTest::acceptanceTest1Sample2;
 
-uint8_t TopicSubscriberTest::acceptanceTest1SampleCount2 = 0;
+std::uint32_t TopicSubscriberTest::acceptanceTest1SampleCount2 = 0;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -104,27 +106,37 @@ bool TopicSubscriberTest::acceptanceTest1()
 
     // Setup / Operation
 
-    const uint32_t testTopicID = 1;
-    const uint8_t sample  = 42;
-    const uint8_t sample2 = 71;
-    const uint8_t sample3 = 23;
+    const TopicBase::Id testTopicId = 1;
 
-    Topic<uint8_t> testTopic(testTopicID);
+    TestSample sample;
+    sample.sample = 42;
 
-    TopicSubscriber<uint8_t>::Config config;
+    TestSample sample2;
+    sample2.sample = 71;
+
+    TestSample sample3;
+    sample3.sample = 23;
+
+    TopicManager topicManager;
+
+    Topic<TestSample>& testTopic = Topic<TestSample>::create(testTopicId);
+
+    TopicSubscriber<TestSample>::Config config;
     config.downsampleFactor = 0;
 
-    TopicSubscriber<uint8_t> subscriber(
-                                 testTopicID,
+    TopicSubscriber<TestSample> subscriber(
+                                 testTopicId,
                                  config,
                                  createCallback(&acceptanceTest1TopicCallback));
+    subscriber.enable();
 
     config.downsampleFactor = 2;
 
-    TopicSubscriber<uint8_t> subscriber2(
-                                testTopicID,
+    TopicSubscriber<TestSample> subscriber2(
+                                testTopicId,
                                 config,
                                 createCallback(&acceptanceTest1TopicCallback2));
+    subscriber2.enable();
 
     testTopic.publish(sample);
     testTopic.publish(sample2);
@@ -133,22 +145,26 @@ bool TopicSubscriberTest::acceptanceTest1()
     // Test
 
     return UNIT_TEST_REPORT(
-                UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample, (uint8_t) 23)     &
-                UNIT_TEST_CASE_EQUAL(acceptanceTest1SampleCount, (uint8_t) 3) &
-                UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample2, (uint8_t) 71)    &
-                UNIT_TEST_CASE_EQUAL(acceptanceTest1SampleCount2, (uint8_t) 1));
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample.sample, (std::uint8_t) 23)  &
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1SampleCount, (std::uint32_t) 3)    &
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1Sample2.sample, (std::uint8_t) 71) &
+        UNIT_TEST_CASE_EQUAL(acceptanceTest1SampleCount2, (std::uint32_t) 1));
 }
 
 //------------------------------------------------------------------------------
-void TopicSubscriberTest::acceptanceTest1TopicCallback(const uint8_t& sample)
+void TopicSubscriberTest::acceptanceTest1TopicCallback(
+                                          const TopicSample<TestSample>& sample)
 {
-    acceptanceTest1Sample = sample;
+    // acceptanceTest1Sample = *(sample.data);
+    acceptanceTest1Sample = sample.data;
     acceptanceTest1SampleCount++;
 }
 
 //------------------------------------------------------------------------------
-void TopicSubscriberTest::acceptanceTest1TopicCallback2(const uint8_t& sample)
+void TopicSubscriberTest::acceptanceTest1TopicCallback2(
+                                          const TopicSample<TestSample>& sample)
 {
-    acceptanceTest1Sample2 = sample;
+    // acceptanceTest1Sample2 = *(sample.data);
+    acceptanceTest1Sample2 = sample.data;
     acceptanceTest1SampleCount2++;
 }

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,11 +64,11 @@ namespace Plat4m
 class ProcessorSTM32F30x : public Processor
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum Error
     {
         ERROR_CLOCK_FREQUENCY_INVALID,
@@ -76,13 +76,13 @@ public:
         ERROR_CLOCK_STARTUP_FAILED,
         ERROR_NONE
     };
-    
+
     enum ClockSource
     {
         CLOCK_SOURCE_INTERNAL,
         CLOCK_SOURCE_EXTERNAL
     };
-    
+
     enum ExternalClockFrequency
     {
         EXTERNAL_CLOCK_FREQUENCY_8_MHZ  = 8000000,
@@ -251,7 +251,7 @@ public:
         bool isEthernet;
         uint32_t vectorTableAddress;
     };
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
@@ -262,7 +262,7 @@ public:
     //--------------------------------------------------------------------------
     // Public static methods
     //--------------------------------------------------------------------------
-    
+
     static Config getDefaultConfig();
 
     static uint32_t getCoreClockFrequencyHz();
@@ -290,13 +290,13 @@ public:
     //--------------------------------------------------------------------------
     // Public virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Error setConfig(const Config& config);
-    
+
     virtual ClockSource getCoreClockSource();
-    
+
     virtual void setCoreClockSource(const ClockSource coreClockSource);
-    
+
 private:
     
     //--------------------------------------------------------------------------
@@ -332,33 +332,37 @@ private:
     static const uint32_t myRccClockEnableMap[];
 
     // Variables
-    
+
     static Config myConfig;
-    
+
     static PllClockMultiplier myPllClockMultiplier;
 
     static PllClockDivider myPllClockDivider;
 
     static AhbClockPrescaler myAhbClockPrescaler;
-    
+
     static Apb1ClockPrescaler myApb1ClockPrescaler;
-    
+
     static Apb2ClockPrescaler myApb2ClockPrescaler;
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Processor
+    // Private virtual methods overridden for Processor
     //--------------------------------------------------------------------------
-    
-    virtual Processor::Error driverReset();
-    
-    virtual Processor::Error driverConfigure(const Processor::Config& config);
-    
+
+    virtual Processor::Error driverReset() override;
+
+    virtual Processor::Error driverConfigure(
+                                      const Processor::Config& config) override;
+
     virtual Processor::Error driverSetPowerMode(
-                                          const Processor::PowerMode powerMode);
+                                 const Processor::PowerMode powerMode) override;
 
-    virtual uint32_t driverGetCoreClockFrequencyHz();
+    virtual uint32_t driverGetCoreClockFrequencyHz() override;
 
-    virtual Processor::Error driverJumpToAddress(const intptr_t address);
+    virtual Processor::Error driverJumpToAddress(
+                                               const intptr_t address) override;
+
+    virtual bool driverIsInterruptActive() override;
 };
 
 }; // namespace Plat4m

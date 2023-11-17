@@ -52,7 +52,11 @@ using Plat4m::AllocationMemory;
 // Private static data members
 //------------------------------------------------------------------------------
 
-AllocationMemory* AllocationMemory::myDriver = 0;
+AllocationMemory* AllocationMemory::myBaseDriver = 0;
+
+AllocationMemory* AllocationMemory::myNestedDriver = 0;
+
+AllocationMemory* AllocationMemory::myCurrentDriver = 0;
 
 //------------------------------------------------------------------------------
 extern "C" void* allocationMemoryAllocate(size_t count)
@@ -73,31 +77,31 @@ extern "C" void allocationMemoryDeallocate(void* pointer)
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocate(size_t count)
 {
-    return myDriver->driverAllocate(count);
+    return (myCurrentDriver->driverAllocate(count));
 }
 
 //------------------------------------------------------------------------------
 void* AllocationMemory::allocateArray(size_t count)
 {
-    return myDriver->driverAllocateArray(count);
+    return (myCurrentDriver->driverAllocateArray(count));
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocate(void* pointer)
 {
-    myDriver->driverDeallocate(pointer);
+    myCurrentDriver->driverDeallocate(pointer);
 }
 
 //------------------------------------------------------------------------------
 void AllocationMemory::deallocateArray(void* pointer)
 {
-    myDriver->driverDeallocateArray(pointer);
+    myCurrentDriver->driverDeallocateArray(pointer);
 }
 
 //------------------------------------------------------------------------------
 size_t AllocationMemory::getFreeMemorySize()
 {
-    return myDriver->driverGetFreeMemorySize();
+    return (myCurrentDriver->driverGetFreeMemorySize());
 }
 
 //------------------------------------------------------------------------------
@@ -107,9 +111,15 @@ size_t AllocationMemory::getFreeMemorySize()
 //------------------------------------------------------------------------------
 AllocationMemory::AllocationMemory()
 {
-    if (isNullPointer(myDriver))
+    if (isNullPointer(myBaseDriver))
     {
-        myDriver = this;
+        myBaseDriver = this;
+        myCurrentDriver = myBaseDriver;
+    }
+    else if (isNullPointer(myNestedDriver))
+    {
+        myNestedDriver = this;
+        myCurrentDriver = myNestedDriver;
     }
 }
 
@@ -120,32 +130,14 @@ AllocationMemory::AllocationMemory()
 //------------------------------------------------------------------------------
 AllocationMemory::~AllocationMemory()
 {
-}
-
-//------------------------------------------------------------------------------
-// Global functions
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void* operator new(size_t count)
-{
-    return AllocationMemory::allocate(count);
-}
-
-//------------------------------------------------------------------------------
-void* operator new[](size_t count)
-{
-    return AllocationMemory::allocateArray(count);
-}
-
-//------------------------------------------------------------------------------
-void operator delete(void* pointer)
-{
-    return AllocationMemory::deallocate(pointer);
-}
-
-//------------------------------------------------------------------------------
-void operator delete[](void* pointer)
-{
-    return AllocationMemory::deallocateArray(pointer);
+    if (isValidPointer(myNestedDriver))
+    {
+        myNestedDriver = 0;
+        myCurrentDriver = myBaseDriver;
+    }
+    else if (isValidPointer(myBaseDriver))
+    {
+        myBaseDriver = 0;
+        myCurrentDriver = 0;
+    }
 }

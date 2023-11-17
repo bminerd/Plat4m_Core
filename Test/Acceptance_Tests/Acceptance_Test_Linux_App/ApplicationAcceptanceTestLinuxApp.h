@@ -49,9 +49,13 @@
 #include <Plat4m_Core/UnitTest/ApplicationUnitTestApp.h>
 #include <Plat4m_Core/Linux/SystemLinux.h>
 #include <Plat4m_Core/Linux/ProcessorLinux.h>
+#include <Plat4m_Core/AllocationMemoryLite/AllocationMemoryLite.h>
 #include <Test/Acceptance_Tests/TopicTest.h>
 #include <Test/Acceptance_Tests/TopicSubscriberTest.h>
 #include <Test/Acceptance_Tests/TopicSubscriberThreadTest.h>
+#include <Test/Acceptance_Tests/ServiceTest.h>
+#include <Test/Acceptance_Tests/ServiceClientTest.h>
+#include <Test/Acceptance_Tests/DataObjectTopicServiceTest.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -90,6 +94,8 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
+    AllocationMemoryLite<4096> myAllocationMemory;
+
     SystemLinux mySystem;
 
     ProcessorLinux myProcessor;
@@ -100,11 +106,17 @@ private:
 
     TopicSubscriberThreadTest myTopicSubscriberThreadTest;
 
+    ServiceTest myServiceTest;
+
+    ServiceClientTest myServiceClientTest;
+
+    DataObjectTopicServiceTest myDataObjectTopicServiceTest;
+
     //--------------------------------------------------------------------------
     // Private methods implemented from Application
     //--------------------------------------------------------------------------
 
-    void driverRun();
+    int driverRun();
 
     //--------------------------------------------------------------------------
     // Private methods

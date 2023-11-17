@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2022 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@
 namespace Plat4m
 {
 
-    class Interrupt;
+class Interrupt;
 
 //------------------------------------------------------------------------------
 // Classes
@@ -68,42 +68,11 @@ class InterruptPolicy
 public:
 
     //--------------------------------------------------------------------------
-    // Public enumerations
-    //--------------------------------------------------------------------------
-    
-    enum ErrorCode
-    {
-        ERROR_NONE,
-        ERROR_PARAMETER_INVALID,
-        ERROR_NOT_ENABLED
-    };
-    
-    //--------------------------------------------------------------------------
-    // Public typedefs
+    // Public pure virual methods
     //--------------------------------------------------------------------------
 
-    typedef ErrorTemplate<ErrorCode> Error;
-
-    //--------------------------------------------------------------------------
-    // Public structures
-    //--------------------------------------------------------------------------
-    
-    struct Config
-    {
-        int a; // Placeholder
-    };
-    
-    //--------------------------------------------------------------------------
-    // Public static methods
-    //--------------------------------------------------------------------------
-
-    static InterruptPolicy* get();
-
-    //--------------------------------------------------------------------------
-    // Public methods
-    //--------------------------------------------------------------------------
-
-    void apply(Interrupt& interrupt, Callback<>& interruptHandlerCallback);
+    virtual void apply(Interrupt& interrupt,
+                       Callback<>& interruptHandlerCallback) = 0;
 
 protected:
     
@@ -118,21 +87,6 @@ protected:
     //--------------------------------------------------------------------------
 
     virtual ~InterruptPolicy();
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private static data members
-    //--------------------------------------------------------------------------
-    
-    static InterruptPolicy* myDriver;
-    
-    //--------------------------------------------------------------------------
-    // Private virtual methods
-    //--------------------------------------------------------------------------
-    
-    virtual void driverApply(Interrupt& interrupt,
-                             Callback<>& interruptHandlerCallback) = 0;
 };
 
 }; // namespace Plat4m

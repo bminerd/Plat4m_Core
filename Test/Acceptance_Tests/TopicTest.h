@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Benjamin Minerd
+// Copyright (c) 2020-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/UnitTest/UnitTest.h>
+#include <Plat4m_Core/TopicSample.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -69,8 +72,8 @@ public:
 
     struct TestSample
     {
-        uint8_t sample1;
-        uint8_t sample2;
+        std::uint8_t sample1;
+        std::uint8_t sample2;
     };
 
     //--------------------------------------------------------------------------
@@ -91,13 +94,16 @@ public:
 
     static bool acceptanceTest1();
 
-    static void acceptanceTest1TopicCallback(const uint8_t& sample);
+    static void acceptanceTest1TopicCallback(
+                                       const TopicSample<std::uint8_t>& sample);
 
-    static void acceptanceTest1TopicCallback2(const uint8_t& sample);
+    static void acceptanceTest1TopicCallback2(
+                                       const TopicSample<std::uint8_t>& sample);
 
     static bool acceptanceTest2();
 
-    static void acceptanceTest2TopicCallback(const TestSample& sample);
+    static void acceptanceTest2TopicCallback(
+                                         const TopicSample<TestSample>& sample);
 
 private:
 
@@ -107,9 +113,9 @@ private:
 
     static const UnitTest::TestCallbackFunction myTestCallbackFunctions[];
 
-    static uint8_t acceptanceTest1Sample;
+    static std::uint8_t acceptanceTest1Sample;
 
-    static uint8_t acceptanceTest1Sample2;
+    static std::uint8_t acceptanceTest1Sample2;
 
     static TestSample acceptanceTest2Sample;
 };

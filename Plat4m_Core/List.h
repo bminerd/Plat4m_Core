@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
+#include <cstdint>
+
+#include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,12 +65,44 @@ template <typename T>
 class List
 {
 public:
-    
+
+    //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
+
+    enum ErrorCode
+    {
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_ITEM_NULL
+    };
+
+    typedef ErrorTemplate<ErrorCode> Error;
+
     struct Item
     {
         T value;
         Item* previousItem;
         Item* nextItem;
+
+        //----------------------------------------------------------------------
+        // Public nested constructors
+        //----------------------------------------------------------------------
+
+        //----------------------------------------------------------------------
+        Item() :
+            value(),
+            previousItem(0),
+            nextItem(0)
+        {
+        }
+
+        //----------------------------------------------------------------------
+        Item(T value) :
+            value(value),
+            previousItem(0),
+            nextItem(0)
+        {
+        }
     };
     
     //--------------------------------------------------------------------------
@@ -156,28 +190,27 @@ public:
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
-    uint32_t size() const
+    std::uint32_t size() const
     {
         return mySize;
     }
-    
+
     //--------------------------------------------------------------------------
     bool isEmpty()
     {
         return (mySize == 0);
     }
-    
+
     //--------------------------------------------------------------------------
     void append(T& value)
     {
-        Item* item = new Item;
-        
-        item->value = value;
+        Item* item = MemoryAllocator::allocate<Item>(value);
+
         item->previousItem = 0;
         item->nextItem = 0;
-        
+
         // Advance myLastItem pointer
         if (isNullPointer(myFirstItem))
         {
@@ -196,19 +229,19 @@ public:
             oldLastItem->nextItem = item;
             myLastItem = item;
         }
-        
+
         mySize++;
     }
-    
+
     //--------------------------------------------------------------------------
     void prepend(T& value)
     {
-        Item* item = new Item;
-        
+        Item* item = MemoryAllocator::allocate<Item>();
+
         item->value = value;
         item->previousItem = 0;
         item->nextItem = 0;
-        
+
         // Advance myLastItem pointer
         if (isNullPointer(myFirstItem))
         {
@@ -216,7 +249,8 @@ public:
         }
         else if (isNullPointer(myLastItem))
         {
-            myLastItem = item;
+            myLastItem = myFirstItem;
+            myFirstItem = item;
             myFirstItem->nextItem = myLastItem;
             myLastItem->previousItem = myFirstItem;
         }
@@ -227,20 +261,39 @@ public:
             oldFirstItem->previousItem = item;
             myFirstItem = item;
         }
-        
+
         mySize++;
     }
-    
+
     //--------------------------------------------------------------------------
-    T& first()
+    bool first(T& value)
     {
-        return myFirstItem->value;
+        if (isNullPointer(myFirstItem))
+        {
+            return false;
+        }
+
+        value = myFirstItem->value;
+
+        return true;
     }
     
     //--------------------------------------------------------------------------
-    T& last()
+    bool last(T& value)
     {
-        return myFirstItem->value;
+        if (isNullPointer(myFirstItem))
+        {
+            return false;
+        }
+
+        if (isNullPointer(myLastItem))
+        {
+            return false;
+        }
+
+        value = myLastItem->value;
+
+        return true;
     }
     
     //--------------------------------------------------------------------------
@@ -248,15 +301,78 @@ public:
     {
         return Iterator(*this);
     }
-    
+
+    //--------------------------------------------------------------------------
+    void remove(const T& value)
+    {
+        Item* currentItem = myFirstItem;
+
+        while (isValidPointer(currentItem))
+        {
+            T& currentValue = currentItem->value;
+
+            if (value == currentValue)
+            {
+                if (currentItem == myFirstItem)
+                {
+                    myFirstItem = myFirstItem->nextItem;
+
+                    if (isValidPointer(myFirstItem))
+                    {
+                        myFirstItem->previousItem = 0;
+                    }
+
+                    if (myFirstItem == myLastItem)
+                    {
+                        myLastItem = 0;
+
+                        if (isValidPointer(myFirstItem))
+                        {
+                            myFirstItem->nextItem = 0;
+                        }
+                    }
+                }
+                else if (currentItem == myLastItem)
+                {
+                    myLastItem = myLastItem->previousItem;
+
+                    if (isValidPointer(myLastItem))
+                    {
+                        myLastItem->nextItem = 0;
+                    }
+
+                    if (myFirstItem == myLastItem)
+                    {
+                        myLastItem = 0;
+                        myFirstItem->nextItem = 0;
+                    }
+                }
+                else
+                {
+                    currentItem->previousItem->nextItem = currentItem->nextItem;
+                    currentItem->nextItem->previousItem =
+                                                      currentItem->previousItem;
+                }
+
+                mySize--;
+
+                MemoryAllocator::deallocate(currentItem);
+
+                break;
+            }
+
+            currentItem = currentItem->nextItem;
+        }
+    }
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
-    uint32_t mySize;
-    
+
+    std::uint32_t mySize;
+
     Item* myFirstItem;
     Item* myLastItem;
 };
