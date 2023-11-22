@@ -43,9 +43,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Accel.h>
+#include <Plat4m_Core/Accel/Accel.h>
 
-using Plat4m::Accel;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public virtual methods
@@ -63,7 +63,7 @@ Accel::Error Accel::configure(const Config& config)
 
     if (error.getCode() == ERROR_CODE_NONE)
     {
-    	myConfig = config;
+        myConfig = config;
     }
 
     return error;
