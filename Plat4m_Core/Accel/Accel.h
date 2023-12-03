@@ -132,10 +132,8 @@ protected:
 
     //--------------------------------------------------------------------------
     Accel() :
-        Module(),
-        myConfig(),
-        mySampleCallback(0),
-        mySample()
+        Sensor<Sample>(),
+        myConfig()
     {
     }
 

@@ -48,7 +48,8 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Accel.h>
+#include <Plat4m_Core/Accel/Accel.h>
+#include <Plat4m_Core/Sensor/ErrorModel.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -83,8 +84,23 @@ public:
     //--------------------------------------------------------------------------
     void simulatedSampleReady(const Accel<ValueType, nDof>::Sample& sample)
     {
-        Accel<ValueType, nDof>::sampleReady(sample);
+        Accel<ValueType, nDof>::Sample errorSample = sample;
+
+        Eigen::Map<Eigen::Matrix<ValueType, nDof, 1>> sampleVector(
+                                                            errorSample.values);
+
+        myErrorModel.apply(sampleVector);
+
+        Accel<ValueType, nDof>::sampleReady(errorSample);
     }
+
+private:
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    ErrorModel<ValueType, nDof> myErrorModel;
 };
 
 }; // namespace Plat4m

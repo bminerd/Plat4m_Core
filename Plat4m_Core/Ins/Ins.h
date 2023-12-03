@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,11 +47,12 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/Sensor.h>
 #include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/Callback.h>
-#include <Plat4m_Math/Matrix.h>
-#include <Plat4m_Math/Vector.h>
-#include <Plat4m_Math/Quaternion.h>
+#include <Matrice/Matrix.h>
+#include <Matrice/Vector.h>
+#include <Matrice/Quaternion.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -64,34 +65,21 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class Ins : public Module
+template <typename ValueType>
+class Ins : public Sensor<Sample>
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE,
         ERROR_CODE_NOT_ENABLED,
         ERROR_CODE_NOT_CONFIGURED,
-        ERROR_CODE_COMMUNICATION_FAILED,
-        ERROR_CODE_ACCEL_MEASUREMENT_RANGE_INVALID,
-        ERROR_CODE_ACCEL_MEASUREMENT_RATE_INVALID,
-        ERROR_CODE_GYRO_MEASUREMENT_RANGE_INVALID,
-        ERROR_CODE_GYRO_MEASUREMENT_RATE_INVALID,
-        ERROR_CODE_ACCEL_NOT_PRESENT,
-        ERROR_CODE_GYRO_NOT_PRESENT,
-        ERROR_CODE_MAG_NOT_PRESENT
-    };
-
-    enum Dof
-    {
-        DOF_X,
-        DOF_Y,
-        DOF_Z
+        ERROR_CODE_COMMUNICATION_FAILED
     };
 
     enum MeasurementMode
@@ -109,43 +97,37 @@ public:
         int a; // Placeholder
     };
 
-    struct Measurement
+    struct Sample
     {
-        Math::Quaternion<RealNumber> quaternion;
+        Matrice::Quaternion<RealNumber> quaternion;
     };
 
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
 
-    void setMeasurementReadyCallback(Callback<>& callback);
-
     Error setConfig(const Config& config);
 
     Config getConfig() const;
-
-    Error getMeasurement(Measurement& measurement);
 
     Error getEulerAnglesDegrees(AngleDegrees& yawAngleDegrees,
                                 AngleDegrees& pitchAngleDegrees,
                                 AngleDegrees& rollAngleDegrees);
 
-    Error getLastMeasurement(Measurement& measurement);
-
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
+
     Ins();
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
-    
+
     virtual ~Ins();
-    
+
     //--------------------------------------------------------------------------
     // Protected methods
     //--------------------------------------------------------------------------
@@ -153,24 +135,18 @@ protected:
     void measurementReady();
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
     Config myConfig;
 
-    Callback<>* myMeasurementCallback;
-
-    Measurement myLastMeasurement;
-
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
 
     virtual Error driverSetConfig(const Config& config) = 0;
-
-    virtual Error driverGetMeasurement(Measurement& measurement) = 0;
 
     virtual Error driverGetEulerAnglesDegrees(
                                             AngleDegrees& yawAngleDegrees,

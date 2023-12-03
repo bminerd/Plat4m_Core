@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2023 Benjamin Minerd
+// Copyright (c) 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file Gyro.h
+/// @file ErrorModel.h
 /// @author Ben Minerd
-/// @date 2/27/2013
-/// @brief Gyro class header file.
+/// @date 12/4/2023
+/// @brief ErrorModel class header file.
 ///
 
-#ifndef PLAT4M_GYRO_H
-#define PLAT4M_GYRO_H
+#ifndef PLAT4M_ERROR_MODEL_H
+#define PLAT4M_ERROR_MODEL_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,11 +48,10 @@
 
 #include <cstdint>
 
+#include <Eigen/Core>
+#include <Eigen/Dense>
+
 #include <Plat4m_Core/Module.h>
-#include <Plat4m_Core/Sensor/Sensor.h>
-#include <Plat4m_Core/ErrorTemplate.h>
-#include <Plat4m_Core/Callback.h>
-#include <Plat4m_Core/TimeStamp.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -66,7 +65,7 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType, std::uint32_t nDof>
-class Gyro : public Sensor<Sample>
+class ErrorModel : public Module
 {
 public:
 
@@ -74,55 +73,13 @@ public:
     // Public types
     //--------------------------------------------------------------------------
 
-    enum ErrorCode
-    {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID,
-        ERROR_CODE_NOT_ENABLED,
-        ERROR_CODE_COMMUNICATION_FAILED
-    };
-
-    using Error = ErrorTemplate<ErrorCode>;
-
-    struct Sample
-    {
-        TimeStamp timeStamp;
-        ValueType values[nDof];
-    };
-
-    enum Dof
-    {
-        DOF_X = 0,
-        DOF_Y,
-        DOF_Z
-    };
-
-    struct Config
-    {
-        int a; // Placeholder
-    };
+    using MeasurementVector = Eigen::Matrix<ValueType, nDof, 1>;
 
     //--------------------------------------------------------------------------
-    // Public virtual methods
+    // Public pure virtual methods
     //--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    Error setConfig(const Config& config)
-    {
-        if (!isEnabled())
-        {
-            return Error(ERROR_CODE_NOT_ENABLED);
-        }
-
-        Error error = subclassConfigure(config);
-
-        if (error.getCode() == ERROR_CODE_NONE)
-        {
-            myConfig = config;
-        }
-
-        return error;
-    }
+    virtual void apply(MeasurementVector& measurement) = 0;
 
 protected:
 
@@ -131,9 +88,8 @@ protected:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    Gyro() :
-        Sensor<Sample>(),
-        myConfig()
+    ErrorModel() :
+        Module()
     {
     }
 
@@ -142,39 +98,11 @@ protected:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual ~Gyro()
+    virtual ~ErrorModel()
     {
     }
-
-    //--------------------------------------------------------------------------
-    // Protected pure virtual methods
-    //--------------------------------------------------------------------------
-
-    virtual Error subclassSetConfig(const Config& config) = 0;
-
-    //--------------------------------------------------------------------------
-    // Protected pure virtual methods (Deprecated)
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual Error driverConfigure(const Config& config)
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    virtual Error driverGetMeasurement(Measurement& measurement)
-    {
-    }
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    Config myConfig;
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_GYRO_H
+#endif // PLAT4M_ERROR_MODEL_H

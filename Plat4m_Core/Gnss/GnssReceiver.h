@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2023 Benjamin Minerd
+// Copyright (c) 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file Gyro.h
+/// @file GnssReceiver.h
 /// @author Ben Minerd
-/// @date 2/27/2013
-/// @brief Gyro class header file.
+/// @date 12/4/2023
+/// @brief GnssReceiver class header file.
 ///
 
-#ifndef PLAT4M_GYRO_H
-#define PLAT4M_GYRO_H
+#ifndef PLAT4M_GNSS_RECEIVER_H
+#define PLAT4M_GNSS_RECEIVER_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -66,7 +66,7 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType, std::uint32_t nDof>
-class Gyro : public Sensor<Sample>
+class GnssReceiver : public Sensor<Sample>
 {
 public:
 
@@ -87,14 +87,9 @@ public:
     struct Sample
     {
         TimeStamp timeStamp;
-        ValueType values[nDof];
-    };
-
-    enum Dof
-    {
-        DOF_X = 0,
-        DOF_Y,
-        DOF_Z
+        ValueType latitude;
+        ValueType longitude;
+        ValueType altitude;
     };
 
     struct Config
@@ -131,7 +126,7 @@ protected:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    Gyro() :
+    GnssReceiver() :
         Sensor<Sample>(),
         myConfig()
     {
@@ -142,7 +137,7 @@ protected:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual ~Gyro()
+    virtual ~GnssReceiver()
     {
     }
 
@@ -177,4 +172,4 @@ private:
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_GYRO_H
+#endif // PLAT4M_GNSS_RECEIVER_H

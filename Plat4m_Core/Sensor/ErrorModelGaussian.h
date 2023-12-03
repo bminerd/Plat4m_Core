@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2023 Benjamin Minerd
+// Copyright (c) 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file Gyro.h
+/// @file ErrorModelGaussian.h
 /// @author Ben Minerd
-/// @date 2/27/2013
-/// @brief Gyro class header file.
+/// @date 12/4/2023
+/// @brief ErrorModelGaussian class header file.
 ///
 
-#ifndef PLAT4M_GYRO_H
-#define PLAT4M_GYRO_H
+#ifndef PLAT4M_ERROR_MODEL_GUASSIAN_H
+#define PLAT4M_ERROR_MODEL_GUASSIAN_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,11 +48,7 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Module.h>
-#include <Plat4m_Core/Sensor/Sensor.h>
-#include <Plat4m_Core/ErrorTemplate.h>
-#include <Plat4m_Core/Callback.h>
-#include <Plat4m_Core/TimeStamp.h>
+#include <Plat4m_Core/Sensor/ErrorModel.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -66,104 +62,40 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType, std::uint32_t nDof>
-class Gyro : public Sensor<Sample>
+class ErrorModelGaussian : public ErrorModel<ValueType, nDof>
 {
 public:
 
     //--------------------------------------------------------------------------
-    // Public types
+    // Public constructors
     //--------------------------------------------------------------------------
 
-    enum ErrorCode
+    //--------------------------------------------------------------------------
+    ErrorModelGaussian() :
+        ErrorModel<ValueType, nDof>()
     {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID,
-        ERROR_CODE_NOT_ENABLED,
-        ERROR_CODE_COMMUNICATION_FAILED
-    };
+    }
 
-    using Error = ErrorTemplate<ErrorCode>;
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
 
-    struct Sample
+    //--------------------------------------------------------------------------
+    virtual ~SensorErrorModel()
     {
-        TimeStamp timeStamp;
-        ValueType values[nDof];
-    };
-
-    enum Dof
-    {
-        DOF_X = 0,
-        DOF_Y,
-        DOF_Z
-    };
-
-    struct Config
-    {
-        int a; // Placeholder
-    };
+    }
 
     //--------------------------------------------------------------------------
     // Public virtual methods
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    Error setConfig(const Config& config)
+    virtual void apply(MeasurementVector& measurement) override
     {
-        if (!isEnabled())
+        if (isEnabled())
         {
-            return Error(ERROR_CODE_NOT_ENABLED);
+            measurement *= myErrorVector;
         }
-
-        Error error = subclassConfigure(config);
-
-        if (error.getCode() == ERROR_CODE_NONE)
-        {
-            myConfig = config;
-        }
-
-        return error;
-    }
-
-protected:
-
-    //--------------------------------------------------------------------------
-    // Protected constructors
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    Gyro() :
-        Sensor<Sample>(),
-        myConfig()
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    // Protected virtual destructors
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual ~Gyro()
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    // Protected pure virtual methods
-    //--------------------------------------------------------------------------
-
-    virtual Error subclassSetConfig(const Config& config) = 0;
-
-    //--------------------------------------------------------------------------
-    // Protected pure virtual methods (Deprecated)
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual Error driverConfigure(const Config& config)
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    virtual Error driverGetMeasurement(Measurement& measurement)
-    {
     }
 
 private:
@@ -172,9 +104,9 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    Config myConfig;
+    MeasurementVector myErrorVector;
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_GYRO_H
+#endif // PLAT4M_ERROR_MODEL_GUASSIAN_H

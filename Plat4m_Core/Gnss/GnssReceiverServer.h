@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file GyroSimulated.h
+/// @file GnssReceiverServer.h
 /// @author Ben Minerd
-/// @date 11/22/2023
-/// @brief GyroSimulated class header file.
+/// @date 12/4/2023
+/// @brief GnssReceiverServer class header file.
 ///
 
-#ifndef PLAT4M_GYRO_SIMULATED_H
-#define PLAT4M_GYRO_SIMULATED_H
+#ifndef PLAT4M_GNSS_RECEIVER_SERVER_H
+#define PLAT4M_GNSS_RECEIVER_SERVER_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,8 +48,10 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Gyro/Gyro.h>
-#include <Plat4m_Core/Sensor/ErrorModel.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Gnss/GnssReceiver.h>
+#include <Plat4m_Core/TopicBase.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -62,8 +64,8 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename ValueType, std::uint32_t nDof>
-class GyroSimulated : public Gyro<ValueType, nDof>
+template <typename ValueType>
+class GnssReceiverServer : public SensorServer<GnssReceiver<ValueType>::Sample>
 {
 public:
 
@@ -72,37 +74,15 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    GyroSimulated() :
-        Gyro<ValueType, nDof>()
+    GnssReceiverServer(GnssReceiver<ValueType>& gnssReceiver,
+                       const TopicBase::Id& sampleTopicId) :
+        SensorServer<GnssReceiver<ValueType>::Sample>(gnssReceiver,
+                                                      sampleTopicId)
     {
     }
-
-    //--------------------------------------------------------------------------
-    // Public methods
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    void simulatedSampleReady(const Gyro<ValueType, nDof>::Sample& sample)
-    {
-        Gyro<ValueType, nDof>::Sample errorSample = sample;
-
-        Eigen::Map<Eigen::Matrix<ValueType, nDof, 1>> sampleVector(
-                                                            errorSample.values);
-
-        myErrorModel.apply(sampleVector);
-
-        Gyro<ValueType, nDof>::sampleReady(errorSample);
-    }
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    ErrorModel<ValueType, nDof> myErrorModel;
 };
+
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_GYRO_SIMULATED_H
+#endif // PLAT4M_GNSS_RECEIVER_SERVER_H

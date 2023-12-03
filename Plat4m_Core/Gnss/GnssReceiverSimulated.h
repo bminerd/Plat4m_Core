@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2023 Benjamin Minerd
+// Copyright (c) 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file Gyro.h
+/// @file GnssReceiverSimulated.h
 /// @author Ben Minerd
-/// @date 2/27/2013
-/// @brief Gyro class header file.
+/// @date 11/22/2023
+/// @brief GnssReceiverSimulated class header file.
 ///
 
-#ifndef PLAT4M_GYRO_H
-#define PLAT4M_GYRO_H
+#ifndef PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#define PLAT4M_GNSS_RECEIVER_SIMULATED_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,11 +48,7 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Module.h>
-#include <Plat4m_Core/Sensor/Sensor.h>
-#include <Plat4m_Core/ErrorTemplate.h>
-#include <Plat4m_Core/Callback.h>
-#include <Plat4m_Core/TimeStamp.h>
+#include <Plat4m_Core/Gnss/GnssReceiver.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -65,105 +61,36 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename ValueType, std::uint32_t nDof>
-class Gyro : public Sensor<Sample>
+template <typename ValueType>
+class GnssReceiverSimulated : public GnssReceiver<ValueType>
 {
 public:
 
     //--------------------------------------------------------------------------
-    // Public types
-    //--------------------------------------------------------------------------
-
-    enum ErrorCode
-    {
-        ERROR_CODE_NONE,
-        ERROR_CODE_PARAMETER_INVALID,
-        ERROR_CODE_NOT_ENABLED,
-        ERROR_CODE_COMMUNICATION_FAILED
-    };
-
-    using Error = ErrorTemplate<ErrorCode>;
-
-    struct Sample
-    {
-        TimeStamp timeStamp;
-        ValueType values[nDof];
-    };
-
-    enum Dof
-    {
-        DOF_X = 0,
-        DOF_Y,
-        DOF_Z
-    };
-
-    struct Config
-    {
-        int a; // Placeholder
-    };
-
-    //--------------------------------------------------------------------------
-    // Public virtual methods
+    // Public constructors
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    Error setConfig(const Config& config)
-    {
-        if (!isEnabled())
-        {
-            return Error(ERROR_CODE_NOT_ENABLED);
-        }
-
-        Error error = subclassConfigure(config);
-
-        if (error.getCode() == ERROR_CODE_NONE)
-        {
-            myConfig = config;
-        }
-
-        return error;
-    }
-
-protected:
-
-    //--------------------------------------------------------------------------
-    // Protected constructors
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    Gyro() :
-        Sensor<Sample>(),
-        myConfig()
+    GnssReceiverSimulated() :
+        GnssReceiver<ValueType>()
     {
     }
 
     //--------------------------------------------------------------------------
-    // Protected virtual destructors
+    // Public methods
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual ~Gyro()
+    void simulatedSampleReady(const GnssReceiver<ValueType>::Sample& sample)
     {
-    }
+        GnssReceiver<ValueType>::Sample errorSample = sample;
 
-    //--------------------------------------------------------------------------
-    // Protected pure virtual methods
-    //--------------------------------------------------------------------------
+        Eigen::Map<Eigen::Matrix<ValueType, 3, 1>> sampleVector(
+                                                            errorSample.values);
 
-    virtual Error subclassSetConfig(const Config& config) = 0;
+        myErrorModel.apply(sampleVector);
 
-    //--------------------------------------------------------------------------
-    // Protected pure virtual methods (Deprecated)
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual Error driverConfigure(const Config& config)
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    virtual Error driverGetMeasurement(Measurement& measurement)
-    {
+        GnssReceiver<ValueType>::sampleReady(errorSample);
     }
 
 private:
@@ -172,9 +99,9 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    Config myConfig;
+    ErrorModel<ValueType, 3> myErrorModel;
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_GYRO_H
+#endif // PLAT4M_GNSS_RECEIVER_SIMULATED_H
