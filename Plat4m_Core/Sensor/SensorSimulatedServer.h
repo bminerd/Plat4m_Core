@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2023 Benjamin Minerd
+// Copyright (c) 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file Accel.h
+/// @file SensorSimulatedServer.h
 /// @author Ben Minerd
-/// @date 2/27/2013
-/// @brief Accel class header file.
+/// @date 12/28/2023
+/// @brief SensorSimulatedServer class header file.
 ///
 
-#ifndef PLAT4M_ACCEL_H
-#define PLAT4M_ACCEL_H
+#ifndef PLAT4M_SENSOR_SIMULATED_SERVER_H
+#define PLAT4M_SENSOR_SIMULATED_SERVER_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -49,10 +49,15 @@
 #include <cstdint>
 
 #include <Plat4m_Core/Module.h>
-#include <Plat4m_Core/Sensor/Sensor.h>
 #include <Plat4m_Core/ErrorTemplate.h>
-#include <Plat4m_Core/Callback.h>
-#include <Plat4m_Core/TimeStamp.h>
+#include <Plat4m_Core/Sensor/SensorSimulated.h>
+#include <Plat4m_Core/Sensor/InertialSystemState.h>
+#include <Plat4m_Core/TopicBase.h>
+#include <Plat4m_Core/Topic.h>
+#include <Plat4m_Core/TopicSubscriber.h>
+#include <Plat4m_Core/ServiceBase.h>
+#include <Plat4m_Core/Service.h>
+#include <Plat4m_Core/CallbackMethod.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -65,8 +70,8 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename ValueType, std::uint32_t nDof>
-class Accel : public Sensor<ValueType, nDof>
+template <typename ValueType, typename SampleType>
+class SensorSimulatedServer : public SensorServer<ValueType, SampleType>
 {
 public:
 
@@ -84,82 +89,47 @@ public:
 
     using Error = ErrorTemplate<ErrorCode>;
 
-    using Sample = typename Sensor<ValueType, nDof>::Sample;
-
-    enum Dof
-    {
-        DOF_X = 0,
-        DOF_Y,
-        DOF_Z
-    };
-
-    struct Config
-    {
-        int a; // Placeholder
-    };
-
     //--------------------------------------------------------------------------
-    // Public virtual methods
+    // Public constructors
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    Error setConfig(const Config& config)
+    SensorSimulatedServer(
+                        SensorSimulated<ValueType, SampleType>& sensorSimulated,
+                        const TopicBase::Id& inertialSystemStateTopicId,
+                        const TopicBase::Id& sampleTopicId) :
+        SensorServer<ValueType, SampleType>(sensorSimulated, sampleTopicId),
+        mySensorSimulated(sensorSimulated),
+        myInertialSystemStateTopicSubscriber(
+            inertialSystemStateTopicId,
+            createCallback(
+                this,
+                &SensorSimulatedServer<ValueType, SampleType>::
+                                              inertialSystemStateTopicCallback))
     {
-        if (!isEnabled())
-        {
-            return Error(ERROR_CODE_NOT_ENABLED);
-        }
+    }
 
-        Error error = subclassConfigure(config);
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
 
-        if (error.getCode() == ERROR_CODE_NONE)
-        {
-            myConfig = config;
-        }
-
-        return error;
+    //--------------------------------------------------------------------------
+    virtual ~SensorSimulatedServer()
+    {
     }
 
 protected:
 
     //--------------------------------------------------------------------------
-    // Protected constructors
+    // Protected virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    Accel() :
-        Sensor<Sample>(),
-        myConfig()
+    virtual Module::Error driverSetEnabled(const bool enabled) override
     {
-    }
+        myInertialSystemStateTopicSubscriber.setEnabled(enabled);
 
-    //--------------------------------------------------------------------------
-    // Protected virtual destructors
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual ~Accel()
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    // Protected pure virtual methods
-    //--------------------------------------------------------------------------
-
-    virtual Error subclassSetConfig(const Config& config) = 0;
-
-    //--------------------------------------------------------------------------
-    // Protected pure virtual methods (Deprecated)
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual Error driverConfigure(const Config& config)
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    virtual Error driverGetMeasurement(Measurement& measurement)
-    {
+        return (Module::Error(Module::ERROR_CODE_NONE));
     }
 
 private:
@@ -168,9 +138,23 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    Config myConfig;
+    SensorSimulated<ValueType, SampleType>& mySensorSimulated;
+
+    TopicSubscriber<InertialSystemState<ValueType>>
+                                           myInertialSystemStateTopicSubscriber;
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+    void inertialSystemStateTopicCallback(
+                       const TopicSample<InertialSystemState<ValueType>>& state)
+    {
+        mySensorSimulated.generateSample(state);
+    }
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_ACCEL_H
+#endif // PLAT4M_SENSOR_SIMULATED_SERVER_H

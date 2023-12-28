@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file GnssReceiverSimulated.h
+/// @file InertialSystemState.h
 /// @author Ben Minerd
-/// @date 11/22/2023
-/// @brief GnssReceiverSimulated class header file.
+/// @date 12/28/2023
+/// @brief InertialSystemState class header file.
 ///
 
-#ifndef PLAT4M_GNSS_RECEIVER_SIMULATED_H
-#define PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#ifndef PLAT4M_INERTIAL_SYSTEM_STATE_H
+#define PLAT4M_INERTIAL_SYSTEM_STATE_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,8 +48,7 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Gnss/GnssReceiver.h>
-#include <Plat4m_Core/Sensor/SensorSimulated.h>
+#include <Plat4m_Core/Math/Vector.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,36 +62,16 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType>
-class GnssReceiverSimulated :
-            public GnssReceiver<ValueType>, public SensorSimulated<ValueType, 3>
+struct InertialSystemState
 {
-public:
-
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    GnssReceiverSimulated() :
-        GnssReceiver<ValueType>(),
-        SensorSimulated<ValueType, 3>()
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    // Public virtual methods overridden for SensorSimulated
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual Sample generateSample(
-                           const InertialSystemState<ValueType>& state) override
-    {
-        GnssReceiver<ValueType>::Sample sample;
-
-        return sample;
-    }
+    Vector<ValueType, 3> positiionLlh;
+    Vector<ValueType, 3> velocityMps;
+    Vector<ValueType, 3> accelerationMps2;
+    Vector<ValueType, 3> eulerAngles321;
+    Vector<ValueType, 3> eulerAnglesVelocity321;
+    Vector<ValueType, 3> eulerAnglesAcceleration321;
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#endif // PLAT4M_INERTIAL_SYSTEM_STATE_H

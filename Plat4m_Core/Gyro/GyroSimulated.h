@@ -49,6 +49,7 @@
 #include <cstdint>
 
 #include <Plat4m_Core/Gyro/Gyro.h>
+#include <Plat4m_Core/Sensor/SensorSimulated.h>
 #include <Plat4m_Core/Sensor/ErrorModel.h>
 
 //------------------------------------------------------------------------------
@@ -63,7 +64,8 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType, std::uint32_t nDof>
-class GyroSimulated : public Gyro<ValueType, nDof>
+class GyroSimulated :
+    public Gyro<ValueType, nDof>, public SensorSimulated<ValueType, Sample>
 {
 public:
 
@@ -73,34 +75,23 @@ public:
 
     //--------------------------------------------------------------------------
     GyroSimulated() :
-        Gyro<ValueType, nDof>()
+        Gyro<ValueType, nDof>(),
+        SensorSimulated<ValueType, Sample>()
     {
     }
 
     //--------------------------------------------------------------------------
-    // Public methods
+    // Public virtual methods overridden for SensorSimulated
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    void simulatedSampleReady(const Gyro<ValueType, nDof>::Sample& sample)
+    virtual Sample generateSample(
+                           const InertialSystemState<ValueType>& state) override
     {
-        Gyro<ValueType, nDof>::Sample errorSample = sample;
+        GnssReceiver<ValueType>::Sample sample;
 
-        Eigen::Map<Eigen::Matrix<ValueType, nDof, 1>> sampleVector(
-                                                            errorSample.values);
-
-        myErrorModel.apply(sampleVector);
-
-        Gyro<ValueType, nDof>::sampleReady(errorSample);
+        return sample;
     }
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    ErrorModel<ValueType, nDof> myErrorModel;
 };
 
 }; // namespace Plat4m

@@ -81,7 +81,7 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual ~SensorErrorModel()
+    virtual ~ErrorModelGaussian()
     {
     }
 
@@ -94,6 +94,8 @@ public:
     {
         if (isEnabled())
         {
+            // Apply random gaussian to myErrorVector
+
             measurement *= myErrorVector;
         }
     }

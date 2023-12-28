@@ -102,6 +102,13 @@ namespace Plat4m
         ENDIAN_BIG
     };
 
+    enum Storage
+    {
+        STORAGE_INTERNAL = 0,
+        STORAGE_EXTERNAL,
+        STORAGE_CONSTANT
+    };
+
     typedef uint32_t Id;
 
     typedef uint32_t TimeS;

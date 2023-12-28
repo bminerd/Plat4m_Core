@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file GnssReceiverSimulated.h
+/// @file Matrix.h
 /// @author Ben Minerd
-/// @date 11/22/2023
-/// @brief GnssReceiverSimulated class header file.
+/// @date 12/28/2023
+/// @brief Matrix class header file.
 ///
 
-#ifndef PLAT4M_GNSS_RECEIVER_SIMULATED_H
-#define PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#ifndef PLAT4M_MATRIX_H
+#define PLAT4M_MATRIX_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,51 +48,14 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Gnss/GnssReceiver.h>
-#include <Plat4m_Core/Sensor/SensorSimulated.h>
+#if PLAT4M_MATRIX_CONFIG_ENABLE_EIGEN
 
-//------------------------------------------------------------------------------
-// Namespaces
-//------------------------------------------------------------------------------
+#include <Plat4m_Core/Math/Eigen/MatrixEigen.h>
 
-namespace Plat4m
-{
+#elif PLAT4M_MATRIX_CONFIG_ENABLE_MATRICE
 
-//------------------------------------------------------------------------------
-// Classes
-//------------------------------------------------------------------------------
+#include <Plat4m_Core/Math/Matrice/MatrixMatrice.h>
 
-template <typename ValueType>
-class GnssReceiverSimulated :
-            public GnssReceiver<ValueType>, public SensorSimulated<ValueType, 3>
-{
-public:
+#endif
 
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    GnssReceiverSimulated() :
-        GnssReceiver<ValueType>(),
-        SensorSimulated<ValueType, 3>()
-    {
-    }
-
-    //--------------------------------------------------------------------------
-    // Public virtual methods overridden for SensorSimulated
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual Sample generateSample(
-                           const InertialSystemState<ValueType>& state) override
-    {
-        GnssReceiver<ValueType>::Sample sample;
-
-        return sample;
-    }
-};
-
-}; // namespace Plat4m
-
-#endif // PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#endif // PLAT4M_MATRIX_H

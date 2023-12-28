@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file GnssReceiverSimulated.h
+/// @file MatrixMatrice.h
 /// @author Ben Minerd
-/// @date 11/22/2023
-/// @brief GnssReceiverSimulated class header file.
+/// @date 12/28/2023
+/// @brief MatrixMatrice class header file.
 ///
 
-#ifndef PLAT4M_GNSS_RECEIVER_SIMULATED_H
-#define PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#ifndef PLAT4M_MATRIX_MATRICE_H
+#define PLAT4M_MATRIX_MATRICE_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,8 +48,8 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Gnss/GnssReceiver.h>
-#include <Plat4m_Core/Sensor/SensorSimulated.h>
+#include <Matrice/Matrice.h>
+#include <Matrice/Matrix.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -59,40 +59,24 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases
 //------------------------------------------------------------------------------
 
-template <typename ValueType>
-class GnssReceiverSimulated :
-            public GnssReceiver<ValueType>, public SensorSimulated<ValueType, 3>
-{
-public:
+template <typename ValueType, std::uint32_t Rows, std::uint32_t Columns>
+using Matrix = Matrice::Matrix<ValueType, Rows, Columns>;
 
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
+template <typename ValueType, std::uint32_t Rows, std::uint32_t Columns>
+using MatrixInternal =
+           Matrice::Matrix<ValueType, Rows, Columns, Matrice::STORAGE_INTERNAL>;
 
-    //--------------------------------------------------------------------------
-    GnssReceiverSimulated() :
-        GnssReceiver<ValueType>(),
-        SensorSimulated<ValueType, 3>()
-    {
-    }
+template <typename ValueType, std::uint32_t Rows, std::uint32_t Columns>
+using MatrixExternal =
+           Matrice::Matrix<ValueType, Rows, Columns, Matrice::STORAGE_EXTERNAL>;
 
-    //--------------------------------------------------------------------------
-    // Public virtual methods overridden for SensorSimulated
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual Sample generateSample(
-                           const InertialSystemState<ValueType>& state) override
-    {
-        GnssReceiver<ValueType>::Sample sample;
-
-        return sample;
-    }
-};
+template <typename ValueType, std::uint32_t Rows, std::uint32_t Columns>
+using MatrixConstant =
+           Matrice::Matrix<ValueType, Rows, Columns, Matrice::STORAGE_CONSTANT>;
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#endif // PLAT4M_MATRIX_MATRICE_H

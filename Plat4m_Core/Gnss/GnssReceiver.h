@@ -66,7 +66,7 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType, std::uint32_t nDof>
-class GnssReceiver : public Sensor<Sample>
+class GnssReceiver : public Sensor<ValueType, nDof>
 {
 public:
 
@@ -84,12 +84,13 @@ public:
 
     using Error = ErrorTemplate<ErrorCode>;
 
-    struct Sample
+    using Sample = typename Sensor<ValueType, nDof>::Sample;
+
+    enum Dof
     {
-        TimeStamp timeStamp;
-        ValueType latitude;
-        ValueType longitude;
-        ValueType altitude;
+        DOF_LATITUDE = 0,
+        DOF_LONGITUDE,
+        DOF_ALTITUDE
     };
 
     struct Config
@@ -127,7 +128,7 @@ protected:
 
     //--------------------------------------------------------------------------
     GnssReceiver() :
-        Sensor<Sample>(),
+        Sensor<ValueType, Sample>(),
         myConfig()
     {
     }

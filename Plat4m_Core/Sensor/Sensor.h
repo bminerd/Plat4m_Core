@@ -52,8 +52,6 @@
 #include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/TimeStamp.h>
-#include <Plat4m_Core/Accel/Accel.h>
-#include <Plat4m_Core/Gyro/Gyro.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -66,7 +64,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename SampleType>
+template <typename ValueType, std::uint32_t nDof>
 class Sensor : public Module
 {
 public:
@@ -83,7 +81,18 @@ public:
 
     using Error = ErrorTemplate<ErrorCode>;
 
-    using SampleCallback = Callback<void, const SampleType&>;
+    struct Sample
+    {
+        TimeStamp timeStamp;
+        ValueType values[nDof];
+    };
+
+    using SampleCallback = Callback<void, const Sample&>;
+
+    struct Config
+    {
+        std::uint32_t outputRateHz;
+    };
 
     //--------------------------------------------------------------------------
     // Public methods
@@ -128,7 +137,7 @@ protected:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    void sampleReady(const SampleType& sample)
+    void sampleReady(const Sample& sample)
     {
         if (isValidPointer(mySampleCallback))
         {
@@ -146,7 +155,7 @@ private:
 
     SampleCallback* mySampleCallback;
 
-    SampleType mySample;
+    Sample mySample;
 };
 
 }; // namespace Plat4m

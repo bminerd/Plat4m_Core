@@ -66,7 +66,7 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType, std::uint32_t nDof>
-class Gyro : public Sensor<Sample>
+class Gyro : public Sensor<ValueType, nDof>
 {
 public:
 
@@ -84,11 +84,7 @@ public:
 
     using Error = ErrorTemplate<ErrorCode>;
 
-    struct Sample
-    {
-        TimeStamp timeStamp;
-        ValueType values[nDof];
-    };
+    using Sample = typename Sensor<ValueType, nDof>::Sample;
 
     enum Dof
     {

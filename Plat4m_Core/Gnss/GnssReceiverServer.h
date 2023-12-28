@@ -65,7 +65,8 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType>
-class GnssReceiverServer : public SensorServer<GnssReceiver<ValueType>::Sample>
+class GnssReceiverServer :
+                 public SensorServer<ValueType, GnssReceiver<ValueType>::Sample>
 {
 public:
 
@@ -76,8 +77,8 @@ public:
     //--------------------------------------------------------------------------
     GnssReceiverServer(GnssReceiver<ValueType>& gnssReceiver,
                        const TopicBase::Id& sampleTopicId) :
-        SensorServer<GnssReceiver<ValueType>::Sample>(gnssReceiver,
-                                                      sampleTopicId)
+        SensorServer<ValueType, GnssReceiver<ValueType>::Sample>(gnssReceiver,
+                                                                 sampleTopicId)
     {
     }
 };

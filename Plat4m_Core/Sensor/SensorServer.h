@@ -68,7 +68,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename SampleType>
+template <typename ValueType, typename SampleType>
 class SensorServer : public Module
 {
 public:
@@ -92,7 +92,7 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    SensorServer(Sensor<SampleType>& sensor,
+    SensorServer(Sensor<ValueType, SampleType>& sensor,
                  const TopicBase::Id& sampleTopicId) :
         Module(),
         mySampleTopic(Topic<SensorSample>::create(sampleTopicId))

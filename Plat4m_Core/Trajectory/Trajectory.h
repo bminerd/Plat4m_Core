@@ -33,23 +33,21 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file GnssReceiverSimulated.h
+/// @file Trajectory.h
 /// @author Ben Minerd
-/// @date 11/22/2023
-/// @brief GnssReceiverSimulated class header file.
+/// @date 4/18/2013
+/// @brief Trajectory class header file.
 ///
 
-#ifndef PLAT4M_GNSS_RECEIVER_SIMULATED_H
-#define PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#ifndef PLAT4M_TRAJECTORY_H
+#define PLAT4M_TRAJECTORY_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <cstdint>
-
-#include <Plat4m_Core/Gnss/GnssReceiver.h>
-#include <Plat4m_Core/Sensor/SensorSimulated.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Callback.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -62,37 +60,97 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename ValueType>
-class GnssReceiverSimulated :
-            public GnssReceiver<ValueType>, public SensorSimulated<ValueType, 3>
+class Trajectory
 {
 public:
 
     //--------------------------------------------------------------------------
-    // Public constructors
+    // Public enumerations
     //--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    GnssReceiverSimulated() :
-        GnssReceiver<ValueType>(),
-        SensorSimulated<ValueType, 3>()
+    enum ErrorCode
     {
-    }
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_ENABLE_FAILED
+    };
 
     //--------------------------------------------------------------------------
-    // Public virtual methods overridden for SensorSimulated
+    // Public typedefs
     //--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    virtual Sample generateSample(
-                           const InertialSystemState<ValueType>& state) override
-    {
-        GnssReceiver<ValueType>::Sample sample;
+	typedef ErrorTemplate<ErrorCode> Error;
 
-        return sample;
-    }
+	typedef Callback<Error, bool> SetEnabledCallback;
+
+    //--------------------------------------------------------------------------
+    // Public typedefs (deprecated)
+    //--------------------------------------------------------------------------
+
+	typedef SetEnabledCallback EnableCallback;
+
+    //--------------------------------------------------------------------------
+    // Public virtual methods
+    //--------------------------------------------------------------------------
+
+	virtual void setSetEnabledCallback(SetEnabledCallback& setEnabledCallback);
+
+    virtual Error setEnabled(const bool enabled);
+
+    virtual Error enable();
+
+    virtual Error disable();
+
+    virtual bool isEnabled();
+
+    //--------------------------------------------------------------------------
+    // Public virtual methods (deprecated)
+    //--------------------------------------------------------------------------
+
+    virtual void setEnableCallback(EnableCallback& enableCallback);
+
+    virtual Error enable(const bool enable);
+
+protected:
+
+    //--------------------------------------------------------------------------
+    // Protected constructors
+    //--------------------------------------------------------------------------
+
+	Trajectory();
+
+    //--------------------------------------------------------------------------
+    // Protected virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~Trajectory();
+    
+private:
+    
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+	bool myIsEnabled;
+
+	SetEnabledCallback* mySetEnabledCallback;
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods
+    //--------------------------------------------------------------------------
+
+	virtual Error interfaceSetEnabled(const bool enabled);
+
+	virtual Error driverSetEnabled(const bool enabled);
+
+    //--------------------------------------------------------------------------
+    // Private virtual methods (deprecated)
+    //--------------------------------------------------------------------------
+
+	virtual Error interfaceEnable(const bool enable);
+
+	virtual Error driverEnable(const bool enable);
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#endif // PLAT4M_TRAJECTORY_H

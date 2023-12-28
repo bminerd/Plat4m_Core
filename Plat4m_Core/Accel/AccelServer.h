@@ -63,7 +63,8 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType, std::uint32_t nDof>
-class AccelServer : public SensorServer<Accel<ValueType, nDof>::Sample>
+class AccelServer :
+                  public SensorServer<ValueType, Accel<ValueType, nDof>::Sample>
 {
 public:
 
@@ -74,7 +75,8 @@ public:
     //--------------------------------------------------------------------------
     AccelServer(Accel<ValueType, nDof>& accel,
                 const TopicBase::Id& sampleTopicId) :
-        SensorServer<Accel<ValueType, nDof>::Sample>(accel, sampleTopicId)
+        SensorServer<ValueType, Accel<ValueType, nDof>::Sample>(accel,
+                                                                sampleTopicId)
     {
     }
 };

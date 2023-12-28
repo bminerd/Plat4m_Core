@@ -65,7 +65,7 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType, std::uint32_t nDof>
-class GyroServer : public SensorServer<Gyro<ValueType, nDof>::Sample>
+class GyroServer : public SensorServer<ValueType, Gyro<ValueType, nDof>::Sample>
 {
 public:
 
@@ -76,7 +76,8 @@ public:
     //--------------------------------------------------------------------------
     GyroServer(Gyro<ValueType, nDof>& gyro,
                const TopicBase::Id& sampleTopicId) :
-        SensorServer<Gyro<ValueType, nDof>::Sample>(gyro, sampleTopicId)
+        SensorServer<ValueType, Gyro<ValueType, nDof>::Sample>(gyro,
+                                                               sampleTopicId)
     {
     }
 };

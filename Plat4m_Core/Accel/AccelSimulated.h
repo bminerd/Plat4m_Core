@@ -63,7 +63,8 @@ namespace Plat4m
 //------------------------------------------------------------------------------
 
 template <typename ValueType, std::uint32_t nDof>
-class AccelSimulated : public Accel
+class AccelSimulated :
+        public Accel<ValueType, nDof>, public SensorSimulated<ValueType, Sample>
 {
 public:
 
@@ -73,34 +74,23 @@ public:
 
     //--------------------------------------------------------------------------
     AccelSimulated() :
-        Accel<ValueType, nDof>()
+        Accel<ValueType, nDof>(),
+        SensorSimulated<ValueType, Sample>()
     {
     }
 
     //--------------------------------------------------------------------------
-    // Public methods
+    // Public virtual methods overridden for SensorSimulated
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    void simulatedSampleReady(const Accel<ValueType, nDof>::Sample& sample)
+    virtual Sample generateSample(
+                           const InertialSystemState<ValueType>& state) override
     {
-        Accel<ValueType, nDof>::Sample errorSample = sample;
+        GnssReceiver<ValueType>::Sample sample;
 
-        Eigen::Map<Eigen::Matrix<ValueType, nDof, 1>> sampleVector(
-                                                            errorSample.values);
-
-        myErrorModel.apply(sampleVector);
-
-        Accel<ValueType, nDof>::sampleReady(errorSample);
+        return sample;
     }
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    ErrorModel<ValueType, nDof> myErrorModel;
 };
 
 }; // namespace Plat4m

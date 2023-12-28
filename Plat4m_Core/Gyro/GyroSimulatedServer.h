@@ -33,14 +33,14 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file GnssReceiverSimulated.h
+/// @file GyroSimulatedServer.h
 /// @author Ben Minerd
-/// @date 11/22/2023
-/// @brief GnssReceiverSimulated class header file.
+/// @date 12/28/2023
+/// @brief GyroSimulatedServer class header file.
 ///
 
-#ifndef PLAT4M_GNSS_RECEIVER_SIMULATED_H
-#define PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#ifndef PLAT4M_GYRO_SIMULATED_SERVER_H
+#define PLAT4M_GYRO_SIMULATED_SERVER_H
 
 //------------------------------------------------------------------------------
 // Include files
@@ -48,8 +48,10 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Gnss/GnssReceiver.h>
-#include <Plat4m_Core/Sensor/SensorSimulated.h>
+#include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Gyro/Gyro.h>
+#include <Plat4m_Core/TopicBase.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -62,9 +64,9 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <typename ValueType>
-class GnssReceiverSimulated :
-            public GnssReceiver<ValueType>, public SensorSimulated<ValueType, 3>
+template <typename ValueType, std::uint32_t nDof>
+class GyroSimulatedServer :
+          public SensorSimulatedServer<ValueType, Gyro<ValueType, nDof>::Sample>
 {
 public:
 
@@ -73,26 +75,15 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    GnssReceiverSimulated() :
-        GnssReceiver<ValueType>(),
-        SensorSimulated<ValueType, 3>()
+    GyroSimulatedServer(GyroSimulated<ValueType, nDof>& gyro,
+               const TopicBase::Id& sampleTopicId) :
+        SensorServer<ValueType, Gyro<ValueType, nDof>::Sample>(gyro,
+                                                               sampleTopicId)
     {
-    }
-
-    //--------------------------------------------------------------------------
-    // Public virtual methods overridden for SensorSimulated
-    //--------------------------------------------------------------------------
-
-    //--------------------------------------------------------------------------
-    virtual Sample generateSample(
-                           const InertialSystemState<ValueType>& state) override
-    {
-        GnssReceiver<ValueType>::Sample sample;
-
-        return sample;
     }
 };
 
+
 }; // namespace Plat4m
 
-#endif // PLAT4M_GNSS_RECEIVER_SIMULATED_H
+#endif // PLAT4M_GYRO_SIMULATED_SERVER_H
