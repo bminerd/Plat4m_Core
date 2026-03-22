@@ -17,6 +17,36 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - `[TEMPLATE]` Description of changes. [Resolves #issue]. [Merge !mr].
 
+- `[BUG FIX]` Changed ByteArray::append() template function parameter defaults to prevent accidental usage in place of other append() methods (Ex. append(const char*)).
+- `[IMPROVEMENT]` Added second template parameter type in UnitTest::testCaseEqual() and testCaseNotEqual() to allow for comparisons between const and non const types.
+- `[IMPROVEMENT]` Added SettingCommand struct for saving, loading, and resetting settings via a Topic.
+- `[BUG FIX]` Fixed scale factor copy bug in Sensor::Traits constructor.
+- `[IMPROVEMENT]` Added generic Sensor class with supporting data type and Server classes.
+- `[IMPROVEMENT]` Changed QueueLinux implementation from Sys V to POSIX message queues. Note that Sys V message queues aren't thread safe. Renamed all [OsClass]Linux classes to [OsClass]Posix now that all implementations are POSIX based. Added aliases to [OsClass]Linux classes. Changed StopwatchStatisticsPrinter hearbeat output from "." to incrementing counter with a new line.
+- `[IMPROVEMENT]` Improved InterruptSTM32F4xx driverSetEnabled() and driverConfigure() logic.
+- `[IMPROVEMENT]` Added c++ check to default FreeRTOSConfig.h file.
+- `[NONFUNCTIONAL]` Removed commented-out code in Printer class.
+- `[BUG FIX]` Fixed ARM 6 warnings and errors in Printer class and Plat4m.h.
+- `[IMPROVEMENT]` Added implementation to fromTimeS() methods in Time class.
+- `[NEW FEATURE]` Added ComProtocolCanOpen and CanIxxat implementations. Minor updates to other modules.
+- `[IMPROVEMENT]` Updated Windows System modules to latest interface APIs. Improved QueueDriverWindows to support all data types (previously only supported uint8_t). Improved start-up stability of ThreadWindows by adding CREATE_SUSPENDED flag at creation. Minor updates to OS module formatting.
+- `[IMPROVEMENT]` Added getDataAs() templated method variant with const qualifier to Array. Minor formatting updates to Array and ByteArray classes.
+- `[IMPROVEMENT]` Disabled unnused stopwatch printing in StopwatchStatisticsPrinter.
+- `[IMPROVEMENT]` Improved SystemFreeRtosCortexM::driverGetTimeStamp() implementation.
+- `[IMPROVEMENT]` Removed debugging logic from Stopwatch.
+- `[IMPROVEMENT]` Added wait until done parameter to StopwatchStatisticsPrinter::printStopwatchStatistics().
+- `[BUG FIX]` Fixed bug in Quantity::to() for converting to float seconds.
+- `[BUG FIX]` Fixed time stamp calculation in SystemFreeRtosCortexM::driverGetTimeStamp().
+- `[IMPROVEMENT]` Added accessor for output thread to StopwatchStatisticsPrinter.
+- `[IMPROVEMENT]` Moved createCallback() helper functions from CallbackFunction.h and CallbackMethod.h to Callback.h for include simplicity.
+- `[BUG FIX]` Fixed StopwatchManager background Stopwatch name.
+- `[IMPROVEMENT]` Added frequency and CPU loading statistics to Stopwatch class. Added more reliable simulation thread synchronization in SystemSimulation and related classes. Added ThreadPolicy functions to track when threads are blocked for timing and CPU loading purposes.
+- `[NONFUNCTIONAL]` Added Topic module documentation.
+- `[NEW FEATURE]` Added generic Quantity class that can store and convert between different value representations. Added Time and Length subclasses with SI units conversions.
+- `[IMPROVEMENT]` Added run-time error handling.
+- `[IMPROVEMENT]` Added MemoryManager class that can generially clean up dynamically allocated objects when it goes out of scope.
+- `[BUG FIX]` Fixed uninitialized GPIO config struct in UartSTM32H7xx.
+
 ### 3.0.0
 
 Released: 2023-11-17

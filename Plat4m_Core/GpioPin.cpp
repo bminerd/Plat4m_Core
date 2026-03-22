@@ -69,7 +69,10 @@ GpioPin::Error GpioPin::setLevel(const Level level)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(GpioPin::Error,
+                                   GpioPin::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     return driverSetLevel(level);
@@ -80,7 +83,10 @@ GpioPin::Error GpioPin::getLevel(Level& level)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(GpioPin::Error,
+                                   GpioPin::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Level temporaryLevel;
@@ -100,7 +106,10 @@ GpioPin::Error GpioPin::readLevel(Level& level)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(GpioPin::Error,
+                                   GpioPin::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Level temporaryLevel;
@@ -120,7 +129,10 @@ GpioPin::Error GpioPin::toggleLevel()
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(GpioPin::Error,
+                                   GpioPin::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     return driverToggleLevel();

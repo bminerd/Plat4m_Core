@@ -194,7 +194,7 @@ public:
         INTERRUPT_TIM_20_CC
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     typedef Callback<> UpdateInterruptCallback;
 

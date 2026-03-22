@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022-2023 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -336,7 +336,7 @@ private:
 
     const TransferMode myTransferMode;
 
-    USART_TypeDef* myUart;
+    volatile USART_TypeDef* myUart;
 
     GpioPinSTM32H7xx& myTransmitGpioPin;
 
@@ -347,10 +347,10 @@ private:
     volatile State myState;
 
     //--------------------------------------------------------------------------
-    // Private methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
-    Module::Error driverSetEnabled(const bool enabled);
+    virtual Module::Error driverSetEnabled(const bool enabled) override;
 
     //--------------------------------------------------------------------------
     // Private virtual methods overridden for Uart

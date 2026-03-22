@@ -46,10 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <pthread.h>
-
-#include <Plat4m_Core/Thread.h>
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Posix/ThreadPosix.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -59,60 +56,10 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases
 //------------------------------------------------------------------------------
 
-class ThreadLinux : public Thread
-{
-public:
-
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    ThreadLinux(RunCallback& callback,
-                const TimeMs periodMs = 0,
-                const char* name = 0);
-
-    //--------------------------------------------------------------------------
-    // Public virtual destructors
-    //--------------------------------------------------------------------------
-
-    virtual ~ThreadLinux();
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    pthread_t myThreadHandle;
-    pthread_mutex_t myMutexHandle;
-    pthread_cond_t myConditionHandle;
-    TimeMs myNextCallTimeMs;
-    bool myIsEnabled;
-    bool myShouldExit;
-
-    //--------------------------------------------------------------------------
-    // Private static methods
-    //--------------------------------------------------------------------------
-
-    static void* threadCallback(void* arg);
-
-    //--------------------------------------------------------------------------
-    // Private virtual methods overridden for Module
-    //--------------------------------------------------------------------------
-
-    virtual Module::Error driverSetEnabled(const bool enabled) override;
-
-    //--------------------------------------------------------------------------
-    // Private virtual methods overridden for Thread
-    //--------------------------------------------------------------------------
-
-    virtual void driverSetPeriodMs(const TimeMs periodMs) override;
-
-    virtual uint32_t driverSetPriority(const uint32_t priority) override;
-};
+using ThreadLinux = ThreadPosix;
 
 }; // namespace Plat4m
 

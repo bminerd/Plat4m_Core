@@ -44,20 +44,27 @@ set(source_files ${PROJECT_SOURCE_DIR}/main.cpp
                  ${PLAT4M_CORE_DIR}/WaitCondition.cpp
                  ${PLAT4M_CORE_DIR}/QueueDriver.cpp
                  ${PLAT4M_CORE_DIR}/Semaphore.cpp
-                 ${PLAT4M_CORE_DIR}/TimeStamp.cpp
                  ${PLAT4M_CORE_DIR}/TopicBase.cpp
                  ${PLAT4M_CORE_DIR}/TopicManager.cpp
                  ${PLAT4M_CORE_DIR}/ServiceBase.cpp
                  ${PLAT4M_CORE_DIR}/ServiceManager.cpp
                  ${PLAT4M_CORE_DIR}/DataObjectBase.cpp
                  ${PLAT4M_CORE_DIR}/DataObjectManager.cpp
+                 ${PLAT4M_CORE_DIR}/Base.cpp
+                 ${PLAT4M_CORE_DIR}/ErrorBase.cpp
+                 ${PLAT4M_CORE_DIR}/ErrorManager.cpp
+                 ${PLAT4M_CORE_DIR}/MemoryManager.cpp
+                 ${PLAT4M_CORE_DIR}/Printer.cpp
+                 ${PLAT4M_CORE_DIR}/PrinterConsole.cpp
+                 ${PLAT4M_CORE_DIR}/GlobalErrorPrinter.cpp
                  ${PLAT4M_CORE_DIR}/UnitTest/UnitTest.cpp
                  ${PLAT4M_CORE_DIR}/Linux/SystemLinux.cpp
                  ${PLAT4M_CORE_DIR}/Linux/ProcessorLinux.cpp
-                 ${PLAT4M_CORE_DIR}/Linux/ThreadLinux.cpp
-                 ${PLAT4M_CORE_DIR}/Linux/MutexLinux.cpp
-                 ${PLAT4M_CORE_DIR}/Linux/WaitConditionLinux.cpp
-                 ${PLAT4M_CORE_DIR}/Linux/QueueDriverLinux.cpp
-                 ${PLAT4M_CORE_DIR}/Linux/SemaphoreLinux.cpp)
+                 ${PLAT4M_CORE_DIR}/Posix/ThreadPosix.cpp
+                 ${PLAT4M_CORE_DIR}/Posix/MutexPosix.cpp
+                 ${PLAT4M_CORE_DIR}/Posix/WaitConditionPosix.cpp
+                 ${PLAT4M_CORE_DIR}/Posix/QueueDriverPosix.cpp
+                 ${PLAT4M_CORE_DIR}/Posix/SemaphorePosix.cpp)
 
 add_executable(Acceptance_Test_Linux_App ${source_files})
+target_link_libraries(${PROJECT_NAME} rt)

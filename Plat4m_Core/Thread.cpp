@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2023 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/ThreadPolicyManager.h>
 
-using Plat4m::Thread;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public methods
@@ -93,6 +93,15 @@ const char* Thread::getName() const
 }
 
 //------------------------------------------------------------------------------
+void Thread::policyNotifyBlocked(const bool blocked)
+{
+    if (isValidPointer(myThreadPolicy))
+    {
+        myThreadPolicy->notifyBlocked(blocked);
+    }
+}
+
+//------------------------------------------------------------------------------
 // Protected constructors
 //------------------------------------------------------------------------------
 
@@ -115,4 +124,8 @@ Thread::Thread(RunCallback& runCallback,
 //------------------------------------------------------------------------------
 Thread::~Thread()
 {
+    if (isValidPointer(myThreadPolicy))
+    {
+        myThreadPolicy->~ThreadPolicy();
+    }
 }

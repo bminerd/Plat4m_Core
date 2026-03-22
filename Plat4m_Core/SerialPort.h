@@ -104,7 +104,7 @@ public:
         HARDWARE_FLOW_CONTROL_NONE = 0
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
     
     //--------------------------------------------------------------------------
     // Public structures

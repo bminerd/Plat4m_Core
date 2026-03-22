@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@
 
 #include <Plat4m_Core/Mutex.h>
 
-using Plat4m::Mutex;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Protected constructors
@@ -74,12 +74,12 @@ Mutex::~Mutex()
 Mutex::Error Mutex::setLocked(const bool locked)
 {
     Error error = driverSetLocked(locked);
-    
-    if (error == ERROR_NONE)
+
+    if (error.getCode() == ERROR_CODE_NONE)
     {
         myIsLocked = locked;
     }
-    
+
     return error;
 }
 
@@ -87,4 +87,16 @@ Mutex::Error Mutex::setLocked(const bool locked)
 bool Mutex::isLocked()
 {
     return myIsLocked;
+}
+
+//------------------------------------------------------------------------------
+Mutex::Error Mutex::lock()
+{
+    return (setLocked(true));
+}
+
+//------------------------------------------------------------------------------
+Mutex::Error Mutex::unlock()
+{
+    return (setLocked(false));
 }

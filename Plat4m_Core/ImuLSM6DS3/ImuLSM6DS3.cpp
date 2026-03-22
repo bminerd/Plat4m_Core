@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2015-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,10 +52,7 @@
 #include <Plat4m_Core/CallbackMethodParameter.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::ImuLSM6DS3;
-using Plat4m::Imu;
-using Plat4m::Module;
-using Plat4m::SlaveDevice;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Private static data members
@@ -271,7 +268,10 @@ ImuLSM6DS3::Error ImuLSM6DS3::setLSM6DS3Config(const Config& config)
 {
 	if (!isEnabled())
 	{
-		return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(ImuLSM6DS3::Error,
+                                   ImuLSM6DS3::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
 	}
 
 	uint8_t value;
@@ -414,7 +414,10 @@ ImuLSM6DS3::Error ImuLSM6DS3::readRegisters(const Register startingRegister,
 {
 	if (!isEnabled())
 	{
-		return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(ImuLSM6DS3::Error,
+                                   ImuLSM6DS3::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
 	}
 
 	ByteArrayN<1> txByteArray;
@@ -425,7 +428,10 @@ ImuLSM6DS3::Error ImuLSM6DS3::readRegisters(const Register startingRegister,
 
 	if (error.getCode() != SlaveDevice::ERROR_CODE_NONE)
 	{
-		return Error(ERROR_CODE_COMMUNICATION_FAILED);
+        return PLAT4M_REPORT_ERROR(ImuLSM6DS3::Error,
+                                   ImuLSM6DS3::ERROR_CODE_COMMUNICATION_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
 	}
 
 	return Error(ERROR_CODE_NONE);
@@ -437,7 +443,10 @@ ImuLSM6DS3::Error ImuLSM6DS3::writeRegister(const Register reg,
 {
 	if (!isEnabled())
 	{
-		return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(ImuLSM6DS3::Error,
+                                   ImuLSM6DS3::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
 	}
 
 	ByteArrayN<2> txByteArray;
@@ -448,7 +457,10 @@ ImuLSM6DS3::Error ImuLSM6DS3::writeRegister(const Register reg,
 
 	if (error.getCode() != SlaveDevice::ERROR_CODE_NONE)
 	{
-		return Error(ERROR_CODE_COMMUNICATION_FAILED);
+        return PLAT4M_REPORT_ERROR(ImuLSM6DS3::Error,
+                                   ImuLSM6DS3::ERROR_CODE_COMMUNICATION_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
 	}
 
 	return Error(ERROR_CODE_NONE);
@@ -509,7 +521,11 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
                         ARRAY_SIZE(myAccelFullScaleMap),
                         index))
     {
-        return Imu::Error(Imu::ERROR_CODE_ACCEL_MEASUREMENT_RANGE_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                                Imu::Error,
+                                Imu::ERROR_CODE_ACCEL_MEASUREMENT_RANGE_INVALID,
+                                ErrorBase::SEVERITY_HIGH,
+                                this);
     }
 
     setBits(value, myAccelFullScaleMaskMap[index]);
@@ -523,7 +539,11 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
                         ARRAY_SIZE(myAccelOutputDataRateMap),
                         index))
     {
-        return Imu::Error(Imu::ERROR_CODE_ACCEL_MEASUREMENT_RATE_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                                 Imu::Error,
+                                 Imu::ERROR_CODE_ACCEL_MEASUREMENT_RATE_INVALID,
+                                 ErrorBase::SEVERITY_HIGH,
+                                 this);
     }
 
     setBits(value, myAccelOutputDataRateMaskMap[index]);
@@ -532,7 +552,10 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
 
     if (error.getCode() != ERROR_CODE_NONE)
     {
-        return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+        return PLAT4M_REPORT_ERROR(Imu::Error,
+                                   Imu::ERROR_CODE_COMMUNICATION_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     // Gyro configuration
@@ -546,7 +569,11 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
                         ARRAY_SIZE(myGyroFullScaleMap),
                         index))
     {
-        return Imu::Error(Imu::ERROR_CODE_GYRO_MEASUREMENT_RANGE_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                                 Imu::Error,
+                                 Imu::ERROR_CODE_GYRO_MEASUREMENT_RANGE_INVALID,
+                                 ErrorBase::SEVERITY_HIGH,
+                                 this);
     }
 
     setBits(value, myGyroFullScaleMaskMap[index]);
@@ -560,7 +587,11 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
                         ARRAY_SIZE(myGyroOutputDataRateMap),
                         index))
     {
-        return Imu::Error(Imu::ERROR_CODE_GYRO_MEASUREMENT_RATE_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                                  Imu::Error,
+                                  Imu::ERROR_CODE_GYRO_MEASUREMENT_RATE_INVALID,
+                                  ErrorBase::SEVERITY_HIGH,
+                                  this);
     }
 
     setBits(value, myGyroOutputDataRateMaskMap[index]);
@@ -569,7 +600,10 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
 
     if (error.getCode() != ERROR_CODE_NONE)
     {
-        return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+        return PLAT4M_REPORT_ERROR(Imu::Error,
+                                   Imu::ERROR_CODE_COMMUNICATION_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     if (isValidPointer(myInt1ExternalInterrupt))
@@ -578,7 +612,10 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
 
         if (error.getCode() != ERROR_CODE_NONE)
         {
-            return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+            return PLAT4M_REPORT_ERROR(Imu::Error,
+                                       Imu::ERROR_CODE_COMMUNICATION_FAILED,
+                                       ErrorBase::SEVERITY_HIGH,
+                                       this);
         }
     }
 
@@ -588,7 +625,10 @@ Imu::Error ImuLSM6DS3::driverSetConfig(const Imu::Config& config)
 
         if (error.getCode() != ERROR_CODE_NONE)
         {
-            return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+            return PLAT4M_REPORT_ERROR(Imu::Error,
+                                       Imu::ERROR_CODE_COMMUNICATION_FAILED,
+                                       ErrorBase::SEVERITY_HIGH,
+                                       this);
         }
 	}
 
@@ -616,7 +656,10 @@ Imu::Error ImuLSM6DS3::driverGetRawAccelMeasurement(
 
         if (error.getCode() != ERROR_CODE_NONE)
         {
-            return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+            return PLAT4M_REPORT_ERROR(Imu::Error,
+                                       Imu::ERROR_CODE_COMMUNICATION_FAILED,
+                                       ErrorBase::SEVERITY_HIGH,
+                                       this);
         }
     }
     else if (myConfig.readMode == READ_MODE_MAILBOX)
@@ -624,7 +667,10 @@ Imu::Error ImuLSM6DS3::driverGetRawAccelMeasurement(
         if (myMailboxArray[0].error.getCode() !=
                                                 MasterSlaveBus::ERROR_CODE_NONE)
         {
-            return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+            return PLAT4M_REPORT_ERROR(Imu::Error,
+                                       Imu::ERROR_CODE_COMMUNICATION_FAILED,
+                                       ErrorBase::SEVERITY_HIGH,
+                                       this);
         }
     }
 
@@ -651,7 +697,10 @@ Imu::Error ImuLSM6DS3::driverGetRawGyroMeasurement(
 
         if (error.getCode() != ERROR_CODE_NONE)
         {
-            return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+            return PLAT4M_REPORT_ERROR(Imu::Error,
+                                       Imu::ERROR_CODE_COMMUNICATION_FAILED,
+                                       ErrorBase::SEVERITY_HIGH,
+                                       this);
         }
     }
     else if (myConfig.readMode == READ_MODE_MAILBOX)
@@ -659,7 +708,10 @@ Imu::Error ImuLSM6DS3::driverGetRawGyroMeasurement(
         if (myMailboxArray[1].error.getCode() !=
                                                 MasterSlaveBus::ERROR_CODE_NONE)
         {
-            return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+            return PLAT4M_REPORT_ERROR(Imu::Error,
+                                       Imu::ERROR_CODE_COMMUNICATION_FAILED,
+                                       ErrorBase::SEVERITY_HIGH,
+                                       this);
         }
     }
 
@@ -690,7 +742,10 @@ Imu::Error ImuLSM6DS3::driverGetRawMeasurement(RawMeasurement& measurement)
 
 		if (error.getCode() != ERROR_CODE_NONE)
 		{
-			return Imu::Error(Imu::ERROR_CODE_COMMUNICATION_FAILED);
+			return PLAT4M_REPORT_ERROR(Imu::Error,
+                                       Imu::ERROR_CODE_COMMUNICATION_FAILED,
+                                       ErrorBase::SEVERITY_HIGH,
+                                       this);
 		}
 
 		measurement.accelX = (int16_t) ((((uint16_t) values[7]) << 8) |

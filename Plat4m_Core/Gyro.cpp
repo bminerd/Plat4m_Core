@@ -62,7 +62,10 @@ Gyro::Error Gyro::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Gyro::Error,
+                                   Gyro::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverSetConfig(config);
@@ -80,7 +83,10 @@ Gyro::Error Gyro::getAngularVelocityDps(AngularVelocityDps& angularVelocityDps)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Gyro::Error,
+                                   Gyro::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverGetAngularVelocityDps(angularVelocityDps);

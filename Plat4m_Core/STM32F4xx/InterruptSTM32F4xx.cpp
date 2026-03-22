@@ -173,13 +173,14 @@ InterruptSTM32F4xx::InterruptSTM32F4xx(const Id id,
 //------------------------------------------------------------------------------
 Module::Error InterruptSTM32F4xx::driverSetEnabled(const bool enabled)
 {
-    NVIC_InitTypeDef nvicInit;
-    nvicInit.NVIC_IRQChannel                   = myIrqNumberMap[myId];
-    nvicInit.NVIC_IRQChannelPreemptionPriority = 0x00;
-    nvicInit.NVIC_IRQChannelSubPriority        = 0x00;
-    nvicInit.NVIC_IRQChannelCmd                = (FunctionalState) enabled;
-
-    NVIC_Init(&nvicInit);
+    if (enabled)
+    {
+        NVIC_EnableIRQ(myIrqNumberMap[myId]);
+    }
+    else
+    {
+        NVIC_DisableIRQ(myIrqNumberMap[myId]);
+    }
 
     return Module::Error(Module::ERROR_CODE_NONE);
 }
@@ -191,13 +192,10 @@ Module::Error InterruptSTM32F4xx::driverSetEnabled(const bool enabled)
 //------------------------------------------------------------------------------
 Interrupt::Error InterruptSTM32F4xx::driverConfigure(const Config& config)
 {
-    NVIC_InitTypeDef nvicInit;
-    nvicInit.NVIC_IRQChannel                   = myIrqNumberMap[myId];
-    nvicInit.NVIC_IRQChannelPreemptionPriority = config.priority;
-    nvicInit.NVIC_IRQChannelSubPriority        = 0x00;
-    nvicInit.NVIC_IRQChannelCmd                = ENABLE;
-
-    NVIC_Init(&nvicInit);
+    NVIC_SetPriority(myIrqNumberMap[myId],
+                     NVIC_EncodePriority(NVIC_GetPriorityGrouping(),
+                                         config.priority,
+                                         0));
 
     return Error(ERROR_CODE_NONE);
 }

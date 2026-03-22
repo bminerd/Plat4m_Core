@@ -58,35 +58,33 @@ ServiceManager* ServiceManager::myInstance = 0;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void ServiceManager::add(ServiceBase& topic)
+void ServiceManager::add(ServiceBase& service)
 {
     if (isNullPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_NOT_CREATED);
-
-        // Lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                                ServiceManager::Error,
+                                ServiceManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                ErrorBase::SEVERITY_CRITICAL,
+                                ServiceManager);
     }
 
-    myInstance->addPrivate(topic);
+    myInstance->addPrivate(service);
 }
 
 //------------------------------------------------------------------------------
-void ServiceManager::remove(ServiceBase& topic)
+void ServiceManager::remove(ServiceBase& service)
 {
     if (isNullPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_NOT_CREATED);
-
-        // Lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                                ServiceManager::Error,
+                                ServiceManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                ErrorBase::SEVERITY_CRITICAL,
+                                ServiceManager);
     }
 
-    myInstance->removePrivate(topic);
+    myInstance->removePrivate(service);
 }
 
 //------------------------------------------------------------------------------
@@ -94,12 +92,11 @@ ServiceBase* ServiceManager::find(const Id id)
 {
     if (isNullPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_NOT_CREATED);
-
-        // Lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                                ServiceManager::Error,
+                                ServiceManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                ErrorBase::SEVERITY_CRITICAL,
+                                ServiceManager);
     }
 
     return (myInstance->findPrivate(id));
@@ -114,12 +111,11 @@ ServiceManager::ServiceManager()
 {
     if (isValidPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_ALREADY_CREATED);
-
-        // Error, lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                            ServiceManager::Error,
+                            ServiceManager::ERROR_CODE_INSTANCE_ALREADY_CREATED,
+                            ErrorBase::SEVERITY_CRITICAL,
+                            ServiceManager);
     }
 
     myInstance = this;

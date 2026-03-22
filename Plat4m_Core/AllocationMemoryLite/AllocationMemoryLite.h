@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014-2023 Benjamin Minerd
+// Copyright (c) 2014-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -74,6 +74,7 @@ public:
     //--------------------------------------------------------------------------
     AllocationMemoryLite() :
         AllocationMemory(),
+        myMemory{0},
         myMemoryIndex(0),
         myIsLocked(false)
     {
@@ -126,7 +127,6 @@ private:
             // Attempting to allocate more memory than available, lock up
             while (true)
             {
-
             }
         }
         
@@ -142,19 +142,19 @@ private:
     //--------------------------------------------------------------------------
     virtual void* driverAllocateArray(size_t count) override
     {
-        return driverAllocate(count); // Does this work?
+        return driverAllocate(count);
     }
 
     //--------------------------------------------------------------------------
-    virtual void driverDeallocate(void* pointer) override
+    virtual void driverDeallocate(void*& pointer) override
     {
-        // Intentionally blank
+        pointer = 0;
     }
 
     //--------------------------------------------------------------------------
-    virtual void driverDeallocateArray(void* pointer) override
+    virtual void driverDeallocateArray(void*& pointer) override
     {
-        // Intentionally blank
+        pointer = 0;
     }
 
     //--------------------------------------------------------------------------

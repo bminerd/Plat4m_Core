@@ -66,8 +66,14 @@ ApplicationUnitTestApp::ApplicationUnitTestApp(const char* name,
                                                const char* version) :
     Application("UNIT_TEST_APP", "UNIT_TEST", "0.0.1"),
     myAllocationMemory(),
+    myMemoryManager(),
+    myErrorManager(),
     myUnitTestList()
 {
+    ErrorManager::Config config;
+    config.minReportingSeverity = ErrorBase::SEVERITY_HIGH;
+
+    myErrorManager.setConfig(config);
 }
 
 //------------------------------------------------------------------------------
@@ -129,7 +135,10 @@ UnitTest::Error ApplicationUnitTestApp::runTest(const uint32_t moduleIndex,
 {
     if (moduleIndex >= myUnitTestList.size())
     {
-        return (UnitTest::Error(UnitTest::ERROR_CODE_INVALID_TEST_INDEX));
+        return PLAT4M_REPORT_ERROR(UnitTest::Error,
+                                   UnitTest::ERROR_CODE_INVALID_TEST_INDEX,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     uint32_t currentIndex = 0;

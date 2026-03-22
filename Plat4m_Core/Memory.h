@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -70,7 +70,7 @@ public:
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -78,13 +78,13 @@ public:
         ERROR_CODE_COMMUNICATION
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
-    
+    using Error = ErrorTemplate<ErrorCode>;
+
     struct Config
     {
         int a; // Placeholder
     };
-    
+
     //--------------------------------------------------------------------------
     // Public virtual methods
     //--------------------------------------------------------------------------
@@ -101,7 +101,10 @@ public:
     {
         if (!isEnabled())
         {
-            return Error(ERROR_CODE_NOT_ENABLED);
+            return PLAT4M_REPORT_ERROR(Memory::Error,
+                                       Memory::ERROR_CODE_NOT_ENABLED,
+                                       ErrorBase::SEVERITY_LOW,
+                                       this);
         }
 
         Error error = driverClear(address, nBytes);
@@ -114,7 +117,10 @@ public:
     {
         if (!isEnabled())
         {
-            return Error(ERROR_CODE_NOT_ENABLED);
+            return PLAT4M_REPORT_ERROR(Memory::Error,
+                                       Memory::ERROR_CODE_NOT_ENABLED,
+                                       ErrorBase::SEVERITY_LOW,
+                                       this);
         }
 
         Error error = driverRead(address, dataArray);
@@ -127,25 +133,28 @@ public:
     {
         if (!isEnabled())
         {
-            return Error(ERROR_CODE_NOT_ENABLED);
+            return PLAT4M_REPORT_ERROR(Memory::Error,
+                                       Memory::ERROR_CODE_NOT_ENABLED,
+                                       ErrorBase::SEVERITY_LOW,
+                                       this);
         }
 
         Error error = driverWrite(address, dataArray);
 
         return error;
     }
-    
+
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-   
+
     //--------------------------------------------------------------------------
     Memory()
     {
     }
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
@@ -156,24 +165,24 @@ protected:
     }
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     Config myConfig;
-    
+
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Error driverConfigure(const Config& config) = 0;
-    
+
     virtual Error driverClear(const TAddress address,
                               const uint32_t nBytes) = 0;
 
     virtual Error driverRead(const TAddress address, ByteArray& byteArray) = 0;
-    
+
     virtual Error driverWrite(const TAddress address,
                               const ByteArray& byteArray) = 0;
 };

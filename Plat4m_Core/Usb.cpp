@@ -58,7 +58,10 @@ ComInterface::Error Usb::transmitBytes(const ByteArray& byteArray,
 {
     if (!isEnabled())
     {
-        return ComInterface::Error(ComInterface::ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(ComInterface::Error,
+                                   ComInterface::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverTransmitBytes(byteArray, waitUntilDone);

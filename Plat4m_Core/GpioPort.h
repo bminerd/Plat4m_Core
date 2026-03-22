@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,7 @@ template <typename TValue>
 class GpioPort : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
@@ -89,7 +89,7 @@ public:
         RESISTOR_PULL_DOWN
     };
     
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     //--------------------------------------------------------------------------
     // Public structures
@@ -106,7 +106,7 @@ public:
     //--------------------------------------------------------------------------
 
     virtual void setValueFast(const TValue value) = 0;
-    
+
     virtual TValue getValueFast() = 0;
 
     virtual TValue readValueFast() = 0;
@@ -114,7 +114,7 @@ public:
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
     Error configure(const Config& config)
     {
@@ -127,52 +127,61 @@ public:
 
         return error;
     }
-    
+
     //--------------------------------------------------------------------------
     Error setValue(const TValue value)
     {
         if (!isEnabled())
         {
-            return Error(ERROR_CODE_NOT_ENABLED);
+            return PLAT4M_REPORT_ERROR(GpioPort::Error,
+                                       GpioPort::ERROR_CODE_NOT_ENABLED,
+                                       ErrorBase::SEVERITY_LOW,
+                                       this);
         }
 
         Error error = driverSetValue(value);
 
         return error;
     }
-    
+
     //--------------------------------------------------------------------------
     Error getValue(TValue& value)
     {
         if (!isEnabled())
         {
-            return Error(ERROR_CODE_NOT_ENABLED);
+            return PLAT4M_REPORT_ERROR(GpioPort::Error,
+                                       GpioPort::ERROR_CODE_NOT_ENABLED,
+                                       ErrorBase::SEVERITY_LOW,
+                                       this);
         }
 
         Error error = driverGetValue(value);
 
         return error;
     }
-    
+
     //--------------------------------------------------------------------------
     Error readValue(TValue& value)
     {
         if (!isEnabled())
         {
-            return Error(ERROR_CODE_NOT_ENABLED);
+            return PLAT4M_REPORT_ERROR(GpioPort::Error,
+                                       GpioPort::ERROR_CODE_NOT_ENABLED,
+                                       ErrorBase::SEVERITY_LOW,
+                                       this);
         }
 
         Error error = driverReadValue(value);
 
         return error;
     }
-    
+
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
     GpioPort() :
         myConfig()
@@ -189,23 +198,23 @@ protected:
     }
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     Config myConfig;
-    
+
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Error driverConfigure(const Config& config) = 0;
-    
+
     virtual Error driverSetValue(const TValue value) = 0;
-    
+
     virtual Error driverGetValue(TValue& value) = 0;
-    
+
     virtual Error driverReadValue(TValue& value) = 0;
 };
 

@@ -999,7 +999,8 @@ bool ArrayUnitTest::prepend2Test1()
 
     // Operation
 
-    bool returnValue = array.prepend(prependItems, arraySize(prependItems));
+    bool returnValue = array.prepend(&(prependItems[0]),
+                                     arraySize(prependItems));
 
     // Test
 
@@ -1051,7 +1052,8 @@ bool ArrayUnitTest::prepend2Test2()
 
     // Operation
 
-    bool returnValue = array.prepend(prependItems, arraySize(prependItems));
+    bool returnValue = array.prepend(&(prependItems[0]),
+                                     arraySize(prependItems));
 
     // Test
 
@@ -1097,7 +1099,8 @@ bool ArrayUnitTest::prepend2Test3()
 
     // Operation
 
-    bool returnValue = array.prepend(prependItems, arraySize(prependItems));
+    bool returnValue = array.prepend(&(prependItems[0]),
+                                     arraySize(prependItems));
 
     // Test
 

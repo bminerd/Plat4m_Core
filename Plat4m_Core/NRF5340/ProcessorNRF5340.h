@@ -85,7 +85,7 @@ public:
         CLOCK_SOURCE_EXTERNAL
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     struct Config
     {

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
+#include <cstdint>
+
 #include <Plat4m_Core/Module.h>
 #include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/ByteArray.h>
@@ -67,7 +68,7 @@ namespace Plat4m
 class ComProtocol : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
@@ -91,55 +92,65 @@ public:
     // Public typedefs
     //--------------------------------------------------------------------------
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
-    uint32_t getParseTimeoutMs();
-    
+
+    std::uint32_t getParseTimeoutMs();
+
     ParseStatus parseData(const ByteArray& receiveByteArray,
                           ByteArray& transmitByteArray,
                           Callback<>*& followUpCallback);
-    
+
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
 
-	ComProtocol(const uint32_t parseTimeoutMs, ComLink& comLink);
+    ComProtocol(const std::uint32_t parseTimeoutMs, ComLink& comLink);
 
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
 
     virtual ~ComProtocol();
-    
+
     //--------------------------------------------------------------------------
     // Protected methods
     //--------------------------------------------------------------------------
 
     ComLink& getComLink();
 
+protected:
+
+    //--------------------------------------------------------------------------
+    // Protected pure virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual ParseStatus subclassParseData(const ByteArray& receiveByteArray,
+                                          ByteArray& transmitByteArray,
+                                          Callback<>*& followUpCallback) = 0;
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
-    const uint32_t myParseTimeoutMs;
+
+    const std::uint32_t myParseTimeoutMs;
 
     ComLink& myComLink;
 
     //--------------------------------------------------------------------------
-    // Private pure virtual methods
+    // Private virtual methods (deprecated)
     //--------------------------------------------------------------------------
 
     virtual ParseStatus driverParseData(const ByteArray& receiveByteArray,
-    									ByteArray& transmitByteArray,
-    									Callback<>*& followUpCallback) = 0;
+                                        ByteArray& transmitByteArray,
+                                        Callback<>*& followUpCallback);
 };
 
 }; // namespace Plat4m

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018-2023 Benjamin Minerd
+// Copyright (c) 2018-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <FreeRTOS-Kernel/include/FreeRTOS.h>
 #include <FreeRTOS-Kernel/include/queue.h>
@@ -74,7 +74,7 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    QueueDriverFreeRtos(const uint32_t nValues, const uint32_t valueSizeBytes) :
+    QueueDriverFreeRtos(const std::uint32_t nValues, const std::uint32_t valueSizeBytes) :
         QueueDriver(),
         myQueueHandle(xQueueCreate(nValues, valueSizeBytes))
     {
@@ -94,33 +94,39 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual uint32_t driverGetSize() override
+    virtual std::uint32_t driverGetSize() override
     {
-        return ((uint32_t) uxQueueMessagesWaiting(myQueueHandle));
+        return (static_cast<std::uint32_t>(uxQueueMessagesWaiting(
+                                                               myQueueHandle)));
     }
 
     //--------------------------------------------------------------------------
-    virtual uint32_t driverGetSizeFast() override
+    virtual std::uint32_t driverGetSizeFast() override
     {
-        return ((uint32_t) uxQueueMessagesWaitingFromISR(myQueueHandle));
+        return (static_cast<std::uint32_t>(uxQueueMessagesWaitingFromISR(
+                                                               myQueueHandle)));
     }
 
     //--------------------------------------------------------------------------
     virtual bool driverEnqueue(const void* value) override
     {
-        return ((bool) xQueueSendToBack(myQueueHandle, value, 0));
+        return (static_cast<bool>(xQueueSendToBack(myQueueHandle, value, 0)));
     }
 
     //--------------------------------------------------------------------------
     virtual bool driverEnqueueFast(const void* value) override
     {
-        return ((bool) xQueueSendToBackFromISR(myQueueHandle, value, 0));
+        return (static_cast<bool>(xQueueSendToBackFromISR(myQueueHandle,
+                                                          value,
+                                                          0)));
     }
 
     //--------------------------------------------------------------------------
     virtual bool driverDequeue(void* value) override
     {
-        return ((bool) xQueueReceive(myQueueHandle, value, 0xFFFFFFFF));
+        return (static_cast<bool>(xQueueReceive(myQueueHandle,
+                                                value,
+                                                0xFFFFFFFF)));
     }
 
     //--------------------------------------------------------------------------
@@ -128,9 +134,9 @@ public:
     {
         BaseType_t xTaskWokenByReceive = pdFALSE;
 
-        return ((bool) xQueueReceiveFromISR(myQueueHandle,
-                                            value,
-                                            &xTaskWokenByReceive));
+        return (static_cast<bool>(xQueueReceiveFromISR(myQueueHandle,
+                                                       value,
+                                                       &xTaskWokenByReceive)));
     }
 
     //--------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/Thread.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,22 +63,31 @@ namespace Plat4m
 class WaitCondition
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
-        ERROR_CODE_NONE
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_WAIT_FAILED,
+        ERROR_CODE_NOTIFY_FAILED,
+        ERROR_CODE_INSTANTIATION_FAILED
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
+
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~WaitCondition();
 
     //--------------------------------------------------------------------------
     // Public pure virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual void notifyFast() = 0;
 
     //--------------------------------------------------------------------------
@@ -89,28 +98,21 @@ public:
 
     Error notify();
 
-    // TODO May need notifyFromIsr() method
-
 protected:
 
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
-    WaitCondition();
-    
-    //--------------------------------------------------------------------------
-    // Protected virtual destructors
-    //--------------------------------------------------------------------------
-    
-    virtual ~WaitCondition();
-    
+
+    WaitCondition(Thread& thread);
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
+    Thread& myThread;
 
     //--------------------------------------------------------------------------
     // Private pure virtual methods

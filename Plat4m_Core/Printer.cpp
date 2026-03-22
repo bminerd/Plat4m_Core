@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,7 @@
 #include <Plat4m_Core/Printer.h>
 #include <Plat4m_Core/ByteArrayN.h>
 
-using Plat4m::Printer;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public static data members
@@ -59,18 +59,19 @@ Printer* Printer::myDriver = 0;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Printer::Error Printer::print(const ByteArray& bytes, const bool waitUntilDone)
+Printer::Error Printer::print(const ByteArray& bytes,
+                              const bool waitUntilDone,
+                              const bool isError)
 {
-    return (myDriver->driverPrint(bytes, waitUntilDone));
+    return (myDriver->driverPrint(bytes, waitUntilDone, isError));
 }
 
 //------------------------------------------------------------------------------
-Printer::Error Printer::print(const char* string, const bool waitUntilDone)
+Printer::Error Printer::print(const char* string,
+                              const bool waitUntilDone,
+                              const bool isError)
 {
-    ByteArrayN<128> bytes;
-    bytes.append(string);
-
-    return (myDriver->driverPrint(bytes, waitUntilDone));
+    return (print<128>(string, waitUntilDone, isError));
 }
 
 //------------------------------------------------------------------------------
@@ -79,7 +80,7 @@ Printer::Error Printer::print(const char* string, const bool waitUntilDone)
 
 //------------------------------------------------------------------------------
 Printer::Printer() :
-	Module()
+    Module()
 {
     if (isNullPointer(myDriver))
     {
@@ -94,4 +95,5 @@ Printer::Printer() :
 //------------------------------------------------------------------------------
 Printer::~Printer()
 {
+    myDriver = 0;
 }

@@ -89,10 +89,19 @@
 	extern uint32_t SystemCoreClock;
 #endif
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 // C-style functions that hook into Plat4m interfaces
 extern uint32_t processorGetCoreClockFrequencyHz(void);
 extern void* allocationMemoryAllocate(size_t count);
 extern void allocationMemoryDeallocate(void* pointer);
+
+#ifdef __cplusplus
+}
+#endif
 
 #define configUSE_PREEMPTION			1
 #define configUSE_IDLE_HOOK				1

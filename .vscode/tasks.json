@@ -4,10 +4,82 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Acceptance_Test_Linux_App - Container build",
+            "label": "Linux_GCC_Build_Test_App - Container clean",
             "type": "shell",
             "linux": {
-                "command": "${workspaceRoot}/Test/Acceptance_Tests/Acceptance_Test_Linux_App/build.sh",
+                "command": "rm -rf ${workspaceRoot}/Test/Build_Tests/Linux_GCC_Build_Test_App/Build",
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Linux_GCC_Build_Test_App - Container build",
+            "type": "shell",
+            "linux": {
+                "command": "${workspaceRoot}/Test/Build_Tests/Linux_GCC_Build_Test_App/build.sh",
+            },
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "ARM_Cortex_M_GCC_Build_Test_App - Container clean",
+            "type": "shell",
+            "linux": {
+                "command": "rm -rf ${workspaceRoot}/Test/Build_Tests/ARM_Cortex_M_GCC_Build_Test_App/Build",
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "ARM_Cortex_M_GCC_Build_Test_App - Container build",
+            "type": "shell",
+            "linux": {
+                "command": "${workspaceRoot}/Test/Build_Tests/ARM_Cortex_M_GCC_Build_Test_App/build.sh",
+            },
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Unit_Test_Linux_App - Container clean",
+            "type": "shell",
+            "linux": {
+                "command": "rm -rf ${workspaceRoot}/Plat4m_Core/UnitTest/Unit_Test_Linux_App/Build",
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Unit_Test_Linux_App - Container build",
+            "type": "shell",
+            "linux": {
+                "command": "${workspaceRoot}/Plat4m_Core/UnitTest/Unit_Test_Linux_App/build.sh",
+            },
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Unit_Test_Linux_App - Container test",
+            "type": "shell",
+            "linux": {
+                "command": "${workspaceRoot}/Plat4m_Core/UnitTest/Unit_Test_Linux_App/test.sh",
             },
             "problemMatcher": [],
             "group": {
@@ -22,6 +94,48 @@
                 "command": "rm -rf ${workspaceRoot}/Test/Acceptance_Tests/Acceptance_Test_Linux_App/Build",
             },
             "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Acceptance_Test_Linux_App - Container build",
+            "type": "shell",
+            "linux": {
+                "command": "${workspaceRoot}/Test/Acceptance_Tests/Acceptance_Test_Linux_App/build.sh",
+            },
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Acceptance_Test_Linux_App - Container test",
+            "type": "shell",
+            "linux": {
+                "command": "${workspaceRoot}/Test/Acceptance_Tests/Acceptance_Test_Linux_App/test.sh",
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "All tests",
+            "type": "shell",
+            "dependsOn": [
+                "Linux_GCC_Build_Test_App - Container build",
+                "ARM_Cortex_M_GCC_Build_Test_App - Container build",
+                "Unit_Test_Linux_App - Container build",
+                "Acceptance_Test_Linux_App - Container build",
+                "Unit_Test_Linux_App - Container test",
+                "Acceptance_Test_Linux_App - Container test",
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"],
             "group": {
                 "kind": "build",
                 "isDefault": true

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018-2023 Benjamin Minerd
+// Copyright (c) 2018-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,19 +44,21 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/SystemWindows/WaitConditionWindows.h>
+#include <Plat4m_Core/SystemWindows/ThreadWindows.h>
 
-using Plat4m::WaitConditionWindows;
-using Plat4m::WaitCondition;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-WaitConditionWindows::WaitConditionWindows() :
-    WaitCondition(),
-    myThreadHandle(0)
+WaitConditionWindows::WaitConditionWindows(Thread& thread) :
+    WaitCondition(thread),
+    myThreadId(0)
 {
+    ThreadWindows& threadWindows = static_cast<ThreadWindows&>(thread);
+    myThreadId = threadWindows.getThreadId();
 }
 
 //------------------------------------------------------------------------------
@@ -75,6 +77,7 @@ WaitConditionWindows::~WaitConditionWindows()
 //------------------------------------------------------------------------------
 void WaitConditionWindows::notifyFast()
 {
+    driverNotify();
 }
 
 //------------------------------------------------------------------------------
@@ -84,19 +87,29 @@ void WaitConditionWindows::notifyFast()
 //------------------------------------------------------------------------------
 WaitCondition::Error WaitConditionWindows::driverWait(const TimeMs waitTimeMs)
 {
-//	myTaskHandle = xTaskGetCurrentTaskHandle();
-//
-//	ulTaskNotifyTake(pdFALSE, (TickType_t) waitTimeMs);
+    if (!(PostThreadMessage(myThreadId, 0x400, 0, 0)))
+    {
+        return (PLAT4M_REPORT_ERROR(WaitCondition::Error,
+                                    ERROR_CODE_WAIT_FAILED,
+                                    ErrorBase::SEVERITY_HIGH,
+                                    this));
+    }
 
-    return Error(ERROR_CODE_NONE);
+    return (WaitCondition::Error(WaitCondition::ERROR_CODE_NONE));
 }
 
 //------------------------------------------------------------------------------
 WaitCondition::Error WaitConditionWindows::driverNotify()
 {
-//	xTaskNotifyGive(myTaskHandle);
-//
-//	myTaskHandle = 0;
+    MSG message;
 
-    return Error(ERROR_CODE_NONE);
+    if (!(GetMessage(&message, NULL, 0, 0)))
+    {
+        return (PLAT4M_REPORT_ERROR(WaitCondition::Error,
+                                    ERROR_CODE_NOTIFY_FAILED,
+                                    ErrorBase::SEVERITY_HIGH,
+                                    this));
+    }
+
+    return (WaitCondition::Error(WaitCondition::ERROR_CODE_NONE));
 }

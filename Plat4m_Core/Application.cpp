@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,7 @@
 #include <Plat4m_Core/Application.h>
 #include <Plat4m_Core/Plat4m.h>
 
-using Plat4m::Application;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Private static data members
@@ -87,7 +87,13 @@ const char* Application::getVersion()
 //------------------------------------------------------------------------------
 int Application::run()
 {
-    return driverRun();
+    return (subclassRun(0, 0));
+}
+
+//------------------------------------------------------------------------------
+int Application::run(int argc, char** argv)
+{
+    return (subclassRun(argc, argv));
 }
 
 //------------------------------------------------------------------------------

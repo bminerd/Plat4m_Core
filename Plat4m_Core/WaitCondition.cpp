@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,19 +45,10 @@
 
 #include <Plat4m_Core/WaitCondition.h>
 
-using Plat4m::WaitCondition;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
-// Protected constructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-WaitCondition::WaitCondition()
-{
-}
-
-//------------------------------------------------------------------------------
-// Protected virtual destructors
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -72,7 +63,11 @@ WaitCondition::~WaitCondition()
 //------------------------------------------------------------------------------
 WaitCondition::Error WaitCondition::wait(const TimeMs waitTimeMs)
 {
+    myThread.policyNotifyBlocked(true);
+
     Error error = driverWait(waitTimeMs);
+
+    myThread.policyNotifyBlocked(false);
 
     return error;
 }
@@ -83,4 +78,14 @@ WaitCondition::Error WaitCondition::notify()
     Error error = driverNotify();
 
     return error;
+}
+
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+WaitCondition::WaitCondition(Thread& thread) :
+    myThread(thread)
+{
 }

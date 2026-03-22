@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018-2023 Benjamin Minerd
+// Copyright (c) 2018-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,8 @@
 
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -67,10 +69,22 @@ class WaitConditionWindows : public WaitCondition
 public:
 
     //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
+
+    enum ErrorCode
+    {
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_CREATION_FAILED
+    };
+
+    using Error = ErrorTemplate<ErrorCode>;
+
+    //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
-    WaitConditionWindows();
+    WaitConditionWindows(Thread& thread);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
@@ -82,8 +96,6 @@ public:
     // Public virtual methods overridden for WaitCondition
     //--------------------------------------------------------------------------
 
-    virtual void waitFast() override;
-
     virtual void notifyFast() override;
 
 private:
@@ -92,17 +104,17 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    HANDLE myThreadHandle;
+    DWORD myThreadId;
 
     //--------------------------------------------------------------------------
     // Private virtual methods overridden for WaitCondition
     //--------------------------------------------------------------------------
 
-    virtual Error driverWait(const TimeMs waitTimeMs) override;
+    virtual WaitCondition::Error driverWait(const TimeMs waitTimeMs) override;
 
-    virtual Error driverNotify() override;
+    virtual WaitCondition::Error driverNotify() override;
 };
 
 }; // namespace Plat4m
 
-#endif // PLAT4M_WAIT_CONDITION_FREE_RTOS_H
+#endif // PLAT4M_WAIT_CONDITION_WINDOWS_H

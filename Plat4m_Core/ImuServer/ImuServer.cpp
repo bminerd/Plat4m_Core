@@ -123,7 +123,10 @@ ImuServer::Error ImuServer::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(ImuServer::Error,
+                                   ImuServer::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     myConfig = config;

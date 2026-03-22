@@ -253,7 +253,10 @@ ComInterface::Error UartSTM32F4xx::driverTransmitBytes(
         }
         else
         {
-            error.setCode(ComInterface::ERROR_CODE_TRANSMIT_BUFFER_FULL);
+            PLAT4M_REPORT_ERROR(ComInterface::Error,
+                                ComInterface::ERROR_CODE_TRANSMIT_BUFFER_FULL,
+                                ErrorBase::SEVERITY_HIGH,
+                                this);
             i = nBytes;
         }
 

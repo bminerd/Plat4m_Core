@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -62,12 +62,11 @@ void TopicManager::add(TopicBase& topic)
 {
     if (isNullPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_NOT_CREATED);
-
-        // Lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                                  TopicManager::Error,
+                                  TopicManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                  ErrorBase::SEVERITY_CRITICAL,
+                                  TopicManager);
     }
 
     myInstance->addPrivate(topic);
@@ -78,12 +77,11 @@ void TopicManager::remove(TopicBase& topic)
 {
     if (isNullPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_NOT_CREATED);
-
-        // Lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                                  TopicManager::Error,
+                                  TopicManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                  ErrorBase::SEVERITY_CRITICAL,
+                                  TopicManager);
     }
 
     myInstance->removePrivate(topic);
@@ -94,12 +92,11 @@ TopicBase* TopicManager::find(const TopicBase::Id id)
 {
     if (isNullPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_NOT_CREATED);
-
-        // Lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                                  TopicManager::Error,
+                                  TopicManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                  ErrorBase::SEVERITY_CRITICAL,
+                                  TopicManager);
     }
 
     return (myInstance->findPrivate(id));
@@ -114,12 +111,10 @@ TopicManager::TopicManager()
 {
     if (isValidPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_ALREADY_CREATED);
-
-        // Error, lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR(TopicManager::Error,
+                            TopicManager::ERROR_CODE_INSTANCE_ALREADY_CREATED,
+                            ErrorBase::SEVERITY_CRITICAL,
+                            this);
     }
 
     myInstance = this;
@@ -176,7 +171,7 @@ TopicBase* TopicManager::findPrivate(const TopicBase::Id id)
     while (iterator.hasCurrent())
     {
         TopicBase* topic = iterator.current();
-        
+
         if (topic->getId() == id)
         {
             existingTopic = topic;

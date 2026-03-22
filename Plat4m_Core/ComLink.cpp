@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,16 +43,12 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <Plat4m_Core/ComLink.h>
 #include <Plat4m_Core/ComProtocol.h>
 #include <Plat4m_Core/System.h>
-#include <Plat4m_Core/CallbackMethodParameter.h>
+#include <Plat4m_Core/Callback.h>
 
-using Plat4m::ComLink;
-using Plat4m::Module;
-using Plat4m::Thread;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -71,12 +67,14 @@ ComLink::ComLink(ByteArray& transmitByteArray,
     myCurrentComProtocolTimeoutTimeMs(0),
     myDataParsingThread(System::createThread(
                           createCallback(this,
-                                         &ComLink::dataParsingThreadCallback))),
-    myWaitCondition(System::createWaitCondition(myDataParsingThread)),
+                                         &ComLink::dataParsingThreadCallback),
+                          0,
+                          1024,
+                          false,
+                          "ComLink Data Parsing Thread")),
     myMutex(System::createMutex(myDataParsingThread)),
-	myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread))
+    myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread))
 {
-    myDataParsingThread.setPriority(3);
 }
 
 //------------------------------------------------------------------------------
@@ -92,16 +90,19 @@ ComLink::ComLink(ByteArray& transmitByteArray,
     myCurrentComProtocolTimeoutTimeMs(0),
     myDataParsingThread(System::createThread(
                           createCallback(this,
-                                         &ComLink::dataParsingThreadCallback))),
-    myWaitCondition(System::createWaitCondition(myDataParsingThread)),
+                                         &ComLink::dataParsingThreadCallback),
+                          0,
+                          1024,
+                          false,
+                          "ComLink Data Parsing Thread")),
     myMutex(System::createMutex(myDataParsingThread)),
-	myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread))
+    myReceiveByteQueue(System::createQueue<uint8_t>(128, myDataParsingThread))
 {
-    myDataParsingThread.setPriority(3);
-
     comInterface.setByteReceivedCallback(
-							    createCallback(this,
-											   &ComLink::byteReceivedCallback));
+                                createCallback(this,
+                                               &ComLink::byteReceivedCallback));
+
+    myConfig.minParseByteCount = 1;
 }
 
 //------------------------------------------------------------------------------
@@ -120,7 +121,7 @@ ComLink::~ComLink()
 //------------------------------------------------------------------------------
 Thread& ComLink::getDataParsingThread()
 {
-	return myDataParsingThread;
+    return myDataParsingThread;
 }
 
 //------------------------------------------------------------------------------
@@ -138,6 +139,20 @@ void ComLink::addComProtocol(ComProtocol& comProtocol)
 }
 
 //------------------------------------------------------------------------------
+ComLink::Error ComLink::setConfig(const Config& config)
+{
+    myConfig = config;
+
+    return (Error(ERROR_CODE_NONE));
+}
+
+//------------------------------------------------------------------------------
+ComLink::Config ComLink::getConfig() const
+{
+    return myConfig;
+}
+
+//------------------------------------------------------------------------------
 ComLink::Error ComLink::transmitBytes(const ByteArray& byteArray,
                                       const bool waitUntilDone)
 {
@@ -145,20 +160,20 @@ ComLink::Error ComLink::transmitBytes(const ByteArray& byteArray,
 
     myComInterfaceDevice.transmitBytes(byteArray, waitUntilDone);
 
-    return Error(ERROR_CODE_NONE);
+    return (Error(ERROR_CODE_NONE));
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Module
+// Protected virtual methods implemented for Module
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Module::Error ComLink::driverEnable(const bool enable)
+Module::Error ComLink::subclassSetEnabled(const bool enable)
 {
     myComInterfaceDevice.setEnabled(enable);
-    myDataParsingThread.enable(enable);
+    myDataParsingThread.setEnabled(enable);
 
-    return Module::Error(Module::ERROR_CODE_NONE);
+    return (Module::Error(Module::ERROR_CODE_NONE));
 }
 
 //------------------------------------------------------------------------------
@@ -168,26 +183,31 @@ Module::Error ComLink::driverEnable(const bool enable)
 //------------------------------------------------------------------------------
 void ComLink::byteReceivedCallback(const uint8_t byte)
 {
-	if (myDataParsingThread.isEnabled())
-	{
-		myReceiveByteQueue.enqueueFast(byte);
-	}
+    if (myDataParsingThread.isEnabled())
+    {
+        myReceiveByteQueue.enqueueFast(byte);
+    }
 }
 
 //------------------------------------------------------------------------------
 void ComLink::dataParsingThreadCallback()
 {
-	uint8_t byte;
-	myReceiveByteQueue.dequeue(byte);
-	myReceiveByteArray.append(byte);
+    std::uint8_t byte;
+    myReceiveByteQueue.dequeue(byte);
+    myReceiveByteArray.append(byte);
 
-	uint32_t nBytes = myReceiveByteQueue.getSize();
+    const std::uint32_t nBytes = myReceiveByteQueue.getSize();
 
-	for (uint32_t i = 0; i < nBytes; i++)
-	{
-		myReceiveByteQueue.dequeue(byte);
-		myReceiveByteArray.append(byte);
-	}
+    for (std::uint32_t i = 0; i < nBytes; i++)
+    {
+        myReceiveByteQueue.dequeue(byte);
+        myReceiveByteArray.append(byte);
+    }
+
+    if (myReceiveByteArray.getSize() < myConfig.minParseByteCount)
+    {
+        return;
+    }
 
     // Timeout
     if (isValidPointer(myCurrentComProtocol) &&
@@ -218,7 +238,6 @@ void ComLink::dataParsingThreadCallback()
 
             iterator.next();
         }
-
     }
 }
 

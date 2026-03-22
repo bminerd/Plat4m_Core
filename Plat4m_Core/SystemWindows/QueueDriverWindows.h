@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018-2023 Benjamin Minerd
+// Copyright (c) 2018-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,9 @@
 
 #include <Plat4m_Core/QueueDriver.h>
 #include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/ByteBuffer.h>
+#include <Plat4m_Core/Mutex.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -69,10 +72,24 @@ class QueueDriverWindows : public QueueDriver
 public:
 
     //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
+
+    enum ErrorCode
+    {
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_CREATION_FAILED
+    };
+
+    using Error = ErrorTemplate<ErrorCode>;
+
+    //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
-    QueueDriverWindows(Thread& thread);
+    QueueDriverWindows(const std::uint32_t nValues,
+                       const std::uint32_t valueSizeBytes,
+                       Thread& thread);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
@@ -84,9 +101,9 @@ public:
     // Public virtual methods overridden for QueueDriver
     //--------------------------------------------------------------------------
 
-    virtual uint32_t driverGetSize() override;
+    virtual std::uint32_t driverGetSize() override;
 
-    virtual uint32_t driverGetSizeFast() override;
+    virtual std::uint32_t driverGetSizeFast() override;
 
     virtual bool driverEnqueue(const void* value) override;
 
@@ -105,6 +122,12 @@ private:
     //--------------------------------------------------------------------------
 
     DWORD myThreadId;
+
+    std::uint8_t* myBytes;
+
+    ByteBuffer myByteBuffer;
+
+    Mutex& myBufferMutex;
 };
 
 }; // namespace Plat4m

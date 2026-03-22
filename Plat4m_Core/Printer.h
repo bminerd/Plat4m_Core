@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,9 +46,13 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+#include <cstdio>
+#include <cstdarg>
+
 #include <Plat4m_Core/Module.h>
 #include <Plat4m_Core/ErrorTemplate.h>
-#include <Plat4m_Core/ByteArray.h>
+#include <Plat4m_Core/ByteArrayN.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -64,35 +68,82 @@ namespace Plat4m
 class Printer : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     //--------------------------------------------------------------------------
     // Public static methods
     //--------------------------------------------------------------------------
 
     static Error print(const ByteArray& bytes,
-                       const bool waitUntilDone = false);
+                       const bool waitUntilDone = false,
+                       const bool isError = false);
 
-    static Error print(const char* string, const bool waitUntilDone = false);
+    //--------------------------------------------------------------------------
+    template <std::uint32_t stringSize>
+    static Error print(const char* string,
+                       const bool waitUntilDone = false,
+                       const bool isError = false)
+    {
+        ByteArrayN<stringSize> bytes;
+        bytes.append(string);
+
+        return (print(bytes, waitUntilDone, isError));
+    }
+
+    static Error print(const char* string,
+                       const bool waitUntilDone = false,
+                       const bool isError = false);
+
+    //--------------------------------------------------------------------------
+    template <typename... TArguments>
+    static Error printFormat(const char* formatString,
+                             const bool waitUntilDone,
+                             const bool isError,
+                             TArguments... arguments)
+    {
+        return (printFormat<128>(formatString,
+                                 waitUntilDone,
+                                 isError,
+                                 arguments...));
+    }
+
+    //--------------------------------------------------------------------------
+    template <std::uint32_t stringSize, typename... TArguments>
+    static Error printFormat(const char* formatString,
+                             const bool waitUntilDone,
+                             const bool isError,
+                             TArguments... arguments)
+    {
+        ByteArrayN<stringSize> bytes;
+
+        int size = std::snprintf(reinterpret_cast<char*>(bytes.getData()),
+                                 stringSize,
+                                 formatString,
+                                 arguments...);
+
+        bytes.setSize(size);
+
+        return (print(bytes, waitUntilDone, isError));
+    }
 
 protected:
 
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
+
     Printer();
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
@@ -112,7 +163,8 @@ private:
     //--------------------------------------------------------------------------
 
     virtual Error driverPrint(const ByteArray& bytes,
-                              const bool waitUntilDone) = 0;
+                              const bool waitUntilDone,
+                              const bool isError) = 0;
 };
 
 }; // namespace Plat4m

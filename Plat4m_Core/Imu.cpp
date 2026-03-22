@@ -116,7 +116,10 @@ Imu::Error Imu::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Imu::Error,
+                                   Imu::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverSetConfig(config);
@@ -225,7 +228,10 @@ Imu::Error Imu::getTempMeasurement(float& tempC)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Imu::Error,
+                                   Imu::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     float temporaryTempC;
@@ -263,7 +269,10 @@ Imu::Error Imu::getAccelMeasurement(AccelMeasurement& measurement)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Imu::Error,
+                                   Imu::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     AccelMeasurement tempMeasurement;
@@ -301,7 +310,10 @@ Imu::Error Imu::getGyroMeasurement(GyroMeasurement& measurement)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Imu::Error,
+                                   Imu::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     GyroMeasurement tempMeasurement;
@@ -339,7 +351,10 @@ Imu::Error Imu::getMagMeasurement(MagMeasurement& measurement)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Imu::Error,
+                                   Imu::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     MagMeasurement tempMeasurement;
@@ -377,7 +392,10 @@ Imu::Error Imu::getMeasurement(Measurement& measurement)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Imu::Error,
+                                   Imu::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverGetMeasurement(measurement);
@@ -420,7 +438,10 @@ Imu::Error Imu::startOffsetCalibration(const uint32_t nSamples)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Imu::Error,
+                                   Imu::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverStartOffsetCalibration(nSamples);

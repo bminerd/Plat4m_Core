@@ -45,9 +45,7 @@
 
 #include <Plat4m_Core/EnableLine.h>
 
-using Plat4m::EnableLine;
-using Plat4m::Module;
-using Plat4m::GpioPin;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Local variables
@@ -223,7 +221,10 @@ Module::Error EnableLine::driverEnable(const bool enable)
     if ((moduleError.getCode() != Module::ERROR_CODE_NONE) ||
         (gpioPinError.getCode() != GpioPin::ERROR_CODE_NONE))
     {
-        return Module::Error(Module::ERROR_CODE_ENABLE_FAILED);
+        return PLAT4M_REPORT_ERROR(Module::Error,
+                                   Module::ERROR_CODE_ENABLE_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     return Module::Error(Module::ERROR_CODE_NONE);

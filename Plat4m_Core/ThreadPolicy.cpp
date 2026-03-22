@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,26 @@
 #include <Plat4m_Core/ThreadPolicy.h>
 #include <Plat4m_Core/Thread.h>
 
-using Plat4m::ThreadPolicy;
+using namespace Plat4m;
+
+//------------------------------------------------------------------------------
+// Public virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+ThreadPolicy::~ThreadPolicy()
+{
+}
+
+//------------------------------------------------------------------------------
+// Public virtual methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void ThreadPolicy::notifyBlocked(const bool blocked)
+{
+    // Not implemented by subclass, default implementation (do nothing)
+}
 
 //------------------------------------------------------------------------------
 // Protected constructors
@@ -54,14 +73,5 @@ using Plat4m::ThreadPolicy;
 
 //------------------------------------------------------------------------------
 ThreadPolicy::ThreadPolicy()
-{
-}
-
-//------------------------------------------------------------------------------
-// Protected virtual destructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-ThreadPolicy::~ThreadPolicy()
 {
 }

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/Module.h>
+#include <cstdint>
+
+#include <Plat4m_Core/ComInterface.h>
 #include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/ByteArrayN.h>
 #include <Plat4m_Core/Callback.h>
@@ -65,105 +66,125 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class Can : public Module
+class Can : public ComInterface
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
-        ERROR_CODE_NONE,              		   /// No error.
-        ERROR_CODE_PARAMETER_INVALID, 		   /// Parameter is invalid.
-        ERROR_CODE_NOT_ENABLED,       		   /// CAN is not enabled.
-		ERROR_CODE_BAUD_RATE_INVALID, 		   /// Baud rate is invalid.
-        ERROR_CODE_TX_BUFFER_FULL,    		   /// CAN transmit buffer is full.
-		ERROR_CODE_ACCEPTANCE_FILTER_LIST_FULL ///
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_PARAMETER_INVALID,
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_BAUD_RATE_INVALID,
+        ERROR_CODE_TX_BUFFER_FULL,
+        ERROR_CODE_ACCEPTANCE_FILTER_LIST_FULL
     };
-    
+
     enum IdType
-	{
-    	ID_TYPE_BASE = 0, /// 11-bit identifier
-		ID_TYPE_EXTENDED  /// 29-bit identifier
-	};
+    {
+        ID_TYPE_BASE = 0, /// 11-bit identifier
+        ID_TYPE_EXTENDED  /// 29-bit identifier
+    };
 
     enum FrameType
-	{
-    	FRAME_TYPE_DATA = 0,
-		FRAME_TYPE_REMOTE
-	};
+    {
+        FRAME_TYPE_DATA = 0,
+        FRAME_TYPE_REMOTE
+    };
 
     //--------------------------------------------------------------------------
     // Public typedefs
     //--------------------------------------------------------------------------
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     //--------------------------------------------------------------------------
     // Public structures
     //--------------------------------------------------------------------------
-    
+
     struct Config
     {
-    	uint32_t baudRate;
-    	unsigned int timeQuantaSyncJumpWidth;
-    	unsigned int timeQuantaBitSegment1;
-    	unsigned int timeQuantaBitSegment2;
-    	bool timeTriggeredCommunicationEnabled;
+        std::uint32_t baudRate;
+        unsigned int timeQuantaSyncJumpWidth;
+        unsigned int timeQuantaBitSegment1;
+        unsigned int timeQuantaBitSegment2;
+        bool timeTriggeredCommunicationEnabled;
     };
-    
+
     struct Message
     {
-    	IdType idType;
-    	uint32_t id;
-    	FrameType frameType;
-    	ByteArrayN<8> data;
+        IdType idType;
+        std::uint32_t id;
+        FrameType frameType;
+        ByteArrayN<8> data;
     };
-    
-    typedef Callback<void, const Message&> ReceivedMessageCallback;
+
+    using ReceivedMessageCallback = Callback<void, const Message&>;
 
     struct ReceivedMessageHandler
     {
-    	IdType idType;
-		uint32_t id;
-		uint32_t mask;
-    	ReceivedMessageCallback* receivedMessageCallback;
+        IdType idType;
+        std::uint32_t id;
+        std::uint32_t mask;
+        ReceivedMessageCallback* receivedMessageCallback;
     };
 
     //--------------------------------------------------------------------------
-    // Public virtual methods
+    // Public virtual methods overridden for ComInterface
     //--------------------------------------------------------------------------
-    
-    virtual Error setConfig(const Config& config);
-    
-    virtual Error addReceivedMessageHandler(
-    						  const IdType idType,
-    				          const uint32_t id,
-							  const uint32_t mask,
-			                  ReceivedMessageCallback& receivedMessageCallback);
 
-    virtual Error addReceivedMessageHandler(
-    					        ReceivedMessageHandler& receivedMessageHandler);
+    virtual ComInterface::Error transmitBytes(
+                                      const ByteArray& byteArray,
+                                      const bool waitUntilDone = true) override;
 
-    virtual Error sendMessage(const IdType idType,
-                              const uint32_t id,
-                              const FrameType frameType,
-                              ByteArrayN<8>& data);
+    virtual std::uint32_t getReceivedBytesCount() override;
 
-    virtual Error sendMessage(const Message& message);
+    virtual ComInterface::Error getReceivedBytes(
+                                       ByteArray& byteArray,
+                                       const std::uint32_t nBytes = 0) override;
 
-    virtual void handleReceivedMessages();
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+ 
+    Error setConfig(const Config& config);
+
+    Config getConfig() const;
+
+    Error addReceivedMessageHandler(
+                              const IdType idType,
+                              const std::uint32_t mask,
+                              const std::uint32_t id,
+                              ReceivedMessageCallback& receivedMessageCallback);
+
+    Error addReceivedMessageHandler(
+                                ReceivedMessageHandler& receivedMessageHandler);
+
+    Error sendMessage(const IdType idType,
+                      const std::uint32_t id,
+                      const FrameType frameType,
+                      ByteArray& data);
+
+    Error sendMessage(const Message& message);
+
+    Error clearReceivedMessages();
+
+    void handleReceivedMessages();
+
+    void enableAllMessagesHandler();
 
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
 
     Can();
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
@@ -171,19 +192,39 @@ protected:
     virtual ~Can();
 
     //--------------------------------------------------------------------------
+    // Protected pure virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual Error subclassSetConfig(const Config& config) = 0;
+
+    virtual Error subclassSendMessage(const Message& message) = 0;
+
+    virtual Error subclassAddAcceptanceFilter(const IdType idType,
+                                              const std::uint32_t filter,
+                                              const std::uint32_t mask) = 0;
+
+    virtual Error subclassClearReceivedMessages() = 0;
+
+    //--------------------------------------------------------------------------
     // Protected methods
+    //--------------------------------------------------------------------------
+
+    void messageReceived(Message& message);
+
+    //--------------------------------------------------------------------------
+    // Protected methods (deprecated)
     //--------------------------------------------------------------------------
 
     void interfaceMessageReceived(Message& message);
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     Config myConfig;
-    
+
     List<ReceivedMessageHandler> myReceivedMessageHandlerList;
 
     BufferN<Message, 16> myTransmitMessageBuffer;
@@ -191,16 +232,22 @@ private:
     BufferN<Message, 16> myReceivedMessageBuffer;
 
     //--------------------------------------------------------------------------
-    // Private pure virtual methods
+    // Private virtual methods (deprecated)
     //--------------------------------------------------------------------------
-    
-    virtual Error driverSetConfig(const Config& config) = 0;
 
-    virtual Error driverSendMessage(const Message& message) = 0;
+    virtual Error driverSetConfig(const Config& config);
+
+    virtual Error driverSendMessage(const Message& message);
 
     virtual Error driverAddAcceptanceFilter(const IdType idType,
-    										const uint32_t filter,
-    										const uint32_t mask) = 0;
+                                            const std::uint32_t filter,
+                                            const std::uint32_t mask);
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    void allMessagesCallback(const Message& message);
 };
 
 }; // namespace Plat4m

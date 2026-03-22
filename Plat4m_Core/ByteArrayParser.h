@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
+#include <cstdint>
+
 #include <Plat4m_Core/ByteArray.h>
 
 //------------------------------------------------------------------------------
@@ -92,15 +93,15 @@ public:
     // Public methods
     //--------------------------------------------------------------------------
 
-    bool parse(uint8_t& item);
+    bool parse(std::uint8_t& item);
 
-    bool parse(uint16_t& item);
+    bool parse(std::uint16_t& item);
 
-    bool parse(uint32_t& item);
+    bool parse(std::uint32_t& item);
 
     bool parse(float& item);
 
-    bool parse(uint64_t& item);
+    bool parse(std::uint64_t& item);
 
     bool parse(double& item);
 
@@ -116,7 +117,7 @@ private:
 
     const ParseDirection myParseDirection;
 
-    uint32_t myIndex;
+    std::uint32_t myIndex;
 };
 
 }; // namespace Plat4m

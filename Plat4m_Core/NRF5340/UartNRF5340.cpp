@@ -289,7 +289,10 @@ Uart::Error UartNRF5340::driverSetConfig(const Config& config)
         !setWordBits(config.wordBits) ||
         !setParity(config.parity))
     {
-        return Error(ERROR_CODE_PARAMETER_INVALID);
+        return PLAT4M_REPORT_ERROR(Uart::Error,
+                                   Uart::ERROR_CODE_PARAMETER_INVALID,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     setStopBits(config.stopBits);

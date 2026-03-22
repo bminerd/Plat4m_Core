@@ -62,7 +62,10 @@ Ins::Error Ins::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Ins::Error,
+                                   Ins::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverSetConfig(config);
@@ -86,7 +89,10 @@ Ins::Error Ins::getMeasurement(Measurement& measurement)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Ins::Error,
+                                   Ins::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverGetMeasurement(measurement);
@@ -106,7 +112,10 @@ Ins::Error Ins::getEulerAnglesDegrees(AngleDegrees& yawAngleDegrees,
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Ins::Error,
+                                   Ins::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     AngleDegrees tempYawAngleDegrees;

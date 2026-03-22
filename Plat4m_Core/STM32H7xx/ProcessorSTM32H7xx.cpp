@@ -482,7 +482,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 {
     if (config.coreClockFrequencyHz > 480000000)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     // Calculate PLL_M, PLL_N, PLL_P, and PLL_Q factors
@@ -518,7 +522,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 
     if (pllM > 63)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     internalConfig.pllM = pllM;
@@ -569,13 +577,21 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     // Check to see if a valid PLL_P value was found
     if (pllP > 127)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     // Check to see if a valid PLL_N value was found
     if ((pllN < 3) || (pllN > 511))
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     internalConfig.pllN = pllN;
@@ -612,7 +628,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     // Check to see if no prescaler was found
     if (i == size)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     internalConfig.d1DomainCorePrescaler =
@@ -626,7 +646,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 
     if (config.ahbClockFrequencyHz > 240000000)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     // Loop through the prescaler values to see if any give the desired AHB
@@ -645,7 +669,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     // Check to see if no prescaler was found
     if (i == size)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     internalConfig.ahbPrescaler = static_cast<AhbPrescaler>(i);
@@ -658,7 +686,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 
     if (config.apb1ClockFrequencyHz > 120000000)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     // Loop through the prescaler values to see if any give the desired AHB
@@ -677,7 +709,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     // Check to see if no prescaler was found
     if (i == size)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     internalConfig.apb1Prescaler = static_cast<Apb1Prescaler>(i);
@@ -690,7 +726,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 
     if (config.apb2ClockFrequencyHz > 120000000)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     // Loop through the prescaler values to see if any give the desired AHB
@@ -709,7 +749,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     // Check to see if no prescaler was found
     if (i == size)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     internalConfig.apb2Prescaler = static_cast<Apb2Prescaler>(i);
@@ -722,7 +766,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 
     if (config.apb3ClockFrequencyHz > 120000000)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     // Loop through the prescaler values to see if any give the desired AHB
@@ -741,7 +789,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     // Check to see if no prescaler was found
     if (i == size)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     internalConfig.apb3Prescaler = static_cast<Apb3Prescaler>(i);
@@ -754,7 +806,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 
     if (config.apb4ClockFrequencyHz > 120000000)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     // Loop through the prescaler values to see if any give the desired AHB
@@ -773,7 +829,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
     // Check to see if no prescaler was found
     if (i == size)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     internalConfig.apb4Prescaler = static_cast<Apb4Prescaler>(i);
@@ -794,7 +854,11 @@ ProcessorSTM32H7xx::Error ProcessorSTM32H7xx::setConfig(const Config& config)
 
     if (i == size)
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(
+                         ProcessorSTM32H7xx::Error,
+                         ProcessorSTM32H7xx::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                         ErrorBase::SEVERITY_HIGH,
+                         this);
     }
 
     if (i < 3)
@@ -971,22 +1035,11 @@ std::uint32_t ProcessorSTM32H7xx::driverGetCoreClockFrequencyHz()
     return (myConfig.coreClockFrequencyHz);
 }
 
-// //------------------------------------------------------------------------------
-// Processor::Error ProcessorSTM32H7xx::driverJumpToAddress(const intptr_t address)
-// {
-//     // if (address_is_in_range...)
-//     {
-//         std::uint32_t jumpAddress = *(__IO std::uint32_t*) (address + 4);
-//         void (*jumpToApplication)()  = (void (*)()) jumpAddress;
-
-//         // Initialize user application's Stack Pointer
-//         __set_MSP(* ( __IO std::uint32_t* ) address);
-
-//         jumpToApplication();
-//     }
-
-//     return Processor::Error(Processor::ERROR_CODE_NONE);
-// }
+//------------------------------------------------------------------------------
+bool ProcessorSTM32H7xx::driverIsInterruptActive()
+{
+    return ((SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0);
+}
 
 //------------------------------------------------------------------------------
 // Private methods

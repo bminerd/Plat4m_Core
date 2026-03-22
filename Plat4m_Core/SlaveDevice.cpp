@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2014 Benjamin Minerd
+// Copyright (c) 2014-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,9 +45,7 @@
 
 #include <Plat4m_Core/SlaveDevice.h>
 
-using Plat4m::SlaveDevice;
-using Plat4m::Array;
-using Plat4m::MasterSlaveBus;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public methods
@@ -72,11 +70,14 @@ SlaveDevice::Error SlaveDevice::transmit(const ByteArray& byteArray,
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(SlaveDevice::Error,
+                                   SlaveDevice::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
-    
+
     Error error = driverTransmit(byteArray, waitUntilDone, mailboxIndex);
-    
+
     return error;
 }
 
@@ -86,11 +87,14 @@ SlaveDevice::Error SlaveDevice::receive(ByteArray& byteArray,
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(SlaveDevice::Error,
+                                   SlaveDevice::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverReceive(byteArray, mailboxIndex);
-    
+
     return error;
 }
 
@@ -102,13 +106,16 @@ SlaveDevice::Error SlaveDevice::transmitReceive(
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(SlaveDevice::Error,
+                                   SlaveDevice::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
-    
+
     Error error = driverTransmitReceive(transmitByteArray,
                                         receiveByteArray,
                                         mailboxIndex);
-    
+
     return error;
 }
 

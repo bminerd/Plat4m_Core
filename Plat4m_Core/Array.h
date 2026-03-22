@@ -46,7 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
+#include <cstdint>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -63,11 +63,11 @@ template <typename T>
 class Array
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
     Array() :
         myItems(0),
@@ -77,7 +77,9 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    Array(T* items, const uint32_t nMaxItems, const int32_t nUsedItems = -1) :
+    Array(T* items,
+          const std::uint32_t nMaxItems,
+          const std::int32_t nUsedItems = -1) :
         myItems(items),
         myNMaxItems(nMaxItems),
         myNUsedItems(0)
@@ -91,10 +93,10 @@ public:
             myNUsedItems = nUsedItems;
         }
     }
-    
+
     //--------------------------------------------------------------------------
-    template <uint32_t nMaxItems>
-    Array(T (&items)[nMaxItems], const int32_t nUsedItems = -1) :
+    template <std::uint32_t nMaxItems>
+    Array(T (&items)[nMaxItems], const std::int32_t nUsedItems = -1) :
         myItems(items),
         myNMaxItems(nMaxItems),
         myNUsedItems(0)
@@ -108,7 +110,7 @@ public:
             myNUsedItems = nUsedItems;
         }
     }
-    
+
     //--------------------------------------------------------------------------
     // Public copy constructors
     //--------------------------------------------------------------------------
@@ -124,7 +126,7 @@ public:
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
     T* getItems() const
     {
@@ -138,23 +140,38 @@ public:
     }
 
     //--------------------------------------------------------------------------
+    T* getData() const
+    {
+        return myItems;
+    }
+
+    //--------------------------------------------------------------------------
     template <typename NewType>
     NewType getDataAs()
     {
         return reinterpret_cast<NewType>(myItems);
     }
-    
+
     //--------------------------------------------------------------------------
-    T& getItem(const uint32_t index) const
+    template <typename NewType>
+    NewType getDataAs() const
+    {
+        return reinterpret_cast<NewType>(myItems);
+    }
+
+    //--------------------------------------------------------------------------
+    T& getItem(const std::uint32_t index) const
     {
         return (myItems[index]);
     }
 
     //--------------------------------------------------------------------------
-    void setItems(T* items, uint32_t nMaxItems, const int32_t nUsedItems = -1)
+    void setItems(T* items,
+                  std::uint32_t nMaxItems,
+                  const std::int32_t nUsedItems = -1)
     {
-        myItems      = items;
-        myNMaxItems  = nMaxItems;
+        myItems = items;
+        myNMaxItems = nMaxItems;
 
         if (nUsedItems == -1)
         {
@@ -167,11 +184,11 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    template <uint32_t nMaxItems>
-    void setItems(T (&items)[nMaxItems], const int32_t nUsedItems = -1)
+    template <std::uint32_t nMaxItems>
+    void setItems(T (&items)[nMaxItems], const std::int32_t nUsedItems = -1)
     {
-        myItems      = items;
-        myNMaxItems  = nMaxItems;
+        myItems = items;
+        myNMaxItems = nMaxItems;
 
         if (nUsedItems == -1)
         {
@@ -184,13 +201,13 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    uint32_t getSize() const
+    std::uint32_t getSize() const
     {
         return myNUsedItems;
     }
     
     //--------------------------------------------------------------------------
-    bool setSize(const uint32_t size)
+    bool setSize(const std::uint32_t size)
     {
         if (size > myNMaxItems)
         {
@@ -203,43 +220,43 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    uint32_t getSizeInBytes() const
+    std::uint32_t getSizeInBytes() const
     {
         return (myNUsedItems * sizeof(T));
     }
 
     //--------------------------------------------------------------------------
-    uint32_t getMaxSize() const
+    std::uint32_t getMaxSize() const
     {
         return myNMaxItems;
     }
 
     //--------------------------------------------------------------------------
-    uint32_t getMaxSizeInBytes() const
+    std::uint32_t getMaxSizeInBytes() const
     {
         return (myNMaxItems * sizeof(T));
     }
-    
+
     //--------------------------------------------------------------------------
-    bool append(const T item)
+    bool append(const T& item)
     {
         if (myNUsedItems == myNMaxItems)
         {
             return false;
         }
-        
+    
         myItems[myNUsedItems++] = item;
-        
+
         return true;
     }
-    
+
     //--------------------------------------------------------------------------
     bool append(const T* items,
-                const uint32_t nItems,
+                const std::uint32_t nItems,
                 const bool greedy = false)
     {
-        uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
-        uint32_t nItemsToAppend = nItems;
+        std::uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
+        std::uint32_t nItemsToAppend = nItems;
 
         bool returnValue;
 
@@ -261,7 +278,7 @@ public:
             returnValue = true;
         }
 
-        for (uint32_t i = 0; i < nItemsToAppend; i++)
+        for (std::uint32_t i = 0; i < nItemsToAppend; i++)
         {
             myItems[myNUsedItems++] = items[i];
         }
@@ -270,12 +287,12 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    template <uint32_t nItems>
+    template <std::uint32_t nItems>
     bool append(const T (&items)[nItems], const bool greedy = false)
     {
         return append(items, nItems, greedy);
     }
-    
+
     //--------------------------------------------------------------------------
     bool append(const Array<T>& array, const bool greedy = false)
     {
@@ -299,11 +316,11 @@ public:
     //--------------------------------------------------------------------------
     template <typename OldType>
     bool appendCast(const OldType* items,
-                    const uint32_t nItems,
+                    const std::uint32_t nItems,
                     const bool greedy = false)
     {
-        uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
-        uint32_t nItemsToAppend = nItems;
+        std::uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
+        std::uint32_t nItemsToAppend = nItems;
 
         bool returnValue;
 
@@ -325,7 +342,7 @@ public:
             returnValue = true;
         }
 
-        for (uint32_t i = 0; i < nItemsToAppend; i++)
+        for (std::uint32_t i = 0; i < nItemsToAppend; i++)
         {
             myItems[myNUsedItems++] = static_cast<T>(items[i]);
         }
@@ -334,7 +351,7 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    template <uint32_t nItems, typename OldType>
+    template <std::uint32_t nItems, typename OldType>
     bool appendCast(const OldType (&items)[nItems], const bool greedy = false)
     {
         return appendCast(items, nItems, greedy);
@@ -348,36 +365,38 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    bool prepend(T item, const bool greedy = false)
+    bool prepend(const T& item, const bool greedy = false)
     {
         if (myNUsedItems == myNMaxItems)
         {
-        	if (greedy)
-        	{
-        		myNUsedItems = myNMaxItems - 1;
-        	}
-        	else
-        	{
-        		return false;
-        	}
+            if (greedy)
+            {
+                myNUsedItems = myNMaxItems - 1;
+            }
+            else
+            {
+                return false;
+            }
         }
         
-        for (uint32_t i = myNUsedItems; i > 0; i--)
+        for (std::uint32_t i = myNUsedItems; i > 0; i--)
         {
             myItems[i] = myItems[(i - 1)];
         }
-        
+
         myItems[0] = item;
         myNUsedItems++;
-        
+
         return true;
     }
-    
+
     //--------------------------------------------------------------------------
-    bool prepend(T items[], const uint32_t nItems, const bool greedy = false)
+    bool prepend(const T items[],
+                 const std::uint32_t nItems,
+                 const bool greedy = false)
     {
-        uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
-        uint32_t nItemsToPrepend = nItems;
+        std::uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
+        std::uint32_t nItemsToPrepend = nItems;
 
         bool returnValue;
 
@@ -399,12 +418,12 @@ public:
             returnValue = true;
         }
         
-        for (int32_t i = (myNUsedItems - 1); i >= 0; i--)
+        for (std::int32_t i = (myNUsedItems - 1); i >= 0; i--)
         {
             myItems[(i + nItemsToPrepend)] = myItems[i];
         }
         
-        for (uint32_t i = 0; i < nItemsToPrepend; i++)
+        for (std::uint32_t i = 0; i < nItemsToPrepend; i++)
         {
             myItems[i] = items[i];
         }
@@ -413,10 +432,10 @@ public:
         
         return returnValue;
     }
-    
+
     //--------------------------------------------------------------------------
-    template <uint32_t nItems>
-    bool prepend(T (&items)[nItems], const bool greedy = false)
+    template <std::uint32_t nItems>
+    bool prepend(const T (&items)[nItems], const bool greedy = false)
     {
         return prepend(items, nItems, greedy);
     }
@@ -429,7 +448,7 @@ public:
 
     //--------------------------------------------------------------------------
     template <typename OldType>
-    bool prependCast(OldType& item, const bool greedy = false)
+    bool prependCast(const OldType& item, const bool greedy = false)
     {
         if (myNUsedItems == myNMaxItems)
         {
@@ -443,24 +462,25 @@ public:
             }
         }
 
-        for (uint32_t i = myNUsedItems; i > 0; i--)
+        for (std::uint32_t i = myNUsedItems; i > 0; i--)
         {
             myItems[i] = myItems[(i - 1)];
         }
 
         myItems[0] = static_cast<T>(item);
         myNUsedItems++;
+
         return true;
     }
 
     //--------------------------------------------------------------------------
     template <typename OldType>
-    bool prependCast(OldType items[],
-                     const uint32_t nItems,
+    bool prependCast(const OldType items[],
+                     const std::uint32_t nItems,
                      const bool greedy = false)
     {
-        uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
-        uint32_t nItemsToPrepend = nItems;
+        std::uint32_t nRemainingItems = myNMaxItems - myNUsedItems;
+        std::uint32_t nItemsToPrepend = nItems;
 
         bool returnValue;
 
@@ -482,12 +502,12 @@ public:
             returnValue = true;
         }
 
-        for (int32_t i = (myNUsedItems - 1); i >= 0; i--)
+        for (std::int32_t i = (myNUsedItems - 1); i >= 0; i--)
         {
             myItems[(i + nItemsToPrepend)] = myItems[i];
         }
 
-        for (uint32_t i = 0; i < nItemsToPrepend; i++)
+        for (std::uint32_t i = 0; i < nItemsToPrepend; i++)
         {
             myItems[i] = items[i];
         }
@@ -498,8 +518,8 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    template <uint32_t nItems, typename OldType>
-    bool prependCast(OldType (&items)[nItems], const bool greedy = false)
+    template <std::uint32_t nItems, typename OldType>
+    bool prependCast(const OldType (&items)[nItems], const bool greedy = false)
     {
         return prependCast(items, nItems, greedy);
     }
@@ -510,16 +530,16 @@ public:
     {
         return prependCast(array.getItems(), array.getSize(), greedy);
     }
-    
+
     //--------------------------------------------------------------------------
-    bool insert(T item, const uint32_t index)
+    bool insert(const T item, const std::uint32_t index)
     {
         if (myNUsedItems == myNMaxItems)
         {
             return false;
         }
         
-        for (uint32_t i = myNUsedItems; i > index; i--)
+        for (std::uint32_t i = myNUsedItems; i > index; i--)
         {
             myItems[i] = myItems[i - 1];
         }
@@ -529,21 +549,23 @@ public:
         
         return true;
     }
-    
+
     //--------------------------------------------------------------------------
-    bool insert(T items[], const uint32_t nItems, const uint32_t index)
+    bool insert(const T items[],
+                const std::uint32_t nItems,
+                const std::uint32_t index)
     {
         if ((myNUsedItems + nItems) >= myNMaxItems)
         {
             return false;
         }
         
-        for (int32_t i = (myNUsedItems - 1); i >= 0; i--)
+        for (std::int32_t i = (myNUsedItems - 1); i >= 0; i--)
         {
             myItems[(i + nItems)] = myItems[i];
         }
         
-        for (uint32_t i = 0; i < nItems; i++)
+        for (std::uint32_t i = 0; i < nItems; i++)
         {
             myItems[(index + i)] = items[i];
         }
@@ -552,16 +574,16 @@ public:
         
         return true;
     }
-    
+
     //--------------------------------------------------------------------------
-    template <uint32_t nItems>
-    bool insert(T (&items)[nItems], const uint32_t index)
+    template <std::uint32_t nItems>
+    bool insert(T (&items)[nItems], const std::uint32_t index)
     {
         return insert(items, nItems, index);
     }
 
     //--------------------------------------------------------------------------
-    bool replace(T item, const uint32_t index)
+    bool replace(T item, const std::uint32_t index)
     {
         if (index >= myNMaxItems)
         {
@@ -572,10 +594,10 @@ public:
         
         return true;
     }
-    
+
     //--------------------------------------------------------------------------
-    Array<T> subArray(const uint32_t index,
-                      const uint32_t nItems = 0) const
+    Array<T> subArray(const std::uint32_t index,
+                      const std::uint32_t nItems = 0) const
     {
         // If starting index is greater than number of items, return empty Array
         if (index >= myNMaxItems)
@@ -583,7 +605,7 @@ public:
             return Array<T>();
         }
 
-        uint32_t subNMaxItems  = 0;
+        std::uint32_t subNMaxItems  = 0;
 
         if ((nItems == 0) || (nItems > (myNMaxItems - index)))
         {
@@ -594,32 +616,32 @@ public:
             subNMaxItems = nItems;
         }
 
-        int32_t subNUsedItems = myNUsedItems - index;
+        std::int32_t subNUsedItems = myNUsedItems - index;
 
         if (subNUsedItems < 0)
         {
             subNUsedItems = 0;
         }
-        else if ((subNUsedItems > (int32_t) nItems) && (nItems != 0))
+        else if ((subNUsedItems > (std::int32_t) nItems) && (nItems != 0))
         {
             subNUsedItems = nItems;
         }
         
         return Array<T>(&(myItems[index]), subNMaxItems, subNUsedItems);
     }
-    
+
     //--------------------------------------------------------------------------
     void clear()
     {
         myNUsedItems = 0;
     }
-    
+
     //--------------------------------------------------------------------------
-    T& operator[](const uint32_t index) const
+    T& operator[](const std::uint32_t index) const
     {
         return myItems[index];
     }
-    
+
     //--------------------------------------------------------------------------
     Array<T>& operator=(const Array<T>& array)
     {
@@ -631,14 +653,14 @@ public:
     }
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     T* myItems;
-    uint32_t myNMaxItems;
-    uint32_t myNUsedItems;
+    std::uint32_t myNMaxItems;
+    std::uint32_t myNUsedItems;
 };
 
 }; // namespace Plat4m

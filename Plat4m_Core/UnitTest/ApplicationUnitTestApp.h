@@ -49,6 +49,9 @@
 #include <Plat4m_Core/Application.h>
 #include <Plat4m_Core/UnitTest/UnitTest.h>
 #include <Plat4m_Core/AllocationMemoryLite/AllocationMemoryLite.h>
+#include <Plat4m_Core/MemoryManager.h>
+#include <Plat4m_Core/ErrorManager.h>
+#include <Plat4m_Core/GlobalErrorPrinter.h>
 #include <Plat4m_Core/List.h>
 
 //------------------------------------------------------------------------------
@@ -109,6 +112,10 @@ private:
     //--------------------------------------------------------------------------
 
     AllocationMemoryLite<4096> myAllocationMemory;
+
+    MemoryManager myMemoryManager;
+
+    ErrorManager myErrorManager;
 
     List<UnitTest*> myUnitTestList;
 

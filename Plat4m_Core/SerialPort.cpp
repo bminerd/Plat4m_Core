@@ -46,8 +46,7 @@
 #include <Plat4m_Core/SerialPort.h>
 #include <Plat4m_Core/System.h>
 
-using Plat4m::SerialPort;
-using Plat4m::ComInterface;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public virtual methods overridden for ComInterface
@@ -59,7 +58,10 @@ ComInterface::Error SerialPort::transmitBytes(const ByteArray& byteArray,
 {
     if (!isEnabled())
     {
-        return ComInterface::Error(ComInterface::ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(ComInterface::Error,
+                                   ComInterface::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     return driverTransmitBytes(byteArray, waitUntilDone);
@@ -99,7 +101,10 @@ SerialPort::Error SerialPort::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(SerialPort::Error,
+                                   SerialPort::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverSetConfig(config);

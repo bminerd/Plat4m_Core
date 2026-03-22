@@ -124,7 +124,10 @@ Module::Error HardwareTimerSimulated::driverSetEnabled(const bool enabled)
 {
     if (isNullPointer(myInterruptHandlerCallback))
     {
-        return Module::Error(Module::ERROR_CODE_ENABLE_FAILED);
+        return PLAT4M_REPORT_ERROR(Module::Error,
+                                   Module::ERROR_CODE_ENABLE_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     myThread.setEnabled(enabled);

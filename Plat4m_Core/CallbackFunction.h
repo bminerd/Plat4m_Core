@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2023 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,6 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
@@ -55,6 +54,9 @@
 
 namespace Plat4m
 {
+
+template <typename TReturn, typename... TParameters>
+class Callback;
 
 //------------------------------------------------------------------------------
 // Classes
@@ -70,7 +72,7 @@ public:
     //--------------------------------------------------------------------------
 
     typedef TReturn (*CallbackFunctionType)(TParameters...);
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
@@ -100,19 +102,6 @@ private:
 
     CallbackFunctionType myCallbackFunction;
 };
-
-//------------------------------------------------------------------------------
-// Namespace functions
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-template <typename TReturn, typename... TParameters>
-Callback<TReturn, TParameters...>& createCallback(
-                                            TReturn (*callback)(TParameters...))
-{
-    return *(MemoryAllocator::allocate<
-                          CallbackFunction<TReturn, TParameters...>>(callback));
-}
 
 }; // namespace Plat4m
 

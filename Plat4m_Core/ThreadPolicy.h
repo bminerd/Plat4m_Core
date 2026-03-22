@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -68,25 +68,31 @@ class ThreadPolicy
 public:
 
     //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~ThreadPolicy();
+
+    //--------------------------------------------------------------------------
     // Public pure virual methods
     //--------------------------------------------------------------------------
 
     virtual void apply(Thread& thread,
                        Callback<>& threadHandlerCallback) = 0;
 
+    //--------------------------------------------------------------------------
+    // Public virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual void notifyBlocked(const bool blocked);
+
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
-    ThreadPolicy();
-    
-    //--------------------------------------------------------------------------
-    // Protected virtual destructors
-    //--------------------------------------------------------------------------
 
-    virtual ~ThreadPolicy();
+    ThreadPolicy();
 };
 
 }; // namespace Plat4m

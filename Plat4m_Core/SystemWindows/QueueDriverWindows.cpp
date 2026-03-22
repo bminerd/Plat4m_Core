@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018-2023 Benjamin Minerd
+// Copyright (c) 2018-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,17 +45,25 @@
 
 #include <Plat4m_Core/SystemWindows/QueueDriverWindows.h>
 #include <Plat4m_Core/SystemWindows/ThreadWindows.h>
+#include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/System.h>
 
-using Plat4m::QueueDriverWindows;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverWindows::QueueDriverWindows(Thread& thread) :
+QueueDriverWindows::QueueDriverWindows(const std::uint32_t nValues,
+                                       const std::uint32_t valueSizeBytes,
+                                       Thread& thread) :
     QueueDriver(),
-    myThreadId(0)
+    myThreadId(0),
+    myBytes(static_cast<std::uint8_t*>(MemoryAllocator::allocateArray(
+                                                    nValues * valueSizeBytes))),
+    myByteBuffer(myBytes, nValues, valueSizeBytes),
+    myBufferMutex(System::createMutex(thread))
 {
     ThreadWindows& threadWindows = static_cast<ThreadWindows&>(thread);
     myThreadId = threadWindows.getThreadId();
@@ -75,28 +83,27 @@ QueueDriverWindows::~QueueDriverWindows()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverWindows::driverGetSize()
+std::uint32_t QueueDriverWindows::driverGetSize()
 {
-//      return ((uint32_t) uxQueueMessagesWaiting(myQueueHandle));
-    return 0;
+    return (myByteBuffer.count());
 }
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverWindows::driverGetSizeFast()
+std::uint32_t QueueDriverWindows::driverGetSizeFast()
 {
-//      return ((uint32_t) uxQueueMessagesWaitingFromISR(myQueueHandle));
-    return 0;
+    return (driverGetSize());
 }
 
 //------------------------------------------------------------------------------
 bool QueueDriverWindows::driverEnqueue(const void* value)
 {
-    uint8_t convertedValue = *(static_cast<const uint8_t*>(value));
+    myBufferMutex.lock();
 
-    return (PostThreadMessage(myThreadId,
-                              0x400,
-                              *(static_cast<const uint8_t*>(value)),
-                              0));
+    myByteBuffer.write(value);
+
+    myBufferMutex.unlock();
+
+    return (PostThreadMessage(myThreadId, 0x400, 0, 0));
 }
 
 //------------------------------------------------------------------------------
@@ -109,11 +116,20 @@ bool QueueDriverWindows::driverEnqueueFast(const void* value)
 bool QueueDriverWindows::driverDequeue(void* value)
 {
     MSG message;
-    bool returnValue = GetMessage(&message, NULL, 0, 0);
+    bool getMessageSucceeded = GetMessage(&message, NULL, 0, 0);
 
-    *(static_cast<uint8_t*>(value)) = message.wParam;
+    bool readBufferSucceeded = false;
 
-    return returnValue;
+    if (getMessageSucceeded)
+    {
+        myBufferMutex.lock();
+
+        readBufferSucceeded = myByteBuffer.read(value);
+
+        myBufferMutex.unlock();
+    }
+
+    return (getMessageSucceeded && readBufferSucceeded);
 }
 
 //--------------------------------------------------------------------------
@@ -125,5 +141,10 @@ bool QueueDriverWindows::driverDequeueFast(void* value)
 //--------------------------------------------------------------------------
 void QueueDriverWindows::driverClear()
 {
-//      xQueueReset(myQueueHandle);
+    MSG message;
+
+    while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+    {
+        myByteBuffer.emptyRead();
+    }
 }

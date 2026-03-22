@@ -108,7 +108,7 @@ public:
         PRIORITY_LEVEL_VERY_HIGH
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     typedef Callback<> TransferCompleteCallback;
 

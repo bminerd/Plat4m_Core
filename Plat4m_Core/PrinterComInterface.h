@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/Module.h>
 #include <Plat4m_Core/Printer.h>
 #include <Plat4m_Core/ErrorTemplate.h>
@@ -64,7 +66,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <uint32_t TxBufferSize>
+template <std::uint32_t TxBufferSize>
 class PrinterComInterface : public Printer
 {
 public:
@@ -78,7 +80,7 @@ public:
         ERROR_CODE_NONE
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     //--------------------------------------------------------------------------
     // Public constructors
@@ -119,11 +121,11 @@ private:
     ComInterfaceDeviceTemplate<TxBufferSize, 1> myComInterfaceDevice;
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Module
+    // Private virtual methods overridden for Module
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    virtual Module::Error driverSetEnabled(const bool enabled)
+    virtual Module::Error driverSetEnabled(const bool enabled) override
     {
         myComInterfaceDevice.setEnabled(enabled);
 
@@ -131,12 +133,13 @@ private:
     }
 
     //--------------------------------------------------------------------------
-    // Private virtual methods implemented from Printer
+    // Private virtual methods overridden for Printer
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
     virtual Printer::Error driverPrint(const ByteArray& bytes,
-                                       const bool waitUntilDone)
+                                       const bool waitUntilDone,
+                                       const bool isError) override
     {
         myComInterfaceDevice.transmitBytes(bytes, waitUntilDone);
 

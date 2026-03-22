@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022-2023 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,8 +44,9 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/StopwatchSystemTime/StopwatchManagerSystemTime.h>
-#include <Plat4m_Core/MemoryAllocator.h>
 #include <Plat4m_Core/StopwatchSystemTime/StopwatchSystemTime.h>
+#include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/System.h>
 
 using namespace Plat4m;
 
@@ -54,8 +55,9 @@ using namespace Plat4m;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-StopwatchManagerSystemTime::StopwatchManagerSystemTime() :
-    StopwatchManager()
+StopwatchManagerSystemTime::StopwatchManagerSystemTime(
+                                           const TimeStamp& cpuLoadTimeWindow) :
+    StopwatchManager(cpuLoadTimeWindow)
 {
 }
 
@@ -73,7 +75,13 @@ StopwatchManagerSystemTime::~StopwatchManagerSystemTime()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Stopwatch& StopwatchManagerSystemTime::driverCreateStopwatch(const char* name)
+Stopwatch& StopwatchManagerSystemTime::subclassCreateStopwatch(const char* name)
 {
     return *(MemoryAllocator::allocate<StopwatchSystemTime>(name));
+}
+
+//------------------------------------------------------------------------------
+TimeStamp StopwatchManagerSystemTime::subclassGetCurrentTimeStamp()
+{
+    return (System::getWallTimeStamp());
 }

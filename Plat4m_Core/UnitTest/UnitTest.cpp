@@ -95,7 +95,10 @@ UnitTest::Error UnitTest::runTest(const uint32_t index, bool& passed)
 {
     if (index >= myTestCallbackFunctionArray.getSize())
     {
-        return Error(ERROR_CODE_INVALID_TEST_INDEX);
+        return PLAT4M_REPORT_ERROR(UnitTest::Error,
+                                   UnitTest::ERROR_CODE_INVALID_TEST_INDEX,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     passed = (*(myTestCallbackFunctionArray[index]))();

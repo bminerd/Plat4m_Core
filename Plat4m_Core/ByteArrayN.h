@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
-#include <string.h>
+#include <cstdint>
+#include <cstring>
 
 #include <Plat4m_Core/ByteArray.h>
 
@@ -62,15 +62,15 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-template <uint32_t N>
+template <std::uint32_t N>
 class ByteArrayN : public ByteArray
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
-    
+
     //--------------------------------------------------------------------------
     ByteArrayN() :
         ByteArray(myBytes, N, 0),
@@ -87,6 +87,15 @@ public:
     }
 
     //--------------------------------------------------------------------------
+    template <typename TData>
+    explicit ByteArrayN(const Array<TData>& array) :
+        ByteArray(array. template getDataAs<std::uint8_t*>(),
+                  array.getMaxSize() * sizeof(TData),
+                  array.getSize() * sizeof(TData))
+    {
+    }
+
+    //--------------------------------------------------------------------------
     // Public operator overloads
     //--------------------------------------------------------------------------
 
@@ -99,14 +108,23 @@ public:
 
         return (*this);
     }
-    
+
+    using ByteArray::append;
+
+    //--------------------------------------------------------------------------
+    template <std::uint32_t nBytes>
+    bool append(const ByteArrayN<nBytes>& byteArray, const bool greedy = false)
+    {
+        return (ByteArray::append(byteArray, greedy));
+    }
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
-    uint8_t myBytes[N];
+
+    std::uint8_t myBytes[N];
 };
 
 }; // namespace Plat4m

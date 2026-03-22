@@ -143,7 +143,8 @@ private:
     virtual QueueDriver& driverCreateQueueDriver(
                                              const std::uint32_t nValues,
                                              const std::uint32_t valueSizeBytes,
-                                             Thread& thread) override;
+                                             Thread& thread,
+                                             const bool isSimulated) override;
 
     virtual Semaphore& driverCreateSemaphore(
                                      const std::uint32_t maxValue,

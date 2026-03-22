@@ -1,4 +1,4 @@
-# Plat4m Detailed Design
+# Plat4m High-Level Design
 
 ## Modular Design
 

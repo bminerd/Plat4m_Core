@@ -58,7 +58,10 @@ MasterSlaveBus::Error MasterSlaveBus::masterTransfer(Transfer& transfer)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(MasterSlaveBus::Error,
+                                   MasterSlaveBus::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverMasterTransfer(transfer);

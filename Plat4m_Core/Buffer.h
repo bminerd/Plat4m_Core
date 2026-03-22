@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
+#include <cstdint>
+
 #include <Plat4m_Core/Array.h>
 
 //------------------------------------------------------------------------------
@@ -64,7 +65,7 @@ template <typename T>
 class Buffer
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
@@ -78,9 +79,9 @@ public:
         myCount(0)
     {
     }
-    
+
     //--------------------------------------------------------------------------
-    Buffer(T* items, const uint32_t nItems) :
+    Buffer(T* items, const std::uint32_t nItems) :
         myItems(items),
         myNItems(nItems),
         myWriteIndex(0),
@@ -110,58 +111,58 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    uint32_t getSize() const
+    std::uint32_t getSize() const
     {
         return myNItems;
     }
 
     //--------------------------------------------------------------------------
-    uint32_t getWriteIndex() const
+    std::uint32_t getWriteIndex() const
     {
         return myWriteIndex;
     }
 
     //--------------------------------------------------------------------------
-    uint32_t getReadIndex() const
+    std::uint32_t getReadIndex() const
     {
         return myReadIndex;
     }
 
     //--------------------------------------------------------------------------
-    uint32_t count()
+    std::uint32_t count() const
     {
         return myCount;
     }
 
     //--------------------------------------------------------------------------
-    bool isEmpty()
+    bool isEmpty() const
     {
         return (myCount == 0);
     }
 
     //--------------------------------------------------------------------------
-    bool isFull()
+    bool isFull() const
     {
         return (myCount >= myNItems);
     }
 
     //--------------------------------------------------------------------------
-    bool write(const T& element)
+    bool write(const T& element, const bool overwrite = false)
     {
-        if (isFull())
+        if (isFull() && !overwrite)
         {
             return false;
         }
-        
+
         writePrivate(element);
-        
+
         return true;
     }
 
     //--------------------------------------------------------------------------
     bool write(const Array<T>& array)
     {
-    	uint32_t size = array.getSize();
+        const std::uint32_t size = array.getSize();
 
         if ((myCount + size) > myNItems)
         {
@@ -183,18 +184,18 @@ public:
         {
             return false;
         }
-        
+
         element = readPrivate();
-        
+
         return true;
     }
 
     //--------------------------------------------------------------------------
     bool read(Array<T>& array)
     {
-        uint32_t maxSize = array.getMaxSize();
-        uint32_t size = array.getSize();
-        uint32_t nItemsToRead = maxSize - size;
+        const std::uint32_t maxSize = array.getMaxSize();
+        const std::uint32_t size = array.getSize();
+        std::uint32_t nItemsToRead = maxSize - size;
 
         if (nItemsToRead > myCount)
         {
@@ -215,7 +216,7 @@ public:
         if (isEmpty())
         {
             element = 0;
-            
+
             return false;
         }
 
@@ -247,7 +248,7 @@ public:
 
     //--------------------------------------------------------------------------
     void setItems(T* items,
-                  const uint32_t nItems,
+                  const std::uint32_t nItems,
                   const bool bufferItems = false)
     {
         myItems      = items;
@@ -266,32 +267,32 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    void setCount(const uint32_t count)
+    void setCount(const std::uint32_t count)
     {
-    	myCount = count;
+        myCount = count;
     }
 
     //--------------------------------------------------------------------------
-    void setWriteIndex(const uint32_t writeIndex)
+    void setWriteIndex(const std::uint32_t writeIndex)
     {
-    	myWriteIndex = writeIndex;
+        myWriteIndex = writeIndex;
     }
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
     T* myItems;
 
-    uint32_t myNItems;
-    
-    uint32_t myWriteIndex;
-    
-    uint32_t myReadIndex;
+    std::uint32_t myNItems;
 
-    uint32_t myCount;
+    volatile std::uint32_t myWriteIndex;
+
+    volatile std::uint32_t myReadIndex;
+
+    volatile std::uint32_t myCount;
 
     //--------------------------------------------------------------------------
     // Private inline methods
@@ -307,6 +308,14 @@ private:
         if (myWriteIndex >= myNItems)
         {
             myWriteIndex = 0;
+        }
+
+        // Check if overwriting occurring
+        if (myCount > myNItems)
+        {
+            myReadIndex = myWriteIndex;
+
+            myCount = myNItems;
         }
     }
 

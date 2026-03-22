@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018-2023 Benjamin Minerd
+// Copyright (c) 2018-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,7 @@
 #include <Plat4m_Core/SystemWindows/ThreadWindows.h>
 #include <Plat4m_Core/System.h>
 
-using Plat4m::ThreadWindows;
-using Plat4m::Module;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -65,18 +64,21 @@ ThreadWindows::ThreadWindows(RunCallback& callback,
                                   0,
                                   &ThreadWindows::threadCallback,
                                   (LPVOID) this,
-                                  0,
+                                  CREATE_SUSPENDED,
                                   &myThreadId);
 
     if (isNullPointer(myThreadHandle))
     {
-        while (true)
-        {
-            // Lock up, unable to create thread
-        }
+        PLAT4M_REPORT_ERROR(ThreadWindows::Error,
+                            ERROR_CODE_CREATION_FAILED,
+                            ErrorBase::SEVERITY_CRITICAL,
+                            this);
     }
 
-    SuspendThread(myThreadHandle);
+    wchar_t newName[128];
+    swprintf_s(newName, 128, L"%S", name);
+
+    SetThreadDescription(myThreadHandle, newName);
 }
 
 //------------------------------------------------------------------------------
@@ -86,6 +88,7 @@ ThreadWindows::ThreadWindows(RunCallback& callback,
 //------------------------------------------------------------------------------
 ThreadWindows::~ThreadWindows()
 {
+    TerminateThread(myThreadHandle, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -150,7 +153,7 @@ void ThreadWindows::driverSetPeriodMs(const TimeMs periodMs)
 }
 
 //------------------------------------------------------------------------------
-uint32_t ThreadWindows::driverSetPriority(const uint32_t priority)
+std::uint32_t ThreadWindows::driverSetPriority(const std::uint32_t priority)
 {
     return 0;
 }

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,9 +46,7 @@
 #include <Plat4m_Core/SpiDevice.h>
 #include <Plat4m_Core/Plat4m.h>
 
-using Plat4m::SpiDevice;
-using Plat4m::SlaveDevice;
-using Plat4m::Module;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -133,9 +131,12 @@ SlaveDevice::Error SpiDevice::driverTransmit(const ByteArray& byteArray,
 
     if (error.getCode() != Spi::ERROR_CODE_NONE)
     {
-        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
+        return PLAT4M_REPORT_ERROR(SlaveDevice::Error,
+                                   SlaveDevice::ERROR_CODE_COMMUNICATION,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
-    
+
     return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
 }
 
@@ -152,10 +153,13 @@ SlaveDevice::Error SpiDevice::driverReceive(ByteArray& byteArray,
 
     if (error.getCode() != Spi::ERROR_CODE_NONE)
     {
-        return Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
+        return PLAT4M_REPORT_ERROR(SlaveDevice::Error,
+                                   SlaveDevice::ERROR_CODE_COMMUNICATION,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
-    return Error(SlaveDevice::ERROR_CODE_NONE);
+    return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
 }
 
 //------------------------------------------------------------------------------
@@ -172,8 +176,11 @@ SlaveDevice::Error SpiDevice::driverTransmitReceive(
 
     if (error.getCode() != Spi::ERROR_CODE_NONE)
     {
-        return SlaveDevice::Error(SlaveDevice::ERROR_CODE_COMMUNICATION);
+        return PLAT4M_REPORT_ERROR(SlaveDevice::Error,
+                                   SlaveDevice::ERROR_CODE_COMMUNICATION,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
-    
-    return Error(ERROR_CODE_NONE);
+
+    return SlaveDevice::Error(SlaveDevice::ERROR_CODE_NONE);
 }

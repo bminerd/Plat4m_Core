@@ -85,14 +85,11 @@ public:
 
         if (isNullPointer(dataObjectBase))
         {
-            Error error(ERROR_CODE_DATA_OBJECT_NOT_INSTANTIATED);
-
-            // Lock up, attempting to access a DataObject that hasn't been
-            // instantiated yet. Current requirement is that all DataObjects
-            // must be created first before attempting access.
-            while (true)
-            {
-            }
+            PLAT4M_REPORT_ERROR_STATIC(
+                        DataObjectBase::Error,
+                        DataObjectBase::ERROR_CODE_DATA_OBJECT_NOT_INSTANTIATED,
+                        ErrorBase::SEVERITY_HIGH,
+                        DataObjectInterface);
 
             return 0;
         }
@@ -102,7 +99,11 @@ public:
 
         if (isNullPointer(dataObjectDerived))
         {
-            Error error(ERROR_CODE_DATA_OBJECT_TYPE_ID_MISMATCH);
+            PLAT4M_REPORT_ERROR_STATIC(
+                        DataObjectBase::Error,
+                        DataObjectBase::ERROR_CODE_DATA_OBJECT_TYPE_ID_MISMATCH,
+                        ErrorBase::SEVERITY_CRITICAL,
+                        DataObjectInterface);
 
             return 0;
         }

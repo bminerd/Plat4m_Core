@@ -62,7 +62,10 @@ Display::Error Display::configure(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Display::Error,
+                                   Display::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverConfigure(config);
@@ -75,7 +78,10 @@ Display::Error Display::writeFrame()
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Display::Error,
+                                   Display::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
     
     Error error = driverWriteFrame();
@@ -88,7 +94,10 @@ Display::Error Display::clear()
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Display::Error,
+                                   Display::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverClear();
@@ -101,7 +110,10 @@ Display::Error Display::setBrightnessPercent(const float brightnessPercent)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Display::Error,
+                                   Display::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverSetBrightnessPercent(brightnessPercent);

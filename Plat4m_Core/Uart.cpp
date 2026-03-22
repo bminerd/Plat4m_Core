@@ -58,7 +58,10 @@ ComInterface::Error Uart::transmitBytes(const ByteArray& byteArray,
 {
     if (!isEnabled())
     {
-        return ComInterface::Error(ComInterface::ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(ComInterface::Error,
+                                   ComInterface::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     return driverTransmitBytes(byteArray, waitUntilDone);
@@ -92,7 +95,10 @@ Uart::Error Uart::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Uart::Error,
+                                   Uart::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverSetConfig(config);

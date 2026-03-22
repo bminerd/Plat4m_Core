@@ -57,6 +57,7 @@
 #include <Plat4m_Core/Semaphore.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 #include <Plat4m_Core/TimeStamp.h>
+#include <Plat4m_Core/Callback.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -80,13 +81,17 @@ public:
     enum ErrorCode
     {
         ERROR_CODE_NONE,
+        ERROR_CODE_INSTANCE_NOT_CREATED,
         ERROR_CODE_PARAMETER_INVALID,
         ERROR_CODE_MODE_INVALID,
-        ERROR_CODE_NOT_ENABLED
+        ERROR_CODE_NOT_ENABLED,
+        ERROR_CODE_CREATING_SECOND_INSTANCE
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
-    
+    using Error = ErrorTemplate<ErrorCode>;
+
+    using BackgroundCallback = Callback<>;
+
     //--------------------------------------------------------------------------
     // Public static methods
     //--------------------------------------------------------------------------
@@ -104,19 +109,27 @@ public:
     //--------------------------------------------------------------------------
     template <typename T>
     static Queue<T>& createQueue(const std::uint32_t nValues,
-                                 Thread& thread)
-	{
-    	return *(MemoryAllocator::allocate<Queue<T>>(
-                                    myDriver->driverCreateQueueDriver(nValues,
-                                                                      sizeof(T),
-                                                                      thread)));
-	}
+                                 Thread& thread,
+                                 const bool isSimulated = false)
+    {
+        return *(MemoryAllocator::allocate<Queue<T>>(
+                                 myDriver->driverCreateQueueDriver(nValues,
+                                                                   sizeof(T),
+                                                                   thread,
+                                                                   isSimulated),
+                                 thread));
+    }
+
+    static QueueDriver& createQueueDriver(const std::uint32_t nValues,
+                                         const std::uint32_t valueSizeBytes,
+                                         Thread& thread,
+                                         const bool isSimulated = false);
 
     static Semaphore& createSemaphore(const std::uint32_t maxValue = 0,
                                       const std::uint32_t initialValue = 0);
 
     static void run();
-    
+
     static bool isRunning();
 
     static TimeMs getTimeMs();
@@ -145,6 +158,8 @@ public:
 
     static void exitCriticalSection();
 
+    static void background();
+
     //--------------------------------------------------------------------------
     // Public pure virtual methods
     //--------------------------------------------------------------------------
@@ -161,8 +176,9 @@ public:
 
     virtual QueueDriver& driverCreateQueueDriver(
                                              const std::uint32_t nValues,
-    									     const std::uint32_t valueSizeBytes,
-    									     Thread& thread) = 0;
+                                             const std::uint32_t valueSizeBytes,
+                                             Thread& thread,
+                                             const bool isSimulated) = 0;
 
     virtual Semaphore& driverCreateSemaphore(
                                           const std::uint32_t maxValue,
@@ -198,8 +214,14 @@ public:
 
     virtual void driverExitCriticalSection();
 
+    //--------------------------------------------------------------------------
+    // Public methods
+    //--------------------------------------------------------------------------
+
+    void setBackgroundCallback(BackgroundCallback& callback);
+
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
@@ -213,14 +235,26 @@ protected:
     virtual ~System();
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
-    
+
     static System* myDriver;
-    
+
     static bool myIsRunning;
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    BackgroundCallback* myBackgroundCallback;
+
+    //---------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    void backgroundPrivate();
 };
 
 }; // namespace Plat4m

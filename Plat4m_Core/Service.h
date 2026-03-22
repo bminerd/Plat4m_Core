@@ -119,7 +119,11 @@ public:
 
         if (isNullPointer(service))
         {
-            return Error(ERROR_CODE_SERVICE_INVALID);
+            return PLAT4M_REPORT_ERROR_STATIC(
+                                        ServiceBase::Error,
+                                        ServiceBase::ERROR_CODE_SERVICE_INVALID,
+                                        ErrorBase::SEVERITY_HIGH,
+                                        Service);
         }
 
         Error error = service->request(request, response);
@@ -148,7 +152,11 @@ public:
     {
         if (isNullPointer(myCallback))
         {
-            return Error(ERROR_CODE_SERVICE_NOT_INITIALIZED);
+            return PLAT4M_REPORT_ERROR(
+                                ServiceBase::Error,
+                                ServiceBase::ERROR_CODE_SERVICE_NOT_INITIALIZED,
+                                ErrorBase::SEVERITY_HIGH,
+                                this);
         }
 
         ServiceRequest<RequestType> serviceRequest(request);
@@ -197,7 +205,11 @@ private:
 
             if (isNullPointer(service))
             {
-                Error error(ERROR_CODE_SERVICE_TYPE_ID_MISMATCH);
+                PLAT4M_REPORT_ERROR_STATIC(
+                               ServiceBase::Error,
+                               ServiceBase::ERROR_CODE_SERVICE_TYPE_ID_MISMATCH,
+                               ErrorBase::SEVERITY_CRITICAL,
+                               Service);
 
                 // Lock up, error condition
                 while (true)

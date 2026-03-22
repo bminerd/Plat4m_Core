@@ -248,6 +248,16 @@ public:
         AlternateFunction alternateFunction;
         OutputType outputType;
         OutputSpeed outputSpeed;
+
+        //----------------------------------------------------------------------
+        // Public constructors
+        //----------------------------------------------------------------------
+
+        STM32H7xxConfig();
+
+        STM32H7xxConfig(const AlternateFunction alternateFunction,
+                        const OutputType outputType,
+                        const OutputSpeed outputSpeed);
     };
 
     //--------------------------------------------------------------------------

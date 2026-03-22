@@ -58,7 +58,8 @@ using namespace Plat4m;
 SystemFreeRtosCortexM::SystemFreeRtosCortexM() :
     SystemFreeRtos(),
     myLastTimeMs(0),
-    myLastNsPortion(0)
+    myLastNsPortion(0),
+    myLastTimeStamp(0)
 {
 }
 
@@ -93,6 +94,8 @@ TimeUs SystemFreeRtosCortexM::driverGetTimeUs()
 //------------------------------------------------------------------------------
 TimeStamp SystemFreeRtosCortexM::driverGetTimeStamp()
 {
+    System::enterCriticalSection();
+
     volatile std::uint32_t sysTickLoad  =
                           *((std::uint32_t*) (0xE000E000UL + 0x0010UL + 0x4UL));
     volatile std::uint32_t sysTickValue =
@@ -101,26 +104,39 @@ TimeStamp SystemFreeRtosCortexM::driverGetTimeStamp()
     // SysTick is configured to increment by 1 millisecond, so the fractional
     // part of the timer will always be <= 1ms which means we can safely add to
     // the nanosecond portion of the TimeStamp only
-    std::uint64_t nsPortion =
-        (((std::uint64_t) sysTickLoad - sysTickValue) * 1000000) / sysTickLoad;
+    const std::uint64_t nsPortion =
+        (((std::uint64_t) sysTickLoad + 1 - sysTickValue) * 1000000) /
+                                                              (sysTickLoad + 1);
 
-    TimeMs timeMs = SystemFreeRtos::driverGetTimeMs();
+    const TimeMs timeMs = SystemFreeRtos::driverGetTimeMs();
     std::uint32_t timeMsRollOverCount = getTimeMsRollOverCounter();
+
+    TimeMs newTimeMs = timeMs;
+
+    if (newTimeMs < myLastTimeMs)
+    {
+        newTimeMs = myLastTimeMs;
+    }
 
     // If the SysTick timer has rolled over but timeMs has not been updated,
     // increment timeMs
-    if ((timeMs == myLastTimeMs) && (nsPortion < myLastNsPortion))
+    if (nsPortion < myLastNsPortion)
     {
-        timeMs++;
+        newTimeMs++;
     }
 
     TimeStamp timeStamp;
-    timeStamp.fromTimeMs(timeMs, timeMsRollOverCount);
+    timeStamp.fromTimeMs(newTimeMs, timeMsRollOverCount);
 
-    timeStamp.timeNs += (TimeNs) nsPortion;
+    timeStamp += TimeStamp(nsPortion);
 
-    myLastTimeMs = timeMs;
+    myLastTimeMs = newTimeMs;
+
+    myLastTimeStamp = timeStamp;
+
     myLastNsPortion = nsPortion;
+
+    System::exitCriticalSection();
 
     return timeStamp;
 }

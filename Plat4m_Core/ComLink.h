@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -82,7 +82,7 @@ class ComLink : public Module
 public:
 
     //--------------------------------------------------------------------------
-    // Public enumerations
+    // Public types
     //--------------------------------------------------------------------------
 
     enum ErrorCode
@@ -92,11 +92,12 @@ public:
         ERROR_CODE_NOT_ENABLED
     };
 
-    //--------------------------------------------------------------------------
-    // Public typedefs
-    //--------------------------------------------------------------------------
+    using Error = ErrorTemplate<ErrorCode>;
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    struct Config
+    {
+        std::uint32_t minParseByteCount;
+    };
 
     //--------------------------------------------------------------------------
     // Public constructors
@@ -127,8 +128,20 @@ public:
 
     void addComProtocol(ComProtocol& comProtocol);
 
+    Error setConfig(const Config& config);
+
+    Config getConfig() const;
+
     Error transmitBytes(const ByteArray& byteArray,
                         const bool waitUntilDone = false);
+
+protected:
+
+    //--------------------------------------------------------------------------
+    // Protected virtual methods overridden for Module
+    //--------------------------------------------------------------------------
+
+    virtual Module::Error subclassSetEnabled(const bool enable) override;
 
 private:
 
@@ -146,27 +159,21 @@ private:
 
     ComProtocol* myCurrentComProtocol;
 
-    uint32_t myCurrentComProtocolTimeoutTimeMs;
+    std::uint32_t myCurrentComProtocolTimeoutTimeMs;
 
     Thread& myDataParsingThread;
-
-    WaitCondition& myWaitCondition;
 
     Mutex& myMutex;
 
     Queue<uint8_t>& myReceiveByteQueue;
 
-    //--------------------------------------------------------------------------
-    // Private methods implemented from Module
-    //--------------------------------------------------------------------------
-
-    Module::Error driverEnable(const bool enable);
+    Config myConfig;
 
     //--------------------------------------------------------------------------
     // Private methods
     //--------------------------------------------------------------------------
 
-    void byteReceivedCallback(const uint8_t byte);
+    void byteReceivedCallback(const std::uint8_t byte);
 
     void dataParsingThreadCallback();
 

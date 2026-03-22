@@ -48,7 +48,8 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Time.h>
+#include <Plat4m_Core/UnitsTime.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -58,172 +59,45 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Structs
+// Classes
 //------------------------------------------------------------------------------
 
-struct TimeStamp
+class TimeStamp : public Time<std::int64_t, Units::Time::NS>
 {
-    //--------------------------------------------------------------------------
-    // Public data members
-    //--------------------------------------------------------------------------
-
-    TimeSecondsSigned timeS;
-    TimeNanosecondsSigned timeNs;
+public:
 
     //--------------------------------------------------------------------------
     // Public constructors
     //--------------------------------------------------------------------------
 
-    TimeStamp();
-
-    TimeStamp(const TimeSecondsSigned seconds,
-              const TimeNanosecondsSigned nanoseconds);
-
     //--------------------------------------------------------------------------
-    // Public virtual destructors
-    //--------------------------------------------------------------------------
-
-    ~TimeStamp();
-
-    //--------------------------------------------------------------------------
-    // Public operator overloads
-    //--------------------------------------------------------------------------
-
-    bool operator>(const TimeStamp& timeStamp) const;
-
-    bool operator<(const TimeStamp& timeStamp) const;
-
-    bool operator==(const TimeStamp& timeStamp) const;
-
-    bool operator!=(const TimeStamp& timeStamp) const;
-
-    bool operator>=(const TimeStamp& timeStamp) const;
-
-    bool operator<=(const TimeStamp& timeStamp) const;
-
-    TimeStamp operator+(const TimeStamp& timeStamp) const;
-
-    TimeStamp& operator+=(const TimeStamp& timeStamp);
-
-    TimeStamp operator-(const TimeStamp& timeStamp) const;
-
-    TimeStamp& operator-=(const TimeStamp& timeStamp);
-
-    TimeStamp operator%(const TimeStamp& timeStamp) const;
-
-    //--------------------------------------------------------------------------
-    // Public methods
-    //--------------------------------------------------------------------------
-
-    void fromTimeMs(const TimeMs& timeMs,
-                    const std::uint32_t rollOverCount = 0);
-
-    void fromTimeUs(const TimeUs& timeUs,
-                    const std::uint32_t rollOverCount = 0);
-
-    void fromTimeNs(const TimeNs& timeNs,
-                    const std::uint32_t rollOverCount = 0);
-
-    void fromTimeMsSigned(const TimeMsSigned& timeMsSigned,
-                          const std::uint32_t rollOverCount = 0);
-
-    void fromTimeUsSigned(const TimeUsSigned& timeUsSigned,
-                         const std::uint32_t rollOverCount = 0);
-
-    void fromTimeNsSigned(const TimeNsSigned& timeNsSigned,
-                          const std::uint32_t rollOverCount = 0);
-
-    void fromTimeSFloat(const TimeSFloat& timeSFloat);
-
-    void fromTimeSFloat(const TimeSFloat& timeSFloat,
-                        const std::uint32_t roundingPrecision);
-
-    void fromTimeSDouble(const TimeSDouble& timeSDouble);
-
-    void fromTimeSDouble(const TimeSDouble& timeSDouble,
-                         const std::uint32_t roundingPrecision);
-
-    //--------------------------------------------------------------------------
-    template <typename ValueType>
-    void fromTimeSValueType(const ValueType& timeSValueType)
+    TimeStamp() :
+        Time<std::int64_t, Units::Time::NS>()
     {
-        timeS = static_cast<TimeSSigned>(timeSValueType);
-
-        timeNs =
-            static_cast<TimeSSigned>(
-                 (timeSValueType - static_cast<ValueType>(timeS)) * 1000000000);
     }
 
     //--------------------------------------------------------------------------
-    template <typename ValueType>
-    void fromTimeSValueType(const ValueType& timeSValueType,
-                            const std::uint32_t roundingPrecisionMultiplier)
+    explicit TimeStamp(const std::int64_t timeNs) :
+        Time<std::int64_t, Units::Time::NS>(timeNs)
     {
-        timeS = static_cast<TimeSSigned>(timeSValueType);
-        ValueType remainder = timeSValueType - static_cast<ValueType>(timeS);
-
-        TimeNsSigned truncatedInt =
-            static_cast<TimeNsSigned>(
-                remainder * roundingPrecisionMultiplier +
-                                                   static_cast<ValueType>(0.5));
-
-        timeNs = truncatedInt * (1000000000 / roundingPrecisionMultiplier);
     }
 
-    float toTimeSFloat() const;
-
-    double toTimeSDouble() const;
-
     //--------------------------------------------------------------------------
-    template <typename ValueType>
-    ValueType toTimeSValueType() const
+    TimeStamp(const TimeSSigned timeS, const TimeNsSigned timeNs) :
+        Time<std::int64_t, Units::Time::NS>(
+                         static_cast<std::int64_t>(timeS) * 1000000000 + timeNs)
     {
-        ValueType timeS =
-          static_cast<ValueType>(this->timeS) +
-                                  (static_cast<ValueType>(timeNs) / 1000000000);
-
-        return timeS;
     }
 
-    TimeMsSigned toTimeMsSigned() const;
-
-    TimeMsSigned toTimeMsSigned(std::uint32_t& rollOverCount) const;
-
-    TimeUsSigned toTimeUsSigned() const;
-
-    TimeUsSigned toTimeUsSigned(std::uint32_t& rollOverCount) const;
-
-    TimeNsSigned toTimeNsSigned() const;
-
-    TimeNsSigned toTimeNsSigned(std::uint32_t& rollOverCount) const;
-
     //--------------------------------------------------------------------------
-    // Public deprecated methods
+    // Public copy constructors
     //--------------------------------------------------------------------------
 
-    TimeMsSigned toTimeMs() const;
-
-    TimeMsSigned toTimeMs(std::uint32_t& rollOverCount) const;
-
-    TimeUsSigned toTimeUs() const;
-
-    TimeUsSigned toTimeUs(std::uint32_t& rollOverCount) const;
-
-    TimeNsSigned toTimeNs() const;
-
-    TimeNsSigned toTimeNs(std::uint32_t& rollOverCount) const;
-
-    void reset();
-
-private:
-
     //--------------------------------------------------------------------------
-    // Private methods
-    //--------------------------------------------------------------------------
-
-    void checkForOverUnderFlow();
-
-    void checkForSignChange();
+    TimeStamp(const QuantityInterface<std::int64_t>& quantity) :
+        Time<std::int64_t, Units::Time::NS>(quantity.get())
+    {
+    }
 };
 
 }; // namespace Plat4m

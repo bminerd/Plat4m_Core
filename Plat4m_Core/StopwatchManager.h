@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022-2023 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Module.h>
 #include <Plat4m_Core/Stopwatch.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/List.h>
+#include <Plat4m_Core/TimeStamp.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -60,9 +62,22 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class StopwatchManager : public Module
+class StopwatchManager
 {
 public:
+
+    //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
+
+    enum ErrorCode
+    {
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_INSTANCE_NOT_CREATED,
+        ERROR_CODE_INSTANCE_ALREADY_CREATED
+    };
+
+    typedef ErrorTemplate<ErrorCode> Error;
 
     //--------------------------------------------------------------------------
     // Public static methods
@@ -70,13 +85,23 @@ public:
 
     static Stopwatch& createStopwatch(const char* name = 0);
 
+    static void addStopwatch(Stopwatch& stopwatch);
+
+    static void removeStopwatch(Stopwatch& stopwatch);
+
+    static List<Stopwatch*>& getStopwatchList();
+
+    static void computeBackgroundCalculations();
+
+    static TimeStamp getCurrentTimeStamp();
+
 protected:
 
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
 
-    StopwatchManager();
+    StopwatchManager(const TimeStamp& cpuLoadTimeWindow);
 
     //--------------------------------------------------------------------------
     // Protected virtual destructors
@@ -93,10 +118,42 @@ private:
     static StopwatchManager* myDriver;
 
     //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    List<Stopwatch*> myStopwatchList;
+
+    Stopwatch* myBackgroundStopwatch;
+
+    TimeStamp myCpuLoadTimeWindow;
+
+    TimeStamp myCpuLoadTimeWindowStartTimeStamp;
+
+    TimeStamp myCpuLoadTimeWindowEndTimeStamp;
+
+    bool myIsMeasuringCpuLoadTimeWindow;
+
+    bool myIsFirstBackgroundMeasurement;
+
+    //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
 
-    virtual Stopwatch& driverCreateStopwatch(const char* name) = 0;
+    virtual Stopwatch& subclassCreateStopwatch(const char* name) = 0;
+
+    virtual TimeStamp subclassGetCurrentTimeStamp() = 0;
+
+    //--------------------------------------------------------------------------
+    // Private methods
+    //--------------------------------------------------------------------------
+
+    void addStopwatchPrivate(Stopwatch& stopwatch);
+
+    void removeStopwatchPrivate(Stopwatch& stopwatch);
+
+    List<Stopwatch*>& getStopwatchListPrivate();
+
+    void computeBackgroundCalculationsPrivate();
 };
 
 }; // namespace Plat4m

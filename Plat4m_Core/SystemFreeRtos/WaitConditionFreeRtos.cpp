@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017-2023 Benjamin Minerd
+// Copyright (c) 2017-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -55,7 +55,7 @@ using Plat4m::WaitCondition;
 
 //------------------------------------------------------------------------------
 WaitConditionFreeRtos::WaitConditionFreeRtos(Thread& thread) :
-    WaitCondition(),
+    WaitCondition(thread),
     myTaskHandle(0)
 {
     ThreadFreeRtos& threadFreeRtos = static_cast<ThreadFreeRtos&>(thread);

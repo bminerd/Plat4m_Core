@@ -105,7 +105,8 @@ public:
     //--------------------------------------------------------------------------
     TopicSubscriber(
                    const TopicBase::Id id,
-                   typename Topic<DataType>::SampleCallback& sampleCallback) :
+                   typename Topic<DataType>::SampleCallback& sampleCallback,
+                   const bool subscribe = true) :
         Module(),
         myTopicId(id),
         myConfig(),
@@ -116,7 +117,10 @@ public:
     {
         myConfig.downsampleFactor = 1;
 
-        Topic<DataType>::subscribe(id, myPrivateSampleCallback);
+        if (subscribe)
+        {
+            Topic<DataType>::subscribe(id, myPrivateSampleCallback);
+        }
     }
 
     //--------------------------------------------------------------------------

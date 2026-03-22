@@ -77,7 +77,7 @@ public:
         ERROR_CODE_SERVICE_TYPE_ID_MISMATCH
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     typedef std::uint32_t Id;
 

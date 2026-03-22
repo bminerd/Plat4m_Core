@@ -106,14 +106,14 @@ public:
     GpioPortSTM32H7xx(const Id id);
 
     //--------------------------------------------------------------------------
-    // Public methods implemented from GpioPort
+    // Public virtual methods overridden for GpioPort
     //--------------------------------------------------------------------------
 
-    void setValueFast(const std::uint16_t value);
+    virtual void setValueFast(const std::uint16_t value) override;
 
-    std::uint16_t getValueFast();
+    virtual std::uint16_t getValueFast() override;
 
-    std::uint16_t readValueFast();
+    virtual std::uint16_t readValueFast() override;
 
     //--------------------------------------------------------------------------
     // Public methods

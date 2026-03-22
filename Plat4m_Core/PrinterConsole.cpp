@@ -85,13 +85,22 @@ Module::Error PrinterConsole::driverSetEnabled(const bool enabled)
 
 //------------------------------------------------------------------------------
 Printer::Error PrinterConsole::driverPrint(const ByteArray& bytes,
-                                           const bool waitUntilDone)
+                                           const bool waitUntilDone,
+                                           const bool isError)
 {
     const std::uint32_t size = bytes.getSize();
 
     for (std::uint32_t i = 0; i < size; i++)
     {
-        std::cout << bytes[i];
+        if (isError)
+        {
+            std::cerr << bytes[i];
+        }
+        else
+        {
+            std::cout << bytes[i];
+        }
+        
     }
 
     return Printer::Error(Printer::ERROR_CODE_NONE);
