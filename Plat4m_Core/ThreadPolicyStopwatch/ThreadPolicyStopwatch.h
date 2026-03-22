@@ -83,6 +83,8 @@ public:
 
     virtual void apply(Thread& thread, Callback<>& threadCallback) override;
 
+    virtual void notifyBlocked(const bool blocked) override;
+
 private:
 
     //--------------------------------------------------------------------------

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -257,7 +257,7 @@ public:
         READ_MODE_MAILBOX
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     struct Config
     {

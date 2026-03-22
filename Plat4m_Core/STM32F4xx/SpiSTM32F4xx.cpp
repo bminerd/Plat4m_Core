@@ -399,7 +399,10 @@ Spi::Error SpiSTM32F4xx::driverSetConfig(const Config& config)
     // True if no prescaler was found to make the desired clock frequency valid
     if (i == size)
     {
-        return Spi::Error(Spi::ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(Spi::Error,
+                                   Spi::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     myClockPrescaler = (ClockPrescaler) i;

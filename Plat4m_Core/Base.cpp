@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021-2023 Benjamin Minerd
+// Copyright (c) 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,78 +33,34 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file SemaphoreLinux.cpp
+/// @file Base.cpp
 /// @author Ben Minerd
-/// @date 8/19/2021
-/// @brief SemaphoreLinux class source file.
+/// @date 4/21/2013
+/// @brief Generic class for all modules to be subclasses of.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Linux/SemaphoreLinux.h>
-#include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/Base.h>
 
-using namespace std;
 using namespace Plat4m;
 
 //------------------------------------------------------------------------------
-// Public constructors
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-SemaphoreLinux::SemaphoreLinux(const uint32_t maxValue,
-                               const uint32_t initialValue) :
-    Semaphore(maxValue, initialValue),
-    mySemaphoreHandle()
-{
-    int returnValue = sem_init(&mySemaphoreHandle, 0, initialValue);
-
-    if (returnValue != 0)
-    {
-        while (true)
-        {
-            // Lock up, unable to create semaphore
-        }
-    }
-}
-
-//------------------------------------------------------------------------------
-// Public destructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-SemaphoreLinux::~SemaphoreLinux()
+Base::~Base()
 {
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods implemented overridden for Semaphore
+// Protected constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Semaphore::Error SemaphoreLinux::driverWait()
+Base::Base()
 {
-    sem_wait(&mySemaphoreHandle);
-
-    return Error(ERROR_CODE_NONE);
-}
-
-//------------------------------------------------------------------------------
-Semaphore::Error SemaphoreLinux::driverPost()
-{
-    sem_post(&mySemaphoreHandle);
-
-    return Error(ERROR_CODE_NONE);
-}
-
-//------------------------------------------------------------------------------
-uint32_t SemaphoreLinux::driverGetValue()
-{
-    uint32_t value;
-
-    sem_getvalue(&mySemaphoreHandle, (int*) &value);
-
-    return value;
 }

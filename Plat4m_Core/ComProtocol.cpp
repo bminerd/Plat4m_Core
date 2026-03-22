@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,15 +46,14 @@
 #include <Plat4m_Core/ComProtocol.h>
 #include <Plat4m_Core/System.h>
 
-using Plat4m::ComProtocol;
-using Plat4m::ComLink;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t ComProtocol::getParseTimeoutMs()
+std::uint32_t ComProtocol::getParseTimeoutMs()
 {
     return myParseTimeoutMs;
 }
@@ -62,12 +61,12 @@ uint32_t ComProtocol::getParseTimeoutMs()
 //------------------------------------------------------------------------------
 ComProtocol::ParseStatus ComProtocol::parseData(
                                               const ByteArray& receiveByteArray,
-								   	   	   	  ByteArray& transmitByteArray,
-						                      Callback<>*& followUpCallback)
+                                              ByteArray& transmitByteArray,
+                                              Callback<>*& followUpCallback)
 {
-	return driverParseData(receiveByteArray,
-	                       transmitByteArray,
-	                       followUpCallback);
+    return subclassParseData(receiveByteArray,
+                             transmitByteArray,
+                             followUpCallback);
 }
 
 //------------------------------------------------------------------------------
@@ -99,4 +98,19 @@ ComProtocol::~ComProtocol()
 ComLink& ComProtocol::getComLink()
 {
     return myComLink;
+}
+
+//------------------------------------------------------------------------------
+// Private virtual methods (deprecated)
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+ComProtocol::ParseStatus ComProtocol::driverParseData(
+                                              const ByteArray& receiveByteArray,
+                                              ByteArray& transmitByteArray,
+                                              Callback<>*& followUpCallback)
+{
+    return (subclassParseData(receiveByteArray,
+                              transmitByteArray,
+                              followUpCallback));
 }

@@ -49,7 +49,6 @@
 #include <cstddef>
 #include <new>
 
-#include <Plat4m_Core/Module.h>
 #include <Plat4m_Core/AllocationMemory.h>
 
 //------------------------------------------------------------------------------
@@ -63,7 +62,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class MemoryAllocator : public Module
+class MemoryAllocator
 {
 public:
 
@@ -94,9 +93,13 @@ public:
 
     //--------------------------------------------------------------------------
     template <typename T>
-    static void deallocate(T* item)
+    static void deallocate(T*& item)
     {
-        AllocationMemory::deallocate(static_cast<void*>(item));
+        item->~T();
+
+        void*& pointer = reinterpret_cast<void*&>(item);
+
+        AllocationMemory::deallocate(pointer);
     }
 
 protected:

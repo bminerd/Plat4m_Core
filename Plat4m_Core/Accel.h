@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,11 +64,11 @@ namespace Plat4m
 class Accel : public Module
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
         ERROR_CODE_NONE,
@@ -88,23 +88,23 @@ public:
     // Public typedefs
     //--------------------------------------------------------------------------
 
-    typedef ErrorTemplate<ErrorCode> Error;
-    
+    using Error = ErrorTemplate<ErrorCode>;
+
     //--------------------------------------------------------------------------
     // Public structures
     //--------------------------------------------------------------------------
-    
+
     struct Config
     {
         int a; // Placeholder
     };
-    
+
     struct Measurement
     {
         int16_t rawSamples[3];
         float samples[3];
     };
-    
+
     //--------------------------------------------------------------------------
     // Public virtual methods
     //--------------------------------------------------------------------------
@@ -112,37 +112,37 @@ public:
     virtual Error configure(const Config& config);
 
     virtual Error getMeasurement(Measurement& measurement);
-    
+
 protected:
-    
+
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
+
     Accel();
     
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
 
-	virtual ~Accel();
+    virtual ~Accel();
 
 private:
     
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
-	Config myConfig;
 
-	Measurement myLastMeasurement;
-    
+    Config myConfig;
+
+    Measurement myLastMeasurement;
+
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Error driverConfigure(const Config& config) = 0;
-    
+
     virtual Error driverGetMeasurement(Measurement& measurement) = 0;
 };
 

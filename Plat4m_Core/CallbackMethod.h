@@ -46,7 +46,6 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Callback.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 
 //------------------------------------------------------------------------------
@@ -55,6 +54,9 @@
 
 namespace Plat4m
 {
+
+template <typename TReturn, typename... TParameters>
+class Callback;
 
 //------------------------------------------------------------------------------
 // Classes
@@ -101,20 +103,6 @@ private:
     TClass* myObject;
     CallbackMethodType myCallbackMethod;
 };
-
-//------------------------------------------------------------------------------
-// Namespace functions
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-template <class TClass, typename TReturn, typename... TParameters>
-Callback<TReturn, TParameters...>& createCallback(TClass* object,
-                                  TReturn (TClass::*callback)(TParameters...))
-{
-    return *(MemoryAllocator::allocate<
-                    CallbackMethod<TClass, TReturn, TParameters...>>(object,
-                                                                     callback));
-}
 
 }; // namespace Plat4m
 

@@ -126,7 +126,7 @@ bool ListUnitTest::appendTest()
     list.append(value);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
     bool isLast = list.last(last);
@@ -152,10 +152,10 @@ bool ListUnitTest::appendTest2()
     list.append(value2);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
-    bool isLast = list.last(last);
+    list.last(last);
 
     return UNIT_TEST_REPORT(
            UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &
@@ -182,10 +182,10 @@ bool ListUnitTest::appendTest3()
     list.append(value3);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
-    bool isLast = list.last(last);
+    list.last(last);
 
     return UNIT_TEST_REPORT(
            UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(3)) &
@@ -204,7 +204,7 @@ bool ListUnitTest::prependTest()
     list.prepend(value);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
     bool isLast = list.last(last);
@@ -230,10 +230,10 @@ bool ListUnitTest::prependTest2()
     list.prepend(value2);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
-    bool isLast = list.last(last);
+    list.last(last);
 
     return UNIT_TEST_REPORT(
            UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &
@@ -260,10 +260,10 @@ bool ListUnitTest::prependTest3()
     list.prepend(value3);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
-    bool isLast = list.last(last);
+    list.last(last);
 
     return UNIT_TEST_REPORT(
            UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(3)) &
@@ -313,7 +313,7 @@ bool ListUnitTest::removeTest2()
     list.remove(value1);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
     bool isLast = list.last(last);
@@ -342,7 +342,7 @@ bool ListUnitTest::removeTest3()
     list.remove(value2);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
     bool isLast = list.last(last);
@@ -375,10 +375,10 @@ bool ListUnitTest::removeTest4()
     list.remove(value1);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
-    bool isLast = list.last(last);
+    list.last(last);
 
     return UNIT_TEST_REPORT(
            UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &
@@ -409,10 +409,10 @@ bool ListUnitTest::removeTest5()
     list.remove(value2);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
-    bool isLast = list.last(last);
+    list.last(last);
 
     return UNIT_TEST_REPORT(
            UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &
@@ -442,10 +442,10 @@ bool ListUnitTest::removeTest6()
     list.remove(value3);
 
     std::uint8_t first = 0;
-    bool isFirst = list.first(first);
+    list.first(first);
 
     std::uint8_t last = 0;
-    bool isLast = list.last(last);
+    list.last(last);
 
     return UNIT_TEST_REPORT(
            UNIT_TEST_CASE_EQUAL(list.size(), static_cast<std::uint32_t>(2)) &

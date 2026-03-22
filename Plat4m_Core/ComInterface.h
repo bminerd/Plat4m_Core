@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Plat4m.h>
+#include <cstdint>
+
 #include <Plat4m_Core/Module.h>
 #include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/Callback.h>
@@ -86,9 +87,9 @@ public:
     // Public typedefs
     //--------------------------------------------------------------------------
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
-    typedef Callback<void, uint8_t> ByteReceivedCallback;
+    using ByteReceivedCallback = Callback<void, std::uint8_t>;
 
     //--------------------------------------------------------------------------
     // Public pure virtual methods
@@ -97,18 +98,18 @@ public:
     virtual Error transmitBytes(const ByteArray& byteArray,
                                 const bool waitUntilDone = true) = 0;
 
-    virtual uint32_t getReceivedBytesCount() = 0;
+    virtual std::uint32_t getReceivedBytesCount() = 0;
 
     virtual Error getReceivedBytes(ByteArray& byteArray,
-                                   const uint32_t nBytes = 0) = 0;
+                                   const std::uint32_t nBytes = 0) = 0;
 
     //--------------------------------------------------------------------------
     // Public virtual methods
     //--------------------------------------------------------------------------
 
-    virtual void setTransmitBuffer(Buffer<uint8_t>& transmitBuffer);
+    virtual void setTransmitBuffer(Buffer<std::uint8_t>& transmitBuffer);
 
-    virtual void setReceiveBuffer(Buffer<uint8_t>& receiveBuffer);
+    virtual void setReceiveBuffer(Buffer<std::uint8_t>& receiveBuffer);
 
     //--------------------------------------------------------------------------
     // Public methods
@@ -124,8 +125,8 @@ protected:
 
     ComInterface();
 
-    ComInterface(Buffer<uint8_t>& transmitBuffer,
-                 Buffer<uint8_t>& receiveBuffer);
+    ComInterface(Buffer<std::uint8_t>& transmitBuffer,
+                 Buffer<std::uint8_t>& receiveBuffer);
 
     //--------------------------------------------------------------------------
     // Protected virtual destructors
@@ -138,19 +139,19 @@ protected:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    inline Buffer<uint8_t>* getTransmitBuffer()
+    inline Buffer<std::uint8_t>* getTransmitBuffer()
     {
         return myTransmitBuffer;
     }
 
     //--------------------------------------------------------------------------
-    inline Buffer<uint8_t>* getReceiveBuffer()
+    inline Buffer<std::uint8_t>* getReceiveBuffer()
     {
         return myReceiveBuffer;
     }
 
     //--------------------------------------------------------------------------
-    inline void byteReceived(const uint8_t byte)
+    inline void byteReceived(const std::uint8_t byte)
     {
         if (isValidPointer(myByteReceivedCallback))
         {
@@ -164,9 +165,9 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    Buffer<uint8_t>* myTransmitBuffer;
+    Buffer<std::uint8_t>* myTransmitBuffer;
 
-    Buffer<uint8_t>* myReceiveBuffer;
+    Buffer<std::uint8_t>* myReceiveBuffer;
 
     ByteReceivedCallback* myByteReceivedCallback;
 };

@@ -49,6 +49,7 @@
 #include <cstdint>
 
 #include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/Base.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -58,11 +59,18 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
+// Forward class declarations
+//------------------------------------------------------------------------------
+
+template <typename TCode>
+class ErrorTemplate;
+
+//------------------------------------------------------------------------------
 // Classes
 //------------------------------------------------------------------------------
 
 template <typename T>
-class List
+class List : public Base
 {
 public:
 
@@ -76,7 +84,7 @@ public:
         ERROR_CODE_ITEM_NULL
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     struct Item
     {
@@ -186,7 +194,25 @@ public:
          myLastItem(0)
     {
     }
-    
+
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~List()
+    {
+        Item* item = myFirstItem;
+
+        while (isValidPointer(item))
+        {
+            Item* nextItem = item->nextItem;
+
+            MemoryAllocator::deallocate(item);
+
+            item = nextItem;
+        }
+    }
+
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------

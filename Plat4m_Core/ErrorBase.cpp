@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019-2023 Benjamin Minerd
+// Copyright (c) 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,159 +33,137 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file QueueDriverLinux.cpp
+/// @file ErrorBase.cpp
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief QueueDriverLinux class source file.
+/// @date 3/16/2023
+/// @brief ErrorBase class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <cstring>
+#include <Plat4m_Core/ErrorBase.h>
+#include <Plat4m_Core/ErrorManager.h>
 
-#include <sys/ipc.h>
-#include <sys/msg.h>
-
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
-
-using Plat4m::QueueDriverLinux;
-
-//------------------------------------------------------------------------------
-// Public constructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-QueueDriverLinux::QueueDriverLinux(const uint32_t valueSizeBytes) :
-    QueueDriver(),
-    myValueSizeBytes(valueSizeBytes),
-    myMessageQueueId(msgget(IPC_PRIVATE, 0666 | IPC_CREAT | IPC_EXCL))
-{
-    if (myMessageQueueId < 0)
-    {
-        while (true)
-        {
-            // Lock up
-        }
-    }
-}
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-QueueDriverLinux::~QueueDriverLinux()
+ErrorBase::~ErrorBase()
 {
 }
 
 //------------------------------------------------------------------------------
-// Public virtual methods overridden for QueueDriver
+// Public methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSize()
+ErrorBase& ErrorBase::operator=(const ErrorBase& errorBase)
 {
-    struct msqid_ds messageQueueInfo;
+    myCode = errorBase.myCode;
+    myModuleId = errorBase.myModuleId;
+    myInstanceId = errorBase.myInstanceId;
 
-    msgctl(myMessageQueueId, IPC_STAT, &messageQueueInfo);
-
-    return (messageQueueInfo.msg_qnum);
+    return (*this);
 }
 
 //------------------------------------------------------------------------------
-uint32_t QueueDriverLinux::driverGetSizeFast()
+ErrorBase::Code ErrorBase::getCode() const
 {
-    return driverGetSize();
+    return myCode;
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueue(const void* value)
+ErrorBase::Severity ErrorBase::getSeverity() const
 {
-    Message message;
-    message.messageType = MESSAGE_TYPE_DATA;
-    message.value       = (void*) value;
-
-    return messageSend(message);
+    return mySeverity;
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverEnqueueFast(const void* value)
+ErrorBase::ModuleId ErrorBase::getModuleId() const
 {
-    return (driverEnqueue(value));
-}
-
-//-----------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeue(void* value)
-{
-    Message message;
-    message.value = value;
-
-    return messageReceive(message);
+    return myModuleId;
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::driverDequeueFast(void* value)
+ErrorBase::InstanceId ErrorBase::getInstanceId() const
 {
-    return (driverDequeue(value));
+    return myInstanceId;
 }
 
 //------------------------------------------------------------------------------
-void QueueDriverLinux::driverClear()
-{
-    Message message;
-    message.messageType = MESSAGE_TYPE_FLUSH;
-    message.value       = 0;
+// Protected constructors
+//------------------------------------------------------------------------------
 
-    messageSend(message);
+//------------------------------------------------------------------------------
+ErrorBase::ErrorBase() :
+    myCode(0),
+    mySeverity(SEVERITY_LOW),
+    myModuleId(0),
+    myInstanceId(0)
+{
 }
 
 //------------------------------------------------------------------------------
-// Private methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-bool QueueDriverLinux::messageSend(const Message& message)
+ErrorBase::ErrorBase(const Code& code) :
+    myCode(),
+    mySeverity(SEVERITY_LOW),
+    myModuleId(0),
+    myInstanceId(0)
 {
-    uint8_t messageBytes[sizeof(message.messageType) + myValueSizeBytes];
-    memset(messageBytes, 0, sizeof(messageBytes));
-
-    memcpy(&(messageBytes[0]),
-           &(message.messageType),
-           sizeof(message.messageType));
-
-    if (isValidPointer(message.value))
-    {
-        memcpy(&(messageBytes[sizeof(message.messageType)]),
-               message.value,
-               myValueSizeBytes);
-    }
-
-    return msgsnd(myMessageQueueId, messageBytes, myValueSizeBytes, 1);
+    setCode(code);
 }
 
 //------------------------------------------------------------------------------
-bool QueueDriverLinux::messageReceive(Message& message)
+ErrorBase::ErrorBase(const Code& code,
+                     const Severity& severity,
+                     const ModuleId& moduleId,
+                     const InstanceId& instanceId) :
+    myCode(),
+    mySeverity(severity),
+    myModuleId(moduleId),
+    myInstanceId(instanceId)
 {
-    uint8_t messageBytes[sizeof(message.messageType) + myValueSizeBytes];
-    memset(messageBytes, 0, sizeof(messageBytes));
+    setCode(code);
+}
 
-    msgrcv(myMessageQueueId, messageBytes, myValueSizeBytes, 0, 0);
+//------------------------------------------------------------------------------
+ErrorBase::ErrorBase(const ErrorBase& error) :
+    myCode(error.myCode),
+    mySeverity(error.mySeverity),
+    myModuleId(error.myModuleId),
+    myInstanceId(error.myInstanceId)
+{
+}
 
-    memcpy(&(message.messageType),
-           &(messageBytes[0]),
-           sizeof(message.messageType));
+//------------------------------------------------------------------------------
+// Protected methods
+//------------------------------------------------------------------------------
 
-    if (message.messageType == MESSAGE_TYPE_FLUSH)
-    {
-        return false;
-    }
+//------------------------------------------------------------------------------
+void ErrorBase::setCode(const Code& code)
+{
+    myCode = code;
+}
 
-    memcpy(message.value,
-           &(messageBytes[sizeof(message.messageType)]),
-           myValueSizeBytes);
+//------------------------------------------------------------------------------
+void ErrorBase::setSeverity(const Severity& severity)
+{
+    mySeverity = severity;
+}
 
-    return true;
+//------------------------------------------------------------------------------
+void ErrorBase::setModuleId(const ModuleId& id)
+{
+    myModuleId = id;
+}
+
+//------------------------------------------------------------------------------
+void ErrorBase::setInstanceId(const InstanceId& id)
+{
+    myInstanceId = id;
 }

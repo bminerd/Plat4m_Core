@@ -44,7 +44,6 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/StopwatchSystemTime/StopwatchSystemTime.h>
-#include <Plat4m_Core/System.h>
 
 using namespace Plat4m;
 
@@ -65,14 +64,4 @@ StopwatchSystemTime::StopwatchSystemTime(const char* name) :
 //------------------------------------------------------------------------------
 StopwatchSystemTime::~StopwatchSystemTime()
 {
-}
-
-//------------------------------------------------------------------------------
-// Public virtual methods overridden for Stopwatch
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-TimeStamp StopwatchSystemTime::getCurrentTimeStamp()
-{
-    return System::getWallTimeStamp();
 }

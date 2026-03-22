@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,9 +45,7 @@
 
 #include <Plat4m_Core/InputCaptureTimer.h>
 
-using Plat4m::InputCaptureTimer;
-using Plat4m::Module;
-using Plat4m::GpioPin;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public methods
@@ -78,11 +76,14 @@ InputCaptureTimer::Error InputCaptureTimer::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(InputCaptureTimer::Error,
+                                   InputCaptureTimer::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
-    
+
     Error error = driverSetConfig(config);
-    
+
     if (error.getCode() == ERROR_CODE_NONE)
     {
         myConfig = config;
@@ -93,7 +94,7 @@ InputCaptureTimer::Error InputCaptureTimer::setConfig(const Config& config)
         mySecondsPerPeriod = ((RealNumber) periodValue) *
                              mySecondsPerCount;
     }
-    
+
     return error;
 }
 

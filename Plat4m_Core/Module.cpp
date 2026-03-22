@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,8 +44,9 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/Module.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
-using Plat4m::Module;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public virtual methods
@@ -69,14 +70,7 @@ Module::Error Module::setEnabled(const bool enabled)
 
     Error error;
 
-    error = driverSetEnabled(enabled);
-
-    if (error.getCode() != ERROR_CODE_NONE)
-    {
-        return error;
-    }
-
-    error = interfaceSetEnabled(enabled);
+    error = subclassSetEnabled(enabled);
 
     if (error.getCode() != ERROR_CODE_NONE)
     {
@@ -96,7 +90,7 @@ Module::Error Module::setEnabled(const bool enabled)
     }
     else
     {
-        error.setCode(ERROR_CODE_NONE);
+        error = Error(ERROR_CODE_NONE);
     }
 
     return error;
@@ -142,8 +136,8 @@ Module::Error Module::enable(const bool enable)
 
 //------------------------------------------------------------------------------
 Module::Module() :
-	myIsEnabled(false),
-	mySetEnabledCallback(0)
+    myIsEnabled(false),
+    mySetEnabledCallback(0)
 {
 }
 
@@ -157,37 +151,52 @@ Module::~Module()
 }
 
 //------------------------------------------------------------------------------
+// Protected virtual methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Module::Error Module::subclassSetEnabled(const bool enabled)
+{
+    // Call deprecated methods in case those were implemented by subclass
+
+    Error error = driverSetEnabled(enabled);
+
+    if (error.getCode() != ERROR_CODE_NONE)
+    {
+        return error;
+    }
+
+    return (interfaceSetEnabled(enabled));
+}
+
+//------------------------------------------------------------------------------
 // Private virtual methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error Module::interfaceSetEnabled(const bool enabled)
 {
-    // Intentionally blank, not implemented by subclass
-    return interfaceEnable(enabled);
+    // Call deprecated method in case it was implemented by subclass
+    return (interfaceEnable(enabled));
 }
 
 //------------------------------------------------------------------------------
 Module::Error Module::driverSetEnabled(const bool enabled)
 {
-    // Intentionally blank, not implemented by subclass
-    return driverEnable(enabled);
+    // Call deprecated method in case it was implemented by subclass
+    return (driverEnable(enabled));
 }
-
-//------------------------------------------------------------------------------
-// Private virtual methods (deprecated)
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Module::Error Module::interfaceEnable(const bool enable)
 {
-	// Intentionally blank, not implemented by subclass
-    return Error(ERROR_CODE_NONE);
+    // Intentionally blank, not implemented by subclass
+    return (Error(ERROR_CODE_NONE));
 }
 
 //------------------------------------------------------------------------------
 Module::Error Module::driverEnable(const bool enable)
 {
     // Intentionally blank, not implemented by subclass
-    return Error(ERROR_CODE_NONE);
+    return (Error(ERROR_CODE_NONE));
 }

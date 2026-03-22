@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,21 +65,26 @@
     UnitTest::testCaseEqual(value,                \
                             correctValue,         \
                             #value,               \
-                            #correctValue)
-
+                            #correctValue,        \
+                            __FILE__,             \
+                            __LINE__)
 
 #define UNIT_TEST_CASE_EQUAL_MESSAGE(value, correctValue, errorMessage) \
     UnitTest::testCaseEqualMessage(value,                               \
                                    correctValue,                        \
                                    #value,                              \
                                    #correctValue,                       \
-                                   errorMessage)
+                                   errorMessage,                        \
+                                   __FILE__,                            \
+                                   __LINE__)
 
 #define UNIT_TEST_CASE_EQUAL_FLOAT(value, correctValue) \
     UnitTest::testCaseEqualFloat(value,                 \
                                  correctValue,          \
                                  #value,                \
-                                 #correctValue)
+                                 #correctValue,         \
+                                 __FILE__,              \
+                                 __LINE__)
 
 
 #define UNIT_TEST_CASE_EQUAL_FLOAT_MESSAGE(value, correctValue, errorMessage) \
@@ -87,7 +92,17 @@
                                         correctValue,                         \
                                         #value,                               \
                                         #correctValue,                        \
-                                        errorMessage)
+                                        errorMessage,                         \
+                                        __FILE__,                             \
+                                        __LINE__)
+
+#define UNIT_TEST_CASE_NOT_EQUAL(value, incorrectValue) \
+    UnitTest::testCaseNotEqual(value,                   \
+                               incorrectValue,          \
+                               #value,                  \
+                               #incorrectValue,         \
+                               __FILE__,                \
+                               __LINE__)
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -121,7 +136,7 @@ public:
     // Public typedefs
     //--------------------------------------------------------------------------
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     typedef bool (*TestCallbackFunction)();
 
@@ -145,15 +160,44 @@ public:
     }
 
     //--------------------------------------------------------------------------
-    template <typename TParameter>
-    static bool testCaseEqual(const TParameter& value,
-                              const TParameter& correctValue,
+    template <typename TParameter1, typename TParameter2>
+    static bool testCaseEqual(const TParameter1& value,
+                              const TParameter2& correctValue,
                               const char* valueName,
-                              const char* correctValueName)
+                              const char* correctValueName,
+                              const char* filename,
+                              const std::uint32_t lineNumber)
     {
         if (value != correctValue)
         {
-            printf("\n- %s didn't equal %s", valueName, correctValueName);
+            printf("\n- %s didn't equal %s (%s:%u)",
+                   valueName,
+                   correctValueName,
+                   filename,
+                   lineNumber);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TParameter1, typename TParameter2>
+    static bool testCaseNotEqual(const TParameter1& value,
+                                 const TParameter2& incorrectValue,
+                                 const char* valueName,
+                                 const char* incorrectValueName,
+                                 const char* filename,
+                                 const std::uint32_t lineNumber)
+    {
+        if (value == incorrectValue)
+        {
+            printf("\n- %s equaled %s (%s:%u)",
+                   valueName,
+                   incorrectValueName,
+                   filename,
+                   lineNumber);
 
             return false;
         }
@@ -167,14 +211,18 @@ public:
                                      const TParameter& correctValue,
                                      const char* valueName,
                                      const char* correctValueName,
-                                     const char* errorMessage)
+                                     const char* errorMessage,
+                                     const char* filename,
+                                     const std::uint32_t lineNumber)
     {
         if (value != correctValue)
         {
-            printf("\n- %s didn't equal %s (%s)",
+            printf("\n- %s didn't equal %s (%s) (%s:%u)",
                    valueName,
                    correctValueName,
-                   errorMessage);
+                   errorMessage,
+                   filename,
+                   lineNumber);
 
             return false;
         }
@@ -186,11 +234,17 @@ public:
     static bool testCaseEqualFloat(const float& value,
                                    const float& correctValue,
                                    const char* valueName,
-                                   const char* correctValueName)
+                                   const char* correctValueName,
+                                   const char* filename,
+                                   const std::uint32_t lineNumber)
     {
         if (fabs(correctValue - value) > FLT_EPSILON)
         {
-            printf("\n- %s didn't equal %s", valueName, correctValueName);
+            printf("\n- %s didn't equal %s (%s:%u)",
+                   valueName,
+                   correctValueName,
+                   filename,
+                   lineNumber);
 
             return false;
         }
@@ -203,14 +257,18 @@ public:
                                           const float& correctValue,
                                           const char* valueName,
                                           const char* correctValueName,
-                                          const char* errorMessage)
+                                          const char* errorMessage,
+                                          const char* filename,
+                                          const std::uint32_t lineNumber)
     {
         if (fabs(correctValue - value) > FLT_EPSILON)
         {
-            printf("\n- %s didn't equal %s (%s)",
+            printf("\n- %s didn't equal %s (%s) (%s:%u)",
                    valueName,
                    correctValueName,
-                   errorMessage);
+                   errorMessage,
+                   filename,
+                   lineNumber);
 
             return false;
         }
@@ -222,11 +280,17 @@ public:
     static bool testCaseEqualFloat(const double& value,
                                    const double& correctValue,
                                    const char* valueName,
-                                   const char* correctValueName)
+                                   const char* correctValueName,
+                                   const char* filename,
+                                   const std::uint32_t lineNumber)
     {
         if (fabs(correctValue - value) > DBL_EPSILON)
         {
-            printf("\n- %s didn't equal %s", valueName, correctValueName);
+            printf("\n- %s didn't equal %s (%s:%u)",
+                   valueName,
+                   correctValueName,
+                   filename,
+                   lineNumber);
 
             return false;
         }
@@ -239,14 +303,18 @@ public:
                                           const double& correctValue,
                                           const char* valueName,
                                           const char* correctValueName,
-                                          const char* errorMessage)
+                                          const char* errorMessage,
+                                          const char* filename,
+                                          const std::uint32_t lineNumber)
     {
         if (fabs(correctValue - value) > DBL_EPSILON)
         {
-            printf("\n- %s didn't equal %s (%s)",
+            printf("\n- %s didn't equal %s (%s) (%s:%u)",
                    valueName,
                    correctValueName,
-                   errorMessage);
+                   errorMessage,
+                   filename,
+                   lineNumber);
 
             return false;
         }

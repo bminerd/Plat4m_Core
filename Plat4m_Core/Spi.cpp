@@ -46,8 +46,7 @@
 #include <Plat4m_Core/Spi.h>
 #include <Plat4m_Core/System.h>
 
-using Plat4m::Spi;
-using Plat4m::Module;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public methods
@@ -58,11 +57,14 @@ Spi::Error Spi::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Spi::Error,
+                                   Spi::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverSetConfig(config);
-    
+
     if (error.getCode() == ERROR_CODE_NONE)
     {
         myConfig = config;
@@ -86,7 +88,10 @@ Spi::Error Spi::masterTransfer(const TransferMode transferMode,
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Spi::Error,
+                                   Spi::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Transfer transfer;
@@ -100,7 +105,7 @@ Spi::Error Spi::masterTransfer(const TransferMode transferMode,
     transfer.receiveBuffer.setItems(receiveByteArray.getItems(),
                                     receiveByteArray.getMaxSize());
     transfer.mailbox = mailbox;
-    transfer.error.setCode(ERROR_CODE_NONE);
+    transfer.error = Error(ERROR_CODE_NONE);
 
     if (isValidPointer(mailbox))
     {

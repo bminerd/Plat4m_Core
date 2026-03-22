@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021-2023 Benjamin Minerd
+// Copyright (c) 2021-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,12 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <cstdint>
-
-#include <pthread.h>
-#include <semaphore.h>
-
-#include <Plat4m_Core/Semaphore.h>
+#include <Plat4m_Core/Posix/SemaphorePosix.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -61,44 +56,10 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases for deprecated classes
 //------------------------------------------------------------------------------
 
-class SemaphoreLinux : public Semaphore
-{
-public:
-
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    SemaphoreLinux(const std::uint32_t maxValue,
-                   const std::uint32_t initialValue);
-
-    //--------------------------------------------------------------------------
-    // Public destructors
-    //--------------------------------------------------------------------------
-
-    ~SemaphoreLinux();
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    sem_t mySemaphoreHandle;
-
-    //--------------------------------------------------------------------------
-    // Private virtual methods overridden for Semaphore
-    //--------------------------------------------------------------------------
-
-    virtual Error driverWait() override;
-
-    virtual Error driverPost() override;
-
-    virtual std::uint32_t driverGetValue() override;
-};
+using SemaphoreLinux = SemaphorePosix;
 
 }; // namespace Plat4m
 

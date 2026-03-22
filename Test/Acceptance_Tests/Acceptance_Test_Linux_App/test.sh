@@ -2,7 +2,7 @@
 
 set -e
 
-pushd .
+pushd . > /dev/null
 
 # Switch current/working directory to here
 cd "${0%/*}"
@@ -11,4 +11,4 @@ cd Build
 
 ./Acceptance_Test_Linux_App
 
-popd
+popd > /dev/null

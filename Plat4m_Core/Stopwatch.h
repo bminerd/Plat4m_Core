@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021-2023 Benjamin Minerd
+// Copyright (c) 2021-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/TimeStamp.h>
 #include <Plat4m_Core/List.h>
 
@@ -65,40 +67,62 @@ class Stopwatch
 public:
 
     //--------------------------------------------------------------------------
-    // Public static methods
+    // Public virtual destructors
     //--------------------------------------------------------------------------
 
-    static List<Stopwatch*>& getStopwatchList();
-
-    //--------------------------------------------------------------------------
-    // Public pure virtual methods
-    //--------------------------------------------------------------------------
-
-    virtual TimeStamp getCurrentTimeStamp() = 0;
+    virtual ~Stopwatch();
 
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
 
-    void setName(const char* name);
-
-    const char* getName() const;
-
     void start();
 
     void stop();
 
-    TimeStamp getCpuTimeStamp();
+    void pause();
 
-    TimeStamp getMinCpuTimeStamp();
+    void resume();
 
-    TimeStamp getMaxCpuTimeStamp();
+    void setName(const char* name);
 
-    TimeStamp getElapsedTimeStamp();
+    const char* getName() const;
 
-    TimeStamp getMinElapsedTimeStamp();
+    TimeStamp getStartTimeStamp() const;
 
-    TimeStamp getMaxElapsedTimeStamp();
+    TimeStamp getStopTimeStamp() const;
+
+    TimeStamp getCpuTimeStamp() const;
+
+    TimeStamp getMinCpuTimeStamp() const;
+
+    TimeStamp getMaxCpuTimeStamp() const;
+
+    TimeStamp getElapsedTimeStamp() const;
+
+    TimeStamp getMinElapsedTimeStamp() const;
+
+    TimeStamp getMaxElapsedTimeStamp() const;
+
+    TimeStamp getPeriodTimeStamp() const;
+
+    TimeStamp getPreemptedTimeStamp() const;
+
+    TimeStamp getCummulativeCpuTimeStamp() const;
+
+    void resetCummulativeCpuTimeStamp();
+
+    std::uint32_t getEventCount() const;
+
+    void resetEventCount();
+
+    std::uint64_t getTotalEventCount() const;
+
+    float getCpuLoadPercentage() const;
+
+    void setCpuLoadPercentage(const float percentage);
+
+    float getFrequencyHz() const;
 
 protected:
 
@@ -109,20 +133,16 @@ protected:
     Stopwatch(const char* name = 0);
 
     //--------------------------------------------------------------------------
-    // Protected virtual destructors
+    // Protected methods
     //--------------------------------------------------------------------------
 
-    virtual ~Stopwatch();
+    bool isFirstMeasurement() const;
 
 private:
 
     //--------------------------------------------------------------------------
     // Private static data members
     //--------------------------------------------------------------------------
-
-    static List<Stopwatch*> myStopwatchList;
-
-    static List<Stopwatch*>::Iterator myStopwatchListIterator;
 
     static Stopwatch* myCurrentStopwatch;
 
@@ -136,9 +156,17 @@ private:
 
     bool myIsFirstMeasurement;
 
+    bool myIsPaused;
+
     TimeStamp myStartTimeStamp;
 
-    TimeStamp myEndTimeStamp;
+    TimeStamp myStopTimeStamp;
+
+    TimeStamp myPauseStartTimeStamp;
+
+    TimeStamp myPauseStopTimeStamp;
+
+    TimeStamp myPausedTimeStamp;
 
     TimeStamp myCpuTimeStamp;
 
@@ -153,6 +181,18 @@ private:
     TimeStamp myMaxElapsedTimeStamp;
 
     TimeStamp myPreemptedTimeStamp;
+
+    TimeStamp myCummulativeCpuTimeStamp;
+
+    std::uint32_t myEventCount;
+
+    std::uint64_t myTotalEventCount;
+
+    float myCpuLoadPercentage;
+
+    TimeStamp myPeriodTimeStamp;
+
+    float myFrequencyHz;
 };
 
 }; // namespace Plat4m

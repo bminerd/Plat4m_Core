@@ -75,7 +75,10 @@ I2c::Error I2c::masterTransfer(const TransferMode transferMode,
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(I2c::Error,
+                                   I2c::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Transfer transfer;
@@ -89,7 +92,7 @@ I2c::Error I2c::masterTransfer(const TransferMode transferMode,
     transfer.receiveBuffer.setItems(receiveByteArray.getItems(),
                                     receiveByteArray.getMaxSize());
     transfer.mailbox = mailbox;
-    transfer.error.setCode(ERROR_CODE_NONE);
+    transfer.error = Error(ERROR_CODE_NONE);
 
     if (isValidPointer(mailbox))
     {

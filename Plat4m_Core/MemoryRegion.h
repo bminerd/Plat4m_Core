@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -83,7 +83,7 @@ public:
         ERROR_CODE_COMMUNICATION
     };
     
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     //--------------------------------------------------------------------------
     // Public structures

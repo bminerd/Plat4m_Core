@@ -83,7 +83,7 @@ ThreadFreeRtos::ThreadFreeRtos(RunCallback& callback,
                                          newName,
                                          nTotalStackBytes / 4,
                                          (void*) this,
-                                         tskIDLE_PRIORITY,
+                                         tskIDLE_PRIORITY + 1,
                                          &myTaskHandle);
 
     if (returnValue != pdPASS)
@@ -171,5 +171,5 @@ uint32_t ThreadFreeRtos::driverSetPriority(const uint32_t priority)
 {
     vTaskPrioritySet(myTaskHandle, priority);
 
-    return 0;
+    return priority;
 }

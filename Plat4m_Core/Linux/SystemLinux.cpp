@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019-2023 Benjamin Minerd
+// Copyright (c) 2019-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -49,14 +49,15 @@
 #include <pthread.h>
 
 #include <Plat4m_Core/Linux/SystemLinux.h>
-#include <Plat4m_Core/Linux/ThreadLinux.h>
-#include <Plat4m_Core/Linux/MutexLinux.h>
-#include <Plat4m_Core/Linux/WaitConditionLinux.h>
-#include <Plat4m_Core/Linux/QueueDriverLinux.h>
-#include <Plat4m_Core/Linux/SemaphoreLinux.h>
+
+#include <Plat4m_Core/Posix/ThreadPosix.h>
+#include <Plat4m_Core/Posix/MutexPosix.h>
+#include <Plat4m_Core/Posix/WaitConditionPosix.h>
+#include <Plat4m_Core/Posix/QueueDriverPosix.h>
+#include <Plat4m_Core/Posix/SemaphorePosix.h>
+
 #include <Plat4m_Core/MemoryAllocator.h>
 
-using namespace std;
 using namespace Plat4m;
 
 //------------------------------------------------------------------------------
@@ -125,38 +126,40 @@ TimeUs SystemLinux::driverGetTimeUs()
 //------------------------------------------------------------------------------
 Thread& SystemLinux::driverCreateThread(Thread::RunCallback& callback,
                                         const TimeMs periodMs,
-                                        const uint32_t nStackBytes,
+                                        const std::uint32_t nStackBytes,
                                         const bool isSimulated,
                                         const char* name)
 {
-    return *(MemoryAllocator::allocate<ThreadLinux>(callback, periodMs, name));
+    return *(MemoryAllocator::allocate<ThreadPosix>(callback, periodMs, name));
 }
 
 //------------------------------------------------------------------------------
 Mutex& SystemLinux::driverCreateMutex(Thread& thread)
 {
-    return *(MemoryAllocator::allocate<MutexLinux>());
+    return *(MemoryAllocator::allocate<MutexPosix>());
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& SystemLinux::driverCreateWaitCondition(Thread& thread)
 {
-    return *(MemoryAllocator::allocate<WaitConditionLinux>());
+    return *(MemoryAllocator::allocate<WaitConditionPosix>(thread));
 }
 
 //------------------------------------------------------------------------------
-QueueDriver& SystemLinux::driverCreateQueueDriver(const uint32_t nValues,
-                                                  const uint32_t valueSizeBytes,
-                                                  Thread& thread)
+QueueDriver& SystemLinux::driverCreateQueueDriver(
+                                             const std::uint32_t nValues,
+                                             const std::uint32_t valueSizeBytes,
+                                             Thread& thread,
+                                             const bool isSimulated)
 {
-    return *(MemoryAllocator::allocate<QueueDriverLinux>(valueSizeBytes));
+    return *(MemoryAllocator::allocate<QueueDriverPosix>(valueSizeBytes));
 }
 
 //------------------------------------------------------------------------------
-Semaphore& SystemLinux::driverCreateSemaphore(const uint32_t maxValue,
-                                              const uint32_t initialValue)
+Semaphore& SystemLinux::driverCreateSemaphore(const std::uint32_t maxValue,
+                                              const std::uint32_t initialValue)
 {
-    return *(MemoryAllocator::allocate<SemaphoreLinux>(maxValue, initialValue));
+    return *(MemoryAllocator::allocate<SemaphorePosix>(maxValue, initialValue));
 }
 
 //------------------------------------------------------------------------------
@@ -199,9 +202,12 @@ TimeStamp SystemLinux::driverGetTimeStamp()
     struct timespec timeSpec;
     clock_gettime(CLOCK_REALTIME, &timeSpec);
 
-    TimeStamp timeStamp;
-    timeStamp.timeS  = timeSpec.tv_sec - myFirstTimeSpec.tv_sec;
-    timeStamp.timeNs = timeSpec.tv_nsec - myFirstTimeSpec.tv_nsec;
+    std::uint32_t timeS  = timeSpec.tv_sec - myFirstTimeSpec.tv_sec;
+    std::uint32_t timeNs = timeSpec.tv_nsec - myFirstTimeSpec.tv_nsec;
+
+    std::uint64_t fullTimeNs = (timeS * 1000000000) + timeNs;
+
+    TimeStamp timeStamp(fullTimeNs);
 
     return timeStamp;
 }

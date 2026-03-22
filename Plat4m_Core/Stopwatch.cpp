@@ -44,6 +44,7 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/Stopwatch.h>
+#include <Plat4m_Core/StopwatchManager.h>
 #include <Plat4m_Core/System.h>
 
 using namespace Plat4m;
@@ -52,57 +53,16 @@ using namespace Plat4m;
 // Private static data members
 //------------------------------------------------------------------------------
 
-List<Stopwatch*> Stopwatch::myStopwatchList;
-
-List<Stopwatch*>::Iterator Stopwatch::myStopwatchListIterator =
-                                                     myStopwatchList.iterator();
-
 Stopwatch* Stopwatch::myCurrentStopwatch = 0;
 
 //------------------------------------------------------------------------------
-// Public static methods
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-List<Stopwatch*>& Stopwatch::getStopwatchList()
-{
-    return myStopwatchList;
-}
-
-//------------------------------------------------------------------------------
-// Protected constructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-Stopwatch::Stopwatch(const char* name) :
-    myName(name),
-    myPreemptedStopwatch(0),
-    myIsFirstMeasurement(true),
-    myStartTimeStamp(),
-    myEndTimeStamp(),
-    myCpuTimeStamp(),
-    myMinCpuTimeStamp(),
-    myMaxCpuTimeStamp(),
-    myElapsedTimeStamp(),
-    myMinElapsedTimeStamp(),
-    myMaxElapsedTimeStamp(),
-    myPreemptedTimeStamp()
-{
-    Stopwatch* pointer = this;
-
-    myStopwatchList.append(pointer);
-}
-
-//------------------------------------------------------------------------------
-// Protected virtual destructors
+// Public virtual destructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 Stopwatch::~Stopwatch()
 {
-    Stopwatch* pointer = this;
-
-    myStopwatchList.remove(pointer);
+    StopwatchManager::removeStopwatch(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -110,25 +70,18 @@ Stopwatch::~Stopwatch()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void Stopwatch::setName(const char* name)
-{
-    myName = name;
-}
-
-//------------------------------------------------------------------------------
-const char* Stopwatch::getName() const
-{
-    return myName;
-}
-
-//------------------------------------------------------------------------------
 void Stopwatch::start()
 {
-    System::enterCriticalSection();
-    
-    myStartTimeStamp = getCurrentTimeStamp();
+    TimeStamp previousStartTimeStamp = myStartTimeStamp;
 
-    myPreemptedStopwatch = myCurrentStopwatch;
+    System::enterCriticalSection();
+
+    myStartTimeStamp = StopwatchManager::getCurrentTimeStamp();
+
+    if (isValidPointer(myCurrentStopwatch) && !(myCurrentStopwatch->myIsPaused))
+    {
+        myPreemptedStopwatch = myCurrentStopwatch;
+    }
 
     myCurrentStopwatch = this;
 
@@ -136,6 +89,12 @@ void Stopwatch::start()
 
     // Reset the preemption time
     myPreemptedTimeStamp = TimeStamp();
+
+    if (!myIsFirstMeasurement)
+    {
+        myPeriodTimeStamp = myStartTimeStamp - previousStartTimeStamp;
+        myFrequencyHz = 1 / myPeriodTimeStamp.toTimeSFloat();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -143,9 +102,11 @@ void Stopwatch::stop()
 {
     System::enterCriticalSection();
 
-    myEndTimeStamp = getCurrentTimeStamp();
+    myStopTimeStamp = StopwatchManager::getCurrentTimeStamp();
 
-    myElapsedTimeStamp = myEndTimeStamp - myStartTimeStamp;
+    myElapsedTimeStamp = myStopTimeStamp - myStartTimeStamp;
+
+    myElapsedTimeStamp -= myPausedTimeStamp;
 
     if (isValidPointer(myPreemptedStopwatch))
     {
@@ -161,7 +122,12 @@ void Stopwatch::stop()
     // The calculations below rely on non-static data members and can be
     // interrupted
 
+    myEventCount++;
+    myTotalEventCount++;
+
     myCpuTimeStamp = myElapsedTimeStamp - myPreemptedTimeStamp;
+
+    myCummulativeCpuTimeStamp += myCpuTimeStamp;
 
     findMinMax(myCpuTimeStamp, myMinCpuTimeStamp, myMaxCpuTimeStamp);
 
@@ -176,40 +142,194 @@ void Stopwatch::stop()
 
         myIsFirstMeasurement = false;
     }
+
+    myPausedTimeStamp.reset();
 }
 
 //------------------------------------------------------------------------------
-TimeStamp Stopwatch::getCpuTimeStamp()
+void Stopwatch::pause()
+{
+    System::enterCriticalSection();
+
+    myPauseStartTimeStamp = StopwatchManager::getCurrentTimeStamp();
+
+    myIsPaused = true;
+
+    System::exitCriticalSection();
+}
+
+//------------------------------------------------------------------------------
+void Stopwatch::resume()
+{
+    System::enterCriticalSection();
+
+    myPauseStopTimeStamp = StopwatchManager::getCurrentTimeStamp();
+
+    myIsPaused = false;
+
+    System::exitCriticalSection();
+
+    myPausedTimeStamp += myPauseStopTimeStamp - myPauseStartTimeStamp;
+}
+
+//------------------------------------------------------------------------------
+void Stopwatch::setName(const char* name)
+{
+    myName = name;
+}
+
+//------------------------------------------------------------------------------
+const char* Stopwatch::getName() const
+{
+    return myName;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp Stopwatch::getStartTimeStamp() const
+{
+    return myStartTimeStamp;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp Stopwatch::getStopTimeStamp() const
+{
+    return myStopTimeStamp;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp Stopwatch::getCpuTimeStamp() const
 {
     return myCpuTimeStamp;
 }
 
 //------------------------------------------------------------------------------
-TimeStamp Stopwatch::getMinCpuTimeStamp()
+TimeStamp Stopwatch::getMinCpuTimeStamp() const
 {
     return myMinCpuTimeStamp;
 }
 
 //------------------------------------------------------------------------------
-TimeStamp Stopwatch::getMaxCpuTimeStamp()
+TimeStamp Stopwatch::getMaxCpuTimeStamp() const
 {
     return myMaxCpuTimeStamp;
 }
 
 //------------------------------------------------------------------------------
-TimeStamp Stopwatch::getElapsedTimeStamp()
+TimeStamp Stopwatch::getElapsedTimeStamp() const
 {
     return myElapsedTimeStamp;
 }
 
 //------------------------------------------------------------------------------
-TimeStamp Stopwatch::getMinElapsedTimeStamp()
+TimeStamp Stopwatch::getMinElapsedTimeStamp() const
 {
     return myMinElapsedTimeStamp;
 }
 
 //------------------------------------------------------------------------------
-TimeStamp Stopwatch::getMaxElapsedTimeStamp()
+TimeStamp Stopwatch::getMaxElapsedTimeStamp() const
 {
     return myMaxElapsedTimeStamp;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp Stopwatch::getPeriodTimeStamp() const
+{
+    return myPeriodTimeStamp;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp Stopwatch::getPreemptedTimeStamp() const
+{
+    return myPreemptedTimeStamp;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp Stopwatch::getCummulativeCpuTimeStamp() const
+{
+    return myCummulativeCpuTimeStamp;
+}
+
+//------------------------------------------------------------------------------
+void Stopwatch::resetCummulativeCpuTimeStamp()
+{
+    myCummulativeCpuTimeStamp.reset();
+}
+
+//------------------------------------------------------------------------------
+std::uint32_t Stopwatch::getEventCount() const
+{
+    return myEventCount;
+}
+
+//------------------------------------------------------------------------------
+void Stopwatch::resetEventCount()
+{
+    myEventCount = 0;
+}
+
+//------------------------------------------------------------------------------
+std::uint64_t Stopwatch::getTotalEventCount() const
+{
+    return myTotalEventCount;
+}
+
+//------------------------------------------------------------------------------
+float Stopwatch::getCpuLoadPercentage() const
+{
+    return myCpuLoadPercentage;
+}
+
+//------------------------------------------------------------------------------
+void Stopwatch::setCpuLoadPercentage(const float percentage)
+{
+    myCpuLoadPercentage = percentage;
+}
+
+//------------------------------------------------------------------------------
+float Stopwatch::getFrequencyHz() const
+{
+    return myFrequencyHz;
+}
+
+//------------------------------------------------------------------------------
+// Protected constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Stopwatch::Stopwatch(const char* name) :
+    myName(name),
+    myPreemptedStopwatch(0),
+    myIsFirstMeasurement(true),
+    myIsPaused(false),
+    myStartTimeStamp(),
+    myStopTimeStamp(),
+    myPauseStartTimeStamp(),
+    myPauseStopTimeStamp(),
+    myPausedTimeStamp(),
+    myCpuTimeStamp(),
+    myMinCpuTimeStamp(),
+    myMaxCpuTimeStamp(),
+    myElapsedTimeStamp(),
+    myMinElapsedTimeStamp(),
+    myMaxElapsedTimeStamp(),
+    myPreemptedTimeStamp(),
+    myCummulativeCpuTimeStamp(),
+    myEventCount(0),
+    myTotalEventCount(0),
+    myCpuLoadPercentage(0),
+    myPeriodTimeStamp(),
+    myFrequencyHz(0)
+{
+    StopwatchManager::addStopwatch(*this);
+}
+
+//------------------------------------------------------------------------------
+// Protected methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+bool Stopwatch::isFirstMeasurement() const
+{
+    return myIsFirstMeasurement;
 }

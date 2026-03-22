@@ -144,7 +144,7 @@ public:
         TASK_CAPTURE_5
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     typedef Callback<> CompareInterruptCallback;
 

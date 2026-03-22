@@ -137,7 +137,7 @@ public:
     // Public typedefs
     //--------------------------------------------------------------------------
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     //--------------------------------------------------------------------------
     // Public structures

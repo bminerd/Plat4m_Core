@@ -64,7 +64,10 @@ RotaryEncoder::Error RotaryEncoder::getAngleDegrees(AngleDegrees& angleDegrees)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(RotaryEncoder::Error,
+                                   RotaryEncoder::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     AngleDegrees tempAngleDegrees = 0.0;
@@ -83,7 +86,10 @@ RotaryEncoder::Error RotaryEncoder::getAngleRadians(AngleRadians& angleRadians)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(RotaryEncoder::Error,
+                                   RotaryEncoder::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     AngleRadians tempAngleRadians = 0.0;
@@ -102,7 +108,10 @@ RotaryEncoder::Error RotaryEncoder::getDirection(Direction& direction)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(RotaryEncoder::Error,
+                                   RotaryEncoder::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     return Error(ERROR_CODE_NONE);
@@ -114,7 +123,10 @@ RotaryEncoder::Error RotaryEncoder::getAngularVelocityDps(
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(RotaryEncoder::Error,
+                                   RotaryEncoder::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     AngularVelocityDps tempAngularVelocityDps = 0.0;
@@ -134,7 +146,10 @@ RotaryEncoder::Error RotaryEncoder::getAngularVelocityRadPs(
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(RotaryEncoder::Error,
+                                   RotaryEncoder::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     AngularVelocityRadPs tempAngularVelocityRadPs = 0.0;

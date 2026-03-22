@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
 ///
 /// @file Accel.cpp
 /// @author Ben Minerd
-/// @date 2/27/13
+/// @date 2/27/2013
 /// @brief Accel class source file.
 ///
 
@@ -45,7 +45,7 @@
 
 #include <Plat4m_Core/Accel.h>
 
-using Plat4m::Accel;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public virtual methods
@@ -56,7 +56,10 @@ Accel::Error Accel::configure(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Accel::Error,
+                                   Accel::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverConfigure(config);
@@ -74,7 +77,10 @@ Accel::Error Accel::getMeasurement(Measurement& measurement)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Accel::Error,
+                                   Accel::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Measurement tempMeasurement;
@@ -97,8 +103,8 @@ Accel::Error Accel::getMeasurement(Measurement& measurement)
 //------------------------------------------------------------------------------
 Accel::Accel() :
     Module(),
-	myConfig(),
-	myLastMeasurement()
+    myConfig(),
+    myLastMeasurement()
 {
 }
 

@@ -63,12 +63,11 @@ void DataObjectManager::add(DataObjectBase& dataObject)
 {
     if (isNullPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_NOT_CREATED);
-
-        // Lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                             DataObjectManager::Error,
+                             DataObjectManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                             ErrorBase::SEVERITY_CRITICAL,
+                             DataObjectManager);
     }
 
     myInstance->addPrivate(dataObject);
@@ -79,12 +78,11 @@ void DataObjectManager::remove(DataObjectBase& dataObject)
 {
     if (isNullPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_NOT_CREATED);
-
-        // Lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                             DataObjectManager::Error,
+                             DataObjectManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                             ErrorBase::SEVERITY_CRITICAL,
+                             DataObjectManager);
     }
 
     myInstance->removePrivate(dataObject);
@@ -95,12 +93,11 @@ DataObjectBase* DataObjectManager::find(const DataObjectBase::Id id)
 {
     if (isNullPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_NOT_CREATED);
-
-        // Lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                             DataObjectManager::Error,
+                             DataObjectManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                             ErrorBase::SEVERITY_CRITICAL,
+                             DataObjectManager);
     }
 
     return (myInstance->findPrivate(id));
@@ -115,12 +112,11 @@ DataObjectManager::DataObjectManager()
 {
     if (isValidPointer(myInstance))
     {
-        Error error(ERROR_CODE_INSTANCE_ALREADY_CREATED);
-
-        // Error, lock up
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR(
+                         DataObjectManager::Error,
+                         DataObjectManager::ERROR_CODE_INSTANCE_ALREADY_CREATED,
+                         ErrorBase::SEVERITY_CRITICAL,
+                         this);
     }
 
     myInstance = this;

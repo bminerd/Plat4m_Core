@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019-2023 Benjamin Minerd
+// Copyright (c) 2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,62 +33,38 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file ThreadLinux.cpp
+/// @file QueueDriverSimulation.cpp
 /// @author Ben Minerd
-/// @date 5/26/2019
-/// @brief ThreadLinux class source file.
+/// @date 2/7/2024
+/// @brief QueueDriverSimulation class source file.
 ///
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <iostream>
-#include <unistd.h>
-
-#include <Plat4m_Core/Linux/ThreadLinux.h>
+#include <Plat4m_Core/Simulation/QueueDriverSimulation.h>
 #include <Plat4m_Core/System.h>
 
-using Plat4m::ThreadLinux;
-using Plat4m::Module;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadLinux::ThreadLinux(RunCallback& callback,
-                         const TimeMs periodMs, 
-                         const char* name) :
-    Thread(callback, periodMs, name),
-    myThreadHandle(0),
-    myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
-    myConditionHandle(PTHREAD_COND_INITIALIZER),
-    myNextCallTimeMs(0),
-    myIsEnabled(false),
-    myShouldExit(false)
+QueueDriverSimulation::QueueDriverSimulation(
+                                          const std::uint32_t nValues,
+                                          const std::uint32_t valueSizeBytes,
+                                          Thread& thread,
+                                          Semaphore& threadsNotifiedSemaphore) :
+    QueueDriver(),
+    myQueueDriver(System::createQueueDriver(nValues,
+                                            valueSizeBytes,
+                                            thread,
+                                            false)),
+    myThreadsNotifiedSemaphore(threadsNotifiedSemaphore)
 {
-    int returnValue = pthread_create(&myThreadHandle,
-                                     NULL,
-                                     &threadCallback,
-                                     this);
-
-    if (returnValue != 0)
-    {
-        while (true)
-        {
-            // Lock up, unable to create thread
-        }
-    }
-
-    const char* newName = name;
-
-    if (isNullPointer(newName))
-    {
-        newName = "(Unnamed Thread)";
-    }
-
-    returnValue = pthread_setname_np(myThreadHandle, newName);
 }
 
 //------------------------------------------------------------------------------
@@ -96,99 +72,61 @@ ThreadLinux::ThreadLinux(RunCallback& callback,
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-ThreadLinux::~ThreadLinux()
+QueueDriverSimulation::~QueueDriverSimulation()
 {
-    myShouldExit = true;
-
-    pthread_mutex_lock(&myMutexHandle);
-    pthread_cond_broadcast(&myConditionHandle);
-    pthread_mutex_unlock(&myMutexHandle);
-
-    pthread_join(myThreadHandle, NULL);
+    myQueueDriver.~QueueDriver();
 }
 
 //------------------------------------------------------------------------------
-// Private static methods
+// Public virtual methods overridden for QueueDriver
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void* ThreadLinux::threadCallback(void* arg)
+std::uint32_t QueueDriverSimulation::driverGetSize()
 {
-    ThreadLinux* thread = static_cast<ThreadLinux*>(arg);
-    thread->myNextCallTimeMs = thread->getPeriodMs();
-
-    while (!(thread->myShouldExit)) // Loop forever
-    {
-        pthread_mutex_lock(&(thread->myMutexHandle));
-
-        if (!(thread->myIsEnabled))
-        {
-            pthread_cond_wait(&(thread->myConditionHandle),
-                              &(thread->myMutexHandle));
-        }
-
-        pthread_mutex_unlock(&(thread->myMutexHandle));
-
-        if (thread->myShouldExit)
-        {
-            pthread_exit(NULL);
-
-            break;
-        }
-
-        TimeMs periodMs = thread->getPeriodMs();
-
-        if (periodMs != 0)
-        {
-            TimeMs sleepTimeMs = thread->getPeriodMs();
-
-            struct timespec timeSpec;
-            timeSpec.tv_sec = sleepTimeMs / 1000;
-            timeSpec.tv_nsec = (sleepTimeMs % 1000) * 1000000;
-            nanosleep(&timeSpec, NULL);
-        }
-
-        thread->run();
-
-        thread->myNextCallTimeMs += periodMs;
-    }
-
-    return 0;
+    return (myQueueDriver.driverGetSize());
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods overridden for Module
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-Module::Error ThreadLinux::driverSetEnabled(const bool enabled)
+std::uint32_t QueueDriverSimulation::driverGetSizeFast()
 {
-    pthread_mutex_lock(&myMutexHandle);
-
-    myIsEnabled = enabled;
-
-    if (enabled)
-    {
-        pthread_cond_broadcast(&myConditionHandle);
-    }
-
-    pthread_mutex_unlock(&myMutexHandle);
-
-    return Module::Error(Module::ERROR_CODE_NONE);
+    return (myQueueDriver.driverGetSizeFast());
 }
 
 //------------------------------------------------------------------------------
-// Private virtual methods overridden for Thread
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void ThreadLinux::driverSetPeriodMs(const TimeMs periodMs)
+bool QueueDriverSimulation::driverEnqueue(const void* value)
 {
-    // Do nothing
+    bool returnValue = myQueueDriver.driverEnqueue(value);
+
+    myThreadsNotifiedSemaphore.post();
+
+    return returnValue;
 }
 
 //------------------------------------------------------------------------------
-uint32_t ThreadLinux::driverSetPriority(const uint32_t priority)
+bool QueueDriverSimulation::driverEnqueueFast(const void* value)
 {
-    return 0;
+    bool returnValue = myQueueDriver.driverEnqueueFast(value);
+
+    myThreadsNotifiedSemaphore.post();
+
+    return returnValue;
+}
+
+//------------------------------------------------------------------------------
+bool QueueDriverSimulation::driverDequeue(void* value)
+{
+    return (myQueueDriver.driverDequeue(value));
+}
+
+//------------------------------------------------------------------------------
+bool QueueDriverSimulation::driverDequeueFast(void* value)
+{
+    return (myQueueDriver.driverDequeueFast(value));
+}
+
+//------------------------------------------------------------------------------
+void QueueDriverSimulation::driverClear()
+{
+    myQueueDriver.driverClear();
 }

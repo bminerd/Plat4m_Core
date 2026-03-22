@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,9 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
+#include <cstdint>
+
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -64,22 +66,40 @@ class QueueDriver
 public:
 
     //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
+
+    enum ErrorCode
+    {
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_INSTANTIATION_FAILED
+    };
+
+    using Error = ErrorTemplate<ErrorCode>;
+
+    //--------------------------------------------------------------------------
     // Public pure virtual methods
     //--------------------------------------------------------------------------
 
-	virtual uint32_t driverGetSize() = 0;
+    virtual std::uint32_t driverGetSize() = 0;
 
-	virtual uint32_t driverGetSizeFast() = 0;
+    virtual std::uint32_t driverGetSizeFast() = 0;
 
-	virtual bool driverEnqueue(const void* value) = 0;
+    virtual bool driverEnqueue(const void* value) = 0;
 
-	virtual bool driverEnqueueFast(const void* value) = 0;
+    virtual bool driverEnqueueFast(const void* value) = 0;
 
-	virtual bool driverDequeue(void* value) = 0;
+    virtual bool driverDequeue(void* value) = 0;
 
-	virtual bool driverDequeueFast(void* value) = 0;
+    virtual bool driverDequeueFast(void* value) = 0;
 
-	virtual void driverClear() = 0;
+    virtual void driverClear() = 0;
+
+    //--------------------------------------------------------------------------
+    // Public virtual constructors
+    //--------------------------------------------------------------------------
+
+    virtual ~QueueDriver();
 
 protected:
 
@@ -88,12 +108,6 @@ protected:
     //--------------------------------------------------------------------------
 
     QueueDriver();
-    
-    //--------------------------------------------------------------------------
-    // Protected virtual constructors
-    //--------------------------------------------------------------------------
-
-    virtual ~QueueDriver();
 };
 
 }; // namespace Plat4m

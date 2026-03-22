@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022-2023 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,7 @@
 #include <Plat4m_Core/CallbackMethod.h>
 #include <Plat4m_Core/Printer.h>
 #include <Plat4m_Core/ByteArrayN.h>
+#include <Plat4m_Core/StopwatchManager.h>
 
 using namespace Plat4m;
 
@@ -72,10 +73,11 @@ const StopwatchStatisticsPrinter::Config
 
 //------------------------------------------------------------------------------
 StopwatchStatisticsPrinter::StopwatchStatisticsPrinter(
-                                                const bool createOutputThread,
-                                                const Config config) :
+                                                  const bool createOutputThread,
+                                                  const Config config) :
     myConfig(config),
-    myOutputThread(0)
+    myOutputThread(0),
+    myHeartbeatCounter(0)
 {
     if (createOutputThread)
     {
@@ -126,16 +128,17 @@ StopwatchStatisticsPrinter::Config StopwatchStatisticsPrinter::getConfig()
 }
 
 //------------------------------------------------------------------------------
-void StopwatchStatisticsPrinter::printStopwatchStatistics()
+void StopwatchStatisticsPrinter::printStopwatchStatistics(
+                                                       const bool waitUntilDone)
 {
-    ByteArrayN<2048> bytes;
+    ByteArrayN<6000> bytes;
 
     bytes.append("\n--------------------\n");
     bytes.append("Stopwatch Statistics\n");
     bytes.append("--------------------\n\n");
 
     List<Stopwatch*>::Iterator stopwatchIterator =
-                                       Stopwatch::getStopwatchList().iterator();
+                                StopwatchManager::getStopwatchList().iterator();
 
     while (stopwatchIterator.hasCurrent())
     {
@@ -148,15 +151,24 @@ void StopwatchStatisticsPrinter::printStopwatchStatistics()
             stopwatchName = "(Unnamed)";
         }
 
-        addStopwatchName(bytes, stopwatchName);
-        addStopwatchStatistics(bytes, stopwatch);
+        if (stopwatch->getTotalEventCount() > 0)
+        {
+            addStopwatchName(bytes, stopwatchName);
+            addStopwatchStatistics(bytes, stopwatch);
+        }
 
         stopwatchIterator.next();
     }
 
     bytes.append("\n---- End ----\n");
 
-    Printer::print(bytes);
+    Printer::print(bytes, waitUntilDone);
+}
+
+//------------------------------------------------------------------------------
+Thread* StopwatchStatisticsPrinter::getOutputThread()
+{
+    return myOutputThread;
 }
 
 //------------------------------------------------------------------------------
@@ -183,7 +195,16 @@ void StopwatchStatisticsPrinter::outputThreadCallback()
 {
     if (myConfig.outputHeartbeat)
     {
-        Printer::print(".");
+        myHeartbeatCounter++;
+
+        char numberString[10];
+
+        std::snprintf(numberString,
+                      arraySize(numberString),
+                      "%u\n",
+                      myHeartbeatCounter);
+
+        Printer::print(numberString);
     }
     else
     {
@@ -213,41 +234,65 @@ void StopwatchStatisticsPrinter::addStopwatchStatistics(ByteArray& byteArray,
                                                         Stopwatch* stopwatch)
 {
     char numberString[10];
-    TimeUs timeUs;
+    TimeUsSigned timeUsSigned;
 
-    timeUs = (stopwatch->getCpuTimeStamp().toTimeUs());
-    std::snprintf(numberString, arraySize(numberString), "%u", timeUs);
+    timeUsSigned = stopwatch->getCpuTimeStamp().toTimeUsSigned();
+    std::snprintf(numberString, arraySize(numberString), "%d", timeUsSigned);
     byteArray.append("- CPU Time (uS): ");
     byteArray.append(numberString);
     byteArray.append("\n");
 
-    timeUs = (stopwatch->getMinCpuTimeStamp().toTimeUs());
-    std::snprintf(numberString, arraySize(numberString), "%u", timeUs);
+    timeUsSigned = stopwatch->getMinCpuTimeStamp().toTimeUsSigned();
+    std::snprintf(numberString, arraySize(numberString), "%d", timeUsSigned);
     byteArray.append("  - Min (uS): ");
     byteArray.append(numberString);
     byteArray.append("\n");
 
-    timeUs = (stopwatch->getMaxCpuTimeStamp().toTimeUs());
-    std::snprintf(numberString, arraySize(numberString), "%u", timeUs);
+    timeUsSigned = stopwatch->getMaxCpuTimeStamp().toTimeUsSigned();
+    std::snprintf(numberString, arraySize(numberString), "%d", timeUsSigned);
     byteArray.append("  - Max (uS): ");
     byteArray.append(numberString);
     byteArray.append("\n");
 
-    timeUs = (stopwatch->getElapsedTimeStamp().toTimeUs());
-    std::snprintf(numberString, arraySize(numberString), "%u", timeUs);
+    timeUsSigned = stopwatch->getElapsedTimeStamp().toTimeUsSigned();
+    std::snprintf(numberString, arraySize(numberString), "%d", timeUsSigned);
     byteArray.append("- Elapsed Time (uS): ");
     byteArray.append(numberString);
     byteArray.append("\n");
 
-    timeUs = (stopwatch->getMinElapsedTimeStamp().toTimeUs());
-    std::snprintf(numberString, arraySize(numberString), "%u", timeUs);
+    timeUsSigned = stopwatch->getMinElapsedTimeStamp().toTimeUsSigned();
+    std::snprintf(numberString, arraySize(numberString), "%d", timeUsSigned);
     byteArray.append("  - Min (uS): ");
     byteArray.append(numberString);
     byteArray.append("\n");
 
-    timeUs = (stopwatch->getMaxElapsedTimeStamp().toTimeUs());
-    std::snprintf(numberString, arraySize(numberString), "%u", timeUs);
+    timeUsSigned = stopwatch->getMaxElapsedTimeStamp().toTimeUsSigned();
+    std::snprintf(numberString, arraySize(numberString), "%d", timeUsSigned);
     byteArray.append("  - Max (uS): ");
+    byteArray.append(numberString);
+    byteArray.append("\n");
+
+    timeUsSigned = stopwatch->getPeriodTimeStamp().toTimeUsSigned();
+    std::snprintf(numberString, arraySize(numberString), "%d", timeUsSigned);
+    byteArray.append("- Period (uS): ");
+    byteArray.append(numberString);
+    byteArray.append("\n");
+
+    float frequencyHz = stopwatch->getFrequencyHz();
+    std::snprintf(numberString,
+                  arraySize(numberString),
+                  "%.2f",
+                  frequencyHz);
+    byteArray.append("- Frequency (Hz): ");
+    byteArray.append(numberString);
+    byteArray.append("\n");
+
+    float cpuLoadPercentage = stopwatch->getCpuLoadPercentage();
+    std::snprintf(numberString,
+                  arraySize(numberString),
+                  "%.2f",
+                  cpuLoadPercentage);
+    byteArray.append("- CPU Load (%): ");
     byteArray.append(numberString);
     byteArray.append("\n");
 

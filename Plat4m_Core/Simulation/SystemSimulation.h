@@ -57,6 +57,7 @@
 #include <Plat4m_Core/Semaphore.h>
 #include <Plat4m_Core/Simulation/ThreadSimulation.h>
 #include <Plat4m_Core/Simulation/ThreadSimulationTick.h>
+#include <Plat4m_Core/Simulation/QueueDriverSimulation.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -93,7 +94,8 @@ public:
                     false,
                     "SystemSimulation Time Thread")),
         myTimeTickTopic(Topic<TimeTickSample>::create(timeTickTopicId)),
-        mySemaphore(System::createSemaphore()),
+        myThreadsNotifiedSemaphore(System::createSemaphore()),
+        myThreadsCompleteSemaphore(System::createSemaphore()),
         mySimulatedThreadCount(0)
     {
     }
@@ -105,6 +107,7 @@ public:
     //--------------------------------------------------------------------------
     SystemSimulation(const TimeUs timeStepUs,
                      const std::uint32_t timeTickTopicId,
+                     const TimeMs timeThreadPeriodMs,
                      const std::uint32_t timeThreadStackBytes = 0) :
         SystemDriver(),
         myTimeStepTimeStamp(),
@@ -112,12 +115,13 @@ public:
         myTimeThread(
             System::createThread(
                     createCallback(this, &SystemSimulation::timeThreadCallback),
-                    0,
+                    timeThreadPeriodMs,
                     timeThreadStackBytes,
                     false,
                     "SystemSimulation Time Thread")),
         myTimeTickTopic(Topic<TimeTickSample>::create(timeTickTopicId)),
-        mySemaphore(System::createSemaphore()),
+        myThreadsNotifiedSemaphore(System::createSemaphore()),
+        myThreadsCompleteSemaphore(System::createSemaphore()),
         mySimulatedThreadCount(0)
     {
         myTimeStepTimeStamp.fromTimeUs(timeStepUs);
@@ -132,10 +136,14 @@ public:
     {
         if (mySimulatedThreadCount > 0)
         {
-            mySemaphore.post();
+            myThreadsNotifiedSemaphore.post();
+            myThreadsCompleteSemaphore.post();
         }
 
         myTimeThread.~Thread();
+
+        myThreadsNotifiedSemaphore.~Semaphore();
+        myThreadsCompleteSemaphore.~Semaphore();
     }
 
     //--------------------------------------------------------------------------
@@ -182,26 +190,50 @@ public:
                 const std::uint32_t timeTopicId = myTimeTickTopic.getId();
 
                 return *(MemoryAllocator::allocate<ThreadSimulationTick>(
-                                                                    callback,
-                                                                    timeTopicId,
-                                                                    mySemaphore,
-                                                                    periodMs,
-                                                                    nStackBytes,
-                                                                    name));
+                                                     callback,
+                                                     timeTopicId,
+                                                     myThreadsNotifiedSemaphore,
+                                                     myThreadsCompleteSemaphore,
+                                                     periodMs,
+                                                     nStackBytes,
+                                                     name));
             }
 
-            return *(MemoryAllocator::allocate<ThreadSimulation>(callback,
-                                                                 mySemaphore,
-                                                                 periodMs,
-                                                                 nStackBytes,
-                                                                 name));
+            return *(MemoryAllocator::allocate<ThreadSimulation>(
+                                                     callback,
+                                                     myThreadsCompleteSemaphore,
+                                                     periodMs,
+                                                     nStackBytes,
+                                                     name));
         }
 
         return (SystemDriver::driverCreateThread(callback,
                                                  periodMs,
                                                  nStackBytes,
-                                                 isSimulated,
+                                                 false,
                                                  name));
+    }
+
+    //--------------------------------------------------------------------------
+    virtual QueueDriver& driverCreateQueueDriver(
+                                             const std::uint32_t nValues,
+                                             const std::uint32_t valueSizeBytes,
+                                             Thread& thread,
+                                             const bool isSimulated) override
+    {
+        if (isSimulated)
+        {
+            return *(MemoryAllocator::allocate<QueueDriverSimulation>(
+                                                   nValues,
+                                                   valueSizeBytes,
+                                                   thread,
+                                                   myThreadsNotifiedSemaphore));
+        }
+
+        return (SystemDriver::driverCreateQueueDriver(nValues,
+                                                      valueSizeBytes,
+                                                      thread,
+                                                      false));
     }
 
     //--------------------------------------------------------------------------
@@ -219,8 +251,7 @@ public:
     //--------------------------------------------------------------------------
     virtual void driverResetTime() override
     {
-        myCurrentTimeStamp.timeS = 0;
-        myCurrentTimeStamp.timeNs = 0;
+        myCurrentTimeStamp.set(0);
     }
 
     //--------------------------------------------------------------------------
@@ -228,7 +259,10 @@ public:
     {
         if (timeStamp < myCurrentTimeStamp)
         {
-            return System::Error(System::ERROR_CODE_PARAMETER_INVALID);
+            return PLAT4M_REPORT_ERROR(System::Error,
+                                       System::ERROR_CODE_PARAMETER_INVALID,
+                                       ErrorBase::SEVERITY_LOW,
+                                       this);
         }
 
         myCurrentTimeStamp = timeStamp;
@@ -240,13 +274,28 @@ public:
 
         if (mySimulatedThreadCount > 0)
         {
-            std::uint32_t value = 1;
+            std::uint32_t startedValue = myThreadsNotifiedSemaphore.getValue();
 
-            while (value != 0)
+            if (startedValue > 0)
             {
-                mySemaphore.wait();
+                std::uint32_t completeValue = 1;
+                std::uint32_t nFinishedThreads = 0;
 
-                value = mySemaphore.getValue();
+                while ((completeValue != 0) ||
+                                              (nFinishedThreads < startedValue))
+                {
+                    myThreadsCompleteSemaphore.wait();
+
+                    completeValue = myThreadsCompleteSemaphore.getValue();
+                    startedValue = myThreadsNotifiedSemaphore.getValue();
+
+                    nFinishedThreads++;
+                }
+
+                while (myThreadsNotifiedSemaphore.getValue())
+                {
+                    myThreadsNotifiedSemaphore.wait();
+                }
             }
         }
 
@@ -277,7 +326,9 @@ private:
 
     Topic<TimeTickSample>& myTimeTickTopic;
 
-    Semaphore& mySemaphore;
+    Semaphore& myThreadsNotifiedSemaphore;
+
+    Semaphore& myThreadsCompleteSemaphore;
 
     std::uint32_t mySimulatedThreadCount;
 

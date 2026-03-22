@@ -53,8 +53,8 @@ using Plat4m::WaitCondition;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-WaitConditionLite::WaitConditionLite() :
-    WaitCondition(),
+WaitConditionLite::WaitConditionLite(Thread& thread) :
+    WaitCondition(thread),
     myCondition(false)
 {
 }

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,16 +56,19 @@ HardwareTimer::Error HardwareTimer::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(HardwareTimer::Error,
+                                   HardwareTimer::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
-    
+
     Error error = driverSetConfig(config);
-    
+
     if (error.getCode() == ERROR_CODE_NONE)
     {
         myConfig = config;
     }
-    
+
     return error;
 }
 

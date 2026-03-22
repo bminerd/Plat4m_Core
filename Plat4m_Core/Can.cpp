@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,11 +45,57 @@
 
 #include <Plat4m_Core/Can.h>
 #include <Plat4m_Core/System.h>
+#include <Plat4m_Core/ByteArrayParser.h>
 
-using Plat4m::Can;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
-// Public virtual methods
+// Public virtual methods overridden for ComInterface
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+ComInterface::Error Can::transmitBytes(const ByteArray& byteArray,
+                                       const bool waitUntilDone)
+{
+    ByteArrayParser parser(byteArray,
+                           ENDIAN_LITTLE,
+                           ByteArrayParser::PARSE_DIRECTION_FORWARD);
+
+    std::uint32_t canId = 0;
+
+    parser.parse(canId);
+
+    Message message;
+    message.id = canId;
+    message.idType = ID_TYPE_BASE;
+    message.frameType = FRAME_TYPE_DATA;
+    message.data.append(byteArray.subArray(4));
+
+    Error error = sendMessage(message);
+
+    if (error.getCode() != ERROR_CODE_NONE)
+    {
+        return (ComInterface::Error(ComInterface::ERROR_CODE_TRANSMIT_FAILED));
+    }
+
+    return (ComInterface::Error(ComInterface::ERROR_CODE_NONE));
+}
+
+//------------------------------------------------------------------------------
+std::uint32_t Can::getReceivedBytesCount()
+{
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+ComInterface::Error Can::getReceivedBytes(ByteArray& byteArray,
+                                          const std::uint32_t nBytes)
+{
+    return (ComInterface::Error(ComInterface::ERROR_CODE_NONE));
+}
+
+//------------------------------------------------------------------------------
+// Public methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -57,64 +103,73 @@ Can::Error Can::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return (PLAT4M_REPORT_ERROR(Can::Error,
+                                    Can::ERROR_CODE_NOT_ENABLED,
+                                    ErrorBase::SEVERITY_LOW,
+                                    this));
     }
-    
-    Error error = driverSetConfig(config);
+
+    Error error = subclassSetConfig(config);
     
     if (error.getCode() == ERROR_CODE_NONE)
     {
         myConfig = config;
     }
-    
+
     return error;
 }
 
 //------------------------------------------------------------------------------
-Can::Error Can::addReceivedMessageHandler(
-							   const IdType idType,
-				          	   const uint32_t id,
-							   const uint32_t mask,
-		                  	   ReceivedMessageCallback& receivedMessageCallback)
+Can::Config Can::getConfig() const
 {
-	ReceivedMessageHandler receivedMessageHandler;
-	receivedMessageHandler.idType 			       = idType;
-	receivedMessageHandler.id		 			   = id;
-	receivedMessageHandler.mask		 			   = mask;
-	receivedMessageHandler.receivedMessageCallback = &receivedMessageCallback;
-
-	return addReceivedMessageHandler(receivedMessageHandler);
+    return myConfig;
 }
 
 //------------------------------------------------------------------------------
 Can::Error Can::addReceivedMessageHandler(
-					  	         ReceivedMessageHandler& receivedMessageHandler)
+                               const IdType idType,
+                               const std::uint32_t id,
+                               const std::uint32_t mask,
+                               ReceivedMessageCallback& receivedMessageCallback)
 {
-	Error error = driverAddAcceptanceFilter(receivedMessageHandler.idType,
-										    receivedMessageHandler.id,
-											receivedMessageHandler.mask);
+    ReceivedMessageHandler receivedMessageHandler;
+    receivedMessageHandler.idType                  = idType;
+    receivedMessageHandler.id                      = id;
+    receivedMessageHandler.mask                    = mask;
+    receivedMessageHandler.receivedMessageCallback = &receivedMessageCallback;
 
-	if (error.getCode() == ERROR_CODE_NONE)
-	{
-		myReceivedMessageHandlerList.append(receivedMessageHandler);
-	}
+    return (addReceivedMessageHandler(receivedMessageHandler));
+}
 
-	return error;
+//------------------------------------------------------------------------------
+Can::Error Can::addReceivedMessageHandler(
+                                 ReceivedMessageHandler& receivedMessageHandler)
+{
+    Error error = driverAddAcceptanceFilter(receivedMessageHandler.idType,
+                                            receivedMessageHandler.id,
+                                            receivedMessageHandler.mask);
+
+    if (error.getCode() == ERROR_CODE_NONE)
+    {
+        myReceivedMessageHandlerList.append(receivedMessageHandler);
+    }
+
+    return error;
 }
 
 //------------------------------------------------------------------------------
 Can::Error Can::sendMessage(const IdType idType,
-							const uint32_t id,
-							const FrameType frameType,
-							ByteArrayN<8>& data)
+                            const std::uint32_t id,
+                            const FrameType frameType,
+                            ByteArray& data)
 {
     Message message;
     message.idType    = idType;
-    message.id 		  = id;
+    message.id        = id;
     message.frameType = frameType;
-    message.data	  = data;
+    message.data.append(data);
 
-    return sendMessage(message);
+    return (sendMessage(message));
 }
 
 //------------------------------------------------------------------------------
@@ -122,46 +177,75 @@ Can::Error Can::sendMessage(const Message& message)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return (PLAT4M_REPORT_ERROR(Can::Error,
+                                    Can::ERROR_CODE_NOT_ENABLED,
+                                    ErrorBase::SEVERITY_LOW,
+                                    this));
     }
 
-    Error error = driverSendMessage(message);
+    return (subclassSendMessage(message));
+}
 
-    return error;
+//------------------------------------------------------------------------------
+Can::Error Can::clearReceivedMessages()
+{
+    if (!isEnabled())
+    {
+        return (PLAT4M_REPORT_ERROR(Can::Error,
+                                    Can::ERROR_CODE_NOT_ENABLED,
+                                    ErrorBase::SEVERITY_LOW,
+                                    this));
+    }
+
+    return (subclassClearReceivedMessages());
 }
 
 //------------------------------------------------------------------------------
 void Can::handleReceivedMessages()
 {
-	while (!(myReceivedMessageBuffer.isEmpty()))
-	{
-		Message message;
-		myReceivedMessageBuffer.read(message);
+    while (!(myReceivedMessageBuffer.isEmpty()))
+    {
+        Message message;
+        myReceivedMessageBuffer.read(message);
 
-		bool wasHandlerFound = false;
-		List<ReceivedMessageHandler>::Iterator iterator =
-										myReceivedMessageHandlerList.iterator();
+        bool wasHandlerFound = false;
+        List<ReceivedMessageHandler>::Iterator iterator =
+                                        myReceivedMessageHandlerList.iterator();
 
-		while (iterator.hasCurrent() && !wasHandlerFound)
-		{
-			ReceivedMessageHandler& handler = iterator.current();
+        while (iterator.hasCurrent() && !wasHandlerFound)
+        {
+            ReceivedMessageHandler& handler = iterator.current();
 
-			if ((message.id & handler.mask) == (handler.id))
-			{
-				handler.receivedMessageCallback->call(message);
-				wasHandlerFound = true;
-			}
+            if ((message.id & handler.mask) == (handler.id) ||
+                (handler.id == 0))
+            {
+                handler.receivedMessageCallback->call(message);
+                wasHandlerFound = true;
+            }
 
-			iterator.next();
-		}
+            iterator.next();
+        }
 
-		if (!wasHandlerFound)
-		{
-			// Shouldn't have received this message
+        if (!wasHandlerFound)
+        {
+            // Shouldn't have received this message
 
-			break;
-		}
-	}
+            break;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+void Can::enableAllMessagesHandler()
+{
+    Plat4m::Can::ReceivedMessageHandler handler;
+    handler.id = 0;
+    handler.idType = Plat4m::Can::ID_TYPE_BASE;
+    handler.mask = 0xFFFFFFFF;
+    handler.receivedMessageCallback =
+                             &(createCallback(this, &Can::allMessagesCallback));
+
+    addReceivedMessageHandler(handler);
 }
 
 //------------------------------------------------------------------------------
@@ -170,10 +254,11 @@ void Can::handleReceivedMessages()
 
 //------------------------------------------------------------------------------
 Can::Can() :
-	Module(),
-	myReceivedMessageHandlerList(),
-	myTransmitMessageBuffer(),
-	myReceivedMessageBuffer()
+    ComInterface(),
+    myConfig(),
+    myReceivedMessageHandlerList(),
+    myTransmitMessageBuffer(),
+    myReceivedMessageBuffer()
 {
 }
 
@@ -191,7 +276,60 @@ Can::~Can()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+void Can::messageReceived(Message& message)
+{
+    myReceivedMessageBuffer.write(message);
+}
+
+//------------------------------------------------------------------------------
+// Protected methods (deprecated)
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 void Can::interfaceMessageReceived(Message& message)
 {
-	myReceivedMessageBuffer.write(message);
+    messageReceived(message);
+}
+
+//------------------------------------------------------------------------------
+// Private virtual methods (deprecated)
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+Can::Error Can::driverSetConfig(const Config& config)
+{
+    return (subclassSetConfig(config));
+}
+
+//------------------------------------------------------------------------------
+Can::Error Can::driverSendMessage(const Message& message)
+{
+    return (subclassSendMessage(message));
+}
+
+//------------------------------------------------------------------------------
+Can::Error Can::driverAddAcceptanceFilter(const IdType idType,
+                                          const std::uint32_t filter,
+                                          const std::uint32_t mask)
+{
+    return (subclassAddAcceptanceFilter(idType, filter, mask));
+}
+
+//------------------------------------------------------------------------------
+// Private methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void Can::allMessagesCallback(const Message& message)
+{
+    ByteArrayN<128> bytes;
+    bytes.append(message.id);
+    bytes.append(message.data);
+
+    const std::uint32_t size = bytes.getSize();
+
+    for (std::uint32_t i = 0; i < size; i++)
+    {
+        byteReceived(bytes[i]);
+    }
 }

@@ -57,6 +57,7 @@ using namespace Plat4m;
 //------------------------------------------------------------------------------
 ThreadSimulationTick::ThreadSimulationTick(RunCallback& callback,
                                            const uint32_t timeTickTopicId,
+                                           Semaphore& runStartedSemaphore,
                                            Semaphore& runCompleteSemaphore,
                                            const TimeMs periodMs,
                                            const uint32_t nStackBytes,
@@ -68,6 +69,7 @@ ThreadSimulationTick::ThreadSimulationTick(RunCallback& callback,
             nStackBytes,
             false,
             name),
+    myRunStartedSemaphore(runStartedSemaphore),
     myRunCompleteSemaphore(runCompleteSemaphore),
     myNextCallTimeMs(0)
 {
@@ -116,10 +118,12 @@ void ThreadSimulationTick::timeTickSampleCallback(
 {
     if (System::checkTimeMs(myNextCallTimeMs))
     {
+        myRunStartedSemaphore.post();
+
         Thread::run();
 
         myNextCallTimeMs += getPeriodMs();
-    }
 
-    myRunCompleteSemaphore.post();
+        myRunCompleteSemaphore.post();
+    }
 }

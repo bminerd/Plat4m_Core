@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2021-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -64,18 +64,25 @@ namespace Plat4m
 class Semaphore
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
+
     enum ErrorCode
     {
-        ERROR_CODE_NONE
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_INSTANTIATION_FAILED
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
-    
+    using Error = ErrorTemplate<ErrorCode>;
+
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
+
+    virtual ~Semaphore();
+
     //--------------------------------------------------------------------------
     // Public virtual methods
     //--------------------------------------------------------------------------
@@ -91,21 +98,15 @@ protected:
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
+
     Semaphore(const std::uint32_t maxValue, const std::uint32_t initialValue);
-    
-    //--------------------------------------------------------------------------
-    // Protected virtual destructors
-    //--------------------------------------------------------------------------
-    
-    virtual ~Semaphore();
-    
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Error driverWait() = 0;
 
     virtual Error driverPost() = 0;

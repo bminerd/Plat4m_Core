@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019-2023 Benjamin Minerd
+// Copyright (c) 2019-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,12 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
-#include <pthread.h>
-#include <sys/types.h>
-
-#include <Plat4m_Core/QueueDriver.h>
-#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/Posix/QueueDriverPosix.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -61,77 +56,10 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases for deprecated classes
 //------------------------------------------------------------------------------
 
-class QueueDriverLinux : public QueueDriver
-{
-public:
-
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    QueueDriverLinux(const uint32_t valueSizeBytes);
-
-    //--------------------------------------------------------------------------
-    // Public virtual destructors
-    //--------------------------------------------------------------------------
-
-    virtual ~QueueDriverLinux();
-
-    //--------------------------------------------------------------------------
-    // Public virtual methods overridden for QueueDriver
-    //--------------------------------------------------------------------------
-
-    uint32_t driverGetSize();
-
-    uint32_t driverGetSizeFast();
-
-    bool driverEnqueue(const void* value);
-
-    bool driverEnqueueFast(const void* value);
-
-    bool driverDequeue(void* value);
-
-    bool driverDequeueFast(void* value);
-
-    void driverClear();
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private types
-    //--------------------------------------------------------------------------
-
-    enum MessageType : long
-    {
-        MESSAGE_TYPE_DATA = 1,
-        MESSAGE_TYPE_FLUSH
-    };
-
-    struct Message
-    {
-        MessageType messageType;
-        void* value;
-    };
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    const uint32_t myValueSizeBytes;
-
-    int myMessageQueueId;
-
-    //--------------------------------------------------------------------------
-    // Private methods
-    //--------------------------------------------------------------------------
-
-    bool messageSend(const Message& message);
-
-    bool messageReceive(Message& message);
-};
+using QueueDriverLinux = QueueDriverPosix;
 
 }; // namespace Plat4m
 

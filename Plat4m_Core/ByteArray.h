@@ -46,6 +46,8 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <cstdint>
+
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/Array.h>
 
@@ -60,54 +62,75 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class ByteArray : public Array<uint8_t>
+class ByteArray : public Array<std::uint8_t>
 {
 public:
 
     //--------------------------------------------------------------------------
     // Public constructors and destructors
     //--------------------------------------------------------------------------
-    
-    ByteArray();
-    
-    ByteArray(uint8_t bytes[],
-              const uint32_t nBytes,
-              const int32_t nUsedBytes = -1);
-    
-    ByteArray(const char string[]);
 
+    ByteArray();
+
+    ByteArray(std::uint8_t bytes[],
+              const std::uint32_t nBytes,
+              const std::int32_t nUsedBytes = -1);
+
+    ByteArray(const ByteArray& byteArray);
+
+    ByteArray(const Array<std::uint8_t>& array);
+
+    ByteArray(const char* string);
+
+    //--------------------------------------------------------------------------
     template <typename TData>
-    ByteArray(const Array<TData>& array) :
-        Array<uint8_t>((uint8_t*) array.getItems(),
-                       array.getMaxSize() * sizeof(TData),
-                       array.getSize() * sizeof(TData))
+    explicit ByteArray(const Array<TData>& array) :
+        Array<std::uint8_t>(array. template getDataAs<std::uint8_t*>(),
+                            array.getMaxSize() * sizeof(TData),
+                            array.getSize() * sizeof(TData))
     {
     }
 
     //--------------------------------------------------------------------------
+    // Public operator overloads
+    //--------------------------------------------------------------------------
+
+    ByteArray& operator=(const ByteArray& byteArray);
+
+    bool operator==(const ByteArray& byteArray) const;
+
+    bool operator!=(const ByteArray& byteArray) const;
+
+    //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
-    
-    using Array<uint8_t>::append;
-    using Array<uint8_t>::prepend;
-    using Array<uint8_t>::insert;
-    using Array<uint8_t>::clear;
+
+    using Array<std::uint8_t>::append;
+    using Array<std::uint8_t>::prepend;
+    using Array<std::uint8_t>::insert;
+    using Array<std::uint8_t>::clear;
 
     //--------------------------------------------------------------------------
     template <typename T>
-    bool append(T item, const Endian endian, const bool greedy = false)
+    bool append(const T& item,
+                const Endian endian,
+                const bool greedy = false)
     {
         if (endian == ENDIAN_LITTLE)
         {
-            return append((uint8_t*) &item, sizeof(item), greedy);
+            return append(reinterpret_cast<const std::uint8_t*>(&item),
+                          sizeof(item),
+                          greedy);
         }
         else if (endian == ENDIAN_BIG)
         {
-            uint8_t* pointer = (uint8_t*) &item;
+            const std::uint8_t* pointer =
+                                   reinterpret_cast<const std::uint8_t*>(&item);
 
-            for (uint32_t i = 0; i < sizeof(item); i++)
+            for (std::uint32_t i = 0; i < sizeof(item); i++)
             {
-                if (!append((uint8_t) pointer[sizeof(item) - 1 - i]))
+                if (!append(
+                           static_cast<uint8_t>(pointer[sizeof(item) - 1 - i])))
                 {
                     return false;
                 }
@@ -123,13 +146,11 @@ public:
 
     bool prepend(const char string[]);
 
-    bool insert(const char string[], const uint32_t index);
+    bool insert(const char string[], const std::uint32_t index);
 
     void clear(const bool clearMemory);
 
-    void setValue(const uint8_t value);
-
-
+    void setValue(const std::uint8_t value);
 };
 
 }; // namespace Plat4m

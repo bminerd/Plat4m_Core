@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019-2023 Benjamin Minerd
+// Copyright (c) 2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,66 +33,49 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file MutexLinux.cpp
+/// @file QuantityBase.h
 /// @author Ben Minerd
-/// @date 5/28/2019
-/// @brief MutexLinux class source file.
+/// @date 5/8/2023
+/// @brief QuantityBase class header file.
 ///
+
+#ifndef PLAT4M_QUANTITY_BASE_H
+#define PLAT4M_QUANTITY_BASE_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Linux/MutexLinux.h>
-#include <Plat4m_Core/Plat4m.h>
+#include <cstdint>
 
-using Plat4m::MutexLinux;
-using Plat4m::Mutex;
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
-// Public constructors
+// Namespaces
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-MutexLinux::MutexLinux() :
-    Mutex(),
-    myMutexHandle()
+namespace Plat4m
 {
-    int returnValue = pthread_mutex_init(&myMutexHandle, NULL);
-
-    if (returnValue != 0)
-    {
-        while (true)
-        {
-            // Lock up, unable to create mutex
-        }
-    }
-}
 
 //------------------------------------------------------------------------------
-// Public destructors
+// Structs
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-MutexLinux::~MutexLinux()
+class QuantityBase
 {
-}
+public:
 
-//------------------------------------------------------------------------------
-// Private virtual methods overridden for Mutex
-//------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-Mutex::Error MutexLinux::driverSetLocked(const bool locked)
-{
-    if (locked)
+    enum ErrorCode
     {
-        pthread_mutex_lock(&myMutexHandle);
-    }
-    else
-    {
-        pthread_mutex_unlock(&myMutexHandle);
-    }
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_CONVERSION_OVERFLOWED_VALUE_TYPE
+    };
+};
 
-    return ERROR_NONE;
-}
+}; // namespace Plat4m
+
+#endif // PLAT4M_QUANTITY_BASE_H

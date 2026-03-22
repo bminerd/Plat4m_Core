@@ -48,8 +48,6 @@
 
 #include <stddef.h>
 
-#include <Plat4m_Core/Module.h>
-
 //------------------------------------------------------------------------------
 // Namespaces
 //------------------------------------------------------------------------------
@@ -61,7 +59,7 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class AllocationMemory : public Module
+class AllocationMemory
 {
 public:
 
@@ -73,9 +71,9 @@ public:
     
     static void* allocateArray(size_t count);
     
-    static void deallocate(void* pointer);
+    static void deallocate(void*& pointer);
     
-    static void deallocateArray(void* pointer);
+    static void deallocateArray(void*& pointer);
 
     static size_t getFreeMemorySize();
 
@@ -113,9 +111,9 @@ private:
 
     virtual void* driverAllocateArray(size_t count) = 0;
 
-    virtual void driverDeallocate(void* pointer) = 0;
+    virtual void driverDeallocate(void*& pointer) = 0;
 
-    virtual void driverDeallocateArray(void* pointer) = 0;
+    virtual void driverDeallocateArray(void*& pointer) = 0;
 
     virtual size_t driverGetFreeMemorySize() = 0;
 };

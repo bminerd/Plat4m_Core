@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Benjamin Minerd
+// Copyright (c) 2015-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -49,10 +49,7 @@
 #include <Plat4m_Core/ByteArrayN.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 
-using Plat4m::ImuLSM6DS0;
-using Plat4m::Imu;
-using Plat4m::Module;
-using Plat4m::SlaveDevice;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Local variables
@@ -131,10 +128,13 @@ ImuLSM6DS0::~ImuLSM6DS0()
 //------------------------------------------------------------------------------
 ImuLSM6DS0::Error ImuLSM6DS0::setLSM6DS0Config(const Config& config)
 {
-	if (!isEnabled())
-	{
-		return Error(ERROR_CODE_NOT_ENABLED);
-	}
+    if (!isEnabled())
+    {
+        return PLAT4M_REPORT_ERROR(ImuLSM6DS0::Error,
+                                   ImuLSM6DS0::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
+    }
 
 //	uint8_t value;
 //	Error error;
@@ -201,7 +201,10 @@ ImuLSM6DS0::Error ImuLSM6DS0::readRegisters(const Register startingRegister,
 {
 	if (!isEnabled())
 	{
-		return Error(ERROR_CODE_NOT_ENABLED);
+		return PLAT4M_REPORT_ERROR(ImuLSM6DS0::Error,
+                                   ImuLSM6DS0::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
 	}
 
 	ByteArrayN<1> txByteArray;
@@ -212,7 +215,10 @@ ImuLSM6DS0::Error ImuLSM6DS0::readRegisters(const Register startingRegister,
 
 	if (error.getCode() != SlaveDevice::ERROR_CODE_NONE)
 	{
-		return Error(ERROR_CODE_COMMUNICATION_FAILED);
+        return PLAT4M_REPORT_ERROR(ImuLSM6DS0::Error,
+                                   ImuLSM6DS0::ERROR_CODE_COMMUNICATION_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
 	}
 
 	return Error(ERROR_CODE_NONE);
@@ -224,7 +230,10 @@ ImuLSM6DS0::Error ImuLSM6DS0::writeRegister(const Register reg,
 {
 	if (!isEnabled())
 	{
-		return Error(ERROR_CODE_NOT_ENABLED);
+		return PLAT4M_REPORT_ERROR(ImuLSM6DS0::Error,
+                                   ImuLSM6DS0::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
 	}
 
 	ByteArrayN<2> txByteArray;
@@ -235,7 +244,10 @@ ImuLSM6DS0::Error ImuLSM6DS0::writeRegister(const Register reg,
 
 	if (error.getCode() != SlaveDevice::ERROR_CODE_NONE)
 	{
-		return Error(ERROR_CODE_COMMUNICATION_FAILED);
+		return PLAT4M_REPORT_ERROR(ImuLSM6DS0::Error,
+                                   ImuLSM6DS0::ERROR_CODE_COMMUNICATION_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
 	}
 
 	return Error(ERROR_CODE_NONE);

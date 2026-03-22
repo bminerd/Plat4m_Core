@@ -74,12 +74,6 @@ public:
     //--------------------------------------------------------------------------
 
     virtual ~StopwatchSystemTime();
-
-    //--------------------------------------------------------------------------
-    // Public virtual methods overridden for Stopwatch
-    //--------------------------------------------------------------------------
-
-    virtual TimeStamp getCurrentTimeStamp() override;
 };
 
 }; // namespace Plat4m

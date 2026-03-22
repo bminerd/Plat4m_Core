@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021-2023 Benjamin Minerd
+// Copyright (c) 2021-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -51,6 +51,7 @@
 #include <Windows.h>
 
 #include <Plat4m_Core/Semaphore.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -66,6 +67,18 @@ namespace Plat4m
 class SemaphoreWindows : public Semaphore
 {
 public:
+
+    //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
+
+    enum ErrorCode
+    {
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_CREATION_FAILED
+    };
+
+    using Error = ErrorTemplate<ErrorCode>;
 
     //--------------------------------------------------------------------------
     // Public constructors
@@ -91,10 +104,10 @@ private:
     //--------------------------------------------------------------------------
     // Private virtual methods overridden for Semaphore
     //--------------------------------------------------------------------------
-    
-    virtual Error driverWait() override;
 
-    virtual Error driverPost() override;
+    virtual Semaphore::Error driverWait() override;
+
+    virtual Semaphore::Error driverPost() override;
 
     virtual std::uint32_t driverGetValue() override;
 };

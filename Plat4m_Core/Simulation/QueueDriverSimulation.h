@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019-2023 Benjamin Minerd
+// Copyright (c) 2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -33,77 +33,84 @@
 //------------------------------------------------------------------------------
 
 ///
-/// @file WaitConditionLinux.cpp
+/// @file QueueDriverSimulation.h
 /// @author Ben Minerd
-/// @date 5/26/2019
-/// @brief WaitConditionLinux class source file.
+/// @date 2/7/2024
+/// @brief QueueDriverSimulation class header file.
 ///
+
+#ifndef PLAT4M_QUEUE_DRIVER_SIMULATION_H
+#define PLAT4M_QUEUE_DRIVER_SIMULATION_H
 
 //------------------------------------------------------------------------------
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Plat4m_Core/Linux/WaitConditionLinux.h>
+#include <cstdint>
 
-using Plat4m::WaitConditionLinux;
-using Plat4m::WaitCondition;
-
-//------------------------------------------------------------------------------
-// Public constructors
-//------------------------------------------------------------------------------
+#include <Plat4m_Core/QueueDriver.h>
+#include <Plat4m_Core/Thread.h>
+#include <Plat4m_Core/Semaphore.h>
 
 //------------------------------------------------------------------------------
-WaitConditionLinux::WaitConditionLinux() :
-    WaitCondition(),
-    myConditionHandle(PTHREAD_COND_INITIALIZER),
-    myMutexHandle(PTHREAD_MUTEX_INITIALIZER),
-    myThreadHandle(0)
+// Namespaces
+//------------------------------------------------------------------------------
+
+namespace Plat4m
 {
-}
 
 //------------------------------------------------------------------------------
-// Public virtual destructors
+// Classes
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-WaitConditionLinux::~WaitConditionLinux()
+class QueueDriverSimulation : public QueueDriver
 {
-}
+public:
 
-//------------------------------------------------------------------------------
-// Public methods
-//------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // Public constructors
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-void WaitConditionLinux::notifyFast()
-{
-    pthread_mutex_lock(&myMutexHandle);
-    pthread_cond_broadcast(&myConditionHandle);
-    pthread_mutex_unlock(&myMutexHandle);
-}
+    QueueDriverSimulation(const std::uint32_t nValues,
+                          const std::uint32_t valueSizeBytes,
+                          Thread& thread,
+                          Semaphore& threadsNotifiedSemaphore);
 
-//------------------------------------------------------------------------------
-// Private virtual methods overridden for WaitCondition
-//------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // Public virtual destructors
+    //--------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-WaitCondition::Error WaitConditionLinux::driverWait(const TimeMs waitTimeMs)
-{
-    myThreadHandle = pthread_self();
+    virtual ~QueueDriverSimulation();
 
-    pthread_mutex_lock(&myMutexHandle);
-    pthread_cond_wait(&myConditionHandle, &myMutexHandle);
-    pthread_mutex_unlock(&myMutexHandle);
+    //--------------------------------------------------------------------------
+    // Public virtual methods overridden for Queue
+    //--------------------------------------------------------------------------
 
-    return Error(ERROR_CODE_NONE);
-}
+    virtual std::uint32_t driverGetSize() override;
 
-//------------------------------------------------------------------------------
-WaitCondition::Error WaitConditionLinux::driverNotify()
-{
-    pthread_mutex_lock(&myMutexHandle);
-    pthread_cond_broadcast(&myConditionHandle);
-    pthread_mutex_unlock(&myMutexHandle);
+    virtual std::uint32_t driverGetSizeFast() override;
 
-    return Error(ERROR_CODE_NONE);
-}
+    virtual bool driverEnqueue(const void* value) override;
+
+    virtual bool driverEnqueueFast(const void* value) override;
+
+    virtual bool driverDequeue(void* value) override;
+
+    virtual bool driverDequeueFast(void* value) override;
+
+    virtual void driverClear() override;
+
+private:
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    QueueDriver& myQueueDriver;
+
+    Semaphore& myThreadsNotifiedSemaphore;
+};
+
+}; // namespace Plat4m
+
+#endif // PLAT4M_QUEUE_DRIVER_SIMULATION_H

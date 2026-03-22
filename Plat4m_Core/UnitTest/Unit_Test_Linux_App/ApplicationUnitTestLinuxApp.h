@@ -49,13 +49,17 @@
 #include <Plat4m_Core/UnitTest/ApplicationUnitTestApp.h>
 #include <Plat4m_Core/Linux/SystemLinux.h>
 #include <Plat4m_Core/Linux/ProcessorLinux.h>
+#include <Plat4m_Core/PrinterConsole.h>
+#include <Plat4m_Core/GlobalErrorPrinter.h>
 #include <Plat4m_Core/UnitTest/ArrayUnitTest.h>
 #include <Plat4m_Core/UnitTest/ArrayNUnitTest.h>
 #include <Plat4m_Core/UnitTest/BufferUnitTest.h>
 #include <Plat4m_Core/UnitTest/ByteArrayUnitTest.h>
 #include <Plat4m_Core/UnitTest/ModuleUnitTest.h>
-#include <Plat4m_Core/UnitTest/TimeStampUnitTest.h>
+#include <Plat4m_Core/UnitTest/TimeUnitTest.h>
 #include <Plat4m_Core/UnitTest/ListUnitTest.h>
+#include <Plat4m_Core/UnitTest/ErrorUnitTest.h>
+#include <Plat4m_Core/UnitTest/QuantityUnitTest.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -84,6 +88,14 @@ public:
 
     virtual ~ApplicationUnitTestLinuxApp();
 
+protected:
+
+    //--------------------------------------------------------------------------
+    // Protected methods implemented from Application
+    //--------------------------------------------------------------------------
+
+    virtual int subclassRun(int argc, char** argv) override;
+
 private:
 
     //--------------------------------------------------------------------------
@@ -98,19 +110,17 @@ private:
 
     ProcessorLinux myProcessor;
 
+    PrinterConsole myPrinterConsole;
+
     ArrayUnitTest myArrayUnitTest;
     ArrayNUnitTest myArrayNUnitTest;
     BufferUnitTest myBufferUnitTest;
     ByteArrayUnitTest myByteArrayUnitTest;
     ModuleUnitTest myModuleUnitTest;
-    TimeStampUnitTest myTimeStampUnitTest;
     ListUnitTest myListUnitTest;
-
-    //--------------------------------------------------------------------------
-    // Private methods implemented from Application
-    //--------------------------------------------------------------------------
-
-    int driverRun();
+    ErrorUnitTest myErrorUnitTest;
+    QuantityUnitTest myQuantityUnitTest;
+    TimeUnitTest myTimeUnitTest;
 
     //--------------------------------------------------------------------------
     // Private methods

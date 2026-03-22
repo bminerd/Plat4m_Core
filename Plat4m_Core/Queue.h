@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,9 +46,10 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <Plat4m_Core/QueueDriver.h>
+#include <Plat4m_Core/Thread.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -71,8 +72,9 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    Queue(QueueDriver& driver) :
-		myDriver(driver)
+    Queue(QueueDriver& driver, Thread& thread) :
+        myDriver(driver),
+        myThread(thread)
     {
     }
 
@@ -83,6 +85,7 @@ public:
     //--------------------------------------------------------------------------
     virtual ~Queue()
     {
+        myDriver.~QueueDriver();
     }
 
     //--------------------------------------------------------------------------
@@ -90,54 +93,69 @@ public:
     //--------------------------------------------------------------------------
 
     //--------------------------------------------------------------------------
-    uint32_t getSize()
+    std::uint32_t getSize()
     {
-    	return (myDriver.driverGetSize());
+        return (myDriver.driverGetSize());
     }
 
     //--------------------------------------------------------------------------
-    uint32_t getSizeFast()
+    std::uint32_t getSizeFast()
     {
-    	return (myDriver.driverGetSizeFast());
+        return (myDriver.driverGetSizeFast());
     }
 
     //--------------------------------------------------------------------------
-	bool enqueue(const T& value)
-	{
-		return (myDriver.driverEnqueue((void*) &value));
-	}
+    bool enqueue(const T& value)
+    {
+        return (myDriver.driverEnqueue(static_cast<const void*>(&value)));
+    }
 
     //--------------------------------------------------------------------------
-	bool enqueueFast(const T& value)
-	{
-		return (myDriver.driverEnqueueFast((void*) &value));
-	}
+    bool enqueueFast(const T& value)
+    {
+        return (myDriver.driverEnqueueFast(static_cast<const void*>(&value)));
+    }
 
-	//--------------------------------------------------------------------------
-	bool dequeue(T& value)
-	{
-		return (myDriver.driverDequeue((void*) &value));
-	}
+    //--------------------------------------------------------------------------
+    bool dequeue(T& value)
+    {
+        myThread.policyNotifyBlocked(true);
 
-	//--------------------------------------------------------------------------
-	bool dequeueFast(T& value)
-	{
-		return (myDriver.driverDequeueFast((void*) &value));
-	}
+        bool returnValue = myDriver.driverDequeue(static_cast<void*>(&value));
 
-	//--------------------------------------------------------------------------
-	void clear()
-	{
-		myDriver.driverClear();
-	}
+        myThread.policyNotifyBlocked(false);
+
+        return returnValue;
+    }
+
+    //--------------------------------------------------------------------------
+    bool dequeueFast(T& value)
+    {
+        myThread.policyNotifyBlocked(true);
+
+        bool returnValue = myDriver.driverDequeueFast(
+                                                    static_cast<void*>(&value));
+
+        myThread.policyNotifyBlocked(false);
+
+        return returnValue;
+    }
+
+    //--------------------------------------------------------------------------
+    void clear()
+    {
+        myDriver.driverClear();
+    }
 
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
     QueueDriver& myDriver;
+
+    Thread& myThread;
 };
 
 }; // namespace Plat4m

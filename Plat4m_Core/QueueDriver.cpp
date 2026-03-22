@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,16 @@
 
 #include <Plat4m_Core/QueueDriver.h>
 
-using Plat4m::QueueDriver;
+using namespace Plat4m;;
+
+//------------------------------------------------------------------------------
+// Public virtual destructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+QueueDriver::~QueueDriver()
+{
+}
 
 //------------------------------------------------------------------------------
 // Protected constructors
@@ -53,14 +62,5 @@ using Plat4m::QueueDriver;
 
 //------------------------------------------------------------------------------
 QueueDriver::QueueDriver()
-{
-}
-
-//------------------------------------------------------------------------------
-// Protected virtual destructors
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-QueueDriver::~QueueDriver()
 {
 }

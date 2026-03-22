@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019-2023 Benjamin Minerd
+// Copyright (c) 2019-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,10 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <pthread.h>
-
-#include <Plat4m_Core/Plat4m.h>
-#include <Plat4m_Core/WaitCondition.h>
+#include <Plat4m_Core/Posix/WaitConditionPosix.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -59,51 +56,10 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases
 //------------------------------------------------------------------------------
 
-class WaitConditionLinux : public WaitCondition
-{
-public:
-
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    WaitConditionLinux();
-
-    //--------------------------------------------------------------------------
-    // Public virtual destructors
-    //--------------------------------------------------------------------------
-
-    virtual ~WaitConditionLinux();
-
-    //--------------------------------------------------------------------------
-    // Public virtual methods overridden for WaitCondition
-    //--------------------------------------------------------------------------
-
-    virtual void notifyFast() override;
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    pthread_cond_t myConditionHandle;
-
-    pthread_mutex_t myMutexHandle;
-
-    pthread_t myThreadHandle;
-
-    //--------------------------------------------------------------------------
-    // Private virtual methods overridden for WaitCondition
-    //--------------------------------------------------------------------------
-
-    virtual Error driverWait(const TimeMs waitTimeMs) override;
-
-    virtual Error driverNotify() override;
-};
+using WaitConditionLinux = WaitConditionPosix;
 
 }; // namespace Plat4m
 

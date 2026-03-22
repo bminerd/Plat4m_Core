@@ -48,7 +48,6 @@
 
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/SystemFreeRtos/SystemFreeRtos.h>
-#include <Plat4m_Core/StopwatchSystemTime/StopwatchSystemTime.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -96,6 +95,8 @@ private:
     TimeMs myLastTimeMs;
 
     std::uint64_t myLastNsPortion;
+
+    TimeStamp myLastTimeStamp;
 };
 
 }; // namespace Plat4m

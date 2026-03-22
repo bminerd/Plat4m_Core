@@ -43,8 +43,6 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <Windows.h>
-
 #include <Plat4m_Core/SystemWindows/SystemWindows.h>
 #include <Plat4m_Core/SystemWindows/ThreadWindows.h>
 #include <Plat4m_Core/SystemWindows/MutexWindows.h>
@@ -53,7 +51,6 @@
 #include <Plat4m_Core/SystemWindows/SemaphoreWindows.h>
 #include <Plat4m_Core/MemoryAllocator.h>
 
-using namespace std;
 using namespace Plat4m;
 
 //------------------------------------------------------------------------------
@@ -63,7 +60,8 @@ using namespace Plat4m;
 //------------------------------------------------------------------------------
 SystemWindows::SystemWindows() :
     System(),
-    myIsRunning(false)
+    myIsRunning(false),
+    myFirstTickCount(GetTickCount64())
 {
 }
 
@@ -83,15 +81,13 @@ SystemWindows::~SystemWindows()
 //------------------------------------------------------------------------------
 Plat4m::TimeUs SystemWindows::driverGetTimeUs()
 {
-    // Default if not implemented by subclass
-
     return (driverGetTimeMs() * 1000);
 }
 
 //------------------------------------------------------------------------------
 Thread& SystemWindows::driverCreateThread(Thread::RunCallback& callback,
                                           const TimeMs periodMs,
-                                          const uint32_t nStackBytes,
+                                          const std::uint32_t nStackBytes,
                                           const bool isSimulated,
                                           const char* name)
 {
@@ -109,21 +105,25 @@ Mutex& SystemWindows::driverCreateMutex(Thread& thread)
 //------------------------------------------------------------------------------
 WaitCondition& SystemWindows::driverCreateWaitCondition(Thread& thread)
 {
-    return *(MemoryAllocator::allocate<WaitConditionWindows>());
+    return *(MemoryAllocator::allocate<WaitConditionWindows>(thread));
 }
 
 //------------------------------------------------------------------------------
 QueueDriver& SystemWindows::driverCreateQueueDriver(
-                                                  const uint32_t nValues,
-                                                  const uint32_t valueSizeBytes,
-                                                  Thread& thread)
+                                             const std::uint32_t nValues,
+                                             const std::uint32_t valueSizeBytes,
+                                             Thread& thread,
+                                             const bool isSimulated)
 {
-    return *(MemoryAllocator::allocate<QueueDriverWindows>(thread));
+    return *(MemoryAllocator::allocate<QueueDriverWindows>(nValues,
+                                                           valueSizeBytes,
+                                                           thread));
 }
 
 //------------------------------------------------------------------------------
-Semaphore& SystemWindows::driverCreateSemaphore(const uint32_t maxValue,
-                                                const uint32_t initialValue)
+Semaphore& SystemWindows::driverCreateSemaphore(
+                                               const std::uint32_t maxValue,
+                                               const std::uint32_t initialValue)
 {
     return *(MemoryAllocator::allocate<SemaphoreWindows>(maxValue,
                                                          initialValue));
@@ -156,4 +156,13 @@ void SystemWindows::driverDelayTimeMs(const TimeMs timeMs)
 void SystemWindows::driverExit()
 {
     myIsRunning = false;
+}
+
+//------------------------------------------------------------------------------
+TimeStamp SystemWindows::driverGetTimeStamp()
+{
+    Time<ULONGLONG, Units::Time::MILLISECONDS> tickTime(
+                                           GetTickCount64() - myFirstTickCount);
+
+    return (tickTime.to<std::int64_t, Units::Time::NANOSECONDS>());
 }

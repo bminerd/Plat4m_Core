@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021-2023 Benjamin Minerd
+// Copyright (c) 2021-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,6 @@
 #include <Plat4m_Core/SystemWindows/SemaphoreWindows.h>
 #include <Plat4m_Core/Plat4m.h>
 
-using namespace std;
 using namespace Plat4m;
 
 //------------------------------------------------------------------------------
@@ -54,17 +53,17 @@ using namespace Plat4m;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-SemaphoreWindows::SemaphoreWindows(const uint32_t maxValue,
-                                   const uint32_t initialValue) :
-    Semaphore(),
+SemaphoreWindows::SemaphoreWindows(const std::uint32_t maxValue,
+                                   const std::uint32_t initialValue) :
+    Semaphore(maxValue, initialValue),
     mySemaphoreHandle(CreateSemaphore(NULL, initialValue, maxValue, NULL))
 {
     if (isNullPointer(mySemaphoreHandle))
     {
-        while (true)
-        {
-            // Lock up, unable to create semaphore
-        }
+        PLAT4M_REPORT_ERROR(SemaphoreWindows::Error,
+                            ERROR_CODE_CREATION_FAILED,
+                            ErrorBase::SEVERITY_CRITICAL,
+                            this);
     }
 }
 
@@ -84,31 +83,31 @@ SemaphoreWindows::~SemaphoreWindows()
 //------------------------------------------------------------------------------
 Semaphore::Error SemaphoreWindows::driverWait()
 {
-    WORD dwWaitResult;
+    DWORD dwWaitResult;
 
     dwWaitResult = WaitForSingleObject(mySemaphoreHandle, INFINITE);
 
-    return Error(ERROR_CODE_NONE);
+    return (Semaphore::Error(Semaphore::ERROR_CODE_NONE));
 }
 
 //------------------------------------------------------------------------------
 Semaphore::Error SemaphoreWindows::driverPost()
 {
-R   eleaseSemaphore(mySemaphoreHandle, 1, NULL);
+    ReleaseSemaphore(mySemaphoreHandle, 1, NULL);
 
-    return Error(ERROR_CODE_NONE);
+    return (Semaphore::Error(Semaphore::ERROR_CODE_NONE));
 }
 
 //------------------------------------------------------------------------------
-uint32_t SemaphoreWindows::driverGetValue()
+std::uint32_t SemaphoreWindows::driverGetValue()
 {
-u   int32_t value;
+    LPLONG value = 0;
 
     DWORD dwWaitResult;
 
     dwWaitResult = WaitForSingleObject(mySemaphoreHandle, 0);
 
-    ReleaseSemaphore(mySemaphoreHandle, 1, &value);
+    ReleaseSemaphore(mySemaphoreHandle, 1, value);
 
-    return value;
+    return (static_cast<std::int32_t>(*value));
 }

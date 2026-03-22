@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2019-2023 Benjamin Minerd
+// Copyright (c) 2019-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,9 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <pthread.h>
-
-#include <Plat4m_Core/Mutex.h>
+#include <Plat4m_Core/Posix/MutexPosix.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -58,39 +56,10 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Classes
+// Aliases for deprecated classes
 //------------------------------------------------------------------------------
 
-class MutexLinux : public Mutex
-{
-public:
-
-    //--------------------------------------------------------------------------
-    // Public constructors
-    //--------------------------------------------------------------------------
-
-    MutexLinux();
-
-    //--------------------------------------------------------------------------
-    // Public destructors
-    //--------------------------------------------------------------------------
-
-    ~MutexLinux();
-
-private:
-
-    //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    pthread_mutex_t myMutexHandle;
-
-    //--------------------------------------------------------------------------
-    // Private virtual methods overridden for Mutex
-    //--------------------------------------------------------------------------
-
-    virtual Error driverSetLocked(const bool locked) override;
-};
+using MutexLinux = MutexPosix;
 
 }; // namespace Plat4m
 

@@ -71,6 +71,29 @@ const GpioPinSTM32H7xx::OutputSpeed GpioPinSTM32H7xx::myDefaultOutputSpeed =
                                        GpioPinSTM32H7xx::OUTPUT_SPEED_VERY_HIGH;
 
 //------------------------------------------------------------------------------
+// Public nested constructors
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+GpioPinSTM32H7xx::STM32H7xxConfig::STM32H7xxConfig() :
+    alternateFunction(ALTERNATE_FUNCTION_0),
+    outputType(OUTPUT_TYPE_PUSH_PULL),
+    outputSpeed(OUTPUT_SPEED_LOW)
+{
+}
+
+//------------------------------------------------------------------------------
+GpioPinSTM32H7xx::STM32H7xxConfig::STM32H7xxConfig(
+                                      const AlternateFunction alternateFunction,
+                                      const OutputType outputType,
+                                      const OutputSpeed outputSpeed) :
+    alternateFunction(alternateFunction),
+    outputType(outputType),
+    outputSpeed(outputSpeed)
+{
+}
+
+//------------------------------------------------------------------------------
 // Public constructors
 //------------------------------------------------------------------------------
 

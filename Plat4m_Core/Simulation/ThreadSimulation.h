@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2021-2023 Benjamin Minerd
+// Copyright (c) 2021-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,6 @@
 
 #include <cstdint>
 
-#include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/Thread.h>
 #include <Plat4m_Core/Semaphore.h>
 
@@ -105,7 +104,8 @@ private:
 
     virtual void driverSetPeriodMs(const TimeMs periodMs) override;
 
-    virtual uint32_t driverSetPriority(const uint32_t priority) override;
+    virtual std::uint32_t driverSetPriority(
+                                         const std::uint32_t priority) override;
 
     //--------------------------------------------------------------------------
     // Private methods

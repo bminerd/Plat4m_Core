@@ -87,13 +87,13 @@ void* AllocationMemory::allocateArray(size_t count)
 }
 
 //------------------------------------------------------------------------------
-void AllocationMemory::deallocate(void* pointer)
+void AllocationMemory::deallocate(void*& pointer)
 {
     myCurrentDriver->driverDeallocate(pointer);
 }
 
 //------------------------------------------------------------------------------
-void AllocationMemory::deallocateArray(void* pointer)
+void AllocationMemory::deallocateArray(void*& pointer)
 {
     myCurrentDriver->driverDeallocateArray(pointer);
 }

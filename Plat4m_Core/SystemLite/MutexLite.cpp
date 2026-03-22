@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013-2023 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,8 +45,7 @@
 
 #include <Plat4m_Core/SystemLite/MutexLite.h>
 
-using Plat4m::MutexLite;
-using Plat4m::Mutex;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public constructors
@@ -75,5 +74,5 @@ MutexLite::~MutexLite()
 Mutex::Error MutexLite::driverSetLocked(const bool locked)
 {
     // Do nothing, Lite is a cooperative RTOS
-    return ERROR_NONE;
+    return (Mutex::Error(Mutex::ERROR_CODE_NONE));
 }

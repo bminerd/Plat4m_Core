@@ -76,6 +76,7 @@ public:
 
     ThreadSimulationTick(RunCallback& callback,
                          const std::uint32_t timeTickTopicId,
+                         Semaphore& runStartedSemaphore,
                          Semaphore& runCompleteSemaphore,
                          const TimeMs periodMs = 0,
                          const std::uint32_t nStackBytes = 0,
@@ -94,6 +95,8 @@ private:
     //--------------------------------------------------------------------------
 
     TopicSubscriberThread<TimeTickSample> myTimeTickTopicSubscriberThread;
+
+    Semaphore& myRunStartedSemaphore;
 
     Semaphore& myRunCompleteSemaphore;
 

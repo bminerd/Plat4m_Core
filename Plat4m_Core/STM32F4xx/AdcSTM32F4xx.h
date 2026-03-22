@@ -212,7 +212,7 @@ public:
         SAMPLE_TIME_601_5_CLOCK_CYCLES
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     struct Config
     {

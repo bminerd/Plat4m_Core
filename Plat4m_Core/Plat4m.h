@@ -46,7 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
-#include <stdint.h>
+#include <cstdint>
 #include <float.h>
 #include <math.h>
 
@@ -102,71 +102,91 @@ namespace Plat4m
         ENDIAN_BIG
     };
 
-    typedef uint32_t Id;
+    using Id = std::uint32_t;
 
-    typedef uint32_t TimeS;
-    typedef uint32_t TimeMs;
-    typedef uint32_t TimeUs;
-    typedef uint32_t TimeNs;
+    using TimeS  = std::uint32_t;
+    using TimeMs = std::uint32_t;
+    using TimeUs = std::uint32_t;
+    using TimeNs = std::uint32_t;
 
-    typedef TimeS TimeSeconds;
-    typedef TimeMs TimeMilliseconds;
-    typedef TimeUs TimeMicroseconds;
-    typedef TimeNs TimeNanoSeconds;
+    using TimeSeconds      = TimeS;
+    using TimeMilliseconds = TimeMs;
+    using TimeMicroseconds = TimeUs;
+    using TimeNanoSeconds  = TimeNs;
 
-    typedef int32_t TimeSSigned;
-    typedef int32_t TimeMsSigned;
-    typedef int32_t TimeUsSigned;
-    typedef int32_t TimeNsSigned;
+    using TimeSSigned  = std::int32_t;
+    using TimeMsSigned = std::int32_t;
+    using TimeUsSigned = std::int32_t;
+    using TimeNsSigned = std::int32_t;
 
-    typedef TimeSSigned TimeSecondsSigned;
-    typedef TimeMsSigned TimeMillisecondsSigned;
-    typedef TimeUsSigned TimeMicrosecondsSigned;
-    typedef TimeNsSigned TimeNanosecondsSigned;
+    using TimeSecondsSigned      = TimeSSigned;
+    using TimeMillisecondsSigned = TimeMsSigned;
+    using TimeMicrosecondsSigned = TimeUsSigned;
+    using TimeNanosecondsSigned  = TimeNsSigned;
 
-    typedef float TimeSFloat;
-    typedef TimeSFloat TimeSecondsFloat;
+    using TimeSLong  = std::uint64_t;
+    using TimeMsLong = std::uint64_t;
+    using TimeUsLong = std::uint64_t;
+    using TimeNsLong = std::uint64_t;
 
-    typedef double TimeSDouble;
-    typedef TimeSDouble TimeSecondsDouble;
+    using TimeSecondsLong      = TimeSLong;
+    using TimeMillisecondsLong = TimeMsLong;
+    using TimeMicrosecondsLong = TimeUsLong;
+    using TimeNanoSecondsLong  = TimeNsLong;
+
+    using TimeSSignedLong  = std::int64_t;
+    using TimeMsSignedLong = std::int64_t;
+    using TimeUsSignedLong = std::int64_t;
+    using TimeNsSignedLong = std::int64_t;
+
+    using TimeSecondsSignedLong      = TimeSSignedLong;
+    using TimeMillisecondsSignedLong = TimeMsSignedLong;
+    using TimeMicrosecondsSignedLong = TimeUsSignedLong;
+    using TimeNanosecondsSignedLong  = TimeNsSignedLong;
+
+    using TimeSFloat = float;
+    using TimeSecondsFloat = TimeSFloat;
+
+    using TimeSDouble = double;
+    using TimeSecondsDouble = TimeSDouble;
 
 #ifndef PLAT4M_CORE_CONFIG
-    typedef float RealNumber;
+    using RealNumber = float;
 #endif
 
-    typedef RealNumber VoltageV;
-    typedef RealNumber VoltageMv;
+    using VoltageV  = RealNumber;
+    using VoltageMv = RealNumber;
 
-    typedef RealNumber CurrentA;
-    typedef RealNumber CurrentMa;
+    using CurrentA  = RealNumber;
+    using CurrentMa = RealNumber;
 
-    typedef RealNumber PositionM;
+    using PositionM = RealNumber;
 
-    typedef RealNumber VelocityMpS;
-    typedef RealNumber VelocityMpm;
-    typedef RealNumber VelocityKph;
-    typedef RealNumber VelocityFps;
-    typedef RealNumber VelocityFpm;
-    typedef RealNumber VelocityMph;
+    using VelocityMpS = RealNumber;
+    using VelocityMpm = RealNumber;
+    using VelocityKph = RealNumber;
+    using VelocityFps = RealNumber;
+    using VelocityFpm = RealNumber;
+    using VelocityMph = RealNumber;
 
-    typedef RealNumber AccelerationG;
-    typedef RealNumber AccelerationMg;
+    using AccelerationG  = RealNumber;
+    using AccelerationMg = RealNumber;
 
-    typedef RealNumber FrequencyHz;
+    using FrequencyHz = RealNumber;
 
-    typedef RealNumber AngleDegrees;
-    typedef RealNumber AngleRadians;
+    using AngleDegrees = RealNumber;
+    using AngleRadians = RealNumber;
 
-    typedef RealNumber AngularSpeedDps;
-    typedef RealNumber AngularSpeedRadPs;
-    typedef RealNumber AngularSpeedRpm;
+    using AngularSpeedDps   = RealNumber;
+    using AngularSpeedRadPs = RealNumber;
+    using AngularSpeedRpm   = RealNumber;
 
-    typedef RealNumber AngularVelocityDps;
-    typedef RealNumber AngularVelocityRadPs;
-    typedef RealNumber AngularVelocityRpm;
+    using AngularVelocityDps   = RealNumber;
+    using AngularVelocityRadPs = RealNumber;
+    using AngularVelocityRpm   = RealNumber;
 
-    typedef RealNumber AngularAccelerationDps2;
-    typedef RealNumber AngularAccelerationRadPs2;
+    using AngularAccelerationDps2   = RealNumber;
+    using AngularAccelerationRadPs2 = RealNumber;
 
     //--------------------------------------------------------------------------
     // Inline functions
@@ -247,7 +267,7 @@ namespace Plat4m
     //--------------------------------------------------------------------------
     template <typename TValue>
     inline void setBitSet(TValue& value,
-                          const uint8_t bitPosition,
+                          const std::uint8_t bitPosition,
                           const bool set)
     {
         if (set)
@@ -325,9 +345,14 @@ namespace Plat4m
     template <typename TValue>
     constexpr TValue power(const TValue value, const int exponent)
     {
+        if (exponent == 0)
+        {
+            return 1;
+        }
+
         if (exponent != 1)
         {
-            return power(value * value, exponent - 1);
+            return (value * power(value, exponent - 1));
         }
 
         return value;
@@ -365,10 +390,10 @@ namespace Plat4m
     template <typename TValue>
     inline bool findValueIndex(const TValue value,
                                const TValue valueTable[],
-                               const uint32_t valueTableSize,
-                               uint32_t& index)
+                               const std::uint32_t valueTableSize,
+                               std::uint32_t& index)
     {
-        uint32_t i;
+        std::uint32_t i;
 
         for (i = 0; i < valueTableSize; i++)
         {
@@ -392,10 +417,10 @@ namespace Plat4m
     template <>
     inline bool findValueIndex(const float value,
                                const float valueTable[],
-                               const uint32_t valueTableSize,
-                               uint32_t& index)
+                               const std::uint32_t valueTableSize,
+                               std::uint32_t& index)
     {
-        uint32_t i;
+        std::uint32_t i;
 
         for (i = 0; i < valueTableSize; i++)
         {
@@ -419,10 +444,10 @@ namespace Plat4m
     template <>
     inline bool findValueIndex(const double value,
                                const double valueTable[],
-                               const uint32_t valueTableSize,
-                               uint32_t& index)
+                               const std::uint32_t valueTableSize,
+                               std::uint32_t& index)
     {
-        uint32_t i;
+        std::uint32_t i;
 
         for (i = 0; i < valueTableSize; i++)
         {
@@ -443,13 +468,13 @@ namespace Plat4m
     }
 
     //--------------------------------------------------------------------------
-    inline char uint8ToAscii(const uint8_t value)
+    inline char uint8ToAscii(const std::uint8_t value)
     {
         return (0x30 + value);
     }
 
     //--------------------------------------------------------------------------
-    inline uint8_t asciiToUint8(const char character)
+    inline std::uint8_t asciiToUint8(const char character)
     {
         return (character - 0x30);
     }
@@ -509,8 +534,8 @@ namespace Plat4m
     }
 
     //--------------------------------------------------------------------------
-    template <typename TValue, uint32_t NValues>
-    inline uint32_t arraySize(const TValue (&valueArray)[NValues])
+    template <typename TValue, std::uint32_t NValues>
+    inline std::uint32_t arraySize(const TValue (&valueArray)[NValues])
     {
         return NValues;
     }
@@ -542,6 +567,25 @@ namespace Plat4m
         }
 
         return ((dividend + (divisor / 2)) / divisor);
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename TValue>
+    constexpr TValue power(const TValue& value, const std::uint32_t exponent)
+    {
+        if (exponent == 0)
+        {
+            return 1;
+        }
+
+        return (value * power(value, exponent - 1));
+    }
+
+    //--------------------------------------------------------------------------
+    template <typename UnitsType>
+    constexpr std::uint32_t unitsMultiplier(const UnitsType& units)
+    {
+        return Plat4m::power(10, units);
     }
 }; // namespace Plat4m
 

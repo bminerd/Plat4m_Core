@@ -89,7 +89,8 @@ public:
     virtual QueueDriver& driverCreateQueueDriver(
                                              const std::uint32_t nValues,
                                              const std::uint32_t valueSizeBytes,
-                                             Thread& thread) override;
+                                             Thread& thread,
+                                             const bool isSimulated) override;
 
     virtual Semaphore& driverCreateSemaphore(
                                      const std::uint32_t maxValue,
@@ -135,9 +136,9 @@ private:
     // Private data members
     //--------------------------------------------------------------------------
 
-    TimeMs myLastTimeMs;
+    volatile TimeMs myLastTimeMs;
 
-    std::uint32_t myTimeMsRollOverCounter;
+    volatile std::uint32_t myTimeMsRollOverCounter;
 
     std::uint32_t mySavedInterruptStatus;
 };

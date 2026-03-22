@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -43,6 +43,12 @@
 #define PLAT4M_MUTEX_H
 
 //------------------------------------------------------------------------------
+// Include files
+//------------------------------------------------------------------------------
+
+#include <Plat4m_Core/ErrorTemplate.h>
+
+//------------------------------------------------------------------------------
 // Namespaces
 //------------------------------------------------------------------------------
 
@@ -56,16 +62,19 @@ namespace Plat4m
 class Mutex
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public types
     //--------------------------------------------------------------------------
-    
-    enum Error
+
+    enum ErrorCode
     {
-        ERROR_NONE
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_INSTANTIATION_FAILED
     };
-    
+
+    using Error = ErrorTemplate<ErrorCode>;
+
     //--------------------------------------------------------------------------
     // Public methods
     //--------------------------------------------------------------------------
@@ -74,32 +83,36 @@ public:
 
     bool isLocked();
 
+    Error lock();
+
+    Error unlock();
+
 protected:
 
     //--------------------------------------------------------------------------
     // Protected constructors
     //--------------------------------------------------------------------------
-    
+
     Mutex();
-    
+
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
-    
+
     virtual ~Mutex();
-    
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
-    
+
     bool myIsLocked;
-    
+
     //--------------------------------------------------------------------------
     // Private pure virtual methods
     //--------------------------------------------------------------------------
-    
+
     virtual Error driverSetLocked(const bool locked) = 0;
 };
 

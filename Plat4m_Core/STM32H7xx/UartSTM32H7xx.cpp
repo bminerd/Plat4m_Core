@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022-2023 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -213,6 +213,7 @@ Module::Error UartSTM32H7xx::driverSetEnabled(const bool enabled)
         GpioPinSTM32H7xx::STM32H7xxConfig config;
         config.alternateFunction = myAlternateFunctionMap[myId];
         config.outputSpeed = GpioPinSTM32H7xx::OUTPUT_SPEED_HIGH;
+        config.outputType = GpioPinSTM32H7xx::OUTPUT_TYPE_PUSH_PULL;
 
         myTransmitGpioPin.setSTM32H7xxConfig(config);
 
@@ -228,6 +229,8 @@ Module::Error UartSTM32H7xx::driverSetEnabled(const bool enabled)
             if (isValidPointer(myReceiveGpioPin))
             {
                 myReceiveGpioPin->configure(gpioPinConfig);
+
+                config.outputType = GpioPinSTM32H7xx::OUTPUT_TYPE_OPEN_DRAIN;
                 myReceiveGpioPin->setSTM32H7xxConfig(config);
             }
         }
@@ -238,8 +241,8 @@ Module::Error UartSTM32H7xx::driverSetEnabled(const bool enabled)
     setUsartEnabled(enabled);
 
     InterruptSTM32H7xx::Config interruptConfig;
-    interruptConfig.priority = 7;
-//    interruptConfig.priority = 6;
+    // interruptConfig.priority = 1;
+    interruptConfig.priority = 6;
     myInterrupt.configure(interruptConfig);
 
     myInterrupt.setEnabled(enabled);
@@ -298,7 +301,8 @@ ComInterface::Error UartSTM32H7xx::driverTransmitBytes(
         }
         else
         {
-            error.setCode(ComInterface::ERROR_CODE_TRANSMIT_BUFFER_FULL);
+            error = ComInterface::Error(
+                                 ComInterface::ERROR_CODE_TRANSMIT_BUFFER_FULL);
             i = nBytes;
         }
 
@@ -380,12 +384,11 @@ void UartSTM32H7xx::initialize()
 {
     if (isValidPointer(interruptObjectMap[myId]))
     {
-        Error(ERROR_CODE_DUPLICATE_PERIPHERAL_INSTANTIATION);
-
-        // Instantiating same peripheral twice, lockup
-        while (true)
-        {
-        }
+        PLAT4M_REPORT_ERROR(
+                   UartSTM32H7xx::Error,
+                   UartSTM32H7xx::ERROR_CODE_DUPLICATE_PERIPHERAL_INSTANTIATION,
+                   ErrorBase::SEVERITY_CRITICAL,
+                   this);
     }
 
     interruptObjectMap[myId] = &myInterrupt;
@@ -541,7 +544,7 @@ void UartSTM32H7xx::setTransferMode(const TransferMode transferMode)
 //------------------------------------------------------------------------------
 void UartSTM32H7xx::writeByte(const std::uint8_t byte)
 {
-    myUart->TDR = static_cast<std::uint16_t>(byte);
+    myUart->TDR = static_cast<std::uint32_t>(byte);
 }
 
 //------------------------------------------------------------------------------

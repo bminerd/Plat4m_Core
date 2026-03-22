@@ -574,6 +574,8 @@ private:
                                  const Processor::PowerMode powerMode) override;
 
     virtual std::uint32_t driverGetCoreClockFrequencyHz() override;
+
+    virtual bool driverIsInterruptActive() override;
 };
 
 }; // namespace Plat4m

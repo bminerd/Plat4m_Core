@@ -2,7 +2,7 @@
 
 set -e
 
-pushd .
+pushd . > /dev/null
 
 # Switch current/working directory to here
 cd "${0%/*}"
@@ -13,8 +13,7 @@ fi
 
 cd Build
 
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+cmake ..
+make -j16
 
-make -j8
-
-popd
+popd > /dev/null

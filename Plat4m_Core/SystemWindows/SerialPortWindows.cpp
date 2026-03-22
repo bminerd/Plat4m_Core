@@ -124,7 +124,10 @@ Module::Error SerialPortWindows::driverSetEnabled(const bool enabled)
             {
                 if (GetLastError() == ERROR_FILE_NOT_FOUND)
                 {
-                    return Module::Error(Module::ERROR_CODE_ENABLE_FAILED);
+                    return PLAT4M_REPORT_ERROR(Module::Error,
+                                               Module::ERROR_CODE_ENABLE_FAILED,
+                                               ErrorBase::SEVERITY_HIGH,
+                                               this);
                 }
             }
         }
@@ -165,7 +168,10 @@ SerialPort::Error SerialPortWindows::driverSetConfig(const Config& config)
 
     if (!SetCommState(mySerialHandle, &serialParametersDcb))
     {
-        return Error(ERROR_CODE_SET_CONFIG_FAILED);
+        return PLAT4M_REPORT_ERROR(SerialPort::Error,
+                                   SerialPort::ERROR_CODE_SET_CONFIG_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     // TODO Make this part of Config?
@@ -178,7 +184,10 @@ SerialPort::Error SerialPortWindows::driverSetConfig(const Config& config)
 
     if (!SetCommTimeouts(mySerialHandle, &timeouts))
     {
-        return Error(ERROR_CODE_SET_CONFIG_FAILED);
+        return PLAT4M_REPORT_ERROR(SerialPort::Error,
+                                   SerialPort::ERROR_CODE_SET_CONFIG_FAILED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     myReceiveThread.setEnabled(true);
@@ -199,8 +208,11 @@ ComInterface::Error SerialPortWindows::driverTransmitBytes(
                    &bytesWritten,
                    NULL))
     {
-        return ComInterface::Error(
-                                 ComInterface::ERROR_CODE_TRANSMIT_BUFFER_FULL);
+        return PLAT4M_REPORT_ERROR(
+                                  ComInterface::Error,
+                                  ComInterface::ERROR_CODE_TRANSMIT_BUFFER_FULL,
+                                  ErrorBase::SEVERITY_HIGH,
+                                  this);
     }
 
     return ComInterface::Error(ComInterface::ERROR_CODE_NONE);

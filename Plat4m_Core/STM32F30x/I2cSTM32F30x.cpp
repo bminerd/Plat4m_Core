@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -52,11 +52,7 @@
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/Interrupt.h>
 
-using Plat4m::I2cSTM32F30x;
-using Plat4m::I2c;
-using Plat4m::GpioPinSTM32F30x;
-using Plat4m::InterruptSTM32F30x;
-using Plat4m::Module;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Local variables
@@ -239,7 +235,10 @@ I2c::Error I2cSTM32F30x::driverMasterTransfer(Transfer& transfer)
         // TODO: Check this
         setInterruptEnabled(INTERRUPT_STOP, true);
 
-        return Error(ERROR_CODE_TRANSFER_BUFFER_FULL);
+        return PLAT4M_REPORT_ERROR(I2c::Error,
+                                   I2c::ERROR_CODE_TRANSFER_BUFFER_FULL,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     setInterruptEnabled(INTERRUPT_STOP, true);

@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022-2023 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,12 +57,6 @@ namespace Plat4m
 {
 
 //------------------------------------------------------------------------------
-// Forward class declarations
-//------------------------------------------------------------------------------
-
-class StopwatchSystemTime;
-
-//------------------------------------------------------------------------------
 // Classes
 //------------------------------------------------------------------------------
 
@@ -74,7 +68,7 @@ public:
     // Public constructors
     //--------------------------------------------------------------------------
 
-    StopwatchManagerSystemTime();
+    StopwatchManagerSystemTime(const TimeStamp& cpuLoadTimeWindow);
 
     //--------------------------------------------------------------------------
     // Public virtual destructors
@@ -88,7 +82,9 @@ private:
     // Private virtual methods overridden for StopwatchManager
     //--------------------------------------------------------------------------
 
-    virtual Stopwatch& driverCreateStopwatch(const char* name) override;
+    virtual Stopwatch& subclassCreateStopwatch(const char* name) override;
+
+    virtual TimeStamp subclassGetCurrentTimeStamp() override;
 };
 
 }; // namespace Plat4m

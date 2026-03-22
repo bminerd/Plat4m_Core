@@ -71,7 +71,7 @@ extern "C" void vApplicationTickHook(void)
 //------------------------------------------------------------------------------
 extern "C" void vApplicationIdleHook(void)
 {
-
+    System::background();
 }
 
 //------------------------------------------------------------------------------
@@ -112,9 +112,10 @@ WaitCondition& SystemFreeRtos::driverCreateWaitCondition(Thread& thread)
 
 //------------------------------------------------------------------------------
 QueueDriver& SystemFreeRtos::driverCreateQueueDriver(
-												  const uint32_t nValues,
-												  const uint32_t valueSizeBytes,
-												  Thread& thread)
+                                                  const uint32_t nValues,
+                                                  const uint32_t valueSizeBytes,
+                                                  Thread& thread,
+                                                  const bool isSimulated)
 {
 	return *(MemoryAllocator::allocate<QueueDriverFreeRtos<0>>(nValues,
                                                                valueSizeBytes));
@@ -227,7 +228,7 @@ SystemFreeRtos::~SystemFreeRtos()
 //------------------------------------------------------------------------------
 Plat4m::TimeUs SystemFreeRtos::driverGetTimeUs()
 {
-	// Default if not implemented by subclass
+    // Default if not implemented by subclass
 
     return (driverGetTimeMs() * 1000);
 }

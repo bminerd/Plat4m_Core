@@ -121,13 +121,14 @@ Mutex& SystemLite::driverCreateMutex(Thread& thread)
 //------------------------------------------------------------------------------
 WaitCondition& SystemLite::driverCreateWaitCondition(Thread& thread)
 {
-    return *(MemoryAllocator::allocate<WaitConditionLite>());
+    return *(MemoryAllocator::allocate<WaitConditionLite>(thread));
 }
 
 //------------------------------------------------------------------------------
 QueueDriver& SystemLite::driverCreateQueueDriver(const uint32_t nValues,
                                                  const uint32_t valueSizeBytes,
-                                                 Thread& thread)
+                                                 Thread& thread,
+                                                 const bool isSimulated)
 {
     return *(MemoryAllocator::allocate<QueueDriverLite<1>>());
 }
@@ -147,6 +148,7 @@ void SystemLite::driverRun()
     while (myIsRunning)
     {
         checkThreads();
+        background();
     }
 }
 
@@ -172,6 +174,7 @@ void SystemLite::driverDelayTimeMs(const TimeMs timeMs)
         if (isRunning())
         {
             checkThreads(timeMs);
+            background();
         }
     }
 }

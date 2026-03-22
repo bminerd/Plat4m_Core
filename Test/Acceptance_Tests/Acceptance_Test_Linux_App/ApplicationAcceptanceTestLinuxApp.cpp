@@ -84,11 +84,11 @@ ApplicationAcceptanceTestLinuxApp::~ApplicationAcceptanceTestLinuxApp()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Application
+// Protected methods overridden for Application
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-int ApplicationAcceptanceTestLinuxApp::driverRun()
+int ApplicationAcceptanceTestLinuxApp::subclassRun(int argc, char** argv)
 {
     initializeProcessor();
     initializeSystem();

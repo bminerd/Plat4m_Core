@@ -45,8 +45,7 @@
 
 #include <Plat4m_Core/CurrentSensor.h>
 
-using Plat4m::CurrentSensor;
-using Plat4m::Module;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public methods
@@ -63,7 +62,10 @@ CurrentSensor::Error CurrentSensor::setConfig(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(CurrentSensor::Error,
+                                   CurrentSensor::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverSetConfig(config);
@@ -95,7 +97,10 @@ CurrentSensor::Error CurrentSensor::setOffsetCurrentA(
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(CurrentSensor::Error,
+                                   CurrentSensor::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     myOffsetCurrentA = offsetCurrentA;
@@ -108,7 +113,10 @@ CurrentSensor::Error CurrentSensor::getCurrentA(CurrentA& currentA)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(CurrentSensor::Error,
+                                   CurrentSensor::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     CurrentA tempCurrentA;
@@ -129,7 +137,10 @@ CurrentSensor::Error CurrentSensor::startOffsetCalibration(
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(CurrentSensor::Error,
+                                   CurrentSensor::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverStartOffsetCalibration(nSamples);
@@ -154,9 +165,9 @@ bool CurrentSensor::isOffsetCalibrationComplete()
 
 //------------------------------------------------------------------------------
 CurrentSensor::CurrentSensor() :
-	Module(),
-	myCurrentReadyCallback(0),
-	myOffsetCurrentA(0.0)
+    Module(),
+    myCurrentReadyCallback(0),
+    myOffsetCurrentA(0.0)
 {
 }
 

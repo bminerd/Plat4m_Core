@@ -104,7 +104,7 @@ public:
         INTERRUPT_EVENT_FIFO_OVERRUN_UNDERRUN
     };
 
-    typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
     struct Config
     {

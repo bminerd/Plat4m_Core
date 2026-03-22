@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2022-2023 Benjamin Minerd
+// Copyright (c) 2022-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,9 @@
 //------------------------------------------------------------------------------
 
 #include <Plat4m_Core/StopwatchManager.h>
+#include <Plat4m_Core/MemoryAllocator.h>
+#include <Plat4m_Core/System.h>
+#include <Plat4m_Core/CallbackFunction.h>
 
 using namespace Plat4m;
 
@@ -62,13 +65,95 @@ Stopwatch& StopwatchManager::createStopwatch(const char* name)
 {
     if (isNullPointer(myDriver))
     {
-        while (true)
-        {
-            // Lock up, no StopwatchManager has been instantiated
-        }
+        PLAT4M_REPORT_ERROR_STATIC(
+                              StopwatchManager::Error,
+                              StopwatchManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                              ErrorBase::SEVERITY_CRITICAL,
+                              StopwatchManager);
     }
 
-    return (myDriver->driverCreateStopwatch(name));
+    if (isNullPointer(myDriver->myBackgroundStopwatch))
+    {
+        myDriver->myBackgroundStopwatch =
+                             &(myDriver->subclassCreateStopwatch("Background"));
+    }
+
+    return (myDriver->subclassCreateStopwatch(name));
+}
+
+//------------------------------------------------------------------------------
+void StopwatchManager::addStopwatch(Stopwatch& stopwatch)
+{
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(
+                              StopwatchManager::Error,
+                              StopwatchManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                              ErrorBase::SEVERITY_CRITICAL,
+                              StopwatchManager);
+    }
+
+    myDriver->addStopwatchPrivate(stopwatch);
+}
+
+//------------------------------------------------------------------------------
+void StopwatchManager::removeStopwatch(Stopwatch& stopwatch)
+{
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(
+                              StopwatchManager::Error,
+                              StopwatchManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                              ErrorBase::SEVERITY_CRITICAL,
+                              StopwatchManager);
+    }
+
+    myDriver->removeStopwatchPrivate(stopwatch);
+}
+
+//------------------------------------------------------------------------------
+List<Stopwatch*>& StopwatchManager::getStopwatchList()
+{
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(
+                              StopwatchManager::Error,
+                              StopwatchManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                              ErrorBase::SEVERITY_CRITICAL,
+                              StopwatchManager);
+    }
+
+    return (myDriver->getStopwatchListPrivate());
+}
+
+//------------------------------------------------------------------------------
+void StopwatchManager::computeBackgroundCalculations()
+{
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(
+                              StopwatchManager::Error,
+                              StopwatchManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                              ErrorBase::SEVERITY_CRITICAL,
+                              StopwatchManager);
+    }
+
+    myDriver->computeBackgroundCalculationsPrivate();
+}
+
+//------------------------------------------------------------------------------
+TimeStamp StopwatchManager::getCurrentTimeStamp()
+{
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(
+                              StopwatchManager::Error,
+                              StopwatchManager::ERROR_CODE_INSTANCE_NOT_CREATED,
+                              ErrorBase::SEVERITY_CRITICAL,
+                              StopwatchManager);
+    }
+
+    return (myDriver->subclassGetCurrentTimeStamp());
 }
 
 //------------------------------------------------------------------------------
@@ -76,16 +161,22 @@ Stopwatch& StopwatchManager::createStopwatch(const char* name)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-StopwatchManager::StopwatchManager() :
-    Module()
+StopwatchManager::StopwatchManager(const TimeStamp& cpuLoadTimeWindow) :
+    myStopwatchList(),
+    myBackgroundStopwatch(0),
+    myCpuLoadTimeWindow(cpuLoadTimeWindow),
+    myCpuLoadTimeWindowStartTimeStamp(),
+    myCpuLoadTimeWindowEndTimeStamp(),
+    myIsMeasuringCpuLoadTimeWindow(false),
+    myIsFirstBackgroundMeasurement(true)
 {
     if (isValidPointer(myDriver))
     {
-        // Error, trying to instantiate a second StopwatchManager
-        while (true)
-        {
-            // Do nothing
-        }
+        PLAT4M_REPORT_ERROR(
+                          StopwatchManager::Error,
+                          StopwatchManager::ERROR_CODE_INSTANCE_ALREADY_CREATED,
+                          ErrorBase::SEVERITY_CRITICAL,
+                          this);
     }
 
     myDriver = this;
@@ -98,5 +189,98 @@ StopwatchManager::StopwatchManager() :
 //------------------------------------------------------------------------------
 StopwatchManager::~StopwatchManager()
 {
+    List<Stopwatch*>::Iterator iterator = myStopwatchList.iterator();
+
+    while (iterator.hasCurrent())
+    {
+        Stopwatch* stopwatch = iterator.current();
+
+        stopwatch->~Stopwatch();
+
+        iterator.next();
+    }
+
     myDriver = 0;
+}
+
+//------------------------------------------------------------------------------
+// Private methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void StopwatchManager::addStopwatchPrivate(Stopwatch& stopwatch)
+{
+    Stopwatch* pointer = &stopwatch;
+
+    myStopwatchList.append(pointer);
+}
+
+//------------------------------------------------------------------------------
+void StopwatchManager::removeStopwatchPrivate(Stopwatch& stopwatch)
+{
+    Stopwatch* pointer = &stopwatch;
+
+    myStopwatchList.remove(pointer);
+}
+
+//------------------------------------------------------------------------------
+List<Stopwatch*>& StopwatchManager::getStopwatchListPrivate()
+{
+    return myStopwatchList;
+}
+
+//------------------------------------------------------------------------------
+void StopwatchManager::computeBackgroundCalculationsPrivate()
+{
+    if (myIsFirstBackgroundMeasurement)
+    {
+        myBackgroundStopwatch->start();
+
+        myIsFirstBackgroundMeasurement = false;
+    }
+
+    myCpuLoadTimeWindowEndTimeStamp = subclassGetCurrentTimeStamp();
+
+    if (myCpuLoadTimeWindowEndTimeStamp - myCpuLoadTimeWindowStartTimeStamp >=
+                                                            myCpuLoadTimeWindow)
+    {
+        myBackgroundStopwatch->stop();
+
+        TimeStamp cpuTimeStamp = myBackgroundStopwatch->getCpuTimeStamp();
+        TimeStamp elapsedTimeStamp =
+                                   myBackgroundStopwatch->getElapsedTimeStamp();
+
+        volatile float cpuTimeS = cpuTimeStamp.toTimeSFloat();
+
+        volatile float elapsedTimeS = elapsedTimeStamp.toTimeSFloat();
+
+        volatile float cpuLoadPercentage =
+                                          100 * (1 - (cpuTimeS / elapsedTimeS));
+
+        myCpuLoadTimeWindowEndTimeStamp += myCpuLoadTimeWindow;
+
+        List<Stopwatch*>::Iterator iterator = myStopwatchList.iterator();
+
+        while (iterator.hasCurrent())
+        {
+            Stopwatch* stopwatch = iterator.current();
+
+            volatile float cummulativeCpuTimeS =
+                         stopwatch->getCummulativeCpuTimeStamp().toTimeSFloat();
+
+            volatile float stopwatchCpuLoadPercentage =
+                                     100 * (cummulativeCpuTimeS / elapsedTimeS);
+
+            stopwatch->setCpuLoadPercentage(stopwatchCpuLoadPercentage);
+
+            stopwatch->resetEventCount();
+            stopwatch->resetCummulativeCpuTimeStamp();
+
+            iterator.next();
+        }
+
+        myBackgroundStopwatch->start();
+
+        myCpuLoadTimeWindowStartTimeStamp = subclassGetCurrentTimeStamp();
+    }
 }

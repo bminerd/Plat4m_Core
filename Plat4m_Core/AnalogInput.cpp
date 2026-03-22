@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Benjamin Minerd
+// Copyright (c) 2016-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@
 
 #include <Plat4m_Core/AnalogInput.h>
 
-using Plat4m::AnalogInput;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public methods
@@ -62,7 +62,10 @@ AnalogInput::Error AnalogInput::readVoltageV(VoltageV& voltageV)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(AnalogInput::Error,
+                                   AnalogInput::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     VoltageV tempVoltageV;
@@ -82,7 +85,10 @@ AnalogInput::Error AnalogInput::startOffsetCalibration(const uint32_t nSamples)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(AnalogInput::Error, 
+                                   AnalogInput::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     Error error = driverStartOffsetCalibration(nSamples);

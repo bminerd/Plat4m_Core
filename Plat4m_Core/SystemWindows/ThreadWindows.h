@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2018-2023 Benjamin Minerd
+// Copyright (c) 2018-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,7 @@
 
 #include <Plat4m_Core/Thread.h>
 #include <Plat4m_Core/Plat4m.h>
+#include <Plat4m_Core/ErrorTemplate.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -65,6 +66,18 @@ namespace Plat4m
 class ThreadWindows : public Thread
 {
 public:
+
+    //--------------------------------------------------------------------------
+    // Public types
+    //--------------------------------------------------------------------------
+
+    enum ErrorCode
+    {
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_CREATION_FAILED
+    };
+
+    using Error = ErrorTemplate<ErrorCode>;
 
     //--------------------------------------------------------------------------
     // Public constructors

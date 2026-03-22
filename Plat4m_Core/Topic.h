@@ -57,6 +57,8 @@
 #include <Plat4m_Core/MemoryAllocator.h>
 #include <Plat4m_Core/TopicManager.h>
 #include <Plat4m_Core/TopicSample.h>
+#include <Plat4m_Core/ErrorTemplate.h>
+#include <Plat4m_Core/ErrorManager.h>
 
 //------------------------------------------------------------------------------
 // Namespaces
@@ -180,12 +182,11 @@ private:
 
             if (isNullPointer(topic))
             {
-                Error error(TopicBase::ERROR_CODE_TOPIC_TYPE_ID_MISMATCH);
-
-                // Lock up, error condition
-                while (true)
-                {
-                }
+                PLAT4M_REPORT_ERROR_STATIC(
+                                       Topic::Error,
+                                       Topic::ERROR_CODE_TOPIC_TYPE_ID_MISMATCH,
+                                       ErrorBase::SEVERITY_CRITICAL,
+                                       Topic);
             }
         }
 

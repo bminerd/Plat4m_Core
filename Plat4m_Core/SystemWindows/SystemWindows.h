@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2023 Benjamin Minerd
+// Copyright (c) 2015-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +48,8 @@
 
 #include <cstdint>
 
+#include <Windows.h>
+
 #include <Plat4m_Core/Plat4m.h>
 #include <Plat4m_Core/System.h>
 
@@ -78,22 +80,14 @@ public:
 
     virtual ~SystemWindows();
 
-private:
-
     //--------------------------------------------------------------------------
-    // Private data members
-    //--------------------------------------------------------------------------
-
-    bool myIsRunning;
-
-    //--------------------------------------------------------------------------
-    // Private virtual methods overridden for System
+    // Public virtual methods overridden for System
     //--------------------------------------------------------------------------
 
     virtual Thread& driverCreateThread(Thread::RunCallback& callback,
                                        const TimeMs periodMs,
                                        const std::uint32_t nStackBytes,
-                                       const bool isSimulated, 
+                                       const bool isSimulated,
                                        const char* name) override;
 
     virtual Mutex& driverCreateMutex(Thread& thread) override;
@@ -103,7 +97,8 @@ private:
     virtual QueueDriver& driverCreateQueueDriver(
                                              const std::uint32_t nValues,
                                              const std::uint32_t valueSizeBytes,
-                                             Thread& thread) override;
+                                             Thread& thread,
+                                             const bool isSimulated) override;
 
     virtual Semaphore& driverCreateSemaphore(
                                      const std::uint32_t maxValue,
@@ -116,8 +111,22 @@ private:
     virtual TimeUs driverGetTimeUs() override;
 
     virtual void driverDelayTimeMs(const TimeMs timeMs) override;
+
+    virtual void driverExit() override;
+
+    virtual TimeStamp driverGetTimeStamp() override;
+
+private:
+
+    //--------------------------------------------------------------------------
+    // Private data members
+    //--------------------------------------------------------------------------
+
+    bool myIsRunning;
+
+    ULONGLONG myFirstTickCount;
 };
 
-}; // namespace Plat4m
+}; // end namespace Plat4m
 
 #endif // PLAT4M_SYSTEM_WINDOWS_H

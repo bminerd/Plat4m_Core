@@ -47,12 +47,7 @@
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/CallbackMethod.h>
 
-using Plat4m::I2cSTM32F4xx;
-using Plat4m::I2c;
-using Plat4m::GpioPinSTM32F4xx;
-using Plat4m::InterruptSTM32F4xx;
-using Plat4m::Module;
-using Plat4m::ProcessorSTM32F4xx;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Local variables
@@ -220,7 +215,10 @@ I2c::Error I2cSTM32F4xx::driverMasterTransfer(Transfer& transfer)
         // TODO: Check this
         setInterruptEnabled(INTERRUPT_EVENT, true);
 
-        return Error(ERROR_CODE_TRANSFER_BUFFER_FULL);
+        return PLAT4M_REPORT_ERROR(I2c::Error,
+                                   I2c::ERROR_CODE_TRANSFER_BUFFER_FULL,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     setInterruptEnabled(INTERRUPT_EVENT, true);
@@ -488,8 +486,8 @@ void I2cSTM32F4xx::handleMasterByteReceivedEvent()
         {
             myCurrentTransfer->mailbox->receiveByteArray->setSize(
                                                myCurrentTransfer->receiveCount);
-            myCurrentTransfer->mailbox->error.setCode(
-                                          (MasterSlaveBus::ErrorCode)
+            myCurrentTransfer->mailbox->error =
+                MasterSlaveBus::Error((MasterSlaveBus::ErrorCode)
                                           (myCurrentTransfer->error.getCode()));
             myCurrentTransfer->mailbox->mailboxFullCallback->call();
         }
@@ -516,8 +514,8 @@ void I2cSTM32F4xx::handleMasterByteReceivedEvent()
         {
             myCurrentTransfer->mailbox->receiveByteArray->setSize(
                                                myCurrentTransfer->receiveCount);
-            myCurrentTransfer->mailbox->error.setCode(
-                                          (MasterSlaveBus::ErrorCode)
+            myCurrentTransfer->mailbox->error =
+                MasterSlaveBus::Error((MasterSlaveBus::ErrorCode)
                                           (myCurrentTransfer->error.getCode()));
             myCurrentTransfer->mailbox->mailboxFullCallback->call();
         }
@@ -617,7 +615,7 @@ void I2cSTM32F4xx::eventInterruptHandler()
                 disableAllInterrupts();
 
                 myState = STATE_ERROR;
-                myCurrentTransfer->error.setCode(I2c::ERROR_CODE_BUS);
+                myCurrentTransfer->error = I2c::Error(I2c::ERROR_CODE_BUS);
             }
 
             break;

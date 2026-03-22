@@ -62,13 +62,16 @@ ApplicationUnitTestLinuxApp::ApplicationUnitTestLinuxApp() :
     ApplicationUnitTestApp("UNIT_TEST_LINUX_APP", "UNIT_TEST_LINUX", "0.0.1"),
     mySystem(),
     myProcessor(),
+    myPrinterConsole(),
     myArrayUnitTest(),
     myArrayNUnitTest(),
     myBufferUnitTest(),
     myByteArrayUnitTest(),
     myModuleUnitTest(),
-    myTimeStampUnitTest(),
-    myListUnitTest()
+    myListUnitTest(),
+    myErrorUnitTest(),
+    myQuantityUnitTest(),
+    myTimeUnitTest()
 {
 }
 
@@ -82,11 +85,11 @@ ApplicationUnitTestLinuxApp::~ApplicationUnitTestLinuxApp()
 }
 
 //------------------------------------------------------------------------------
-// Private methods implemented from Application
+// Protected methods overridden for Application
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-int ApplicationUnitTestLinuxApp::driverRun()
+int ApplicationUnitTestLinuxApp::subclassRun(int argc, char** argv)
 {
     initializeProcessor();
     initializeSystem();
@@ -112,6 +115,8 @@ void ApplicationUnitTestLinuxApp::initializeSystem()
     addUnitTest(myBufferUnitTest);
     addUnitTest(myByteArrayUnitTest);
     addUnitTest(myModuleUnitTest);
-    addUnitTest(myTimeStampUnitTest);
     addUnitTest(myListUnitTest);
+    addUnitTest(myErrorUnitTest);
+    addUnitTest(myQuantityUnitTest);
+    addUnitTest(myTimeUnitTest);
 }

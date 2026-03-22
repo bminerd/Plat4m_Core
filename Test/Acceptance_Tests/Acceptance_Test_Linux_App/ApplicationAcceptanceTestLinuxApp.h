@@ -84,11 +84,15 @@ public:
 
     virtual ~ApplicationAcceptanceTestLinuxApp();
 
-private:
+protected:
 
     //--------------------------------------------------------------------------
-    // Private static data members
+    // Protected methods implemented from Application
     //--------------------------------------------------------------------------
+
+    virtual int subclassRun(int argc, char** argv) override;
+
+private:
 
     //--------------------------------------------------------------------------
     // Private data members
@@ -111,12 +115,6 @@ private:
     ServiceClientTest myServiceClientTest;
 
     DataObjectTopicServiceTest myDataObjectTopicServiceTest;
-
-    //--------------------------------------------------------------------------
-    // Private methods implemented from Application
-    //--------------------------------------------------------------------------
-
-    int driverRun();
 
     //--------------------------------------------------------------------------
     // Private methods

@@ -46,13 +46,7 @@
 #include <Plat4m_Core/System.h>
 #include <Plat4m_Core/List.h>
 
-using namespace std;
 using namespace Plat4m;
-
-using Plat4m::System;
-using Plat4m::Thread;
-using Plat4m::Mutex;
-using Plat4m::WaitCondition;
 
 //------------------------------------------------------------------------------
 // Private static data members
@@ -68,10 +62,18 @@ bool System::myIsRunning = false;
 //------------------------------------------------------------------------------
 Thread& System::createThread(Thread::RunCallback& callback,
                              const TimeMs periodMs,
-                             const uint32_t nStackBytes,
+                             const std::uint32_t nStackBytes,
                              const bool isSimulated,
                              const char* name)
 {
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(System::Error,
+                                   System::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                   ErrorBase::SEVERITY_CRITICAL,
+                                   System);
+    }
+
     return (myDriver->driverCreateThread(callback,
                                          periodMs,
                                          nStackBytes,
@@ -82,19 +84,63 @@ Thread& System::createThread(Thread::RunCallback& callback,
 //------------------------------------------------------------------------------
 Mutex& System::createMutex(Thread& thread)
 {
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(System::Error,
+                                   System::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                   ErrorBase::SEVERITY_CRITICAL,
+                                   System);
+    }
+
     return (myDriver->driverCreateMutex(thread));
 }
 
 //------------------------------------------------------------------------------
 WaitCondition& System::createWaitCondition(Thread& thread)
 {
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(System::Error,
+                                   System::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                   ErrorBase::SEVERITY_CRITICAL,
+                                   System);
+    }
+
     return (myDriver->driverCreateWaitCondition(thread));
 }
 
 //------------------------------------------------------------------------------
-Semaphore& System::createSemaphore(const uint32_t maxValue,
-                                   const uint32_t initialValue)
+QueueDriver& System::createQueueDriver(const std::uint32_t nValues,
+                                       const std::uint32_t valueSizeBytes,
+                                       Thread& thread,
+                                       const bool isSimulated)
 {
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(System::Error,
+                                   System::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                   ErrorBase::SEVERITY_CRITICAL,
+                                   System);
+    }
+
+    return (myDriver->driverCreateQueueDriver(nValues,
+                                              valueSizeBytes,
+                                              thread,
+                                              isSimulated));
+}
+
+//------------------------------------------------------------------------------
+Semaphore& System::createSemaphore(const std::uint32_t maxValue,
+                                   const std::uint32_t initialValue)
+{
+    if (isNullPointer(myDriver))
+    {
+        PLAT4M_REPORT_ERROR_STATIC(System::Error,
+                                   System::ERROR_CODE_INSTANCE_NOT_CREATED,
+                                   ErrorBase::SEVERITY_CRITICAL,
+                                   System);
+    }
+
     return (myDriver->driverCreateSemaphore(maxValue, initialValue));
 }
 
@@ -112,7 +158,7 @@ bool System::isRunning()
 }
 
 //------------------------------------------------------------------------------
-uint32_t System::getTimeMs()
+std::uint32_t System::getTimeMs()
 {
     return (myDriver->driverGetTimeMs());
 }
@@ -130,19 +176,19 @@ TimeStamp System::getWallTimeStamp()
 }
 
 //------------------------------------------------------------------------------
-uint32_t System::getTimeUs()
+std::uint32_t System::getTimeUs()
 {
     return (myDriver->driverGetTimeUs());
 }
 
 //------------------------------------------------------------------------------
-void System::delayTimeMs(const uint32_t timeMs)
+void System::delayTimeMs(const std::uint32_t timeMs)
 {
     myDriver->driverDelayTimeMs(timeMs);
 }
 
 //------------------------------------------------------------------------------
-bool System::checkTimeMs(const uint32_t timeMs)
+bool System::checkTimeMs(const std::uint32_t timeMs)
 {
     return (timeMs <= getTimeMs());
 }
@@ -190,11 +236,17 @@ void System::exitCriticalSection()
 }
 
 //------------------------------------------------------------------------------
+void System::background()
+{
+    myDriver->backgroundPrivate();
+}
+
+//------------------------------------------------------------------------------
 // Public virtual methods
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-Plat4m::TimeStamp System::driverGetTimeStamp()
+TimeStamp System::driverGetTimeStamp()
 {
     // Not implemented by subclass, default implementation
     //
@@ -209,7 +261,7 @@ Plat4m::TimeStamp System::driverGetTimeStamp()
 }
 
 //------------------------------------------------------------------------------
-Plat4m::TimeStamp System::driverGetWallTimeStamp()
+TimeStamp System::driverGetWallTimeStamp()
 {
     // Not implemented by subclass, default implementation
 
@@ -267,6 +319,16 @@ void System::driverExitCriticalSection()
 }
 
 //------------------------------------------------------------------------------
+// Public methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void System::setBackgroundCallback(BackgroundCallback& callback)
+{
+    myBackgroundCallback = &callback;
+}
+
+//------------------------------------------------------------------------------
 // Protected constructors
 //------------------------------------------------------------------------------
 
@@ -279,6 +341,8 @@ System::System()
     }
     else
     {
+        Error error(ERROR_CODE_CREATING_SECOND_INSTANCE);
+
         // System lockup, trying to instantiate more than one System
         while (true)
         {
@@ -294,4 +358,17 @@ System::System()
 System::~System()
 {
     myDriver = 0;
+}
+
+//------------------------------------------------------------------------------
+// PRivate methods
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void System::backgroundPrivate()
+{
+    if (isValidPointer(myBackgroundCallback))
+    {
+        myBackgroundCallback->call();
+    }
 }

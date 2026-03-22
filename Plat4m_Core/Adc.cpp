@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@
 
 #include <Plat4m_Core/Adc.h>
 
-using Plat4m::Adc;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Public virtual methods
@@ -56,11 +56,14 @@ Adc::Error Adc::configure(const Config& config)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Adc::Error,
+                                   Adc::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
-    
+
     Error error = driverConfigure(config);
-    
+
     if (error.getCode() == ERROR_CODE_NONE)
     {
         myConfig = config;
@@ -74,7 +77,10 @@ Adc::Error Adc::readVoltage(float& voltage, const unsigned int nReadings)
 {
     if (!isEnabled())
     {
-        return Error(ERROR_CODE_NOT_ENABLED);
+        return PLAT4M_REPORT_ERROR(Adc::Error,
+                                   Adc::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_LOW,
+                                   this);
     }
 
     float tempVoltage;

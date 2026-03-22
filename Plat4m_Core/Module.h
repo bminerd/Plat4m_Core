@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2013 Benjamin Minerd
+// Copyright (c) 2013-2024 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,6 +46,7 @@
 // Include files
 //------------------------------------------------------------------------------
 
+#include <Plat4m_Core/Base.h>
 #include <Plat4m_Core/ErrorTemplate.h>
 #include <Plat4m_Core/Callback.h>
 
@@ -60,39 +61,39 @@ namespace Plat4m
 // Classes
 //------------------------------------------------------------------------------
 
-class Module
+class Module : public Base
 {
 public:
-    
+
     //--------------------------------------------------------------------------
     // Public enumerations
     //--------------------------------------------------------------------------
 
-	enum ErrorCode
-	{
-		ERROR_CODE_NONE = 0,
-		ERROR_CODE_ENABLE_FAILED
-	};
+    enum ErrorCode
+    {
+        ERROR_CODE_NONE = 0,
+        ERROR_CODE_ENABLE_FAILED
+    };
 
     //--------------------------------------------------------------------------
     // Public typedefs
     //--------------------------------------------------------------------------
 
-	typedef ErrorTemplate<ErrorCode> Error;
+    using Error = ErrorTemplate<ErrorCode>;
 
-	typedef Callback<Error, bool> SetEnabledCallback;
+    typedef Callback<Error, bool> SetEnabledCallback;
 
     //--------------------------------------------------------------------------
     // Public typedefs (deprecated)
     //--------------------------------------------------------------------------
 
-	typedef SetEnabledCallback EnableCallback;
+    typedef SetEnabledCallback EnableCallback;
 
     //--------------------------------------------------------------------------
     // Public virtual methods
     //--------------------------------------------------------------------------
 
-	virtual void setSetEnabledCallback(SetEnabledCallback& setEnabledCallback);
+    virtual void setSetEnabledCallback(SetEnabledCallback& setEnabledCallback);
 
     virtual Error setEnabled(const bool enabled);
 
@@ -116,39 +117,41 @@ protected:
     // Protected constructors
     //--------------------------------------------------------------------------
 
-	Module();
+    Module();
 
     //--------------------------------------------------------------------------
     // Protected virtual destructors
     //--------------------------------------------------------------------------
 
     virtual ~Module();
-    
+
+    //--------------------------------------------------------------------------
+    // Protected virtual methods
+    //--------------------------------------------------------------------------
+
+    virtual Error subclassSetEnabled(const bool enabled);
+
 private:
-    
+
     //--------------------------------------------------------------------------
     // Private data members
     //--------------------------------------------------------------------------
 
-	bool myIsEnabled;
+    bool myIsEnabled;
 
-	SetEnabledCallback* mySetEnabledCallback;
-
-    //--------------------------------------------------------------------------
-    // Private virtual methods
-    //--------------------------------------------------------------------------
-
-	virtual Error interfaceSetEnabled(const bool enabled);
-
-	virtual Error driverSetEnabled(const bool enabled);
+    SetEnabledCallback* mySetEnabledCallback;
 
     //--------------------------------------------------------------------------
     // Private virtual methods (deprecated)
     //--------------------------------------------------------------------------
 
-	virtual Error interfaceEnable(const bool enable);
+    virtual Error interfaceSetEnabled(const bool enabled);
 
-	virtual Error driverEnable(const bool enable);
+    virtual Error driverSetEnabled(const bool enabled);
+
+    virtual Error interfaceEnable(const bool enable);
+
+    virtual Error driverEnable(const bool enable);
 };
 
 }; // namespace Plat4m

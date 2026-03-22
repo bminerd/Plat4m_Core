@@ -66,6 +66,7 @@ ThreadPolicyStopwatch::ThreadPolicyStopwatch(Thread& thread) :
 //------------------------------------------------------------------------------
 ThreadPolicyStopwatch::~ThreadPolicyStopwatch()
 {
+    myStopwatch.~Stopwatch();
 }
 
 //------------------------------------------------------------------------------
@@ -80,4 +81,17 @@ void ThreadPolicyStopwatch::apply(Thread& thread, Callback<>& threadCallback)
     threadCallback.call();
 
     myStopwatch.stop();
+}
+
+//------------------------------------------------------------------------------
+void ThreadPolicyStopwatch::notifyBlocked(const bool blocked)
+{
+    if (blocked)
+    {
+        myStopwatch.pause();
+    }
+    else
+    {
+        myStopwatch.resume();
+    }
 }

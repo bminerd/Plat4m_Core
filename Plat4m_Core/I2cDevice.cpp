@@ -131,7 +131,10 @@ SlaveDevice::Error I2cDevice::driverTransmit(const ByteArray& byteArray,
 
     if (error.getCode() != I2c::ERROR_CODE_NONE)
     {
-       return Error(ERROR_CODE_COMMUNICATION);
+        return PLAT4M_REPORT_ERROR(SlaveDevice::Error,
+                                   SlaveDevice::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
    return Error(ERROR_CODE_NONE);
@@ -164,7 +167,10 @@ SlaveDevice::Error I2cDevice::driverReceive(ByteArray& byteArray,
 
     if (error.getCode() != I2c::ERROR_CODE_NONE)
     {
-       return Error(ERROR_CODE_COMMUNICATION);
+        return PLAT4M_REPORT_ERROR(SlaveDevice::Error,
+                                   SlaveDevice::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     return Error(ERROR_CODE_NONE);
@@ -197,7 +203,10 @@ SlaveDevice::Error I2cDevice::driverTransmitReceive(
 
     if (error.getCode() != I2c::ERROR_CODE_NONE)
     {
-        return Error(ERROR_CODE_COMMUNICATION);
+        return PLAT4M_REPORT_ERROR(SlaveDevice::Error,
+                                   SlaveDevice::ERROR_CODE_NOT_ENABLED,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     return Error(ERROR_CODE_NONE);

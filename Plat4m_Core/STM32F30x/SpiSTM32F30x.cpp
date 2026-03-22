@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Benjamin Minerd
+// Copyright (c) 2017-2023 Benjamin Minerd
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,12 +47,7 @@
 #include <Plat4m_Core/Buffer.h>
 #include <Plat4m_Core/CallbackMethod.h>
 
-using Plat4m::SpiSTM32F30x;
-using Plat4m::Spi;
-using Plat4m::GpioPinSTM32F30x;
-using Plat4m::Module;
-using Plat4m::InterruptSTM32F30x;
-using Plat4m::ProcessorSTM32F30x;
+using namespace Plat4m;
 
 //------------------------------------------------------------------------------
 // Local variables
@@ -351,7 +346,10 @@ Spi::Error SpiSTM32F30x::driverSetConfig(const Config& config)
 
     if (!setClockFrequencyHz(config.clockFrequencyHz))
     {
-        return Error(ERROR_CODE_CLOCK_FREQUENCY_INVALID);
+        return PLAT4M_REPORT_ERROR(Spi::Error,
+                                   Spi::ERROR_CODE_CLOCK_FREQUENCY_INVALID,
+                                   ErrorBase::SEVERITY_HIGH,
+                                   this);
     }
 
     setMode(config.mode);
